@@ -39,3 +39,11 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+design files/
+design files/DESIGN.md
+design files/Especificacao de requisitos.md
+design files/Especificacao do banco de dados.md
+design files/ui design.md
+.claude/
+docs/
+basic-news/
