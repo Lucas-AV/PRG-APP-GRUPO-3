@@ -1,0 +1,24 @@
+{
+  "name": "crud-orm",
+  "version": "1.0.0",
+  "description": "CLI CRUD com Drizzle ORM e SQLite",
+  "scripts": {
+    "dev": "ts-node src/index.ts",
+    "generate": "drizzle-kit generate",
+    "migrate": "ts-node src/db/migrate.ts"
+  },
+  "dependencies": {
+    "@libsql/client": "^0.17.2",
+    "@types/better-sqlite3": "^7.6.13",
+    "better-sqlite3": "^12.9.0",
+    "drizzle-orm": "^0.30.10",
+    "prompt-sync": "^4.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.7",
+    "@types/prompt-sync": "^4.2.3",
+    "drizzle-kit": "^0.21.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
+  }
+}
