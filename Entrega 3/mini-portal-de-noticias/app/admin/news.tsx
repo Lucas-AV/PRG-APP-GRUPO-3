@@ -1,4 +1,4 @@
-import { View, Text, FlatList, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, Alert, Platform } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useChronicleStore } from '@/store/chronicleStore';
 import { Colors } from '@/constants/theme';
@@ -17,6 +17,7 @@ export default function NewsAdmin() {
   const news = useChronicleStore((s) => s.news);
   const users = useChronicleStore((s) => s.users);
   const updateNewsStatus = useChronicleStore((s) => s.updateNewsStatus);
+  const rejectNews = useChronicleStore((s) => s.rejectNews);
 
   function getAuthorName(authorId: string) {
     return users.find((u) => u.id === authorId)?.name ?? 'Desconhecido';
@@ -29,11 +30,32 @@ export default function NewsAdmin() {
     ]);
   }
 
-  function confirmTrash(item: News) {
-    Alert.alert('Mover para Lixeira', `Mover "${item.title}" para a lixeira?`, [
-      { text: 'Cancelar', style: 'cancel' },
-      { text: 'Confirmar', style: 'destructive', onPress: () => updateNewsStatus(item.id, 'lixeira') },
-    ]);
+  function confirmReject(item: News) {
+    if (Platform.OS === 'ios') {
+      Alert.prompt(
+        'Rejeitar Notícia',
+        `Motivo da rejeição para "${item.title}":`,
+        [
+          { text: 'Cancelar', style: 'cancel' },
+          {
+            text: 'Rejeitar',
+            style: 'destructive',
+            onPress: (reason: string | undefined) =>
+              rejectNews(item.id, reason?.trim() || 'Não atende às diretrizes editoriais.'),
+          },
+        ],
+        'plain-text'
+      );
+    } else {
+      Alert.alert('Rejeitar Notícia', `Rejeitar "${item.title}"?`, [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Rejeitar',
+          style: 'destructive',
+          onPress: () => rejectNews(item.id, 'Não atende às diretrizes editoriais.'),
+        },
+      ]);
+    }
   }
 
   const sorted = [...news].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
@@ -102,11 +124,11 @@ export default function NewsAdmin() {
                     flex: 1, backgroundColor: '#fee2e2', borderRadius: 12,
                     paddingVertical: 8, alignItems: 'center',
                   }}
-                  onPress={() => confirmTrash(item)}
+                  onPress={() => confirmReject(item)}
                   accessibilityRole="button"
                   accessibilityLabel="Mover para lixeira"
                 >
-                  <Text style={{ fontFamily: 'WorkSans_700Bold', fontSize: 12, color: '#b91c1c' }}>Lixeira</Text>
+                  <Text style={{ fontFamily: 'WorkSans_700Bold', fontSize: 12, color: '#b91c1c' }}>Rejeitar</Text>
                 </TouchableOpacity>
               )}
               {item.status === 'lixeira' && (
