@@ -2,6 +2,8 @@
 export type Role = 'leitor' | 'autor' | 'editor' | 'superadmin';
 export type NewsStatus = 'rascunho' | 'em_revisao' | 'publicada' | 'lixeira';
 export type CommentStatus = 'active' | 'deleted_by_user' | 'deleted_by_moderator';
+export type ReadingFontSize = 'sm' | 'md' | 'lg';
+export type ReadingBackground = 'white' | 'sepia' | 'dark';
 
 export interface User {
   id: string;
@@ -11,6 +13,11 @@ export interface User {
   bio?: string;
   profilePictureUrl?: string;
   createdAt: string;
+  followedTagIds: string[];
+  followedAuthorIds: string[];
+  savedNewsIds: string[];
+  readingFontSize: ReadingFontSize;
+  readingBackground: ReadingBackground;
 }
 
 export interface Tag {
@@ -35,12 +42,14 @@ export interface City {
 export interface News {
   id: string;
   authorId: string;
+  cityId?: string;
   title: string;
   status: NewsStatus;
   tagIds: string[];
   coverImageUrl?: string;
   contentBody: string;
   rejectionReason?: string;
+  viewsCount: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -53,4 +62,8 @@ export interface Comment {
   status: CommentStatus;
   reportCount: number;
   createdAt: string;
+  parentId?: string;
+  likeCount: number;
+  likedByIds: string[];
+  reportedByIds: string[];
 }
