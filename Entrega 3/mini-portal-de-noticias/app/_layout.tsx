@@ -42,6 +42,13 @@ export default function RootLayout() {
       <Stack.Screen name="onboarding" />
       <Stack.Screen name="(auth)" />
       <Stack.Screen name="(tabs)" />
+      <Stack.Screen name="admin" />
+      <Stack.Screen name="author" />
+      <Stack.Screen name="news/[id]" />
+      <Stack.Screen name="news/comments" options={{ presentation: 'modal' }} />
+      <Stack.Screen name="profile/[id]" />
+      <Stack.Screen name="profile/edit" />
+      <Stack.Screen name="profile/settings" />
     </Stack>
   );
 }
