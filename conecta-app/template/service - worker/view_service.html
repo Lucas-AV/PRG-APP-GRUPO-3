@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Service Insights | SevGen</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "tertiary-container": "#e1d8fa",
+                        "inverse-surface": "#0c0f0f",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed": "#dae1ff",
+                        "on-error": "#fff7f6",
+                        "outline-variant": "#adb3b4",
+                        "on-surface": "#2d3435",
+                        "background": "#f9f9f9",
+                        "surface-bright": "#f9f9f9",
+                        "outline": "#757c7d",
+                        "on-secondary-container": "#515155",
+                        "on-primary-container": "#0049bb",
+                        "on-primary-fixed-variant": "#0052d0",
+                        "surface": "#f9f9f9",
+                        "on-primary-fixed": "#003894",
+                        "on-primary": "#f8f7ff",
+                        "primary-dim": "#004abd",
+                        "surface-variant": "#dde4e5",
+                        "surface-dim": "#d4dbdd",
+                        "secondary-fixed-dim": "#d5d4d8",
+                        "on-secondary-fixed": "#3f3f43",
+                        "surface-container-high": "#e4e9ea",
+                        "tertiary-dim": "#554f6b",
+                        "tertiary-fixed": "#e1d8fa",
+                        "error-dim": "#4e0309",
+                        "error-container": "#fe8983",
+                        "on-tertiary-container": "#504b66",
+                        "on-tertiary-fixed": "#3d3852",
+                        "primary-fixed-dim": "#c7d3ff",
+                        "error": "#9f403d",
+                        "surface-container": "#ebeeef",
+                        "on-surface-variant": "#5a6061",
+                        "on-secondary-fixed-variant": "#5b5b5f",
+                        "surface-container-highest": "#dde4e5",
+                        "secondary": "#5f5f62",
+                        "primary": "#0054d6",
+                        "on-background": "#2d3435",
+                        "secondary-fixed": "#e4e2e6",
+                        "on-secondary": "#faf8fc",
+                        "secondary-dim": "#535356",
+                        "surface-container-low": "#f2f4f4",
+                        "secondary-container": "#e4e2e6",
+                        "inverse-on-surface": "#9c9d9d",
+                        "tertiary": "#615b77",
+                        "inverse-primary": "#5e8bff",
+                        "primary-container": "#dae1ff",
+                        "on-tertiary-fixed-variant": "#5a5470",
+                        "on-error-container": "#752121",
+                        "surface-tint": "#0054d6",
+                        "on-tertiary": "#fcf7ff",
+                        "tertiary-fixed-dim": "#d3caeb"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .signature-gradient {
+            background: linear-gradient(135deg, #0054d6 0%, #004abd 100%);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background font-body text-on-surface">
+<!-- TopAppBar -->
+<header class="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md sticky top-0 w-full z-50">
+<div class="flex justify-between items-center w-full px-6 py-3 max-w-full">
+<div class="flex items-center gap-3">
+<button class="material-symbols-outlined text-on-surface-variant hover:bg-zinc-100 p-2 rounded-full transition-colors">arrow_back</button>
+<span class="text-xl font-extrabold tracking-tighter text-blue-600 dark:text-blue-500 font-headline">SevGen</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden md:flex items-center gap-6 mr-6">
+<a class="text-zinc-500 dark:text-zinc-400 font-semibold text-sm hover:text-blue-600" href="#">Overview</a>
+<a class="text-blue-600 dark:text-blue-400 font-bold text-sm" href="#">Services</a>
+<a class="text-zinc-500 dark:text-zinc-400 font-semibold text-sm hover:text-blue-600" href="#">Bookings</a>
+</div>
+<button class="material-symbols-outlined text-zinc-500 dark:text-zinc-400 p-2 hover:bg-zinc-100 rounded-full transition-colors" data-icon="notifications">notifications</button>
+<div class="w-8 h-8 rounded-full bg-surface-variant overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Professional provider headshot with a friendly smile, clean studio background, professional lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD-q55nNS-dJL8NAOltKi_Lv2J7-ecomcls0tzNlJstkhRbPWNk9ZQpAIQ26kip3HwLgrrJc79VvujLb98JwDXvmGCXVyqRNzDrp_4Fpdp3l9bXDTGV6rnrecbRZGOcENe0pVcZQUnphV9FLQHEuu29vnU5J4AT8Keh-HIuXJfmVtGBStdz20daqEZ-vmBfYGuZPEyOp-MzMeocQJFolnzPDY37dCXCRx3IV2Dn6J4SmyxWjUY47zcNjSmNhcFsEkzpGyjFZjPPmIU"/>
+</div>
+</div>
+</div>
+<div class="bg-zinc-100/50 dark:bg-zinc-800/50 h-px w-full"></div>
+</header>
+<main class="max-w-7xl mx-auto px-6 pt-8 pb-32">
+<!-- Service Hero Section: Asymmetric Layout -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12">
+<div class="lg:col-span-8">
+<div class="relative rounded-xl overflow-hidden aspect-[21/9] mb-6 shadow-sm">
+<img class="w-full h-full object-cover" data-alt="High-end professional photography of an interior designer workspace with architectural plans and luxury fabric swatches in soft natural light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAub4bwjjrWdeFCogWPfTxsVjJSUSe3pcGL2niDgjCHhR6VvK7Sd0yRZK5e3aEGstwXnYzpTWR26qJfdMsreM-o6-6SR89oni1PWQPpAeUOKFrfdtWcjmodOs1FEcw4ZHKfFRLgXf2fMdB-xJl2KaznT_M9LNVD5L00-UatrSz2lmLv-6BIvgiYtR8XAo5T0bN8aTeHVzrhKjr85cxcU2rP6hfg6m5Neh_WqVugsh8k8_GmVA4WodvIItuKIeE7eL8d_j7mUnykrY4"/>
+<div class="absolute top-4 left-4">
+<span class="bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase text-primary">Interior Design</span>
+</div>
+</div>
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<h1 class="text-4xl md:text-5xl font-extrabold font-headline tracking-tight text-on-surface mb-2">Premium Space Consultation</h1>
+<p class="text-on-surface-variant text-lg max-w-2xl">High-end residential interior curation and space planning for luxury homes and apartments.</p>
+</div>
+<button class="signature-gradient text-on-primary px-8 py-4 rounded-lg font-bold flex items-center gap-2 active:scale-95 transition-all shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-lg" data-icon="edit">edit</span>
+                        Edit Service
+                    </button>
+</div>
+</div>
+<!-- Bento Sidebar: Status & Quick Info -->
+<div class="lg:col-span-4 flex flex-col gap-4">
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm flex flex-col gap-6">
+<div class="flex items-center justify-between">
+<span class="font-headline font-bold text-lg">Service Status</span>
+<!-- Custom Toggle -->
+<div class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+<span class="ml-3 text-sm font-semibold text-primary">Active</span>
+</div>
+</div>
+<div class="space-y-4">
+<div class="flex items-center justify-between p-4 bg-surface-container-low rounded-lg">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" data-icon="payments">payments</span>
+<span class="font-semibold text-sm">Base Price</span>
+</div>
+<span class="font-bold text-on-surface">$250/hr</span>
+</div>
+<div class="flex items-center justify-between p-4 bg-surface-container-low rounded-lg">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" data-icon="schedule">schedule</span>
+<span class="font-semibold text-sm">Duration</span>
+</div>
+<span class="font-bold text-on-surface">90 mins</span>
+</div>
+</div>
+</div>
+<div class="bg-primary-container p-6 rounded-xl border border-primary/10">
+<h3 class="font-headline font-bold text-on-primary-container mb-1">Visibility Score</h3>
+<p class="text-sm text-on-primary-container/70 mb-4">Your service is appearing in 85% of relevant searches this week.</p>
+<div class="w-full bg-white/40 h-2 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 85%"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Metrics Grid -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+<!-- Metric Card -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm hover:translate-y-[-4px] transition-transform">
+<div class="flex items-center justify-between mb-4">
+<div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="trending_up">trending_up</span>
+</div>
+<span class="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded-full">+12.5%</span>
+</div>
+<h4 class="text-sm font-bold text-on-surface-variant uppercase tracking-wider mb-1">Total Earnings</h4>
+<p class="text-3xl font-extrabold font-headline">$14,280.00</p>
+</div>
+<!-- Metric Card -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm hover:translate-y-[-4px] transition-transform">
+<div class="flex items-center justify-between mb-4">
+<div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="event_available">event_available</span>
+</div>
+<span class="text-xs font-bold text-on-surface-variant bg-surface-container-low px-2 py-1 rounded-full">All-time</span>
+</div>
+<h4 class="text-sm font-bold text-on-surface-variant uppercase tracking-wider mb-1">Bookings</h4>
+<p class="text-3xl font-extrabold font-headline">58</p>
+</div>
+<!-- Metric Card -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm hover:translate-y-[-4px] transition-transform">
+<div class="flex items-center justify-between mb-4">
+<div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<div class="flex -space-x-2">
+<img class="w-6 h-6 rounded-full border-2 border-white" data-alt="Customer avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDKvHdIBqPgID839ZPRPUWFwB9FOCtpirX4UuXVB_4RxwzmXyl7CiE9WKm0NmPDxSNH_JrJRPWUOafwSk3VSs9zgQsiAPiWXfP4xxfbNdUhqx17m81aAxSIc24CO3XJe-3mCg3aAIOZBKmqmX8D59SnuKNcag1nXBVIlSVOFysZweyvblJ7B96P1zooWqYCeIYYsR8PQoz1im4kbufYvDMOeBaGez_5bTEAq_aA8Zv3GFYHlP5UP6M_7n2e1brPa4DGaA7ukC9CBCg"/>
+<img class="w-6 h-6 rounded-full border-2 border-white" data-alt="Customer avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDKw4NxNL56qz6WJ9YL16WLxOLBWP8UCS9PmiGf0BYcK8G8wmV_qtaIVcSjEyOLJ0H1-_73jYRBbzrVrFP85_mn4YbDG0aZM4N9raalQKFZOuLc5MvmCKEsOyPWE80cREYj9gUfOqicOXoQGw74bFamWlYMJL5JAuGxlU9hc1t15-2rjHxQgL-IUt2HSmmGnxxRyT5As8T_Pdr7gkltqNunf0LY30D_AfU79xphnVB9i5Iw6o49yHhxgFGojyRbF7ISWJOT-zGAlfA"/>
+</div>
+</div>
+<h4 class="text-sm font-bold text-on-surface-variant uppercase tracking-wider mb-1">Avg Rating</h4>
+<p class="text-3xl font-extrabold font-headline">4.92</p>
+</div>
+<!-- Metric Card -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm hover:translate-y-[-4px] transition-transform">
+<div class="flex items-center justify-between mb-4">
+<div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="avg_time">avg_time</span>
+</div>
+<span class="text-xs font-bold text-primary bg-primary-container px-2 py-1 rounded-full">Fast</span>
+</div>
+<h4 class="text-sm font-bold text-on-surface-variant uppercase tracking-wider mb-1">Response Time</h4>
+<p class="text-3xl font-extrabold font-headline">2h 15m</p>
+</div>
+</section>
+<!-- Insights & Feedback: Asymmetric Grid -->
+<section class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<div class="lg:col-span-2 space-y-6">
+<div class="flex items-center justify-between">
+<h2 class="text-2xl font-extrabold font-headline">Recent Feedback</h2>
+<a class="text-primary font-bold text-sm hover:underline" href="#">View All Reviews</a>
+</div>
+<div class="space-y-4">
+<!-- Review Card -->
+<div class="bg-surface-container-lowest p-6 rounded-xl border-l-4 border-primary">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-high overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Portrait of a satisfied customer, smiling at camera, soft outdoor lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD6MgZMdzioBkRIf_J79huVSUretEik2sRkmhN-RcQJg_lYUzHjVCx7Hg5NQ0kcf637OY2kQzI8Ufg4RmhXfpcizpoLjNSjNs0DVHy11VzHGvZ_SQg6vuP0EpB8gocjLiBL3y2m1H3vgBuze8s2R8VbHLTEcTLHxhP4AAQS8iab7SfRUVVfQMv7Q7oRnLQ4sT4Y7LWXFGmLv1akX9X86oWgkF-zUFrpm7hAgI03-eHDy9wfFJ4MhAYR7llY3Hu_zv2nWOL2I6pXKCM"/>
+</div>
+<div>
+<p class="font-bold text-on-surface">Julian Marcov</p>
+<p class="text-xs text-on-surface-variant">March 14, 2024</p>
+</div>
+</div>
+<div class="flex text-primary">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+<p class="text-on-surface-variant italic">"The consultation was incredibly thorough. We managed to redesign our entire living floor plan in under 90 minutes. High quality advice and very professional."</p>
+</div>
+<!-- Review Card -->
+<div class="bg-surface-container-lowest p-6 rounded-xl border-l-4 border-primary">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-high overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Professional woman portrait, warm office environment, soft lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGDO6lkC9aQ9ymaKg7BjLRgo5YnY3U85yCGb77CCY-cm6d6RYx_OdMACIq4OmQ_-acvC6c62IEKaKAu52vwtNStbjW1lDK5DV3DBIMmuESTumvkzl4D00WL0N4aoUUCq--wtK_WhxUqdKTzv2sMiFf7BsrDUoGZVcirQtfCIKOxDzN3BSoAshy1rksSkRG2sfdsu1ycI2-yvXeXm9sVuU3_SFZwR_njpKhMDchYgNAoX2ivX9DeaWK5s8gvJ-qnlUcfeiICJk_o6o"/>
+</div>
+<div>
+<p class="font-bold text-on-surface">Sarah Jenkins</p>
+<p class="text-xs text-on-surface-variant">March 10, 2024</p>
+</div>
+</div>
+<div class="flex text-primary">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+<p class="text-on-surface-variant italic">"Great attention to detail. Really understood our aesthetic requirements."</p>
+</div>
+</div>
+</div>
+<!-- Performance Chart Area -->
+<div class="lg:col-span-1 space-y-6">
+<h2 class="text-2xl font-extrabold font-headline">Weekly Activity</h2>
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm h-[320px] flex flex-col">
+<div class="flex-grow flex items-end justify-between gap-2 px-2">
+<div class="bg-surface-container-highest w-full rounded-t-sm h-[40%]"></div>
+<div class="bg-surface-container-highest w-full rounded-t-sm h-[60%]"></div>
+<div class="bg-primary w-full rounded-t-sm h-[85%]"></div>
+<div class="bg-surface-container-highest w-full rounded-t-sm h-[50%]"></div>
+<div class="bg-surface-container-highest w-full rounded-t-sm h-[70%]"></div>
+<div class="bg-surface-container-highest w-full rounded-t-sm h-[30%]"></div>
+<div class="bg-surface-container-highest w-full rounded-t-sm h-[45%]"></div>
+</div>
+<div class="flex justify-between mt-4 text-[10px] font-bold text-on-surface-variant/50 uppercase tracking-tighter">
+<span>Mon</span>
+<span>Tue</span>
+<span>Wed</span>
+<span>Thu</span>
+<span>Fri</span>
+<span>Sat</span>
+<span>Sun</span>
+</div>
+<div class="mt-6 pt-6 border-t border-surface-container flex justify-between items-center">
+<span class="text-sm font-semibold text-on-surface-variant">Highest Day</span>
+<span class="text-sm font-bold text-primary">Wednesday</span>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-2 bg-white/90 dark:bg-zinc-950/90 backdrop-blur-xl md:hidden">
+<a class="flex flex-col items-center justify-center text-zinc-400 dark:text-zinc-500 px-5 py-2 hover:text-zinc-900 active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-['Inter'] text-[10px] font-semibold uppercase tracking-wider mt-1">Overview</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-2xl px-5 py-2 active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="format_list_bulleted">format_list_bulleted</span>
+<span class="font-['Inter'] text-[10px] font-semibold uppercase tracking-wider mt-1">Services</span>
+</a>
+<a class="flex flex-col items-center justify-center text-zinc-400 dark:text-zinc-500 px-5 py-2 hover:text-zinc-900 active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+<span class="font-['Inter'] text-[10px] font-semibold uppercase tracking-wider mt-1">Bookings</span>
+</a>
+<a class="flex flex-col items-center justify-center text-zinc-400 dark:text-zinc-500 px-5 py-2 hover:text-zinc-900 active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-['Inter'] text-[10px] font-semibold uppercase tracking-wider mt-1">Profile</span>
+</a>
+</nav>
+</body></html>
