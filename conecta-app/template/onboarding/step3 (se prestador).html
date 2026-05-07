@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+
+<html class="light" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary-dim": "#004abd",
+              "error": "#9f403d",
+              "error-dim": "#4e0309",
+              "secondary-dim": "#535356",
+              "on-error-container": "#752121",
+              "error-container": "#fe8983",
+              "background": "#f9f9f9",
+              "on-error": "#fff7f6",
+              "on-secondary": "#faf8fc",
+              "primary": "#0054d6",
+              "surface-container-high": "#e4e9ea",
+              "on-surface-variant": "#5a6061",
+              "on-tertiary-fixed-variant": "#5a5470",
+              "surface-container-lowest": "#ffffff",
+              "outline-variant": "#adb3b4",
+              "primary-fixed": "#dae1ff",
+              "tertiary-fixed": "#e1d8fa",
+              "surface-variant": "#dde4e5",
+              "on-primary-fixed-variant": "#0052d0",
+              "tertiary-container": "#e1d8fa",
+              "inverse-surface": "#0c0f0f",
+              "surface-container": "#ebeeef",
+              "secondary-container": "#e4e2e6",
+              "on-tertiary": "#fcf7ff",
+              "on-secondary-fixed": "#3f3f43",
+              "surface-container-low": "#f2f4f4",
+              "primary-container": "#dae1ff",
+              "on-background": "#2d3435",
+              "inverse-primary": "#5e8bff",
+              "surface-tint": "#0054d6",
+              "on-primary": "#f8f7ff",
+              "on-tertiary-fixed": "#3d3852",
+              "on-surface": "#2d3435",
+              "outline": "#757c7d",
+              "surface-container-highest": "#dde4e5",
+              "tertiary-fixed-dim": "#d3caeb",
+              "tertiary-dim": "#554f6b",
+              "tertiary": "#615b77",
+              "surface": "#f9f9f9",
+              "inverse-on-surface": "#9c9d9d",
+              "on-tertiary-container": "#504b66",
+              "surface-bright": "#f9f9f9",
+              "on-primary-fixed": "#003894",
+              "secondary": "#5f5f62",
+              "on-secondary-container": "#515155",
+              "secondary-fixed-dim": "#d5d4d8",
+              "secondary-fixed": "#e4e2e6",
+              "primary-fixed-dim": "#c7d3ff",
+              "on-primary-container": "#0049bb",
+              "on-secondary-fixed-variant": "#5b5b5f",
+              "surface-dim": "#d4dbdd"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+            vertical-align: middle;
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #dde4e5; border-radius: 10px; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body antialiased selection:bg-primary-container selection:text-on-primary-container">
+<!-- Top Navigation Shell -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-6 h-16 bg-[#f9f9f9] dark:bg-[#121212] border-b-0 shadow-[0_4px_20px_-10px_rgba(0,0,0,0.05)] bg-[#f2f4f4] dark:bg-[#1a1a1a]">
+<div class="flex items-center gap-4">
+<button class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-[#ebeeef] dark:hover:bg-[#2c2c2c] transition-colors active:scale-95 opacity-80 duration-150">
+<span class="material-symbols-outlined text-[#0066FF] dark:text-[#4D94FF]">arrow_back</span>
+</button>
+<h1 class="font-['Manrope'] text-sm font-semibold tracking-tight text-[#2d3435] dark:text-white">Service Profile</h1>
+</div>
+<span class="font-['Manrope'] text-sm font-semibold tracking-tight text-[#0066FF] dark:text-[#4D94FF]">Step 2 of 4</span>
+</header>
+<main class="pt-24 pb-32 px-5 max-w-2xl mx-auto space-y-10">
+<!-- Progress Bar Section -->
+<section class="space-y-3">
+<div class="flex justify-between items-end">
+<h2 class="font-headline text-2xl font-extrabold tracking-tight text-on-background">Your Expertise</h2>
+<span class="font-label text-xs font-bold uppercase tracking-widest text-primary">66% Complete</span>
+</div>
+<div class="h-2 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full w-2/3 bg-gradient-to-r from-primary to-primary-dim rounded-full transition-all duration-700"></div>
+</div>
+</section>
+<!-- Section 1: Services (Serviços) -->
+<section class="space-y-6">
+<header>
+<h3 class="font-headline text-lg font-bold text-on-background">Serviços</h3>
+<p class="font-body text-sm text-on-surface-variant">Select the categories that define your core business.</p>
+</header>
+<div class="flex flex-wrap gap-3">
+<!-- Selected Chip -->
+<button class="inline-flex items-center px-4 py-2.5 rounded-full bg-primary-container text-on-primary-container border-2 border-primary/20 transition-all hover:bg-primary-container/80">
+<span class="material-symbols-outlined mr-2 text-[18px]" style="font-variation-settings: 'FILL' 1;">cleaning_services</span>
+<span class="text-sm font-semibold">Cleaning</span>
+</button>
+<!-- Default Chips -->
+<button class="inline-flex items-center px-4 py-2.5 rounded-full bg-surface-container-lowest text-on-surface border border-outline-variant/30 transition-all hover:bg-surface-container-high">
+<span class="material-symbols-outlined mr-2 text-[18px]">plumbing</span>
+<span class="text-sm font-medium">Plumbing</span>
+</button>
+<button class="inline-flex items-center px-4 py-2.5 rounded-full bg-surface-container-lowest text-on-surface border border-outline-variant/30 transition-all hover:bg-surface-container-high">
+<span class="material-symbols-outlined mr-2 text-[18px]">electrical_services</span>
+<span class="text-sm font-medium">Electrical</span>
+</button>
+<button class="inline-flex items-center px-4 py-2.5 rounded-full bg-surface-container-lowest text-on-surface border border-outline-variant/30 transition-all hover:bg-surface-container-high">
+<span class="material-symbols-outlined mr-2 text-[18px]">format_paint</span>
+<span class="text-sm font-medium">Painting</span>
+</button>
+<button class="inline-flex items-center px-4 py-2.5 rounded-full bg-surface-container-lowest text-on-surface border border-outline-variant/30 transition-all hover:bg-surface-container-high">
+<span class="material-symbols-outlined mr-2 text-[18px]">carpenter</span>
+<span class="text-sm font-medium">Carpentry</span>
+</button>
+<button class="inline-flex items-center px-4 py-2.5 rounded-full bg-surface-container-lowest text-on-surface border border-outline-variant/30 transition-all hover:bg-surface-container-high">
+<span class="material-symbols-outlined mr-2 text-[18px]">add</span>
+<span class="text-sm font-medium">More</span>
+</button>
+</div>
+</section>
+<!-- Section 2: Professional Experience (Experiência Profissional) -->
+<section class="space-y-6">
+<header class="flex justify-between items-center">
+<h3 class="font-headline text-lg font-bold text-on-background">Experiência Profissional</h3>
+<button class="text-primary font-bold text-xs uppercase tracking-widest flex items-center gap-1 hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined text-[16px]">add_circle</span>
+                    Add New
+                </button>
+</header>
+<div class="space-y-4">
+<!-- Experience Card 1 -->
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-[0_8px_32px_rgba(0,0,0,0.02)] border-0 relative overflow-hidden group transition-all hover:shadow-[0_12px_40px_rgba(0,0,0,0.04)]">
+<div class="absolute top-0 left-0 w-1 h-full bg-primary-dim"></div>
+<div class="space-y-5">
+<div class="grid gap-2">
+<label class="font-label text-[11px] font-bold uppercase tracking-widest text-on-surface-variant">Job Title</label>
+<input class="w-full bg-surface-container-high border-0 rounded-lg py-3 px-4 text-sm font-medium focus:ring-2 focus:ring-primary/20 focus:bg-surface-container-lowest transition-all" type="text" value="Senior Residential Cleaner"/>
+</div>
+<div class="grid gap-2">
+<label class="font-label text-[11px] font-bold uppercase tracking-widest text-on-surface-variant">Description of work</label>
+<textarea class="w-full bg-surface-container-high border-0 rounded-lg py-3 px-4 text-sm font-medium focus:ring-2 focus:ring-primary/20 focus:bg-surface-container-lowest transition-all resize-none" rows="3">Managed deep cleaning services for luxury apartments in downtown area. Specialized in eco-friendly chemical usage and surface preservation.</textarea>
+</div>
+<div class="flex flex-wrap gap-4 items-center pt-2">
+<button class="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-secondary-container text-on-secondary-container text-xs font-bold uppercase tracking-wider hover:bg-outline-variant/20 transition-all">
+<span class="material-symbols-outlined text-[18px]">upload_file</span>
+                                Upload Certificado
+                            </button>
+<span class="text-[11px] text-outline italic">Optional: PDF, PNG up to 5MB</span>
+</div>
+</div>
+</div>
+<!-- Empty Experience Card State -->
+<div class="bg-surface-container-low border-2 border-dashed border-outline-variant/20 rounded-xl p-8 flex flex-col items-center justify-center gap-3 group cursor-pointer hover:border-primary/40 transition-all">
+<div class="w-12 h-12 rounded-full bg-surface-container-highest flex items-center justify-center text-outline group-hover:bg-primary-container group-hover:text-primary transition-all">
+<span class="material-symbols-outlined text-[24px]">work_history</span>
+</div>
+<p class="text-sm font-medium text-on-surface-variant">Click to add another role</p>
+</div>
+</div>
+</section>
+<!-- Section 3: Biography (Biografia) -->
+<section class="space-y-4">
+<div class="flex items-center justify-between">
+<h3 class="font-headline text-lg font-bold text-on-background">Sobre você</h3>
+<span class="text-[11px] font-bold uppercase tracking-widest text-outline">Bio</span>
+</div>
+<div class="relative">
+<textarea class="w-full bg-surface-container-highest border-0 rounded-2xl p-6 text-sm font-medium placeholder:text-outline/60 focus:ring-2 focus:ring-primary/20 transition-all shadow-inner" placeholder="Tell potential clients about your journey, work ethic, and what makes your service unique..." rows="6"></textarea>
+<div class="absolute bottom-4 right-4 text-[10px] font-bold text-outline uppercase tracking-tighter">0 / 500</div>
+</div>
+<p class="text-xs text-on-surface-variant leading-relaxed px-1">
+<span class="material-symbols-outlined text-[14px] mr-1">info</span>
+                Personal bios increase booking rates by up to 40% on SevGen.
+            </p>
+</section>
+</main>
+<!-- Bottom Navigation Shell -->
+<nav class="fixed bottom-0 w-full z-50 flex justify-around items-center px-8 pb-8 pt-4 bg-[#f9f9f9]/80 dark:bg-[#121212]/80 backdrop-blur-xl no-border bg-gradient-to-t from-[#f2f4f4] to-transparent dark:from-[#1a1a1a] shadow-[0_-8px_32px_rgba(0,0,0,0.04)] rounded-t-3xl">
+<!-- Save Draft (Inactive) -->
+<button class="flex flex-col items-center justify-center text-[#5a6061] dark:text-[#adb3b4] py-3 px-8 hover:opacity-90 transition-opacity active:scale-[0.98] transition-transform duration-200">
+<span class="material-symbols-outlined mb-1">save</span>
+<span class="font-['Manrope'] text-[11px] font-bold uppercase tracking-widest">Save Draft</span>
+</button>
+<!-- Continue (Active) -->
+<button class="flex flex-col items-center justify-center bg-gradient-to-br from-[#0054d6] to-[#004abd] text-white rounded-xl py-3 px-8 shadow-lg shadow-blue-500/20 hover:opacity-90 transition-opacity active:scale-[0.98] transition-transform duration-200">
+<span class="material-symbols-outlined mb-1">arrow_forward</span>
+<span class="font-['Manrope'] text-[11px] font-bold uppercase tracking-widest">Continue</span>
+</button>
+</nav>
+</body></html>
