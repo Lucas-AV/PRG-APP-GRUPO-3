@@ -22,41 +22,90 @@ Aplicativo mobile de prestação de serviços sob demanda (modelo similar ao iFo
 
 ---
 
-## Como executar
+## Como instalar e executar
 
 ### Pré-requisitos
 
-- Node.js 18+
-- npm ou yarn
-- Expo Go instalado no celular **ou** Android Emulator / iOS Simulator configurado
+Certifique-se de ter instalado:
 
-### Instalação
+| Ferramenta | Versão mínima | Link |
+|---|---|---|
+| Node.js | 18+ | https://nodejs.org |
+| npm | 9+ (vem com o Node) | — |
+| Git | qualquer | https://git-scm.com |
+| Expo CLI | instalado via npx | — |
+
+Para rodar no dispositivo físico:
+- **Expo Go** — instale no [Android](https://play.google.com/store/apps/details?id=host.exp.exponent) ou [iOS](https://apps.apple.com/app/expo-go/id982107779)
+
+Para rodar em emulador/simulador (opcional):
+- **Android** — Android Studio com um AVD configurado
+- **iOS** — Xcode com simulador (somente macOS)
+
+---
+
+### 1. Clonar o repositório
+
+```bash
+git clone https://github.com/Lucas-AV/PRG-APP-GRUPO-3.git
+cd PRG-APP-GRUPO-3/conecta-app
+```
+
+### 2. Instalar as dependências
 
 ```bash
 npm install
 ```
 
-### Iniciar o servidor de desenvolvimento
+Isso instala todas as dependências listadas no `package.json`, incluindo Expo SDK, React Native, fontes e demais bibliotecas.
+
+### 3. Iniciar o servidor de desenvolvimento
 
 ```bash
-# Abre o menu com QR code (Expo Go, Android, iOS, Web)
 npx expo start
-
-# Direto no Android
-npm run android
-
-# Direto no iOS
-npm run ios
-
-# No navegador (Web)
-npm run web
 ```
 
-### Lint
+O terminal exibirá um **QR code**. Escolha como abrir:
+
+| Opção | Como usar |
+|---|---|
+| Expo Go (celular) | Escaneie o QR code com o app Expo Go |
+| Android Emulator | Pressione `a` no terminal (requer Android Studio) |
+| iOS Simulator | Pressione `i` no terminal (requer Xcode, somente macOS) |
+| Navegador (Web) | Pressione `w` no terminal |
+
+Ou use os atalhos diretos:
+
+```bash
+npm run android   # abre no emulador Android
+npm run ios       # abre no simulador iOS (macOS)
+npm run web       # abre no navegador
+```
+
+### 4. (Opcional) Verificar o código
 
 ```bash
 npm run lint
 ```
+
+---
+
+### Solução de problemas comuns
+
+**Erro ao instalar dependências**
+```bash
+# Limpe o cache e reinstale
+rm -rf node_modules
+npm install
+```
+
+**Metro bundler travado ou com cache corrompido**
+```bash
+npx expo start --clear
+```
+
+**Fontes não carregando**
+Verifique se `@expo-google-fonts/manrope` e `@expo-google-fonts/inter` foram instalados corretamente. Rode `npm install` novamente se necessário.
 
 ---
 
