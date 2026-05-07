@@ -1,5 +1,0 @@
-node_modules/
-banco.db
-*.db-shm
-*.db-wal
-dist/
