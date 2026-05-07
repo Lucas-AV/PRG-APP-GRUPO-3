@@ -246,7 +246,7 @@ export default function ServicesScreen() {
 
       {/* FAB */}
       <Pressable
-        style={[styles.fab, { bottom: insets.bottom + 72 }]}
+        style={[styles.fab, { bottom: insets.bottom + Spacing.xl }]}
         onPress={() => router.push('/(services)/create')}
       >
         <LinearGradient colors={GradientColors} style={styles.fabInner}>

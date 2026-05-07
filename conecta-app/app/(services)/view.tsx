@@ -29,6 +29,7 @@ type ServiceData = {
 };
 
 const DAYS = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
+const DAY_FULL = ['Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado', 'Domingo'];
 
 const MOCK: Record<string, ServiceData> = {
   '1': {
@@ -265,7 +266,7 @@ export default function ViewServiceScreen() {
             </View>
             <View style={styles.chartFooter}>
               <Text style={styles.chartFooterLabel}>Dia mais ativo</Text>
-              <Text style={styles.chartFooterValue}>{DAYS[peakIdx]}feira</Text>
+              <Text style={styles.chartFooterValue}>{DAY_FULL[peakIdx]}</Text>
             </View>
           </View>
         </View>
