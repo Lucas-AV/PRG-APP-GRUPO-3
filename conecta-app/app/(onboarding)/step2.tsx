@@ -33,8 +33,8 @@ export default function Step2Screen() {
   const { role } = useLocalSearchParams<{ role: string }>();
   const insets = useSafeAreaInsets();
   const isPrestador = role === 'prestador';
-  const progress = isPrestador ? 2 / 4 : 2 / 3;
-  const badge = isPrestador ? 'Passo 2 de 4' : 'Passo 2 de 3';
+  const progress = isPrestador ? 2 / 5 : 2 / 3;
+  const badge = isPrestador ? 'Passo 2 de 5' : 'Passo 2 de 3';
 
   const [locType, setLocType] = useState<LocationType>('casa');
   const [cep, setCep] = useState('');
@@ -50,12 +50,13 @@ export default function Step2Screen() {
   const pillWidth = useSharedValue(0);
 
   const pillAnimStyle = useAnimatedStyle(() => ({
+    width: pillWidth.value,
     transform: [{ translateX: activeIdx.value * pillWidth.value }],
   }));
 
   const handleLocTypeChange = (type: LocationType, idx: number) => {
     setLocType(type);
-    activeIdx.value = withSpring(idx, { damping: 20, stiffness: 200 });
+    activeIdx.value = withSpring(idx, { damping: 30, stiffness: 180, mass: 0.8 });
   };
 
   const handleContinue = () => {
@@ -91,7 +92,7 @@ export default function Step2Screen() {
         <View
           style={styles.segmentedTrack}
           onLayout={(e) => {
-            pillWidth.value = e.nativeEvent.layout.width / 2;
+            pillWidth.value = (e.nativeEvent.layout.width - 12) / 2;
           }}
         >
           <Animated.View style={[styles.segmentedPill, pillAnimStyle]} />
@@ -128,6 +129,7 @@ export default function Step2Screen() {
         />
 
         {/* Map preview (full width) */}
+        <Text style={styles.sectionLabel}>LOCALIZAÇÃO</Text>
         <View style={styles.mapPreview}>
           <MaterialIcons
             name="location-on"
@@ -296,7 +298,6 @@ const styles = StyleSheet.create({
     top: 6,
     bottom: 6,
     left: 6,
-    width: '50%',
     borderRadius: Radius.full,
     backgroundColor: Colors.surfaceContainerLowest,
     shadowColor: '#000',
@@ -314,6 +315,14 @@ const styles = StyleSheet.create({
     color: Colors.primary,
   },
 
+  sectionLabel: {
+    fontFamily: FontFamily.bodySemiBold,
+    fontSize: 10,
+    color: Colors.onSurfaceVariant,
+    letterSpacing: 1.2,
+    marginLeft: 2,
+    marginBottom: -Spacing.base,
+  },
   mapPreview: {
     height: 96,
     backgroundColor: Colors.surfaceContainerHigh,

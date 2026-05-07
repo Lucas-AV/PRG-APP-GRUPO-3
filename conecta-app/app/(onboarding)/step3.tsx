@@ -46,7 +46,7 @@ export default function Step3Screen() {
 
   return (
     <SafeAreaView style={styles.container} edges={['left', 'right']}>
-      <TopAppBar title="Perfil do Prestador" badge="Passo 3 de 4" />
+      <TopAppBar title="Perfil do Prestador" badge="Passo 3 de 5" />
 
       <Animated.View entering={FadeIn.duration(300).delay(80)} style={styles.scroll}>
       <ScrollView
@@ -55,7 +55,7 @@ export default function Step3Screen() {
         keyboardShouldPersistTaps="handled"
       >
         {/* Progress */}
-        <ProgressBar progress={3 / 4} percentageLabel="66%" />
+        <ProgressBar progress={3 / 5} percentageLabel="60%" />
 
         {/* ── SEÇÃO 1: Serviços ── */}
         <View style={styles.section}>
@@ -167,86 +167,6 @@ export default function Step3Screen() {
           </View>
         </View>
 
-        {/* ── SEÇÃO 4: Verificação de Segurança ── */}
-        <View style={styles.section}>
-          <Text style={styles.verifyTitle}>Verificação de Segurança</Text>
-          <Text style={styles.verifySubtitle}>
-            Para garantir a confiança da nossa comunidade, solicitamos a validação
-            dos seus documentos. Seus dados são criptografados e protegidos.
-          </Text>
-
-          {/* Identity document card */}
-          <View style={styles.verifyCard}>
-            <View style={styles.verifyCardLeft}>
-              <View style={[styles.verifyIconBox, { backgroundColor: Colors.primaryContainer }]}>
-                <MaterialIcons name="badge" size={22} color={Colors.primary} />
-              </View>
-              <View style={styles.verifyCardText}>
-                <Text style={styles.verifyCardTitle}>Documento de Identidade</Text>
-                <Text style={styles.verifyCardDesc}>
-                  Envie uma foto nítida do seu RG ou CNH (Frente e Verso).
-                </Text>
-              </View>
-            </View>
-            <View style={styles.verifyBtnRow}>
-              <Pressable style={styles.uploadSmallBtn}>
-                <MaterialIcons name="upload" size={14} color={Colors.onSurface} />
-                <Text style={styles.uploadSmallLabel}>Frente</Text>
-              </Pressable>
-              <Pressable style={styles.uploadSmallBtn}>
-                <MaterialIcons name="upload" size={14} color={Colors.onSurface} />
-                <Text style={styles.uploadSmallLabel}>Verso</Text>
-              </Pressable>
-            </View>
-          </View>
-
-          {/* Two-column cards */}
-          <View style={styles.verifyTwoCol}>
-            {/* Proof of residence */}
-            <View style={[styles.verifyCardSmall]}>
-              <View style={[styles.verifyIconBox, { backgroundColor: Colors.tertiaryContainer }]}>
-                <MaterialIcons name="place" size={22} color={Colors.tertiary} />
-              </View>
-              <Text style={styles.verifyCardTitle}>Comprovante de Residência</Text>
-              <Text style={styles.verifyCardDesc}>
-                Contas de luz, água ou internet dos últimos 90 dias.
-              </Text>
-              <Pressable style={styles.dashedUploadBtn}>
-                <MaterialIcons name="cloud-upload" size={22} color={Colors.outline} />
-                <Text style={styles.dashedUploadLabel}>Clique para selecionar</Text>
-              </Pressable>
-            </View>
-
-            {/* Criminal background */}
-            <View style={styles.verifyCardSmall}>
-              <View style={styles.recommendedRow}>
-                <View style={[styles.verifyIconBox, { backgroundColor: Colors.secondaryContainer }]}>
-                  <MaterialIcons name="gavel" size={22} color={Colors.secondary} />
-                </View>
-                <View style={styles.recommendedBadge}>
-                  <Text style={styles.recommendedText}>RECOMENDADO</Text>
-                </View>
-              </View>
-              <Text style={styles.verifyCardTitle}>Antecedentes Criminais</Text>
-              <Text style={styles.verifyCardDesc}>
-                Aumente sua taxa de aprovação em até 40% com este selo.
-              </Text>
-              <Pressable style={styles.dashedUploadBtn}>
-                <MaterialIcons name="verified-user" size={22} color={Colors.outline} />
-                <Text style={styles.dashedUploadLabel}>Adicionar Certidão</Text>
-              </Pressable>
-            </View>
-          </View>
-
-          {/* Trust note */}
-          <View style={styles.trustNote}>
-            <MaterialIcons name="info" size={14} color={Colors.outline} />
-            <Text style={styles.trustNoteText}>
-              Ao prosseguir, você concorda com nossos termos de privacidade. Seus documentos
-              serão analisados pela equipe de segurança em até 24 horas úteis.
-            </Text>
-          </View>
-        </View>
       </ScrollView>
       </Animated.View>
 
@@ -261,7 +181,7 @@ export default function Step3Screen() {
         <GradientButton
           label="Continuar →"
           onPress={() =>
-            router.push({ pathname: '/(onboarding)/step4', params: { role } })
+            router.push({ pathname: '/(onboarding)/step3b' as any, params: { role } })
           }
           style={styles.continueBtn}
         />
@@ -465,145 +385,6 @@ const styles = StyleSheet.create({
     color: Colors.onSurfaceVariant,
     lineHeight: 17,
     flex: 1,
-  },
-
-  // Verification section
-  verifyTitle: {
-    fontFamily: FontFamily.headlineExtraBold,
-    fontSize: 26,
-    letterSpacing: -0.8,
-    color: Colors.onBackground,
-  },
-  verifySubtitle: {
-    fontFamily: FontFamily.bodyRegular,
-    fontSize: 13,
-    color: Colors.onSurfaceVariant,
-    lineHeight: 19,
-    maxWidth: 360,
-  },
-  verifyCard: {
-    backgroundColor: Colors.surfaceContainerLowest,
-    borderRadius: Radius.md,
-    padding: Spacing.xxl,
-    gap: Spacing.base,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.04,
-    shadowRadius: 16,
-    elevation: 2,
-  },
-  verifyCardLeft: {
-    flexDirection: 'row',
-    gap: Spacing.base,
-    alignItems: 'flex-start',
-  },
-  verifyIconBox: {
-    width: 48,
-    height: 48,
-    borderRadius: Radius.md,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexShrink: 0,
-  },
-  verifyCardText: { flex: 1 },
-  verifyCardTitle: {
-    fontFamily: FontFamily.headlineBold,
-    fontSize: 14,
-    color: Colors.onBackground,
-    marginBottom: 2,
-  },
-  verifyCardDesc: {
-    fontFamily: FontFamily.bodyRegular,
-    fontSize: 12,
-    color: Colors.onSurfaceVariant,
-    lineHeight: 17,
-  },
-  verifyBtnRow: {
-    flexDirection: 'row',
-    gap: Spacing.sm,
-  },
-  uploadSmallBtn: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: Spacing.xs,
-    paddingVertical: Spacing.sm + 2,
-    backgroundColor: Colors.surfaceContainer,
-    borderRadius: Radius.sm,
-  },
-  uploadSmallLabel: {
-    fontFamily: FontFamily.bodySemiBold,
-    fontSize: 12,
-    color: Colors.onSurface,
-  },
-
-  verifyTwoCol: {
-    flexDirection: 'row',
-    gap: Spacing.base,
-  },
-  verifyCardSmall: {
-    flex: 1,
-    backgroundColor: Colors.surfaceContainerLowest,
-    borderRadius: Radius.md,
-    padding: Spacing.xl,
-    gap: Spacing.sm,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.04,
-    shadowRadius: 16,
-    elevation: 2,
-  },
-  recommendedRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-  },
-  recommendedBadge: {
-    backgroundColor: Colors.primaryContainer,
-    borderRadius: 4,
-    paddingHorizontal: Spacing.xs,
-    paddingVertical: 2,
-  },
-  recommendedText: {
-    fontFamily: FontFamily.headlineBold,
-    fontSize: 8,
-    color: Colors.onPrimaryContainer,
-    letterSpacing: 0.5,
-  },
-
-  dashedUploadBtn: {
-    borderWidth: 1.5,
-    borderColor: Colors.outlineVariant + '4D',
-    borderStyle: 'dashed',
-    borderRadius: Radius.md,
-    paddingVertical: Spacing.md,
-    alignItems: 'center',
-    gap: Spacing.xs,
-    marginTop: 'auto',
-  },
-  dashedUploadLabel: {
-    fontFamily: FontFamily.bodySemiBold,
-    fontSize: 11,
-    color: Colors.onSurfaceVariant,
-    textAlign: 'center',
-  },
-
-  trustNote: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: Spacing.sm,
-    backgroundColor: Colors.surfaceContainerLow,
-    borderRadius: Radius.md,
-    padding: Spacing.base,
-  },
-  trustNoteText: {
-    flex: 1,
-    fontFamily: FontFamily.bodyRegular,
-    fontSize: 11,
-    color: Colors.onSurfaceVariant,
-    lineHeight: 17,
-    fontStyle: 'italic',
   },
 
   // Bottom nav
