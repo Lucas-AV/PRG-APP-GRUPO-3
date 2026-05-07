@@ -23,8 +23,8 @@ export default function Step1Screen() {
   const [specialty, setSpecialty] = useState('');
 
   const isPrestador = role === 'prestador';
-  const progress = isPrestador ? 1 / 4 : 1 / 3;
-  const badge = isPrestador ? 'Passo 1 de 4' : 'Passo 1 de 3';
+  const progress = isPrestador ? 1 / 5 : 1 / 3;
+  const badge = isPrestador ? 'Passo 1 de 5' : 'Passo 1 de 3';
 
   const handleContinue = () => {
     router.push({ pathname: '/(onboarding)/step2', params: { role } });
