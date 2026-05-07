@@ -6,7 +6,12 @@ import {
   ScrollView,
   StyleSheet,
 } from 'react-native';
-import Animated, { FadeIn } from 'react-native-reanimated';
+import Animated, {
+  FadeIn,
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+} from 'react-native-reanimated';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -41,6 +46,18 @@ export default function Step2Screen() {
   const [state, setState] = useState('');
   const [showStatePicker, setShowStatePicker] = useState(false);
 
+  const activeIdx = useSharedValue(0);
+  const pillWidth = useSharedValue(0);
+
+  const pillAnimStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: activeIdx.value * pillWidth.value }],
+  }));
+
+  const handleLocTypeChange = (type: LocationType, idx: number) => {
+    setLocType(type);
+    activeIdx.value = withSpring(idx, { damping: 20, stiffness: 200 });
+  };
+
   const handleContinue = () => {
     const next = isPrestador ? '/(onboarding)/step3' : '/(onboarding)/step4';
     router.push({ pathname: next as any, params: { role } });
@@ -71,14 +88,20 @@ export default function Step2Screen() {
         </View>
 
         {/* Location type selector (pill segmented control) */}
-        <View style={styles.segmentedTrack}>
-          {(['casa', 'trabalho'] as LocationType[]).map((t) => {
+        <View
+          style={styles.segmentedTrack}
+          onLayout={(e) => {
+            pillWidth.value = e.nativeEvent.layout.width / 2;
+          }}
+        >
+          <Animated.View style={[styles.segmentedPill, pillAnimStyle]} />
+          {(['casa', 'trabalho'] as LocationType[]).map((t, idx) => {
             const isActive = locType === t;
             return (
               <Pressable
                 key={t}
-                onPress={() => setLocType(t)}
-                style={[styles.segmentedItem, isActive && styles.segmentedItemActive]}
+                onPress={() => handleLocTypeChange(t, idx)}
+                style={styles.segmentedItem}
               >
                 <MaterialIcons
                   name={t === 'casa' ? 'home' : 'work'}
@@ -95,26 +118,23 @@ export default function Step2Screen() {
           })}
         </View>
 
-        {/* CEP + map preview */}
-        <View style={styles.cepRow}>
-          <View style={styles.cepInput}>
-            <InputField
-              label="CEP"
-              placeholder="00000-000"
-              value={cep}
-              onChangeText={setCep}
-              keyboardType="numeric"
-            />
-          </View>
-          {/* Map preview placeholder */}
-          <View style={styles.mapPreview}>
-            <MaterialIcons
-              name="location-on"
-              size={36}
-              color={Colors.primary}
-            />
-            <Text style={styles.mapLabel}>Mapa</Text>
-          </View>
+        {/* CEP field (full width) */}
+        <InputField
+          label="CEP"
+          placeholder="00000-000"
+          value={cep}
+          onChangeText={setCep}
+          keyboardType="numeric"
+        />
+
+        {/* Map preview (full width) */}
+        <View style={styles.mapPreview}>
+          <MaterialIcons
+            name="location-on"
+            size={36}
+            color={Colors.primary}
+          />
+          <Text style={styles.mapLabel}>Mapa</Text>
         </View>
 
         {/* Address fields */}
@@ -269,8 +289,15 @@ const styles = StyleSheet.create({
     gap: Spacing.xs,
     paddingVertical: Spacing.md,
     borderRadius: Radius.full,
+    zIndex: 1,
   },
-  segmentedItemActive: {
+  segmentedPill: {
+    position: 'absolute',
+    top: 6,
+    bottom: 6,
+    left: 6,
+    width: '50%',
+    borderRadius: Radius.full,
     backgroundColor: Colors.surfaceContainerLowest,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
@@ -287,15 +314,7 @@ const styles = StyleSheet.create({
     color: Colors.primary,
   },
 
-  // CEP row
-  cepRow: {
-    flexDirection: 'row',
-    gap: Spacing.base,
-    alignItems: 'flex-end',
-  },
-  cepInput: { flex: 1 },
   mapPreview: {
-    flex: 2,
     height: 96,
     backgroundColor: Colors.surfaceContainerHigh,
     borderRadius: Radius.md,
