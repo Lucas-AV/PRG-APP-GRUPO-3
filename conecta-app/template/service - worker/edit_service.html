@@ -1,0 +1,363 @@
+<!doctype html>
+
+<html class="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Edit Service - SevGen</title>
+    <!-- Material Symbols -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "tertiary-container": "#e1d8fa",
+              "inverse-surface": "#0c0f0f",
+              "surface-container-lowest": "#ffffff",
+              "primary-fixed": "#dae1ff",
+              "on-error": "#fff7f6",
+              "outline-variant": "#adb3b4",
+              "on-surface": "#2d3435",
+              background: "#f9f9f9",
+              "surface-bright": "#f9f9f9",
+              outline: "#757c7d",
+              "on-secondary-container": "#515155",
+              "on-primary-container": "#0049bb",
+              "on-primary-fixed-variant": "#0052d0",
+              surface: "#f9f9f9",
+              "on-primary-fixed": "#003894",
+              "on-primary": "#f8f7ff",
+              "primary-dim": "#004abd",
+              "surface-variant": "#dde4e5",
+              "surface-dim": "#d4dbdd",
+              "secondary-fixed-dim": "#d5d4d8",
+              "on-secondary-fixed": "#3f3f43",
+              "surface-container-high": "#e4e9ea",
+              "tertiary-dim": "#554f6b",
+              "tertiary-fixed": "#e1d8fa",
+              "error-dim": "#4e0309",
+              "error-container": "#fe8983",
+              "on-tertiary-container": "#504b66",
+              "on-tertiary-fixed": "#3d3852",
+              "primary-fixed-dim": "#c7d3ff",
+              error: "#9f403d",
+              "surface-container": "#ebeeef",
+              "on-surface-variant": "#5a6061",
+              "on-secondary-fixed-variant": "#5b5b5f",
+              "surface-container-highest": "#dde4e5",
+              secondary: "#5f5f62",
+              primary: "#0054d6",
+              "on-background": "#2d3435",
+              "secondary-fixed": "#e4e2e6",
+              "on-secondary": "#faf8fc",
+              "secondary-dim": "#535356",
+              "surface-container-low": "#f2f4f4",
+              "secondary-container": "#e4e2e6",
+              "inverse-on-surface": "#9c9d9d",
+              tertiary: "#615b77",
+              "inverse-primary": "#5e8bff",
+              "primary-container": "#dae1ff",
+              "on-tertiary-fixed-variant": "#5a5470",
+              "on-error-container": "#752121",
+              "surface-tint": "#0054d6",
+              "on-tertiary": "#fcf7ff",
+              "tertiary-fixed-dim": "#d3caeb",
+            },
+            fontFamily: {
+              headline: ["Manrope"],
+              body: ["Inter"],
+              label: ["Inter"],
+            },
+            borderRadius: {
+              DEFAULT: "0.5rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      .material-symbols-outlined {
+        font-variation-settings:
+          "FILL" 0,
+          "wght" 400,
+          "GRAD" 0,
+          "opsz" 20;
+      }
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .signature-gradient {
+        background: linear-gradient(135deg, #0054d6 0%, #004abd 100%);
+      }
+    </style>
+    <style>
+      body {
+        min-height: max(884px, 100dvh);
+      }
+    </style>
+  </head>
+  <body
+    class="bg-surface-bright font-body text-on-surface selection:bg-primary-container"
+  >
+    <!-- TopAppBar -->
+    <nav
+      class="sticky top-0 w-full z-50 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md flex justify-between items-center w-full px-6 py-3 max-w-full"
+    >
+      <div class="flex items-center gap-4">
+        <button
+          class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-zinc-100 transition-colors active:scale-95 duration-200"
+        >
+          <span class="material-symbols-outlined text-zinc-900"
+            >arrow_back</span
+          >
+        </button>
+        <h1
+          class="font-['Manrope'] font-bold text-zinc-900 text-xl tracking-tight"
+        >
+          Edit Service
+        </h1>
+      </div>
+      <div class="flex items-center gap-3">
+        <button
+          class="text-blue-600 font-bold hover:bg-zinc-100 px-4 py-2 rounded-lg transition-colors active:scale-95"
+        >
+          Save Changes
+        </button>
+      </div>
+    </nav>
+    <!-- Main Content -->
+    <main class="max-w-3xl mx-auto px-6 py-8 pb-32">
+      <!-- Service Identity Section (Bento Inspired) -->
+      <section class="grid grid-cols-1 md:grid-cols-12 gap-6 mb-12">
+        <!-- Headline Card -->
+        <div
+          class="md:col-span-8 bg-surface-container-lowest p-8 rounded-xl flex flex-col justify-end min-h-[160px]"
+        >
+          <span
+            class="font-label text-xs font-semibold uppercase tracking-widest text-outline mb-2"
+            >Primary Details</span
+          >
+          <input
+            class="bg-transparent border-none p-0 focus:ring-0 font-headline font-extrabold text-3xl text-on-surface placeholder:text-surface-variant"
+            placeholder="Service Name"
+            type="text"
+            value="Deep Tissue Muscle Recovery"
+          />
+        </div>
+        <!-- Category Pill Card -->
+        <div
+          class="md:col-span-4 bg-surface-container-low p-6 rounded-xl flex flex-col gap-4"
+        >
+          <span
+            class="font-label text-xs font-semibold uppercase tracking-widest text-outline"
+            >Category</span
+          >
+          <select
+            class="w-full bg-surface-container-highest border-none rounded-lg font-body text-sm py-3 px-4 focus:ring-2 focus:ring-primary/20 appearance-none"
+          >
+            <option>Wellness &amp; Spa</option>
+            <option selected="">Physical Therapy</option>
+            <option>Personal Training</option>
+            <option>Consulting</option>
+          </select>
+        </div>
+        <!-- Pricing & Time Glass Card -->
+        <div class="md:col-span-12 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div
+            class="bg-white border-[1.5px] border-outline-variant/10 p-6 rounded-xl flex items-center justify-between"
+          >
+            <div class="flex flex-col">
+              <span
+                class="font-label text-xs font-semibold uppercase tracking-widest text-outline mb-1"
+                >Price Model</span
+              >
+              <div class="flex gap-2">
+                <button
+                  class="px-3 py-1.5 rounded-full bg-primary-container text-on-primary-container font-semibold text-xs transition-all"
+                >
+                  Fixed
+                </button>
+                <button
+                  class="px-3 py-1.5 rounded-full bg-surface-container text-on-surface-variant font-semibold text-xs hover:bg-surface-variant transition-all"
+                >
+                  Starting at
+                </button>
+              </div>
+            </div>
+            <div class="text-right">
+              <span
+                class="font-label text-xs font-semibold uppercase tracking-widest text-outline block mb-1"
+                >Amount ($)</span
+              >
+              <input
+                class="w-24 text-right bg-surface-container-highest border-none rounded-lg font-bold text-lg focus:ring-0"
+                type="number"
+                value="120"
+              />
+            </div>
+          </div>
+          <div
+            class="bg-white border-[1.5px] border-outline-variant/10 p-6 rounded-xl flex items-center justify-between"
+          >
+            <div class="flex flex-col">
+              <span
+                class="font-label text-xs font-semibold uppercase tracking-widest text-outline mb-1"
+                >Duration</span
+              >
+              <p class="font-body text-sm text-on-surface-variant">
+                Client session length
+              </p>
+            </div>
+            <div class="text-right">
+              <span
+                class="font-label text-xs font-semibold uppercase tracking-widest text-outline block mb-1"
+                >Minutes</span
+              >
+              <input
+                class="w-24 text-right bg-surface-container-highest border-none rounded-lg font-bold text-lg focus:ring-0"
+                type="number"
+                value="60"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- Description Section -->
+      <section class="mb-12">
+        <div class="flex items-baseline justify-between mb-4">
+          <h2 class="font-headline font-bold text-xl text-on-surface">
+            Service Description
+          </h2>
+          <span class="font-label text-[10px] font-bold uppercase text-outline"
+            >Rich Text Enabled</span
+          >
+        </div>
+        <div class="bg-surface-container-lowest p-1 rounded-xl shadow-sm">
+          <textarea
+            class="w-full border-none bg-transparent p-6 font-body text-on-surface-variant leading-relaxed focus:ring-0 resize-none"
+            placeholder="Explain the benefits, process, and tools used in this service..."
+            rows="6"
+          >
+This comprehensive deep tissue session focuses on realigning deeper layers of muscles and connective tissue. It is especially helpful for chronic aches and pains and contracted areas such as a stiff neck and upper back, low back pain, leg muscle tightness, and sore shoulders.</textarea
+          >
+        </div>
+      </section>
+      <!-- Photo Gallery Section -->
+      <section class="mb-12">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="font-headline font-bold text-xl text-on-surface">
+            Visual Gallery
+          </h2>
+          <button
+            class="flex items-center gap-2 bg-primary-container text-on-primary-container px-4 py-2 rounded-full font-bold text-xs hover:opacity-90 transition-opacity"
+          >
+            <span class="material-symbols-outlined text-sm">add_a_photo</span>
+            Add Photo
+          </button>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div class="relative aspect-square group">
+            <img
+              class="w-full h-full object-cover rounded-xl grayscale-[0.2] group-hover:grayscale-0 transition-all duration-300"
+              data-alt="Close-up of therapeutic massage therapy with expert hands applying oil to a person's back in a serene spa setting"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuAwhn53BNvvqeWYMXGM80OYD7XfAwyig0tD_HCG6drCeTgDvIO7IqCHdeyHAs3dmmJrvXwITLFql_-any65KQ0DPaIR0c-3r_2gAY_BPprKC4nGa6V7_dso7Ye4XH6RloqjHdGyzkc6VNo0cAIKIWyCuQSC3ii5MDtTpKEhZqtIrw6my3-rIuGE178gfWSm-AnNdUVVMFwWaGb4wFc-9tdkegXl4oVyuoKruXRMt70A_Y4Hbq-Srup4TjGvT_8fsafbDTZ5teTfpkc"
+            />
+            <button
+              class="absolute top-2 right-2 w-8 h-8 bg-black/50 backdrop-blur-md rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity"
+            >
+              <span class="material-symbols-outlined text-sm">close</span>
+            </button>
+          </div>
+          <div class="relative aspect-square group">
+            <img
+              class="w-full h-full object-cover rounded-xl grayscale-[0.2] group-hover:grayscale-0 transition-all duration-300"
+              data-alt="Interior of a modern high-end minimalist wellness studio with wooden accents and soft warm ambient lighting"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3-v375mIyOUoPXpWpq6jWzuqmut4rAhEC1o6S2VDKcj4cAzTmelnylsUbtY1jI2xOPPlEChQj4rmkQNLRH5VDKkeArIF_qn7FW9w8Pzgp87pHilPfCn0eyE_TFsyfO9Eot9m9WHEnxPpsCN00Xl6ngyebusN-FCOj6EUSMNEaxfu9GEbzOWGJPLmfnzacPJpI1Jwhimx5QFcxWLVxFXKr7UNWlbPECPj-4hAJtbwM3-KpXNbwi04dqGMrJBFQxJ2mvT52ojD2r1k"
+            />
+            <button
+              class="absolute top-2 right-2 w-8 h-8 bg-black/50 backdrop-blur-md rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity"
+            >
+              <span class="material-symbols-outlined text-sm">close</span>
+            </button>
+          </div>
+          <div class="relative aspect-square group">
+            <img
+              class="w-full h-full object-cover rounded-xl grayscale-[0.2] group-hover:grayscale-0 transition-all duration-300"
+              data-alt="Professional medical massage tools and essential oils arranged neatly on a stone tray with a white towel"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuDAGbtJK0gea9xXXCW8CnpZ4reMI34zbb1FRkfU_VPYpGALF45xZl8gudC0Kkn7_1kX3cPRpcYVbUZFDEKGBjEWbuZEZsD9tjmvLj-YvB9yckLOYKvakDD4zpzDwOR7T8RBSIYM10VuKbfc3ipdKaSlhZjWpNWuzqXER3042mwZGXNtLQ3xAI1KoubZTxTBEwzUCYPkE13gEcB9hSX8lPyl9REiydlrCjuFxQu0Bcq7BSArUa0RefipN0RvnHVLdQlWAtBHud8kH24"
+            />
+            <button
+              class="absolute top-2 right-2 w-8 h-8 bg-black/50 backdrop-blur-md rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity"
+            >
+              <span class="material-symbols-outlined text-sm">close</span>
+            </button>
+          </div>
+          <!-- Upload Placeholder -->
+          <div
+            class="aspect-square bg-surface-container border-2 border-dashed border-outline-variant/30 rounded-xl flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-surface-variant transition-colors group"
+          >
+            <span
+              class="material-symbols-outlined text-outline group-hover:scale-110 transition-transform"
+              >cloud_upload</span
+            >
+            <span class="font-label text-[10px] font-bold text-outline"
+              >UPLOAD JPG/PNG</span
+            >
+          </div>
+        </div>
+      </section>
+      <!-- Destructive Action Section -->
+      <section
+        class="mt-16 pt-8 border-t-4 border-surface-variant rounded-full flex items-center justify-center"
+      >
+        <button
+          class="flex items-center gap-2 text-error font-bold text-sm hover:bg-on-error px-6 py-3 rounded-xl transition-colors active:scale-95"
+        >
+          <span class="material-symbols-outlined text-sm">delete_forever</span>
+          Permanently Delete Service
+        </button>
+      </section>
+    </main>
+    <!-- Bottom Navigation Shell (Contextual Suppression Filter Applied) -->
+    <!-- Not rendered as this is a Task-Focused Edit Screen -->
+    <!-- Fixed Action Bar (Web/Mobile Hybrid Layout) -->
+    <div
+      class="fixed bottom-0 left-0 w-full p-6 bg-white/60 backdrop-blur-xl border-t border-outline-variant/10 z-40"
+    >
+      <div class="max-w-3xl mx-auto flex gap-4">
+        <button
+          class="flex-1 px-8 py-4 bg-surface-container-high text-on-surface font-bold rounded-xl hover:bg-surface-variant transition-all active:scale-95"
+        >
+          Discard Changes
+        </button>
+        <button
+          class="flex-[2] px-8 py-4 signature-gradient text-on-primary font-bold rounded-xl shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-95 flex items-center justify-center gap-2"
+        >
+          <span>Save Service Changes</span>
+          <span class="material-symbols-outlined text-sm">check_circle</span>
+        </button>
+      </div>
+    </div>
+  </body>
+</html>
