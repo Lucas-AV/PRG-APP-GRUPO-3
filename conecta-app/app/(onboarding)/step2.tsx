@@ -211,10 +211,13 @@ export default function Step2Screen() {
 
       {/* Bottom nav */}
       <View style={[styles.bottomNav, { paddingBottom: Math.max(insets.bottom + 8, Spacing.xl) }]}>
-        <GradientButton label="Continuar" onPress={handleContinue} />
-        <Pressable style={styles.draftBtn}>
-          <Text style={styles.draftLabel}>Salvar Rascunho</Text>
+        <Pressable
+          style={({ pressed }) => [styles.draftBtn, pressed && { opacity: 0.6 }]}
+        >
+          <MaterialIcons name="save" size={18} color={Colors.onSurfaceVariant} />
+          <Text style={styles.draftLabel}>Salvar</Text>
         </Pressable>
+        <GradientButton label="Continuar →" onPress={handleContinue} style={styles.continueBtn} />
       </View>
     </SafeAreaView>
   );
@@ -368,9 +371,11 @@ const styles = StyleSheet.create({
 
   // Bottom nav
   bottomNav: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.md,
     paddingHorizontal: Spacing.xl,
     paddingTop: Spacing.xl + 4,
-    gap: Spacing.xs,
     backgroundColor: Colors.surfaceContainerLowest,
     shadowColor: Colors.onSurface,
     shadowOffset: { width: 0, height: -4 },
@@ -379,12 +384,19 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
   draftBtn: {
+    flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: Spacing.md,
+    gap: Spacing.xs,
+    paddingVertical: Spacing.base,
+    paddingHorizontal: Spacing.md,
+    borderRadius: Radius.sm,
   },
   draftLabel: {
     fontFamily: FontFamily.bodySemiBold,
-    fontSize: 14,
-    color: Colors.primary,
+    fontSize: 13,
+    color: Colors.onSurfaceVariant,
+  },
+  continueBtn: {
+    flex: 1,
   },
 });

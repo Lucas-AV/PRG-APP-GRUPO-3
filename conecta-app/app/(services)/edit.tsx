@@ -269,7 +269,11 @@ export default function EditServiceScreen() {
       {/* Bottom action bar */}
       <View style={[styles.bottomBar, { paddingBottom: Math.max(insets.bottom + 8, Spacing.xl) }]}>
         <View style={styles.bottomActions}>
-          <Pressable style={styles.discardBtn} onPress={() => router.back()}>
+          <Pressable
+            style={({ pressed }) => [styles.discardBtn, pressed && { opacity: 0.6 }]}
+            onPress={() => router.back()}
+          >
+            <MaterialIcons name="close" size={18} color={Colors.onSurfaceVariant} />
             <Text style={styles.discardBtnText}>Descartar</Text>
           </Pressable>
           <GradientButton
@@ -596,16 +600,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   discardBtn: {
-    flex: 1,
-    paddingVertical: Spacing.base + 2,
-    backgroundColor: Colors.surfaceContainerHigh,
-    borderRadius: Radius.md,
+    flexDirection: 'row',
     alignItems: 'center',
+    gap: Spacing.xs,
+    paddingVertical: Spacing.base,
+    paddingHorizontal: Spacing.md,
+    borderRadius: Radius.sm,
   },
   discardBtnText: {
-    fontFamily: FontFamily.headlineBold,
-    fontSize: 14,
-    color: Colors.onSurface,
+    fontFamily: FontFamily.bodySemiBold,
+    fontSize: 13,
+    color: Colors.onSurfaceVariant,
   },
-  saveBtn: { flex: 2 },
+  saveBtn: { flex: 1 },
 });
