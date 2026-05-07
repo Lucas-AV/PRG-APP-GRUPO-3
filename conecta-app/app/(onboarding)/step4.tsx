@@ -10,6 +10,7 @@ import {
   ScrollView,
   StyleSheet,
   Animated,
+  Alert,
 } from 'react-native';
 import Reanimated, { FadeIn } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -43,6 +44,18 @@ export default function Step4Screen() {
 
   const scaleAnim = useRef(new Animated.Value(0)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  const handleEnterApp = () => {
+    if (isPrestador) {
+      router.replace('/(tabs)');
+    } else {
+      Alert.alert(
+        'Em desenvolvimento',
+        'A visão do cliente ainda está sendo desenvolvida. Por enquanto, apenas prestadores de serviço podem acessar o app.',
+        [{ text: 'Entendido', style: 'default' }]
+      );
+    }
+  };
 
   useEffect(() => {
     Animated.sequence([
@@ -126,9 +139,9 @@ export default function Step4Screen() {
         <Animated.View style={{ opacity: fadeAnim }}>
           <GradientButton
             label="Começar agora!"
-            onPress={() => router.replace('/(tabs)')}
+            onPress={handleEnterApp}
           />
-          <Pressable style={styles.laterBtn} onPress={() => router.replace('/(tabs)')}>
+          <Pressable style={styles.laterBtn} onPress={handleEnterApp}>
             <Text style={styles.laterLabel}>Explorar o app →</Text>
           </Pressable>
         </Animated.View>
