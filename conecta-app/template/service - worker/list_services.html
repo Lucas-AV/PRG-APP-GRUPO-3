@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+
+<html class="light" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Meus Serviços - SevGen</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface-bright": "#f9f9f9",
+                        "secondary-container": "#e4e2e6",
+                        "on-secondary": "#faf8fc",
+                        "surface-container-highest": "#dde4e5",
+                        "inverse-on-surface": "#9c9d9d",
+                        "on-background": "#2d3435",
+                        "primary-dim": "#004abd",
+                        "primary-fixed-dim": "#c7d3ff",
+                        "surface-variant": "#dde4e5",
+                        "primary-container": "#dae1ff",
+                        "inverse-surface": "#0c0f0f",
+                        "on-primary-fixed": "#003894",
+                        "secondary-dim": "#535356",
+                        "tertiary-fixed-dim": "#d3caeb",
+                        "on-tertiary-fixed": "#3d3852",
+                        "on-secondary-fixed": "#3f3f43",
+                        "secondary-fixed": "#e4e2e6",
+                        "surface-container": "#ebeeef",
+                        "on-surface": "#2d3435",
+                        "surface": "#f9f9f9",
+                        "on-tertiary-container": "#504b66",
+                        "on-tertiary-fixed-variant": "#5a5470",
+                        "surface-container-high": "#e4e9ea",
+                        "on-surface-variant": "#5a6061",
+                        "outline-variant": "#adb3b4",
+                        "error": "#9f403d",
+                        "tertiary-dim": "#554f6b",
+                        "tertiary-container": "#e1d8fa",
+                        "on-secondary-container": "#515155",
+                        "on-secondary-fixed-variant": "#5b5b5f",
+                        "on-primary": "#f8f7ff",
+                        "on-primary-fixed-variant": "#0052d0",
+                        "background": "#f9f9f9",
+                        "on-primary-container": "#0049bb",
+                        "on-error": "#fff7f6",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary": "#fcf7ff",
+                        "tertiary": "#615b77",
+                        "secondary": "#5f5f62",
+                        "outline": "#757c7d",
+                        "inverse-primary": "#5e8bff",
+                        "error-dim": "#4e0309",
+                        "on-error-container": "#752121",
+                        "primary-fixed": "#dae1ff",
+                        "tertiary-fixed": "#e1d8fa",
+                        "error-container": "#fe8983",
+                        "surface-dim": "#d4dbdd",
+                        "secondary-fixed-dim": "#d5d4d8",
+                        "surface-container-low": "#f2f4f4",
+                        "primary": "#0054d6",
+                        "surface-tint": "#0054d6"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f9f9f9;
+            color: #2d3435;
+        }
+        h1, h2, h3 {
+            font-family: 'Manrope', sans-serif;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface-bright text-on-surface">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#f9f9f9] dark:bg-slate-950 flex items-center justify-between px-5 h-16 w-full">
+<div class="flex items-center gap-4">
+<button class="text-[#0066FF] dark:text-blue-400 active:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h1 class="font-['Manrope'] font-bold text-xl tracking-tight text-[#0066FF] dark:text-blue-400">Meus Serviços</h1>
+</div>
+<div class="flex gap-4">
+<button class="hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors p-2 rounded-full">
+<span class="material-symbols-outlined">search</span>
+</button>
+<button class="hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors p-2 rounded-full">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+</div>
+<div class="absolute bottom-0 left-0 bg-[#f2f4f4] dark:bg-slate-900 h-[1px] w-full"></div>
+</header>
+<main class="pt-20 pb-28 px-5 max-w-2xl mx-auto">
+<!-- CTA Card: Adicionar Novo Serviço -->
+<section class="mb-10">
+<div class="relative overflow-hidden bg-gradient-to-br from-primary to-primary-dim p-6 rounded-xl shadow-[0_8px_32px_rgba(0,84,214,0.15)] group cursor-pointer active:scale-[0.98] transition-all">
+<div class="relative z-10 flex items-center justify-between">
+<div>
+<h2 class="text-on-primary font-headline font-bold text-2xl mb-1">Expandir Catálogo</h2>
+<p class="text-on-primary/80 text-sm font-body">Crie novos serviços e alcance mais clientes na SevGen.</p>
+</div>
+<div class="bg-on-primary/10 p-3 rounded-full">
+<span class="material-symbols-outlined text-on-primary text-3xl" style="font-variation-settings: 'FILL' 1;">add_circle</span>
+</div>
+</div>
+<!-- Decorative element -->
+<div class="absolute -right-8 -bottom-8 w-32 h-32 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500"></div>
+</div>
+</section>
+<!-- Serviços Ativos Section -->
+<section class="mb-12">
+<div class="flex items-end justify-between mb-6">
+<div>
+<h2 class="font-headline font-extrabold text-2xl tracking-tight">Serviços Ativos</h2>
+<p class="text-on-surface-variant text-sm font-medium">Gerencie sua presença atual</p>
+</div>
+<span class="bg-primary-container text-on-primary-container px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">3 Ativos</span>
+</div>
+<div class="space-y-4">
+<!-- Active Service Card 1 -->
+<div class="bg-surface-container-lowest p-4 rounded-xl flex flex-col gap-4">
+<div class="flex gap-4">
+<div class="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="Close-up of a professional electrician installing a power outlet in a modern white wall with precise tools" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAYq5tjI8-gm85KW9x6x6b03twZ9djihauxYiswVSMxAY5DRhQ3Xq6nLAVjXD2ysM3d_H4qBX4Guhwi-wnSaDc2fPIW0fz9sgIzH1_kZ8ofuCATHOoONx8ktztLPfkju8myy3pnwWAxMNNNgfF5bePbqAphoMGwtFu-NgbkuNFMWCxE6lcI9RG2eupClIbsApdpRPdbTo3w4O88m7GylEaVpq38cU8peErnF3fwbai8wFdqWG-yNQF8yEmWZ-IvJd9yXbKJc-gLB3k"/>
+</div>
+<div class="flex-1 flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<h3 class="font-headline font-bold text-lg text-on-surface leading-tight">Instalação de Tomadas</h3>
+<span class="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide">Ativo</span>
+</div>
+<p class="text-primary font-bold text-sm">A partir de R$ 80,00</p>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-2 py-3 border-y border-surface-variant/30">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-on-surface-variant text-lg">event_available</span>
+<div class="flex flex-col">
+<span class="text-[10px] text-on-surface-variant uppercase font-bold tracking-tighter leading-none">Agendamentos</span>
+<span class="font-headline font-bold text-sm">124</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-amber-500 text-lg" style="font-variation-settings: 'FILL' 1;">star</span>
+<div class="flex flex-col">
+<span class="text-[10px] text-on-surface-variant uppercase font-bold tracking-tighter leading-none">Nota Média</span>
+<span class="font-headline font-bold text-sm">4.9</span>
+</div>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="flex-1 py-2 rounded-lg bg-surface-container-high text-on-surface font-bold text-sm hover:bg-surface-container transition-colors">Visualizar</button>
+<button class="flex-1 py-2 rounded-lg bg-primary-container text-on-primary-container font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-sm">edit</span> Editar
+                        </button>
+</div>
+</div>
+<!-- Active Service Card 2 -->
+<div class="bg-surface-container-lowest p-4 rounded-xl flex flex-col gap-4">
+<div class="flex gap-4">
+<div class="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="Professional technician repairing a split air conditioning unit with clean filters and modern equipment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCHCzlNoVuJ_vwKXUacK4hs_DxhgEYa6UuRV4SmlDdxX1b9oHomvb5gbpV6WpQlHyzjkgqkhxUsMkAl_PdbRXz5qgSK1asM_dL4iBMq-95izom0s5J1BB30cDIf5QGqisteZeQr8q31m5GYo6GpSwZjpH_8RmhGV-DNAUs3Gc5bA1w35cS5pfvSbiEOLCVPsL0pt9D7r6JetATYlds_0XCLCyZp_dMRfHUmplyr0VMJpprV07jx5ccYr7bDhE71TfFdxwAqvPs3rjM"/>
+</div>
+<div class="flex-1 flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<h3 class="font-headline font-bold text-lg text-on-surface leading-tight">Manutenção de AC</h3>
+<span class="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide">Ativo</span>
+</div>
+<p class="text-primary font-bold text-sm">A partir de R$ 150,00</p>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-2 py-3 border-y border-surface-variant/30">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-on-surface-variant text-lg">event_available</span>
+<div class="flex flex-col">
+<span class="text-[10px] text-on-surface-variant uppercase font-bold tracking-tighter leading-none">Agendamentos</span>
+<span class="font-headline font-bold text-sm">86</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-amber-500 text-lg" style="font-variation-settings: 'FILL' 1;">star</span>
+<div class="flex flex-col">
+<span class="text-[10px] text-on-surface-variant uppercase font-bold tracking-tighter leading-none">Nota Média</span>
+<span class="font-headline font-bold text-sm">4.7</span>
+</div>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="flex-1 py-2 rounded-lg bg-surface-container-high text-on-surface font-bold text-sm">Visualizar</button>
+<button class="flex-1 py-2 rounded-lg bg-primary-container text-on-primary-container font-bold text-sm flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm">edit</span> Editar
+                        </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Drafts Section -->
+<section>
+<div class="flex items-end justify-between mb-6">
+<div>
+<h2 class="font-headline font-extrabold text-2xl tracking-tight">Rascunhos</h2>
+<p class="text-on-surface-variant text-sm font-medium">Aguardando finalização</p>
+</div>
+<span class="bg-surface-container-highest text-on-surface-variant px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">1 Item</span>
+</div>
+<div class="bg-surface-container-lowest/50 border border-dashed border-outline-variant p-4 rounded-xl flex items-center gap-4 opacity-75">
+<div class="w-16 h-16 rounded-lg bg-surface-container-high flex items-center justify-center text-outline">
+<span class="material-symbols-outlined text-3xl">image</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between">
+<h3 class="font-headline font-bold text-base text-on-surface">Pintura Residencial</h3>
+<span class="bg-surface-container-highest text-on-surface-variant px-2 py-0.5 rounded text-[9px] font-bold uppercase">Rascunho</span>
+</div>
+<p class="text-on-surface-variant text-xs mt-1">Criado em 12 de Outubro</p>
+<button class="mt-2 text-primary text-xs font-bold flex items-center gap-1">Continuar Edição <span class="material-symbols-outlined text-xs">arrow_forward</span></button>
+</div>
+</div>
+</section>
+</main>
+<!-- FAB (Contextual) -->
+<button class="fixed bottom-24 right-5 w-14 h-14 bg-primary text-on-primary rounded-full shadow-[0_8px_32px_rgba(0,84,214,0.3)] flex items-center justify-center active:scale-90 transition-all z-40">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">add</span>
+</button>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full h-20 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl flex justify-around items-center px-4 pb-safe z-50 rounded-t-2xl shadow-[0_-8px_32px_rgba(0,0,0,0.04)] border-t border-[#adb3b4]/20">
+<a class="flex flex-col items-center justify-center text-[#5a6061] dark:text-slate-400 px-3 py-1 hover:opacity-80 transition-opacity active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-['Inter'] text-[11px] font-medium tracking-wide uppercase mt-1">Início</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5a6061] dark:text-slate-400 px-3 py-1 hover:opacity-80 transition-opacity active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="font-['Inter'] text-[11px] font-medium tracking-wide uppercase mt-1">Agendamentos</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#0066FF] dark:text-blue-400 bg-[#ebeeef] dark:bg-blue-900/30 rounded-xl px-3 py-1 active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">build</span>
+<span class="font-['Inter'] text-[11px] font-medium tracking-wide uppercase mt-1">Serviços</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5a6061] dark:text-slate-400 px-3 py-1 hover:opacity-80 transition-opacity active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-['Inter'] text-[11px] font-medium tracking-wide uppercase mt-1">Perfil</span>
+</a>
+</nav>
+</body></html>

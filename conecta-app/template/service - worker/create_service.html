@@ -1,0 +1,357 @@
+<!doctype html>
+
+<html class="light" lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-variant": "#dde4e5",
+              "on-secondary": "#faf8fc",
+              secondary: "#5f5f62",
+              "on-secondary-fixed-variant": "#5b5b5f",
+              "tertiary-fixed": "#e1d8fa",
+              "on-primary-fixed-variant": "#0052d0",
+              "surface-container-high": "#e4e9ea",
+              "on-primary-container": "#0049bb",
+              "tertiary-container": "#e1d8fa",
+              "surface-container-highest": "#dde4e5",
+              "outline-variant": "#adb3b4",
+              "error-dim": "#4e0309",
+              "error-container": "#fe8983",
+              "tertiary-dim": "#554f6b",
+              background: "#f9f9f9",
+              "on-secondary-container": "#515155",
+              "on-error-container": "#752121",
+              "on-surface": "#2d3435",
+              surface: "#f9f9f9",
+              tertiary: "#615b77",
+              "surface-container-low": "#f2f4f4",
+              "secondary-fixed-dim": "#d5d4d8",
+              "on-primary-fixed": "#003894",
+              "on-error": "#fff7f6",
+              error: "#9f403d",
+              "surface-bright": "#f9f9f9",
+              "on-background": "#2d3435",
+              "inverse-on-surface": "#9c9d9d",
+              primary: "#0054d6",
+              "on-tertiary-fixed": "#3d3852",
+              "tertiary-fixed-dim": "#d3caeb",
+              "on-primary": "#f8f7ff",
+              "surface-container-lowest": "#ffffff",
+              outline: "#757c7d",
+              "on-tertiary": "#fcf7ff",
+              "inverse-primary": "#5e8bff",
+              "primary-dim": "#004abd",
+              "surface-tint": "#0054d6",
+              "on-tertiary-fixed-variant": "#5a5470",
+              "primary-container": "#dae1ff",
+              "on-surface-variant": "#5a6061",
+              "primary-fixed": "#dae1ff",
+              "primary-fixed-dim": "#c7d3ff",
+              "inverse-surface": "#0c0f0f",
+              "secondary-fixed": "#e4e2e6",
+              "on-tertiary-container": "#504b66",
+              "secondary-container": "#e4e2e6",
+              "on-secondary-fixed": "#3f3f43",
+              "surface-container": "#ebeeef",
+              "surface-dim": "#d4dbdd",
+              "secondary-dim": "#535356",
+            },
+            fontFamily: {
+              headline: ["Manrope"],
+              body: ["Inter"],
+              label: ["Inter"],
+            },
+            borderRadius: {
+              DEFAULT: "0.5rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      .material-symbols-outlined {
+        font-variation-settings:
+          "FILL" 0,
+          "wght" 400,
+          "GRAD" 0,
+          "opsz" 24;
+      }
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      h1,
+      h2,
+      h3 {
+        font-family: "Manrope", sans-serif;
+      }
+      .glass-header {
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+      }
+      input:focus,
+      textarea:focus,
+      select:focus {
+        outline: none !important;
+        border-color: transparent !important;
+        box-shadow: 0 0 0 2px rgba(0, 84, 214, 0.2);
+      }
+    </style>
+    <style>
+      body {
+        min-height: max(884px, 100dvh);
+      }
+    </style>
+  </head>
+  <body class="bg-surface text-on-surface min-h-screen pb-32">
+    <!-- TopAppBar -->
+    <header
+      class="fixed top-0 w-full z-50 glass-header bg-white/80 flex items-center justify-between px-5 h-16"
+    >
+      <div class="flex items-center gap-4">
+        <button
+          class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-surface-container transition-colors active:scale-95 duration-200"
+        >
+          <span class="material-symbols-outlined text-primary">arrow_back</span>
+        </button>
+        <h1
+          class="font-headline font-bold text-lg tracking-tight text-on-surface"
+        >
+          Create Service
+        </h1>
+      </div>
+      <div class="w-10"></div>
+      <!-- Spacer for symmetry -->
+    </header>
+    <main class="max-w-2xl mx-auto px-5 pt-24 pb-12 space-y-10">
+      <!-- Section 1: Informações Básicas -->
+      <section class="space-y-6">
+        <div class="flex flex-col gap-1">
+          <span class="text-primary font-bold text-xs uppercase tracking-widest"
+            >Passo 01</span
+          >
+          <h2 class="text-2xl font-extrabold tracking-tight">
+            Informações Básicas
+          </h2>
+        </div>
+        <div class="space-y-4">
+          <div class="group">
+            <label
+              class="block text-sm font-semibold mb-2 text-on-surface-variant"
+              >Nome do Serviço</label
+            >
+            <input
+              class="w-full bg-surface-container-highest border-none rounded-xl px-4 py-3.5 text-on-surface placeholder:text-outline transition-all focus:bg-surface-container-lowest"
+              placeholder="Ex: Fotografia de Casamento Premium"
+              type="text"
+            />
+          </div>
+          <div class="group">
+            <label
+              class="block text-sm font-semibold mb-2 text-on-surface-variant"
+              >Categoria</label
+            >
+            <div class="relative">
+              <select
+                class="w-full bg-surface-container-highest border-none rounded-xl px-4 py-3.5 text-on-surface appearance-none focus:bg-surface-container-lowest transition-all"
+              >
+                <option value="">Selecione uma categoria</option>
+                <option value="bem-estar">Bem-estar e Saúde</option>
+                <option value="reformas">Reformas e Manutenção</option>
+                <option value="eventos">Eventos e Festas</option>
+                <option value="tecnologia">Tecnologia e Design</option>
+              </select>
+              <span
+                class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-outline"
+                >expand_more</span
+              >
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- Section 2: Preços e Duração -->
+      <section class="space-y-6">
+        <div class="flex flex-col gap-1">
+          <span class="text-primary font-bold text-xs uppercase tracking-widest"
+            >Passo 02</span
+          >
+          <h2 class="text-2xl font-extrabold tracking-tight">
+            Preços e Duração
+          </h2>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="space-y-2">
+            <label class="block text-sm font-semibold text-on-surface-variant"
+              >Valor do Serviço (R$)</label
+            >
+            <div class="flex gap-2 p-1 bg-surface-container-highest rounded-xl">
+              <button
+                class="flex-1 py-2 text-xs font-bold rounded-lg bg-surface-container-lowest shadow-sm text-primary transition-all"
+              >
+                Fixo
+              </button>
+              <button
+                class="flex-1 py-2 text-xs font-bold rounded-lg text-on-surface-variant hover:bg-surface-container transition-all"
+              >
+                A partir de
+              </button>
+            </div>
+            <input
+              class="w-full bg-surface-container-highest border-none rounded-xl px-4 py-3.5 text-on-surface focus:bg-surface-container-lowest transition-all"
+              placeholder="0,00"
+              type="number"
+            />
+          </div>
+          <div class="space-y-2">
+            <label class="block text-sm font-semibold text-on-surface-variant"
+              >Duração Estimada</label
+            >
+            <div class="relative mt-[44px]">
+              <!-- Aligning with input level -->
+              <select
+                class="w-full bg-surface-container-highest border-none rounded-xl px-4 py-3.5 text-on-surface appearance-none focus:bg-surface-container-lowest transition-all"
+              >
+                <option>1h</option>
+                <option>2h</option>
+                <option>4-6h</option>
+                <option>Diária</option>
+                <option>A combinar</option>
+              </select>
+              <span
+                class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-outline"
+                >schedule</span
+              >
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- Section 3: Descrição -->
+      <section class="space-y-6">
+        <div class="flex flex-col gap-1">
+          <span class="text-primary font-bold text-xs uppercase tracking-widest"
+            >Passo 03</span
+          >
+          <h2 class="text-2xl font-extrabold tracking-tight">
+            O que está incluso?
+          </h2>
+        </div>
+        <textarea
+          class="w-full bg-surface-container-highest border-none rounded-2xl px-5 py-4 text-on-surface placeholder:text-outline focus:bg-surface-container-lowest transition-all resize-none"
+          placeholder="Descreva detalhadamente o que o cliente receberá ao contratar este serviço..."
+          rows="5"
+        ></textarea>
+      </section>
+      <!-- Section 4: Fotos do Serviço -->
+      <section class="space-y-6">
+        <div class="flex flex-col gap-1">
+          <span class="text-primary font-bold text-xs uppercase tracking-widest"
+            >Passo 04</span
+          >
+          <h2 class="text-2xl font-extrabold tracking-tight">
+            Fotos do Serviço
+          </h2>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <!-- Upload Placeholder -->
+          <label
+            class="aspect-square rounded-2xl border-2 border-dashed border-outline-variant flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-surface-container transition-all group"
+          >
+            <span
+              class="material-symbols-outlined text-3xl text-outline group-hover:text-primary transition-colors"
+              >add_a_photo</span
+            >
+            <span
+              class="text-xs font-bold text-outline uppercase tracking-wider"
+              >Adicionar</span
+            >
+            <input class="hidden" type="file" />
+          </label>
+          <!-- Mock Image Previews -->
+          <div
+            class="aspect-square rounded-2xl bg-surface-container relative overflow-hidden group"
+          >
+            <img
+              class="w-full h-full object-cover"
+              data-alt="modern office workspace with laptop and notebook on a white desk in bright daylight"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuA6Hlfbt0CbZBQQAb_wHUK-c5Z2Eew6z9acL3aVgdxRtNigDWwJsM9f73u2u5FAKWb_vqsSoWAOcZw6szhPAeCsGaiKZFjARTFslJorzFmNYHTMYOXdmWsGMVyqJyEzchhikitWV9bWvudHV-El5zGTMrbUDXHOSZyjyDgFnqubD8HpjgeSFiPq8BTERINA2bQVeExFWgf1-W6DD1JH5fFtdzRW35yIZw79SvKPH6y0mclZB_-KRaFAH5nG9XiBn8VxmKK-aQ-AQTc"
+            />
+            <button
+              class="absolute top-2 right-2 w-8 h-8 rounded-full bg-inverse-surface/60 text-white flex items-center justify-center hover:bg-error transition-colors"
+            >
+              <span class="material-symbols-outlined text-sm">close</span>
+            </button>
+          </div>
+          <div
+            class="aspect-square rounded-2xl bg-surface-container relative overflow-hidden group"
+          >
+            <img
+              class="w-full h-full object-cover"
+              data-alt="professional house cleaning equipment including sprays and microfiber cloths on a clean wooden floor"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuBogLrPW7V2-kCjPSQkhplyJKRpvMpCbb5PWirYuJf2ggcDGjyAu4npQM46Ku5gVy3qWuV9WcjURoXScsYJqwHBWvLeMPOJjUWgbEacZ3qsUF27Nw0VbcfS4IljYtJ6CKx7f2cS2dN7ILktG0TsCDWNsLxV51Sdsd1A58iLIyL3rrQsuAFpVY27XCre5Tgr8vBVw1Y-FIRNqqOd1cm9Ephp1eSclHoeY6EV_H5H6BZ-7bsM8fhsU_U_M_GcsZyhF1bDZ7GfdXVLmy8"
+            />
+            <button
+              class="absolute top-2 right-2 w-8 h-8 rounded-full bg-inverse-surface/60 text-white flex items-center justify-center hover:bg-error transition-colors"
+            >
+              <span class="material-symbols-outlined text-sm">close</span>
+            </button>
+          </div>
+        </div>
+      </section>
+      <!-- Section 5: Visibilidade -->
+      <section
+        class="bg-surface-container-low p-6 rounded-2xl flex items-center justify-between border border-white/50"
+      >
+        <div class="space-y-1">
+          <h3 class="font-bold text-on-surface">Publicar agora</h3>
+          <p class="text-xs text-on-surface-variant font-medium">
+            Seu serviço ficará visível imediatamente para clientes.
+          </p>
+        </div>
+        <label class="relative inline-flex items-center cursor-pointer">
+          <input checked="" class="sr-only peer" type="checkbox" value="" />
+          <div
+            class="w-12 h-6 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"
+          ></div>
+        </label>
+      </section>
+    </main>
+    <!-- Final Action Button Container -->
+    <div
+      class="fixed bottom-0 left-0 w-full bg-white/80 backdrop-blur-xl px-5 py-6 flex flex-col items-center gap-4 z-50"
+    >
+      <button
+        class="w-full max-w-2xl py-4 bg-gradient-to-br from-primary to-primary-dim text-on-primary font-headline font-bold rounded-xl shadow-[0_8px_32px_rgba(0,84,214,0.15)] active:scale-95 transition-all duration-200"
+      >
+        Salvar e Publicar
+      </button>
+      <button
+        class="text-on-surface-variant font-bold text-sm uppercase tracking-widest hover:text-primary transition-colors"
+      >
+        Salvar como Rascunho
+      </button>
+    </div>
+    <!-- BottomNavBar (Hidden on this transactional screen as per protocol) -->
+    <!-- Shell suppressed: Transactional/Task-focused flow -->
+  </body>
+</html>
