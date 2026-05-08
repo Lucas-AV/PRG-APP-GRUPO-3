@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-container-lowest": "#ffffff",
+              "surface-bright": "#f9f9f9",
+              "on-surface": "#2d3435",
+              "secondary-container": "#e4e2e6",
+              "surface": "#f9f9f9",
+              "on-surface-variant": "#5a6061",
+              "primary-fixed": "#dae1ff",
+              "on-background": "#2d3435",
+              "on-primary": "#f8f7ff",
+              "on-tertiary-fixed-variant": "#5a5470",
+              "on-tertiary-container": "#504b66",
+              "on-secondary-container": "#515155",
+              "secondary-fixed-dim": "#d5d4d8",
+              "surface-container-highest": "#dde4e5",
+              "on-tertiary-fixed": "#3d3852",
+              "tertiary": "#615b77",
+              "secondary-fixed": "#e4e2e6",
+              "tertiary-fixed-dim": "#d3caeb",
+              "surface-dim": "#d4dbdd",
+              "inverse-primary": "#5e8bff",
+              "error-container": "#fe8983",
+              "surface-tint": "#0054d6",
+              "primary-fixed-dim": "#c7d3ff",
+              "on-secondary-fixed-variant": "#5b5b5f",
+              "on-secondary-fixed": "#3f3f43",
+              "primary-dim": "#004abd",
+              "secondary": "#5f5f62",
+              "error": "#9f403d",
+              "on-error-container": "#752121",
+              "on-primary-container": "#0049bb",
+              "on-error": "#fff7f6",
+              "on-secondary": "#faf8fc",
+              "primary-container": "#dae1ff",
+              "background": "#f9f9f9",
+              "surface-container-high": "#e4e9ea",
+              "primary": "#0054d6",
+              "inverse-surface": "#0c0f0f",
+              "surface-container": "#ebeeef",
+              "outline": "#757c7d",
+              "tertiary-dim": "#554f6b",
+              "surface-container-low": "#f2f4f4",
+              "on-primary-fixed-variant": "#0052d0",
+              "on-primary-fixed": "#003894",
+              "error-dim": "#4e0309",
+              "surface-variant": "#dde4e5",
+              "tertiary-container": "#e1d8fa",
+              "on-tertiary": "#fcf7ff",
+              "outline-variant": "#adb3b4",
+              "tertiary-fixed": "#e1d8fa",
+              "secondary-dim": "#535356",
+              "inverse-on-surface": "#9c9d9d"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.5rem", "lg": "0.75rem", "xl": "1rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      }
+      body {
+        background-color: #f9f9f9;
+        color: #2d3435;
+      }
+      .signature-gradient {
+        background: linear-gradient(135deg, #0054d6 0%, #004abd 100%);
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-body selection:bg-primary-container">
+<!-- Top Navigation Anchor -->
+<header class="fixed top-0 w-full z-50 bg-surface-bright dark:bg-neutral-900">
+<div class="flex items-center justify-between px-5 h-16 w-full max-w-7xl mx-auto">
+<div class="flex items-center gap-4">
+<button class="p-2 -ml-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors rounded-full active:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined text-blue-600 dark:text-blue-400">arrow_back</span>
+</button>
+<h1 class="font-headline text-headline-sm font-bold tracking-tight text-blue-700 dark:text-blue-500">SevGen</h1>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-label-sm font-semibold text-on-surface-variant uppercase tracking-widest">Step 2/4</span>
+</div>
+</div>
+</header>
+<main class="pt-24 pb-32 px-5 max-w-xl mx-auto">
+<!-- Progress Bar Segment -->
+<div class="w-full h-1.5 bg-surface-container-highest rounded-full mb-10 overflow-hidden">
+<div class="h-full bg-primary w-1/2 rounded-full transition-all duration-500"></div>
+</div>
+<!-- Header Section -->
+<div class="mb-10">
+<h2 class="font-headline text-3xl font-extrabold text-on-surface tracking-tight leading-tight">Where are you located?</h2>
+<p class="mt-2 text-on-surface-variant text-body-lg">We need your address to find services and professionals near your area.</p>
+</div>
+<!-- Location Type Selector (Segmented Control Pill) -->
+<div class="mb-8 p-1.5 bg-surface-container-highest rounded-full flex items-center">
+<button class="flex-1 py-3 px-6 rounded-full bg-surface-container-lowest shadow-sm text-primary font-semibold text-sm transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[20px]">home</span>
+                Home
+            </button>
+<button class="flex-1 py-3 px-6 rounded-full text-on-surface-variant font-medium text-sm hover:text-on-surface transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[20px]">work</span>
+                Office
+            </button>
+</div>
+<!-- Form Layout (Bento-style spacing) -->
+<div class="space-y-6">
+<!-- ZIP Code with Map Preview Visual -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="md:col-span-1">
+<label class="block text-label-sm font-semibold text-on-surface-variant mb-2 uppercase tracking-wider">ZIP Code (CEP)</label>
+<input class="w-full bg-surface-container-high border-none rounded-xl py-4 px-5 text-on-surface placeholder:text-outline focus:ring-2 focus:ring-primary transition-all" placeholder="00000-000" type="text"/>
+</div>
+<div class="md:col-span-2 relative h-32 rounded-xl overflow-hidden group">
+<img class="w-full h-full object-cover grayscale opacity-60 group-hover:grayscale-0 transition-all duration-700" data-alt="minimalist clean map interface showing a city grid with soft blue accents and vector stylized buildings" data-location="São Paulo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAY1ozV-QDadGATG6KR014Vq873ehE8K49kLohuphOhuUgatcIxEZA-LbX9jOSEMkxQiyorc6MMmOXjvR-ePpmFAcsvALkdUzXigtGdvwwwB4gUGGKCtVC__kVl5fmFRRDqhqESEfCkVhGKlBRc7iCpvDaIitr0ghWuoumO4A73mmn0eJfgXoz7RmAAMt_KMt43s0UeP-4I-oJnQybJMLYF1mPFz7gc3Ts295GNvoB46-oM_iDwMq63EzC4VkwAi9Us_owzQzwFmDo"/>
+<div class="absolute inset-0 flex items-center justify-center bg-black/5">
+<span class="material-symbols-outlined text-primary text-4xl" style="font-variation-settings: 'FILL' 1;">location_on</span>
+</div>
+</div>
+</div>
+<!-- Address Fields -->
+<div>
+<label class="block text-label-sm font-semibold text-on-surface-variant mb-2 uppercase tracking-wider">Address</label>
+<input class="w-full bg-surface-container-high border-none rounded-xl py-4 px-5 text-on-surface placeholder:text-outline focus:ring-2 focus:ring-primary transition-all" placeholder="Street, Avenue, or Square" type="text"/>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="block text-label-sm font-semibold text-on-surface-variant mb-2 uppercase tracking-wider">Number</label>
+<input class="w-full bg-surface-container-high border-none rounded-xl py-4 px-5 text-on-surface placeholder:text-outline focus:ring-2 focus:ring-primary transition-all" placeholder="123" type="text"/>
+</div>
+<div>
+<label class="block text-label-sm font-semibold text-on-surface-variant mb-2 uppercase tracking-wider">Complement</label>
+<input class="w-full bg-surface-container-high border-none rounded-xl py-4 px-5 text-on-surface placeholder:text-outline focus:ring-2 focus:ring-primary transition-all" placeholder="Apt / Suite" type="text"/>
+</div>
+</div>
+<div>
+<label class="block text-label-sm font-semibold text-on-surface-variant mb-2 uppercase tracking-wider">Neighborhood</label>
+<input class="w-full bg-surface-container-high border-none rounded-xl py-4 px-5 text-on-surface placeholder:text-outline focus:ring-2 focus:ring-primary transition-all" placeholder="District name" type="text"/>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div>
+<label class="block text-label-sm font-semibold text-on-surface-variant mb-2 uppercase tracking-wider">City</label>
+<input class="w-full bg-surface-container-high border-none rounded-xl py-4 px-5 text-on-surface placeholder:text-outline focus:ring-2 focus:ring-primary transition-all" placeholder="New York" type="text"/>
+</div>
+<div>
+<label class="block text-label-sm font-semibold text-on-surface-variant mb-2 uppercase tracking-wider">State</label>
+<select class="w-full bg-surface-container-high border-none rounded-xl py-4 px-5 text-on-surface focus:ring-2 focus:ring-primary transition-all appearance-none">
+<option>Select State</option>
+<option>SP</option>
+<option>RJ</option>
+<option>MG</option>
+</select>
+</div>
+</div>
+</div>
+</main>
+<!-- Fixed Action Bar -->
+<footer class="fixed bottom-0 left-0 w-full bg-white/80 dark:bg-neutral-950/80 backdrop-blur-xl z-50 px-5 pb-8 pt-4">
+<div class="max-w-xl mx-auto flex flex-col gap-3">
+<button class="signature-gradient text-on-primary font-bold py-4 rounded-xl shadow-[0_8px_32px_rgba(0,84,214,0.2)] active:scale-95 transition-all duration-200">
+                Continue
+            </button>
+<button class="text-primary font-semibold py-3 hover:bg-primary/5 rounded-xl transition-colors active:scale-95 duration-200">
+                Save Draft
+            </button>
+</div>
+</footer>
+</body></html>
