@@ -44,3 +44,9 @@ app-example
 # generated native folders
 /ios
 /android
+
+# backend SQLite database (gerado pelo seed)
+conecta-backend/db/*.db
+conecta-backend/db/*.db-journal
+conecta-backend/db/*.db-wal
+conecta-backend/db/*.db-shm
