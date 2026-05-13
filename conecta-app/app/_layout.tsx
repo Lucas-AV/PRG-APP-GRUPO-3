@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { AuthProvider } from '@/context/AuthContext';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import {
@@ -35,7 +36,7 @@ export default function RootLayout() {
   if (!fontsLoaded && !fontError) return null;
 
   return (
-    <>
+    <AuthProvider>
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="index" />
         <Stack.Screen name="(auth)" />
@@ -44,6 +45,6 @@ export default function RootLayout() {
         <Stack.Screen name="(services)" />
       </Stack>
       <StatusBar style="dark" backgroundColor="transparent" translucent />
-    </>
+    </AuthProvider>
   );
 }
