@@ -22,6 +22,7 @@ interface InputFieldProps {
   autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
   multiline?: boolean;
   numberOfLines?: number;
+  errorMessage?: string;
 }
 
 export function InputField({
@@ -36,14 +37,15 @@ export function InputField({
   autoCapitalize,
   multiline,
   numberOfLines,
+  errorMessage,
 }: InputFieldProps) {
   const [showPassword, setShowPassword] = useState(false);
   const isPassword = secureTextEntry;
 
   return (
     <View style={styles.wrapper}>
-      <Text style={styles.label}>{label.toUpperCase()}</Text>
-      <View style={styles.inputRow}>
+      {label ? <Text style={styles.label}>{label.toUpperCase()}</Text> : null}
+      <View style={[styles.inputRow, !!errorMessage && styles.inputRowError]}>
         {icon && (
           <MaterialIcons
             name={icon}
@@ -84,6 +86,7 @@ export function InputField({
         )}
         {rightAction && <View style={styles.trailing}>{rightAction}</View>}
       </View>
+      {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
     </View>
   );
 }
@@ -130,5 +133,15 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: Spacing.base,
     padding: 4,
+  },
+  inputRowError: {
+    borderWidth: 1.5,
+    borderColor: '#d32f2f',
+  },
+  errorText: {
+    fontFamily: FontFamily.bodyRegular,
+    fontSize: 12,
+    color: '#d32f2f',
+    marginLeft: 2,
   },
 });
