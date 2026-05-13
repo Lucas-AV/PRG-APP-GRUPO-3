@@ -7,12 +7,15 @@ import {
   Pressable,
   Switch,
   StyleSheet,
+  Alert,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
 import { GradientButton } from '@/components/ui/gradient-button';
 import { Colors, FontFamily, Spacing, Radius } from '@/constants/theme';
+import { useAuth } from '@/context/AuthContext';
+import { servicesApi } from '@/services/api';
 
 const CATEGORIES = [
   'Bem-estar e Saúde',
@@ -27,17 +30,44 @@ const DURATIONS = ['1h', '2h', '3h', '4–6h', 'Diária', 'A combinar'];
 
 export default function CreateServiceScreen() {
   const insets = useSafeAreaInsets();
+  const { token } = useAuth();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
   const [priceType, setPriceType] = useState<'fixo' | 'a_partir_de'>('fixo');
   const [publishNow, setPublishNow] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const [showCategory, setShowCategory] = useState(false);
   const [category, setCategory] = useState('');
 
   const [showDuration, setShowDuration] = useState(false);
   const [duration, setDuration] = useState('');
+
+  const handleSave = async (asDraft: boolean) => {
+    if (!name.trim()) {
+      Alert.alert('Campo obrigatório', 'Informe o nome do serviço.');
+      return;
+    }
+    if (!token) return;
+    setLoading(true);
+    try {
+      await servicesApi.create({
+        name: name.trim(),
+        category: category || undefined,
+        price: price ? parseFloat(price.replace(',', '.')) : undefined,
+        price_type: priceType,
+        duration: duration || undefined,
+        description: description.trim() || undefined,
+        status: asDraft ? 'rascunho' : (publishNow ? 'ativo' : 'rascunho'),
+      }, token);
+      router.back();
+    } catch (e: any) {
+      Alert.alert('Erro ao salvar', e.message ?? 'Tente novamente.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container} edges={['left', 'right']}>
@@ -246,8 +276,12 @@ export default function CreateServiceScreen() {
 
       {/* Bottom action bar */}
       <View style={[styles.bottomBar, { paddingBottom: Math.max(insets.bottom + 8, Spacing.xl) }]}>
-        <GradientButton label="Salvar e Publicar" onPress={() => router.back()} />
-        <Pressable style={styles.draftBtn}>
+        <GradientButton
+          label={loading ? 'Salvando…' : 'Salvar e Publicar'}
+          onPress={() => handleSave(false)}
+          disabled={loading}
+        />
+        <Pressable style={styles.draftBtn} onPress={() => handleSave(true)} disabled={loading}>
           <Text style={styles.draftBtnText}>Salvar como Rascunho</Text>
         </Pressable>
       </View>
