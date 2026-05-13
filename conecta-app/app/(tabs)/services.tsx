@@ -1,66 +1,54 @@
+import { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
   ScrollView,
   Pressable,
   StyleSheet,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, FontFamily, GradientColors, Spacing, Radius } from '@/constants/theme';
+import { useAuth } from '@/context/AuthContext';
+import { servicesApi, Service } from '@/services/api';
 
-type ServiceStatus = 'ativo' | 'rascunho';
-
-type Service = {
-  id: string;
-  title: string;
-  price: number;
-  priceType: 'fixo' | 'a_partir_de';
-  status: ServiceStatus;
-  icon: React.ComponentProps<typeof MaterialIcons>['name'];
-  appointments?: number;
-  rating?: number;
-  createdAt?: string;
+const CATEGORY_ICONS: Record<string, React.ComponentProps<typeof MaterialIcons>['name']> = {
+  'Limpeza': 'cleaning-services',
+  'Reformas e Manutenção': 'plumbing',
+  'Elétrica': 'electrical-services',
+  'Pintura': 'format-paint',
+  'Tecnologia e Design': 'computer',
+  'Bem-estar e Saúde': 'favorite',
+  'Eventos e Festas': 'celebration',
 };
-
-const MOCK_SERVICES: Service[] = [
-  {
-    id: '1',
-    title: 'Instalação de Tomadas',
-    price: 80,
-    priceType: 'a_partir_de',
-    status: 'ativo',
-    icon: 'electrical-services',
-    appointments: 124,
-    rating: 4.9,
-  },
-  {
-    id: '2',
-    title: 'Manutenção de AC',
-    price: 150,
-    priceType: 'a_partir_de',
-    status: 'ativo',
-    icon: 'ac-unit',
-    appointments: 86,
-    rating: 4.7,
-  },
-  {
-    id: '3',
-    title: 'Pintura Residencial',
-    price: 0,
-    priceType: 'a_partir_de',
-    status: 'rascunho',
-    icon: 'format-paint',
-    createdAt: '12 de Outubro',
-  },
-];
+const getCategoryIcon = (cat?: string): React.ComponentProps<typeof MaterialIcons>['name'] =>
+  CATEGORY_ICONS[cat ?? ''] ?? 'build';
 
 export default function ServicesScreen() {
   const insets = useSafeAreaInsets();
-  const activeServices = MOCK_SERVICES.filter((s) => s.status === 'ativo');
-  const draftServices = MOCK_SERVICES.filter((s) => s.status === 'rascunho');
+  const { token } = useAuth();
+  const [services, setServices] = useState<Service[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchServices = useCallback(async () => {
+    if (!token) return;
+    try {
+      const data = await servicesApi.list(token);
+      setServices(data);
+    } catch {
+      // silently retain previous list on error
+    } finally {
+      setLoading(false);
+    }
+  }, [token]);
+
+  useFocusEffect(useCallback(() => { fetchServices(); }, [fetchServices]));
+
+  const activeServices = services.filter((s) => s.status === 'ativo');
+  const draftServices = services.filter((s) => s.status === 'rascunho');
 
   return (
     <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
@@ -81,6 +69,14 @@ export default function ServicesScreen() {
           </Pressable>
         </View>
       </View>
+
+      {loading && (
+        <ActivityIndicator
+          style={styles.loader}
+          size="large"
+          color={Colors.primary}
+        />
+      )}
 
       <ScrollView
         style={styles.scroll}
@@ -132,38 +128,42 @@ export default function ServicesScreen() {
                     colors={[Colors.primaryContainer, Colors.surfaceContainerHigh]}
                     style={styles.serviceThumb}
                   >
-                    <MaterialIcons name={service.icon} size={26} color={Colors.primary} />
+                    <MaterialIcons name={getCategoryIcon(service.category)} size={26} color={Colors.primary} />
                   </LinearGradient>
 
                   <View style={styles.cardInfo}>
                     <View style={styles.cardInfoTop}>
                       <Text style={styles.serviceTitle} numberOfLines={1}>
-                        {service.title}
+                        {service.name}
                       </Text>
                       <View style={styles.activeBadge}>
                         <Text style={styles.activeBadgeText}>Ativo</Text>
                       </View>
                     </View>
                     <Text style={styles.servicePrice}>
-                      {service.priceType === 'a_partir_de' ? 'A partir de ' : ''}
-                      R$ {service.price.toFixed(2).replace('.', ',')}
+                      {service.price_type === 'a_partir_de' ? 'A partir de ' : ''}
+                      {service.price != null
+                        ? `R$ ${service.price.toFixed(2).replace('.', ',')}`
+                        : 'Preço a combinar'}
                     </Text>
                   </View>
                 </View>
 
                 <View style={styles.statsRow}>
                   <View style={styles.statItem}>
-                    <MaterialIcons name="event-available" size={16} color={Colors.onSurfaceVariant} />
+                    <MaterialIcons name="calendar-today" size={16} color={Colors.onSurfaceVariant} />
                     <View>
-                      <Text style={styles.statLabel}>Agendamentos</Text>
-                      <Text style={styles.statValue}>{service.appointments}</Text>
+                      <Text style={styles.statLabel}>Criado em</Text>
+                      <Text style={styles.statValue}>
+                        {new Date(service.created_at).toLocaleDateString('pt-BR')}
+                      </Text>
                     </View>
                   </View>
                   <View style={styles.statItem}>
-                    <MaterialIcons name="star" size={16} color="#F59E0B" />
+                    <MaterialIcons name="category" size={16} color={Colors.onSurfaceVariant} />
                     <View>
-                      <Text style={styles.statLabel}>Nota Média</Text>
-                      <Text style={styles.statValue}>{service.rating?.toFixed(1)}</Text>
+                      <Text style={styles.statLabel}>Categoria</Text>
+                      <Text style={styles.statValue} numberOfLines={1}>{service.category ?? '—'}</Text>
                     </View>
                   </View>
                 </View>
@@ -227,12 +227,14 @@ export default function ServicesScreen() {
                 </View>
                 <View style={styles.draftInfo}>
                   <View style={styles.draftInfoTop}>
-                    <Text style={styles.draftTitle}>{service.title}</Text>
+                    <Text style={styles.draftTitle}>{service.name}</Text>
                     <View style={styles.draftStatusBadge}>
                       <Text style={styles.draftStatusText}>Rascunho</Text>
                     </View>
                   </View>
-                  <Text style={styles.draftDate}>Criado em {service.createdAt}</Text>
+                  <Text style={styles.draftDate}>
+                    Criado em {new Date(service.created_at).toLocaleDateString('pt-BR')}
+                  </Text>
                   <View style={styles.draftContinue}>
                     <Text style={styles.draftContinueLabel}>Continuar Edição</Text>
                     <MaterialIcons name="arrow-forward" size={12} color={Colors.primary} />
@@ -297,6 +299,7 @@ const styles = StyleSheet.create({
     borderRadius: Radius.full,
   },
 
+  loader: { marginTop: Spacing.xxxl },
   scroll: { flex: 1 },
   scrollContent: {
     paddingHorizontal: Spacing.xl,

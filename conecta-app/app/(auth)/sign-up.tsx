@@ -7,6 +7,7 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
@@ -15,14 +16,50 @@ import { GradientButton } from '@/components/ui/gradient-button';
 import { InputField } from '@/components/ui/input-field';
 import { TopAppBar } from '@/components/ui/top-app-bar';
 import { Colors, FontFamily, Spacing, Radius } from '@/constants/theme';
+import { useAuth } from '@/context/AuthContext';
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function SignUpScreen() {
+  const { register } = useAuth();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validate = () => {
+    const e: Record<string, string> = {};
+    if (!name.trim()) e.name = 'Informe seu nome completo.';
+    if (!EMAIL_REGEX.test(email)) e.email = 'Informe um e-mail válido.';
+    if (phone.replace(/\D/g, '').length < 10) e.phone = 'Informe um celular válido.';
+    if (password.length < 6) e.password = 'A senha deve ter pelo menos 6 caracteres.';
+    if (password !== confirmPassword) e.confirmPassword = 'As senhas não coincidem.';
+    setErrors(e);
+    return Object.keys(e).length === 0;
+  };
+
+  const handleRegister = async () => {
+    if (!validate()) return;
+    setLoading(true);
+    try {
+      await register({
+        name: name.trim(),
+        email: email.trim().toLowerCase(),
+        phone: phone.trim(),
+        password,
+        role: 'cliente',
+      });
+      router.push('/(onboarding)/step0');
+    } catch (e: any) {
+      Alert.alert('Erro ao criar conta', e.message ?? 'Tente novamente em instantes.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container} edges={['bottom']}>
@@ -56,6 +93,7 @@ export default function SignUpScreen() {
               value={name}
               onChangeText={setName}
               autoCapitalize="words"
+              errorMessage={errors.name}
             />
             <InputField
               label="E-mail"
@@ -64,6 +102,7 @@ export default function SignUpScreen() {
               onChangeText={setEmail}
               keyboardType="email-address"
               autoCapitalize="none"
+              errorMessage={errors.email}
             />
             <InputField
               label="Celular"
@@ -71,6 +110,7 @@ export default function SignUpScreen() {
               value={phone}
               onChangeText={setPhone}
               keyboardType="phone-pad"
+              errorMessage={errors.phone}
             />
             <InputField
               label="Senha"
@@ -78,6 +118,7 @@ export default function SignUpScreen() {
               value={password}
               onChangeText={setPassword}
               secureTextEntry
+              errorMessage={errors.password}
             />
             <InputField
               label="Confirmar Senha"
@@ -85,6 +126,7 @@ export default function SignUpScreen() {
               value={confirmPassword}
               onChangeText={setConfirmPassword}
               secureTextEntry
+              errorMessage={errors.confirmPassword}
             />
 
             {/* Terms checkbox */}
@@ -111,9 +153,9 @@ export default function SignUpScreen() {
             </Pressable>
 
             <GradientButton
-              label="Criar Conta"
-              onPress={() => router.push('/(onboarding)/step0')}
-              disabled={!termsAccepted}
+              label={loading ? 'Criando conta…' : 'Criar Conta'}
+              onPress={handleRegister}
+              disabled={!termsAccepted || loading}
             />
           </View>
 

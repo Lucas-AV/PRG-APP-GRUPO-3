@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,12 +7,15 @@ import {
   Pressable,
   StyleSheet,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
 import { GradientButton } from '@/components/ui/gradient-button';
 import { Colors, FontFamily, Spacing, Radius } from '@/constants/theme';
+import { useAuth } from '@/context/AuthContext';
+import { servicesApi } from '@/services/api';
 
 const CATEGORIES = [
   'Bem-estar e Saúde',
@@ -23,42 +26,56 @@ const CATEGORIES = [
   'Outros',
 ];
 
-const MOCK_SERVICES: Record<string, { title: string; category: string; price: string; priceType: 'fixo' | 'a_partir_de'; description: string }> = {
-  '1': {
-    title: 'Instalação de Tomadas',
-    category: 'Reformas e Manutenção',
-    price: '80,00',
-    priceType: 'a_partir_de',
-    description: 'Instalação profissional de tomadas e interruptores residenciais e comerciais. Inclui material básico, mão de obra e teste de funcionamento.',
-  },
-  '2': {
-    title: 'Manutenção de AC',
-    category: 'Reformas e Manutenção',
-    price: '150,00',
-    priceType: 'a_partir_de',
-    description: 'Limpeza completa e manutenção preventiva de ar-condicionado. Inclui higienização dos filtros, verificação do gás e teste de operação.',
-  },
-  '3': {
-    title: 'Pintura Residencial',
-    category: 'Reformas e Manutenção',
-    price: '',
-    priceType: 'a_partir_de',
-    description: '',
-  },
-};
-
 export default function EditServiceScreen() {
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
-  const mock = MOCK_SERVICES[id ?? '1'] ?? MOCK_SERVICES['1'];
+  const { token } = useAuth();
 
-  const [name, setName] = useState(mock.title);
-  const [description, setDescription] = useState(mock.description);
-  const [price, setPrice] = useState(mock.price);
-  const [priceType, setPriceType] = useState<'fixo' | 'a_partir_de'>(mock.priceType);
-
+  const [fetchLoading, setFetchLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
+  const [price, setPrice] = useState('');
+  const [priceType, setPriceType] = useState<'fixo' | 'a_partir_de'>('fixo');
   const [showCategory, setShowCategory] = useState(false);
-  const [category, setCategory] = useState(mock.category);
+  const [category, setCategory] = useState('');
+
+  useEffect(() => {
+    if (!token || !id) return;
+    servicesApi.get(Number(id), token)
+      .then((s) => {
+        setName(s.name);
+        setDescription(s.description ?? '');
+        setPrice(s.price != null ? String(s.price) : '');
+        setPriceType(s.price_type);
+        setCategory(s.category ?? '');
+      })
+      .catch(() => Alert.alert('Erro', 'Não foi possível carregar o serviço.'))
+      .finally(() => setFetchLoading(false));
+  }, [id, token]);
+
+  const handleSave = async () => {
+    if (!name.trim()) {
+      Alert.alert('Campo obrigatório', 'Informe o nome do serviço.');
+      return;
+    }
+    if (!token) return;
+    setSaving(true);
+    try {
+      await servicesApi.update(Number(id), {
+        name: name.trim(),
+        category: category || undefined,
+        price: price ? parseFloat(price.replace(',', '.')) : undefined,
+        price_type: priceType,
+        description: description.trim() || undefined,
+      }, token);
+      router.back();
+    } catch (e: any) {
+      Alert.alert('Erro ao salvar', e.message ?? 'Tente novamente.');
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const handleDelete = () => {
     Alert.alert(
@@ -69,11 +86,27 @@ export default function EditServiceScreen() {
         {
           text: 'Excluir',
           style: 'destructive',
-          onPress: () => router.back(),
+          onPress: async () => {
+            if (!token) return;
+            try {
+              await servicesApi.remove(Number(id), token);
+              router.back();
+            } catch (e: any) {
+              Alert.alert('Erro ao excluir', e.message ?? 'Tente novamente.');
+            }
+          },
         },
       ]
     );
   };
+
+  if (fetchLoading) {
+    return (
+      <SafeAreaView style={[styles.container, { alignItems: 'center', justifyContent: 'center' }]}>
+        <ActivityIndicator size="large" color={Colors.primary} />
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container} edges={['left', 'right']}>
@@ -83,7 +116,7 @@ export default function EditServiceScreen() {
           <MaterialIcons name="arrow-back" size={24} color={Colors.onSurface} />
         </Pressable>
         <Text style={styles.headerTitle}>Editar Serviço</Text>
-        <Pressable style={styles.saveTextBtn} onPress={() => router.back()}>
+        <Pressable style={styles.saveTextBtn} onPress={handleSave} disabled={saving}>
           <Text style={styles.saveTextBtnLabel}>Salvar</Text>
         </Pressable>
       </View>
@@ -277,8 +310,9 @@ export default function EditServiceScreen() {
             <Text style={styles.discardBtnText}>Descartar</Text>
           </Pressable>
           <GradientButton
-            label="Salvar Alterações"
-            onPress={() => router.back()}
+            label={saving ? 'Salvando…' : 'Salvar Alterações'}
+            onPress={handleSave}
+            disabled={saving}
             style={styles.saveBtn}
           />
         </View>
