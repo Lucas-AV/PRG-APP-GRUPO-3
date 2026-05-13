@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 import { authApi, User } from '@/services/api';
 
 interface AuthContextType {
@@ -27,8 +27,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     (async () => {
       try {
-        const storedToken = await AsyncStorage.getItem('@token');
-        const storedUser = await AsyncStorage.getItem('@user');
+        const storedToken = await SecureStore.getItemAsync('token');
+        const storedUser = await SecureStore.getItemAsync('user');
         if (storedToken && storedUser) {
           setToken(storedToken);
           setUser(JSON.parse(storedUser));
@@ -40,8 +40,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const persist = async (newToken: string, newUser: User) => {
-    await AsyncStorage.setItem('@token', newToken);
-    await AsyncStorage.setItem('@user', JSON.stringify(newUser));
+    await SecureStore.setItemAsync('token', newToken);
+    await SecureStore.setItemAsync('user', JSON.stringify(newUser));
     setToken(newToken);
     setUser(newUser);
   };
@@ -63,8 +63,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = async () => {
-    await AsyncStorage.removeItem('@token');
-    await AsyncStorage.removeItem('@user');
+    await SecureStore.deleteItemAsync('token');
+    await SecureStore.deleteItemAsync('user');
     setToken(null);
     setUser(null);
   };
