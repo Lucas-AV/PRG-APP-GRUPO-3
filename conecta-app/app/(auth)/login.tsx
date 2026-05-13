@@ -47,8 +47,16 @@ export default function LoginScreen() {
     if (!validate()) return;
     setLoading(true);
     try {
-      await login(email.trim().toLowerCase(), password);
-      router.replace('/(tabs)');
+      const user = await login(email.trim().toLowerCase(), password);
+      if (user.role === 'prestador') {
+        router.replace('/(tabs)');
+      } else {
+        Alert.alert(
+          'Em desenvolvimento',
+          'A visão do cliente ainda está sendo desenvolvida. Por enquanto, apenas prestadores de serviço podem acessar o app.',
+          [{ text: 'Entendido', style: 'default' }]
+        );
+      }
     } catch (e: any) {
       Alert.alert('Erro ao entrar', e.message ?? 'Verifique seus dados e tente novamente.');
     } finally {
