@@ -7,6 +7,8 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
+  ActivityIndicator,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
@@ -14,10 +16,45 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { GradientButton } from '@/components/ui/gradient-button';
 import { InputField } from '@/components/ui/input-field';
 import { Colors, FontFamily, Spacing, Radius } from '@/constants/theme';
+import { useAuth } from '@/context/AuthContext';
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function LoginScreen() {
+  const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const validate = () => {
+    let valid = true;
+    setEmailError('');
+    setPasswordError('');
+    if (!EMAIL_REGEX.test(email)) {
+      setEmailError('Informe um e-mail válido.');
+      valid = false;
+    }
+    if (password.length < 6) {
+      setPasswordError('A senha deve ter pelo menos 6 caracteres.');
+      valid = false;
+    }
+    return valid;
+  };
+
+  const handleLogin = async () => {
+    if (!validate()) return;
+    setLoading(true);
+    try {
+      await login(email.trim().toLowerCase(), password);
+      router.replace('/(tabs)');
+    } catch (e: any) {
+      Alert.alert('Erro ao entrar', e.message ?? 'Verifique seus dados e tente novamente.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -55,6 +92,7 @@ export default function LoginScreen() {
               keyboardType="email-address"
               autoCapitalize="none"
               icon="mail"
+              errorMessage={emailError}
             />
 
             <View style={styles.passwordGroup}>
@@ -71,12 +109,14 @@ export default function LoginScreen() {
                 onChangeText={setPassword}
                 secureTextEntry
                 icon="lock"
+                errorMessage={passwordError}
               />
             </View>
 
             <GradientButton
-              label="Entrar"
-              onPress={() => router.replace('/(tabs)')}
+              label={loading ? 'Entrando…' : 'Entrar'}
+              onPress={handleLogin}
+              disabled={loading}
               style={styles.ctaMargin}
             />
 
