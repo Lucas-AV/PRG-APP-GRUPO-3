@@ -110,7 +110,7 @@ export default function PaymentsScreen() {
           </View>
           <Pressable
             style={({ pressed }) => [styles.addCardBtn, pressed && { opacity: 0.7 }]}
-            onPress={comingSoon}
+            onPress={() => router.push('/(account)/new-card' as any)}
           >
             <MaterialIcons name="add" size={20} color={Colors.primary} />
             <Text style={styles.addCardLabel}>Adicionar novo cartão</Text>
