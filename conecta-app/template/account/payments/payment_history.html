@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Histórico de Pagamentos - SevGen</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-tertiary-container": "#504b66",
+              "primary": "#0054d6",
+              "on-background": "#2d3435",
+              "on-tertiary-fixed": "#3d3852",
+              "surface-container-high": "#e4e9ea",
+              "surface-bright": "#f9f9f9",
+              "error-container": "#fe8983",
+              "tertiary": "#615b77",
+              "on-secondary": "#faf8fc",
+              "on-error": "#fff7f6",
+              "surface-container-low": "#f2f4f4",
+              "surface-container-highest": "#dde4e5",
+              "on-primary-container": "#0049bb",
+              "primary-fixed-dim": "#c7d3ff",
+              "on-secondary-fixed-variant": "#5b5b5f",
+              "tertiary-fixed": "#e1d8fa",
+              "on-surface": "#2d3435",
+              "outline-variant": "#adb3b4",
+              "on-secondary-fixed": "#3f3f43",
+              "secondary-container": "#e4e2e6",
+              "inverse-primary": "#5e8bff",
+              "on-tertiary-fixed-variant": "#5a5470",
+              "surface-container": "#ebeeef",
+              "on-primary-fixed-variant": "#0052d0",
+              "inverse-surface": "#0c0f0f",
+              "tertiary-fixed-dim": "#d3caeb",
+              "surface-dim": "#d4dbdd",
+              "tertiary-container": "#e1d8fa",
+              "surface-container-lowest": "#ffffff",
+              "secondary-fixed-dim": "#d5d4d8",
+              "secondary": "#5f5f62",
+              "surface-tint": "#0054d6",
+              "secondary-fixed": "#e4e2e6",
+              "primary-dim": "#004abd",
+              "on-tertiary": "#fcf7ff",
+              "surface-variant": "#dde4e5",
+              "on-primary-fixed": "#003894",
+              "outline": "#757c7d",
+              "on-secondary-container": "#515155",
+              "error-dim": "#4e0309",
+              "primary-fixed": "#dae1ff",
+              "tertiary-dim": "#554f6b",
+              "on-error-container": "#752121",
+              "background": "#f9f9f9",
+              "secondary-dim": "#535356",
+              "on-surface-variant": "#5a6061",
+              "on-primary": "#f8f7ff",
+              "error": "#9f403d",
+              "primary-container": "#dae1ff",
+              "inverse-on-surface": "#9c9d9d",
+              "surface": "#f9f9f9"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      body {
+        -webkit-tap-highlight-color: transparent;
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface font-body text-on-surface selection:bg-primary-container">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-slate-50/80 dark:bg-slate-900/80 backdrop-blur-md flex items-center justify-between px-5 h-16 w-full">
+<div class="flex items-center gap-4">
+<button class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-slate-200/50 dark:hover:bg-slate-700/50 active:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined text-blue-600 dark:text-blue-400">arrow_back</span>
+</button>
+<h1 class="font-manrope font-bold text-lg tracking-tight text-on-surface">Payment History</h1>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-200/50 dark:hover:bg-slate-700/50 active:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined text-on-surface-variant">more_vert</span>
+</button>
+</header>
+<main class="pt-20 pb-24 px-5 max-w-2xl mx-auto space-y-8">
+<!-- Summary Card -->
+<section class="relative overflow-hidden bg-surface-container-lowest p-6 rounded-xl shadow-[0_4px_20px_0_rgba(0,0,0,0.02)]">
+<div class="flex flex-col gap-1">
+<span class="font-label text-xs uppercase tracking-widest text-on-surface-variant font-semibold">Total Gasto este mês</span>
+<div class="flex items-baseline gap-3">
+<h2 class="font-headline text-3xl font-extrabold tracking-tight text-on-surface">R$ 1.240,00</h2>
+<div class="flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 text-[11px] font-bold">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'wght' 700;">trending_up</span>
+                        +5%
+                    </div>
+</div>
+</div>
+<!-- Decorative Element -->
+<div class="absolute -right-4 -bottom-4 w-24 h-24 bg-primary/5 rounded-full blur-2xl"></div>
+</section>
+<!-- Filter Chips -->
+<nav class="flex items-center gap-3 overflow-x-auto pb-2 scrollbar-hide">
+<button class="whitespace-nowrap px-6 py-2.5 rounded-full bg-primary text-on-primary font-label text-sm font-semibold transition-all">Este Mês</button>
+<button class="whitespace-nowrap px-6 py-2.5 rounded-full bg-surface-container-highest text-on-surface-variant font-label text-sm font-medium hover:bg-surface-container-high transition-all">Últimos 3 Meses</button>
+<button class="whitespace-nowrap px-6 py-2.5 rounded-full bg-surface-container-highest text-on-surface-variant font-label text-sm font-medium hover:bg-surface-container-high transition-all">2023</button>
+</nav>
+<!-- Transaction List Grouped -->
+<div class="space-y-8">
+<!-- January 2024 -->
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<h3 class="font-headline text-lg font-bold text-on-surface">Janeiro 2024</h3>
+<div class="h-[1px] flex-grow ml-4 bg-surface-variant rounded-full"></div>
+</div>
+<div class="space-y-3">
+<!-- Transaction 1 -->
+<div class="group flex items-center justify-between p-4 bg-surface-container-lowest rounded-xl hover:bg-surface-container-low transition-colors duration-200">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 flex items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">electrical_services</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline text-sm font-bold text-on-surface">Reparo Elétrico - João Silva</span>
+<span class="font-body text-xs text-on-surface-variant">15 Jan, 14:30</span>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1.5">
+<span class="font-headline text-sm font-extrabold text-on-surface">R$ 150,00</span>
+<span class="px-2.5 py-0.5 rounded-md bg-emerald-50 text-emerald-600 text-[10px] font-bold uppercase tracking-wider">Concluído</span>
+</div>
+</div>
+<!-- Transaction 2 -->
+<div class="group flex items-center justify-between p-4 bg-surface-container-lowest rounded-xl hover:bg-surface-container-low transition-colors duration-200">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 flex items-center justify-center rounded-xl bg-purple-50 text-purple-600">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">cleaning_services</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline text-sm font-bold text-on-surface">Limpeza Residencial - Ana Clara</span>
+<span class="font-body text-xs text-on-surface-variant">12 Jan, 09:00</span>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1.5">
+<span class="font-headline text-sm font-extrabold text-on-surface">R$ 220,00</span>
+<span class="px-2.5 py-0.5 rounded-md bg-amber-50 text-amber-600 text-[10px] font-bold uppercase tracking-wider">Pendente</span>
+</div>
+</div>
+</div>
+</div>
+<!-- December 2023 -->
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<h3 class="font-headline text-lg font-bold text-on-surface">Dezembro 2023</h3>
+<div class="h-[1px] flex-grow ml-4 bg-surface-variant rounded-full"></div>
+</div>
+<div class="space-y-3">
+<!-- Transaction 3 -->
+<div class="group flex items-center justify-between p-4 bg-surface-container-lowest rounded-xl hover:bg-surface-container-low transition-colors duration-200">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 flex items-center justify-center rounded-xl bg-rose-50 text-rose-600">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">plumbing</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline text-sm font-bold text-on-surface">Reparo Hidráulico - Marcos Lima</span>
+<span class="font-body text-xs text-on-surface-variant">28 Dez, 16:15</span>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1.5">
+<span class="font-headline text-sm font-extrabold text-on-surface">R$ 380,00</span>
+<span class="px-2.5 py-0.5 rounded-md bg-rose-50 text-rose-600 text-[10px] font-bold uppercase tracking-wider">Cancelado</span>
+</div>
+</div>
+<!-- Transaction 4 -->
+<div class="group flex items-center justify-between p-4 bg-surface-container-lowest rounded-xl hover:bg-surface-container-low transition-colors duration-200">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 flex items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">build</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline text-sm font-bold text-on-surface">Manutenção Ar-Condicionado</span>
+<span class="font-body text-xs text-on-surface-variant">20 Dez, 10:30</span>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1.5">
+<span class="font-headline text-sm font-extrabold text-on-surface">R$ 490,00</span>
+<span class="px-2.5 py-0.5 rounded-md bg-emerald-50 text-emerald-600 text-[10px] font-bold uppercase tracking-wider">Concluído</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full h-20 flex justify-around items-center px-6 pb-safe bg-white/80 dark:bg-slate-900/80 backdrop-blur-md rounded-t-2xl shadow-[0_-4px_20px_0_rgba(0,0,0,0.04)] z-50">
+<button class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-3 py-1 hover:text-blue-500 dark:hover:text-blue-300 active:scale-90 transition-all duration-200">
+<span class="material-symbols-outlined">search</span>
+<span class="font-inter text-[11px] font-semibold uppercase tracking-wider">Explore</span>
+</button>
+<button class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-3 py-1 hover:text-blue-500 dark:hover:text-blue-300 active:scale-90 transition-all duration-200">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="font-inter text-[11px] font-semibold uppercase tracking-wider">Bookings</span>
+</button>
+<button class="flex flex-col items-center justify-center text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 rounded-xl px-3 py-1 active:scale-90 transition-all duration-200">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">account_balance_wallet</span>
+<span class="font-inter text-[11px] font-semibold uppercase tracking-wider">Payments</span>
+</button>
+<button class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-3 py-1 hover:text-blue-500 dark:hover:text-blue-300 active:scale-90 transition-all duration-200">
+<span class="material-symbols-outlined">person</span>
+<span class="font-inter text-[11px] font-semibold uppercase tracking-wider">Profile</span>
+</button>
+</nav>
+</body></html>
