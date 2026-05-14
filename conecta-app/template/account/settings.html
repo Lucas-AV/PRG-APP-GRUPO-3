@@ -1,0 +1,585 @@
+<!doctype html>
+<html class="light" lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Configurações - SevGen</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "tertiary-fixed-dim": "#d3caeb",
+              "tertiary-container": "#e1d8fa",
+              outline: "#757c7d",
+              "surface-container-highest": "#dde4e5",
+              surface: "#f9f9f9",
+              "on-error-container": "#752121",
+              "primary-fixed-dim": "#c7d3ff",
+              "on-primary-fixed-variant": "#0052d0",
+              "on-secondary-fixed-variant": "#5b5b5f",
+              "inverse-on-surface": "#9c9d9d",
+              "outline-variant": "#adb3b4",
+              "secondary-container": "#e4e2e6",
+              "surface-container-lowest": "#ffffff",
+              "on-secondary-container": "#515155",
+              "on-error": "#fff7f6",
+              "on-tertiary-container": "#504b66",
+              "tertiary-fixed": "#e1d8fa",
+              "on-primary-fixed": "#003894",
+              "error-container": "#fe8983",
+              "surface-variant": "#dde4e5",
+              primary: "#0054d6",
+              "on-primary": "#f8f7ff",
+              "inverse-surface": "#0c0f0f",
+              "on-tertiary-fixed": "#3d3852",
+              "inverse-primary": "#5e8bff",
+              "surface-container-low": "#f2f4f4",
+              "surface-bright": "#f9f9f9",
+              "on-secondary-fixed": "#3f3f43",
+              "surface-container-high": "#e4e9ea",
+              background: "#f9f9f9",
+              "tertiary-dim": "#554f6b",
+              "on-background": "#2d3435",
+              tertiary: "#615b77",
+              "surface-container": "#ebeeef",
+              "secondary-fixed-dim": "#d5d4d8",
+              "primary-dim": "#004abd",
+              "primary-fixed": "#dae1ff",
+              "on-tertiary-fixed-variant": "#5a5470",
+              "surface-tint": "#0054d6",
+              secondary: "#5f5f62",
+              "error-dim": "#4e0309",
+              "primary-container": "#dae1ff",
+              "surface-dim": "#d4dbdd",
+              error: "#9f403d",
+              "on-tertiary": "#fcf7ff",
+              "secondary-dim": "#535356",
+              "on-surface-variant": "#5a6061",
+              "on-surface": "#2d3435",
+              "on-secondary": "#faf8fc",
+              "on-primary-container": "#0049bb",
+              "secondary-fixed": "#e4e2e6",
+            },
+            fontFamily: {
+              headline: ["Manrope"],
+              body: ["Inter"],
+              label: ["Inter"],
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      .material-symbols-outlined {
+        font-variation-settings:
+          "FILL" 0,
+          "wght" 400,
+          "GRAD" 0,
+          "opsz" 20;
+      }
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      h1,
+      h2,
+      h3 {
+        font-family: "Manrope", sans-serif;
+      }
+    </style>
+    <style>
+      body {
+        min-height: max(884px, 100dvh);
+      }
+    </style>
+  </head>
+  <body class="bg-surface text-on-surface min-h-screen pb-32">
+    <!-- TopAppBar -->
+    <header
+      class="bg-surface-bright dark:bg-slate-950 fixed top-0 w-full z-50 docked full-width no-line-rule tonal-shift-only flat no shadows"
+    >
+      <div
+        class="flex items-center justify-between px-5 h-16 w-full max-w-7xl mx-auto"
+      >
+        <div class="flex items-center gap-4">
+          <button
+            class="text-blue-600 dark:text-blue-400 p-2 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors rounded-full active:opacity-80 transition-transform scale-95"
+            style=""
+          >
+            <span
+              class="material-symbols-outlined"
+              data-icon="arrow_back"
+              style=""
+              >arrow_back</span
+            >
+          </button>
+          <h1 class="font-manrope font-bold text-lg text-slate-800" style="">
+            Configurações
+          </h1>
+        </div>
+        <div
+          class="text-blue-600 font-bold dark:text-blue-400 font-manrope"
+          style=""
+        >
+          SevGen
+        </div>
+      </div>
+    </header>
+    <main class="pt-24 px-5 max-w-2xl mx-auto space-y-10">
+      <!-- User Profile Summary -->
+      <section
+        class="flex items-center justify-between bg-surface-container-lowest p-6 rounded-xl shadow-2xl shadow-blue-900/5"
+      >
+        <div class="flex items-center gap-4">
+          <div
+            class="w-16 h-16 rounded-full overflow-hidden bg-surface-container-highest"
+          >
+            <img
+              alt="Avatar do usuário"
+              class="w-full h-full object-cover"
+              data-alt="close-up portrait of a professional smiling man with clean-cut appearance, soft natural studio lighting, neutral minimalist grey background"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuBN8LG87gjTxmv-nXoK7bZD4Dbf3Mq2ex80SZxUczKRhkpoGXFHCvM8Z8cPId60wjRMhM9TBq6xyrLvzWNY6zPWnfXRz7DluIzQOdJKCozb3mQ47f3wTbHfsUBrlVxyuFoF1iOHr4tP1oQHsMayUVV4c6Of_2un_bQz-c1FRrpKQK_LLyt6UjsqbIel9ngKJPf-qEfeMswwcMxxDIV6eo1GruvxMOVeCUt6qXPOiW4poJc_aQ_omzBgznUhLJ4YZDozAPlB6k1m-10"
+              style=""
+            />
+          </div>
+          <div>
+            <h2
+              class="text-xl font-extrabold text-on-surface leading-tight"
+              style=""
+            >
+              Jane Doe<br />
+            </h2>
+            <button
+              class="text-primary font-semibold text-sm mt-0.5 hover:underline"
+              style=""
+            >
+              Editar Perfil
+            </button>
+          </div>
+        </div>
+        <span
+          class="material-symbols-outlined text-outline-variant"
+          data-icon="chevron_right"
+          style=""
+          >chevron_right</span
+        >
+      </section>
+      <!-- Section 1: Conta -->
+      <section class="space-y-4">
+        <h3
+          class="text-xs font-bold uppercase tracking-widest text-on-surface-variant px-1"
+          style=""
+        >
+          Conta
+        </h3>
+        <div class="bg-surface-container-lowest rounded-xl overflow-hidden">
+          <div
+            class="flex items-center justify-between p-4 hover:bg-slate-50 transition-colors cursor-pointer group"
+          >
+            <div class="flex items-center gap-4">
+              <div
+                class="w-10 h-10 flex items-center justify-center rounded-lg bg-primary-container/30 text-primary"
+              >
+                <span
+                  class="material-symbols-outlined"
+                  data-icon="location_on"
+                  style=""
+                  >location_on</span
+                >
+              </div>
+              <span class="font-medium text-on-surface" style=""
+                >Endereços</span
+              >
+            </div>
+            <span
+              class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors"
+              data-icon="chevron_right"
+              style=""
+              >chevron_right</span
+            >
+          </div>
+          <div
+            class="flex items-center justify-between p-4 hover:bg-slate-50 transition-colors cursor-pointer group"
+          >
+            <div class="flex items-center gap-4">
+              <div
+                class="w-10 h-10 flex items-center justify-center rounded-lg bg-primary-container/30 text-primary"
+              >
+                <span
+                  class="material-symbols-outlined"
+                  data-icon="payments"
+                  style=""
+                  >payments</span
+                >
+              </div>
+              <span class="font-medium text-on-surface" style=""
+                >Pagamentos</span
+              >
+            </div>
+            <span
+              class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors"
+              data-icon="chevron_right"
+              style=""
+              >chevron_right</span
+            >
+          </div>
+          <div
+            class="flex items-center justify-between p-4 hover:bg-slate-50 transition-colors cursor-pointer group"
+          >
+            <div class="flex items-center gap-4">
+              <div
+                class="w-10 h-10 flex items-center justify-center rounded-lg bg-primary-container/30 text-primary"
+              >
+                <span
+                  class="material-symbols-outlined"
+                  data-icon="card_membership"
+                  style=""
+                  >card_membership</span
+                >
+              </div>
+              <span class="font-medium text-on-surface" style=""
+                >Assinaturas</span
+              >
+            </div>
+            <span
+              class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors"
+              data-icon="chevron_right"
+              style=""
+              >chevron_right</span
+            >
+          </div>
+        </div>
+      </section>
+      <!-- Section 2: Preferências -->
+      <section class="space-y-4">
+        <h3
+          class="text-xs font-bold uppercase tracking-widest text-on-surface-variant px-1"
+          style=""
+        >
+          Preferências
+        </h3>
+        <div class="bg-surface-container-lowest rounded-xl overflow-hidden">
+          <div
+            class="flex items-center justify-between p-4 hover:bg-slate-50 transition-colors cursor-pointer group"
+          >
+            <div class="flex items-center gap-4">
+              <div
+                class="w-10 h-10 flex items-center justify-center rounded-lg bg-surface-container text-outline"
+              >
+                <span
+                  class="material-symbols-outlined"
+                  data-icon="notifications"
+                  style=""
+                  >notifications</span
+                >
+              </div>
+              <span class="font-medium text-on-surface" style=""
+                >Notificações</span
+              >
+            </div>
+            <span
+              class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors"
+              data-icon="chevron_right"
+              style=""
+              >chevron_right</span
+            >
+          </div>
+          <div
+            class="flex items-center justify-between p-4 hover:bg-slate-50 transition-colors cursor-pointer group"
+          >
+            <div class="flex items-center gap-4">
+              <div
+                class="w-10 h-10 flex items-center justify-center rounded-lg bg-surface-container text-outline"
+              >
+                <span
+                  class="material-symbols-outlined"
+                  data-icon="language"
+                  style=""
+                  >language</span
+                >
+              </div>
+              <div class="flex flex-col">
+                <span class="font-medium text-on-surface" style="">Idioma</span>
+                <span class="text-xs text-on-surface-variant" style=""
+                  >Português (Brasil)</span
+                >
+              </div>
+            </div>
+            <span
+              class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors"
+              data-icon="chevron_right"
+              style=""
+              >chevron_right</span
+            >
+          </div>
+          <div
+            class="flex items-center justify-between p-4 border-t border-surface-container-low/50"
+          >
+            <div class="flex items-center gap-4">
+              <div
+                class="w-10 h-10 flex items-center justify-center rounded-lg bg-surface-container text-outline"
+              >
+                <span
+                  class="material-symbols-outlined"
+                  data-icon="dark_mode"
+                  style=""
+                  >dark_mode</span
+                >
+              </div>
+              <span class="font-medium text-on-surface" style=""
+                >Modo Escuro</span
+              >
+            </div>
+            <div class="relative inline-flex items-center cursor-pointer">
+              <input class="sr-only peer" type="checkbox" value="" />
+              <div
+                class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"
+              ></div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- Section 3: Segurança -->
+      <section class="space-y-4">
+        <h3
+          class="text-xs font-bold uppercase tracking-widest text-on-surface-variant px-1"
+          style=""
+        >
+          Segurança
+        </h3>
+        <div class="bg-surface-container-lowest rounded-xl overflow-hidden">
+          <div
+            class="flex items-center justify-between p-4 hover:bg-slate-50 transition-colors cursor-pointer group"
+          >
+            <div class="flex items-center gap-4">
+              <div
+                class="w-10 h-10 flex items-center justify-center rounded-lg bg-surface-container text-outline"
+              >
+                <span
+                  class="material-symbols-outlined"
+                  data-icon="lock_reset"
+                  style=""
+                  >lock_reset</span
+                >
+              </div>
+              <span class="font-medium text-on-surface" style=""
+                >Alterar Senha</span
+              >
+            </div>
+            <span
+              class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors"
+              data-icon="chevron_right"
+              style=""
+              >chevron_right</span
+            >
+          </div>
+          <div
+            class="flex items-center justify-between p-4 border-t border-surface-container-low/50"
+          >
+            <div class="flex items-center gap-4">
+              <div
+                class="w-10 h-10 flex items-center justify-center rounded-lg bg-surface-container text-outline"
+              >
+                <span
+                  class="material-symbols-outlined"
+                  data-icon="fingerprint"
+                  style=""
+                  >fingerprint</span
+                >
+              </div>
+              <span class="font-medium text-on-surface" style=""
+                >Biometria</span
+              >
+            </div>
+            <div class="relative inline-flex items-center cursor-pointer">
+              <input checked="" class="sr-only peer" type="checkbox" value="" />
+              <div
+                class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"
+              ></div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- Section 4: Suporte & Legal -->
+      <section class="space-y-4">
+        <h3
+          class="text-xs font-bold uppercase tracking-widest text-on-surface-variant px-1"
+          style=""
+        >
+          Suporte &amp; Legal
+        </h3>
+        <div class="bg-surface-container-lowest rounded-xl overflow-hidden">
+          <div
+            class="flex items-center justify-between p-4 hover:bg-slate-50 transition-colors cursor-pointer group"
+          >
+            <div class="flex items-center gap-4">
+              <div
+                class="w-10 h-10 flex items-center justify-center rounded-lg bg-surface-container text-outline"
+              >
+                <span
+                  class="material-symbols-outlined"
+                  data-icon="help_center"
+                  style=""
+                  >help_center</span
+                >
+              </div>
+              <span class="font-medium text-on-surface" style="">Ajuda</span>
+            </div>
+            <span
+              class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors"
+              data-icon="chevron_right"
+              style=""
+              >chevron_right</span
+            >
+          </div>
+          <div
+            class="flex items-center justify-between p-4 hover:bg-slate-50 transition-colors cursor-pointer group"
+          >
+            <div class="flex items-center gap-4">
+              <div
+                class="w-10 h-10 flex items-center justify-center rounded-lg bg-surface-container text-outline"
+              >
+                <span
+                  class="material-symbols-outlined"
+                  data-icon="description"
+                  style=""
+                  >description</span
+                >
+              </div>
+              <span class="font-medium text-on-surface" style=""
+                >Termos de Uso</span
+              >
+            </div>
+            <span
+              class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors"
+              data-icon="chevron_right"
+              style=""
+              >chevron_right</span
+            >
+          </div>
+          <div
+            class="flex items-center justify-between p-4 hover:bg-slate-50 transition-colors cursor-pointer group"
+          >
+            <div class="flex items-center gap-4">
+              <div
+                class="w-10 h-10 flex items-center justify-center rounded-lg bg-surface-container text-outline"
+              >
+                <span
+                  class="material-symbols-outlined"
+                  data-icon="info"
+                  style=""
+                  >info</span
+                >
+              </div>
+              <span class="font-medium text-on-surface" style="">Sobre</span>
+            </div>
+            <span
+              class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors"
+              data-icon="chevron_right"
+              style=""
+              >chevron_right</span
+            >
+          </div>
+        </div>
+      </section>
+      <!-- Bottom: Sair da Conta -->
+      <section class="pt-4">
+        <button
+          class="w-full flex items-center justify-center gap-3 py-4 text-error font-bold border border-error/10 rounded-xl hover:bg-error/5 transition-all active:scale-95"
+          style=""
+        >
+          <span class="material-symbols-outlined" data-icon="logout" style=""
+            >logout</span
+          >
+          Sair da Conta
+        </button>
+        <p
+          class="text-center text-[10px] text-outline-variant mt-8 uppercase tracking-[0.2em]"
+          style=""
+        >
+          Versão 2.4.0 (2024)
+        </p>
+      </section>
+    </main>
+    <!-- BottomNavBar (Filtered based on Top-Level Destination rule) -->
+    <nav
+      class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-2 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-t border-slate-100/20 shadow-2xl shadow-blue-900/5"
+    >
+      <a
+        class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-500 px-3 py-1.5 hover:text-blue-500 transition-all"
+        href="#"
+        style=""
+      >
+        <span class="material-symbols-outlined" data-icon="home" style=""
+          >home</span
+        >
+        <span class="font-inter text-[11px] font-medium tracking-wide" style=""
+          >Início</span
+        >
+      </a>
+      <a
+        class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-500 px-3 py-1.5 hover:text-blue-500 transition-all"
+        href="#"
+        style=""
+      >
+        <span class="material-symbols-outlined" data-icon="search" style=""
+          >search</span
+        >
+        <span class="font-inter text-[11px] font-medium tracking-wide" style=""
+          >Busca</span
+        >
+      </a>
+      <a
+        class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-500 px-3 py-1.5 hover:text-blue-500 transition-all"
+        href="#"
+        style=""
+      >
+        <span
+          class="material-symbols-outlined"
+          data-icon="receipt_long"
+          style=""
+          >receipt_long</span
+        >
+        <span class="font-inter text-[11px] font-medium tracking-wide" style=""
+          >Pedidos</span
+        >
+      </a>
+      <a
+        class="flex flex-col items-center justify-center bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-xl px-3 py-1.5"
+        href="#"
+        style=""
+      >
+        <span
+          class="material-symbols-outlined"
+          data-icon="person"
+          data-weight="fill"
+          style=""
+          >person</span
+        >
+        <span class="font-inter text-[11px] font-medium tracking-wide" style=""
+          >Perfil</span
+        >
+      </a>
+    </nav>
+  </body>
+</html>

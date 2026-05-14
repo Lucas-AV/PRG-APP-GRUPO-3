@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-highest": "#dde4e5",
+                        "outline": "#757c7d",
+                        "on-primary-container": "#0049bb",
+                        "inverse-primary": "#5e8bff",
+                        "tertiary-fixed-dim": "#d3caeb",
+                        "primary-fixed-dim": "#c7d3ff",
+                        "on-primary": "#f8f7ff",
+                        "surface-bright": "#f9f9f9",
+                        "tertiary-fixed": "#e1d8fa",
+                        "surface-container-high": "#e4e9ea",
+                        "secondary": "#5f5f62",
+                        "primary": "#0054d6",
+                        "secondary-fixed-dim": "#d5d4d8",
+                        "on-tertiary": "#fcf7ff",
+                        "on-secondary-container": "#515155",
+                        "on-tertiary-fixed": "#3d3852",
+                        "on-error": "#fff7f6",
+                        "tertiary-container": "#e1d8fa",
+                        "error": "#9f403d",
+                        "primary-dim": "#004abd",
+                        "on-surface-variant": "#5a6061",
+                        "on-tertiary-fixed-variant": "#5a5470",
+                        "on-primary-fixed-variant": "#0052d0",
+                        "surface-tint": "#0054d6",
+                        "on-secondary-fixed-variant": "#5b5b5f",
+                        "on-primary-fixed": "#003894",
+                        "surface-variant": "#dde4e5",
+                        "on-tertiary-container": "#504b66",
+                        "on-secondary": "#faf8fc",
+                        "surface": "#f9f9f9",
+                        "error-container": "#fe8983",
+                        "surface-container": "#ebeeef",
+                        "background": "#f9f9f9",
+                        "on-surface": "#2d3435",
+                        "surface-container-low": "#f2f4f4",
+                        "error-dim": "#4e0309",
+                        "secondary-fixed": "#e4e2e6",
+                        "inverse-on-surface": "#9c9d9d",
+                        "on-error-container": "#752121",
+                        "secondary-dim": "#535356",
+                        "inverse-surface": "#0c0f0f",
+                        "tertiary-dim": "#554f6b",
+                        "surface-container-lowest": "#ffffff",
+                        "on-background": "#2d3435",
+                        "primary-fixed": "#dae1ff",
+                        "on-secondary-fixed": "#3f3f43",
+                        "secondary-container": "#e4e2e6",
+                        "outline-variant": "#adb3b4",
+                        "tertiary": "#615b77",
+                        "surface-dim": "#d4dbdd",
+                        "primary-container": "#dae1ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.5rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, h4 { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface-bright text-on-surface selection:bg-primary-container">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#f9f9f9]/80 dark:bg-slate-950/80 backdrop-blur-xl flex justify-between items-center px-5 h-16 w-full">
+<div class="flex items-center gap-4">
+<button class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-[#ebeeef] transition-colors active:scale-95 duration-150">
+<span class="material-symbols-outlined text-[#0066FF]">arrow_back</span>
+</button>
+<h1 class="text-xl font-bold tracking-tight text-[#2d3435] dark:text-slate-100">Subscriptions</h1>
+</div>
+<button class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-[#ebeeef] transition-colors active:scale-95 duration-150">
+<span class="material-symbols-outlined text-[#5a6061]">more_vert</span>
+</button>
+</header>
+<main class="pt-20 pb-28 px-5 max-w-5xl mx-auto">
+<!-- Segmented Control Tabs -->
+<div class="flex p-1 bg-surface-container-highest rounded-full mb-8 max-w-md mx-auto">
+<button class="flex-1 py-2 text-sm font-semibold rounded-full bg-surface-container-lowest text-primary shadow-sm">Para Clientes</button>
+<button class="flex-1 py-2 text-sm font-medium rounded-full text-on-surface-variant hover:text-on-surface transition-colors">Para Prestadores</button>
+</div>
+<!-- Section: Headline & Context -->
+<div class="mb-10 text-center md:text-left">
+<h2 class="text-3xl font-extrabold text-on-surface mb-2">Seu Plano Atual</h2>
+<p class="text-on-surface-variant text-sm max-w-lg">Gerencie suas assinaturas e descubra novas formas de aproveitar o SevGen ao máximo.</p>
+</div>
+<!-- Layout: Current Plan (Asymmetric Focus) -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6 mb-12">
+<!-- Current Plan Card -->
+<div class="md:col-span-8 bg-surface-container-lowest rounded-2xl p-8 flex flex-col md:flex-row gap-8 items-start relative overflow-hidden group">
+<!-- Visual Accent Gradient -->
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-full -mr-10 -mt-10 group-hover:scale-110 transition-transform duration-500"></div>
+<div class="flex-1 z-10">
+<span class="inline-block px-3 py-1 rounded-full bg-primary-container text-on-primary-container text-[10px] font-bold tracking-widest uppercase mb-4">Plano Ativo</span>
+<h3 class="text-4xl font-extrabold mb-2">Plano Free</h3>
+<p class="text-on-surface-variant mb-6 text-sm">Ideal para quem está começando e busca serviços pontuais.</p>
+<ul class="space-y-3 mb-8">
+<li class="flex items-center gap-3 text-sm text-on-surface">
+<span class="material-symbols-outlined text-primary text-lg" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                            Acesso a todos os serviços
+                        </li>
+<li class="flex items-center gap-3 text-sm text-on-surface">
+<span class="material-symbols-outlined text-primary text-lg" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                            Histórico de agendamentos
+                        </li>
+</ul>
+<button class="px-6 py-3 bg-secondary-container text-on-secondary-container font-bold rounded-lg hover:bg-surface-container-high transition-colors active:scale-95">
+                        Gerenciar Plano
+                    </button>
+</div>
+<div class="w-full md:w-48 aspect-square rounded-xl bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover grayscale opacity-80" data-alt="Modern minimalist aesthetic with clean lines and soft lighting on a professional work desk with plants" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDg9GY5xCecZOcCCPNkEajROTl2tzxMHuLuox5DpKpi_uDcbUD__DcpxvpjfTBcZQErMpRr6ZQxjj07iBgX-BZimZq-GckN1fu3TZfurXI4y8UL609g1l7XXN9eiMBmssGll0FKFFYPuwI4OXOYoUciYv_c03P8IBBeNjafbvoKKj4QP4NOyyH_FaJSGpaHz-LVUIBprtorOKjnrl95s4eAOekRaiYMFtUFIddIe-y2Qv5ExbPI62xhwnLbBKFnjXocKLLpxTRc3J4"/>
+</div>
+</div>
+<!-- Stats/Context Side Card -->
+<div class="md:col-span-4 bg-primary rounded-2xl p-8 text-on-primary flex flex-col justify-between">
+<div>
+<h4 class="text-lg font-bold mb-2">Economize Mais</h4>
+<p class="text-primary-fixed-dim text-xs leading-relaxed">Usuários Plus economizam em média R$ 45,00 por mês com cupons exclusivos.</p>
+</div>
+<div class="mt-8">
+<div class="text-3xl font-black mb-1">08</div>
+<div class="text-[10px] uppercase tracking-widest font-bold opacity-70">Agendamentos este mês</div>
+</div>
+</div>
+</div>
+<!-- Section: Upgrades (Bento Style Grid) -->
+<div class="mb-6">
+<h2 class="text-2xl font-bold mb-6">Recomendado para você</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Premium Plan Main -->
+<div class="lg:col-span-2 bg-surface-container-lowest rounded-2xl p-8 border border-primary/10 flex flex-col md:flex-row gap-8 relative">
+<div class="flex-1">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
+<span class="font-bold text-primary">SevGen Plus</span>
+</div>
+<div class="mb-6">
+<span class="text-4xl font-black">R$ 19,90</span>
+<span class="text-on-surface-variant text-sm">/mês</span>
+</div>
+<ul class="space-y-4 mb-8">
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary mt-0.5">bolt</span>
+<div>
+<p class="text-sm font-bold">Prioridade em agendamentos</p>
+<p class="text-xs text-on-surface-variant">Sua solicitação aparece primeiro para os profissionais.</p>
+</div>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary mt-0.5">confirmation_number</span>
+<div>
+<p class="text-sm font-bold">Cupons exclusivos mensais</p>
+<p class="text-xs text-on-surface-variant">Descontos de até 20% em serviços selecionados.</p>
+</div>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary mt-0.5">verified_user</span>
+<div>
+<p class="text-sm font-bold">Selo de cliente VIP</p>
+<p class="text-xs text-on-surface-variant">Destaque seu perfil na plataforma.</p>
+</div>
+</li>
+</ul>
+<button class="w-full md:w-auto px-10 py-4 bg-gradient-to-br from-primary to-primary-dim text-on-primary font-bold rounded-xl shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform active:scale-95">
+                            Assinar Agora
+                        </button>
+</div>
+<div class="hidden md:block w-1/3 rounded-xl overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Smiling professional woman in a modern bright office environment using a tablet" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYLanjLW2sdCwborIbP3-qIGd5VahnXccwyKkCmfJqCe2gUkOx3geEoSGMsTGdUtt8chaoGhH77pi2xZsi8mz14khmiHWH59h6VyBiFqMdzckLWRnFFA_kLyuPLcVeuhuo1wHLItvajRECGo7V3xBjna7jCQ-NOtMwyQNTTdndK4Cku-ryXqwkFrxLLRmFYsDglLXkhhe7vyGfabw620Vi-_5SCQ5qRw4yLZxtKlzrRPiGae-FNo6DoNa_nEKjBPnObJdJHYF0lx8"/>
+</div>
+</div>
+<!-- Secondary Bento Card - Feature highlight -->
+<div class="bg-surface-container-high rounded-2xl p-8 flex flex-col justify-between">
+<div>
+<div class="w-12 h-12 bg-surface-container-lowest rounded-xl flex items-center justify-center mb-6 shadow-sm">
+<span class="material-symbols-outlined text-primary">support_agent</span>
+</div>
+<h4 class="text-xl font-bold mb-2">Suporte Prioritário</h4>
+<p class="text-on-surface-variant text-sm">Atendimento em menos de 5 minutos via chat direto no app.</p>
+</div>
+<div class="mt-8 flex -space-x-3">
+<div class="w-10 h-10 rounded-full border-2 border-surface-container-high bg-slate-300 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Portrait of a female support agent" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDeSF0jLrgIVmEDSQStpci_XWFNpVTW6YcSRDDSxGrxfuCbKaavft_0bOWhE4GHT-f_8oxfbuvEZOoRnXaiYJ8xdkijyhqF6UURY4ho8I_NK8rD6IbsrWmrbZMKpdEmB3Ba8ZA_SVhR80bMFixn_ggmCyLmqwnaWkDaHRVfTWsHtUieqhYk16YpqD3Cp743LsIGzGnhVck4a0u0m84wp4mN_xA-A_FN58KQF_i3C2IFZxXW3ZnzjjAv4t9WoB-yqMuCvO4ikSNxjOk"/>
+</div>
+<div class="w-10 h-10 rounded-full border-2 border-surface-container-high bg-slate-300 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Portrait of a male support agent" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCn1jbn2YxVinJcLBPhOESg9G3kEATT6RI4K-Tt1tisWBwq7O2Nh-XmwiqTzqxLDM-7CeCSZoYTB9P0am7iwRKkb5c3flE95ab6LYEhQtOG-duxGdqRgiOcPL-C0LWxEgAUdhEGDKAZ3m1NpxPLrcOqOeoyoOLD3JAaSSnwruuuIJ_HL3RtB9_G7-egbVf-j19vU-oLuj_PCqINavItZ8Os4xn101dIpushoGF6S2P7G6vB0WtMz9OccRWoq0k8ISBuVa_vLIi9ESI"/>
+</div>
+<div class="w-10 h-10 rounded-full border-2 border-surface-container-high bg-primary flex items-center justify-center text-[10px] text-white font-bold">
+                            +12
+                        </div>
+</div>
+</div>
+</div>
+</div>
+<!-- Provider-specific teaser (Even on client view, to encourage switching) -->
+<div class="mt-12 bg-surface-container-lowest rounded-2xl p-6 flex items-center justify-between gap-4 border border-outline-variant/10">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-tertiary-container text-on-tertiary-container rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined">storefront</span>
+</div>
+<div>
+<h5 class="text-sm font-bold">Também é um prestador?</h5>
+<p class="text-xs text-on-surface-variant">Confira os planos Elite Pro para o seu negócio.</p>
+</div>
+</div>
+<button class="text-primary text-sm font-bold flex items-center gap-1 hover:underline">
+                Ver Planos Pro
+                <span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 h-20 pb-safe bg-[#f9f9f9]/80 dark:bg-slate-950/80 backdrop-blur-xl z-50 rounded-t-2xl shadow-[0_-4px_20px_rgba(0,0,0,0.04)] dark:shadow-none">
+<a class="flex flex-col items-center justify-center text-[#5a6061] dark:text-slate-400 hover:text-[#0066FF] transition-all" href="#">
+<span class="material-symbols-outlined">search</span>
+<span class="text-[11px] font-medium tracking-wide Inter">Explore</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5a6061] dark:text-slate-400 hover:text-[#0066FF] transition-all" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="text-[11px] font-medium tracking-wide Inter">Bookings</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5a6061] dark:text-slate-400 hover:text-[#0066FF] transition-all" href="#">
+<span class="material-symbols-outlined">chat_bubble</span>
+<span class="text-[11px] font-medium tracking-wide Inter">Inbox</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#0066FF] dark:text-[#3385FF] font-bold active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
+<span class="text-[11px] font-medium tracking-wide Inter">Plans</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5a6061] dark:text-slate-400 hover:text-[#0066FF] transition-all" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[11px] font-medium tracking-wide Inter">Profile</span>
+</a>
+</nav>
+</body></html>

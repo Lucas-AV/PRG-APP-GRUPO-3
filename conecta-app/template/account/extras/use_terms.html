@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+
+<html class="light" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-container-low": "#f2f4f4",
+              "inverse-surface": "#0c0f0f",
+              "error-container": "#fe8983",
+              "secondary": "#5f5f62",
+              "surface-tint": "#0054d6",
+              "surface-variant": "#dde4e5",
+              "surface": "#f9f9f9",
+              "error-dim": "#4e0309",
+              "on-primary": "#f8f7ff",
+              "secondary-dim": "#535356",
+              "on-tertiary": "#fcf7ff",
+              "primary-container": "#dae1ff",
+              "on-surface": "#2d3435",
+              "on-tertiary-fixed": "#3d3852",
+              "on-primary-fixed": "#003894",
+              "tertiary-dim": "#554f6b",
+              "surface-dim": "#d4dbdd",
+              "error": "#9f403d",
+              "surface-container": "#ebeeef",
+              "on-primary-container": "#0049bb",
+              "secondary-fixed-dim": "#d5d4d8",
+              "outline-variant": "#adb3b4",
+              "surface-bright": "#f9f9f9",
+              "tertiary": "#615b77",
+              "primary-fixed": "#dae1ff",
+              "on-surface-variant": "#5a6061",
+              "on-error-container": "#752121",
+              "tertiary-fixed-dim": "#d3caeb",
+              "surface-container-high": "#e4e9ea",
+              "primary-dim": "#004abd",
+              "on-secondary-container": "#515155",
+              "on-secondary-fixed": "#3f3f43",
+              "inverse-on-surface": "#9c9d9d",
+              "on-error": "#fff7f6",
+              "background": "#f9f9f9",
+              "tertiary-container": "#e1d8fa",
+              "inverse-primary": "#5e8bff",
+              "on-secondary-fixed-variant": "#5b5b5f",
+              "primary-fixed-dim": "#c7d3ff",
+              "primary": "#0054d6",
+              "surface-container-highest": "#dde4e5",
+              "surface-container-lowest": "#ffffff",
+              "on-secondary": "#faf8fc",
+              "secondary-fixed": "#e4e2e6",
+              "tertiary-fixed": "#e1d8fa",
+              "outline": "#757c7d",
+              "on-tertiary-container": "#504b66",
+              "on-primary-fixed-variant": "#0052d0",
+              "on-tertiary-fixed-variant": "#5a5470",
+              "secondary-container": "#e4e2e6",
+              "on-background": "#2d3435"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      body {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#f9f9f9]/80 backdrop-blur-md flex items-center justify-between px-5 h-16 w-full">
+<div class="flex items-center gap-4">
+<button class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-[#ebeeef] transition-colors active:scale-95 duration-200 text-[#0066FF]">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+<h1 class="font-['Manrope'] font-bold text-lg tracking-tight text-on-surface">Termos de Uso</h1>
+</div>
+<div class="flex items-center gap-2">
+<button class="hidden md:flex items-center px-4 py-2 text-[#5a6061] font-['Inter'] text-[14px] font-medium hover:bg-[#ebeeef] rounded-lg transition-colors">Português (BR)</button>
+</div>
+</header>
+<!-- Main Content -->
+<main class="pt-24 pb-32 px-5 max-w-3xl mx-auto">
+<!-- Header Section -->
+<section class="mb-12">
+<div class="inline-flex items-center px-3 py-1 rounded-full bg-primary-container text-on-primary-container text-xs font-bold mb-4">
+                DOCUMENTAÇÃO LEGAL
+            </div>
+<h2 class="font-headline text-4xl font-extrabold text-on-surface leading-tight mb-3">Termos de Uso</h2>
+<p class="text-on-surface-variant font-medium text-sm">Última atualização: Janeiro 2024</p>
+</section>
+<!-- Document Content -->
+<div class="space-y-10">
+<!-- Intro -->
+<article class="space-y-4">
+<h3 class="font-headline text-xl font-bold text-[#0066FF] flex items-center gap-2">
+<span class="w-1.5 h-6 bg-primary rounded-full"></span>
+                    1. Introdução
+                </h3>
+<div class="space-y-3 text-on-surface-variant leading-relaxed">
+<p>Bem-vindo ao SevGen. Ao acessar ou utilizar nossa plataforma, você concorda em cumprir e estar vinculado aos seguintes Termos de Uso. Este documento rege o relacionamento entre o SevGen e os usuários de nossos serviços.</p>
+<p>O SevGen é um marketplace que conecta prestadores de serviços independentes a clientes em potencial. Não somos empregadores, agentes ou representantes de nenhum dos prestadores listados.</p>
+</div>
+</article>
+<!-- 2. Elegibilidade -->
+<article class="space-y-4">
+<h3 class="font-headline text-xl font-bold text-[#0066FF] flex items-center gap-2">
+<span class="w-1.5 h-6 bg-primary rounded-full"></span>
+                    2. Elegibilidade e Cadastro
+                </h3>
+<div class="space-y-3 text-on-surface-variant leading-relaxed">
+<p>Para utilizar o SevGen, você deve ter pelo menos 18 anos de idade e capacidade legal para celebrar contratos. Ao criar uma conta, você se compromete a fornecer informações precisas, completas e atualizadas.</p>
+<div class="p-4 bg-surface-container-low rounded-xl border-l-4 border-primary/30">
+<p class="text-sm font-medium">A segurança da sua senha é de sua inteira responsabilidade. Notifique-nos imediatamente sobre qualquer uso não autorizado de sua conta.</p>
+</div>
+</div>
+</article>
+<!-- 3. Responsabilidades -->
+<article class="space-y-4">
+<h3 class="font-headline text-xl font-bold text-[#0066FF] flex items-center gap-2">
+<span class="w-1.5 h-6 bg-primary rounded-full"></span>
+                    3. Responsabilidades do Usuário
+                </h3>
+<div class="space-y-3 text-on-surface-variant leading-relaxed">
+<p>Os usuários concordam em utilizar a plataforma de forma ética e legal. É estritamente proibido:</p>
+<ul class="list-none space-y-2 ml-2">
+<li class="flex gap-3">
+<span class="material-symbols-outlined text-primary text-sm mt-1" data-icon="check_circle">check_circle</span>
+<span>Publicar conteúdo falso, enganoso ou difamatório.</span>
+</li>
+<li class="flex gap-3">
+<span class="material-symbols-outlined text-primary text-sm mt-1" data-icon="check_circle">check_circle</span>
+<span>Tentar burlar os sistemas de pagamento da plataforma.</span>
+</li>
+<li class="flex gap-3">
+<span class="material-symbols-outlined text-primary text-sm mt-1" data-icon="check_circle">check_circle</span>
+<span>Assediar ou prejudicar outros usuários ou prestadores.</span>
+</li>
+</ul>
+</div>
+</article>
+<!-- Visual Break / Asymmetric Card -->
+<div class="relative overflow-hidden rounded-2xl bg-inverse-surface p-8 text-white my-12 shadow-xl">
+<div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+<div class="max-w-md">
+<h4 class="font-headline text-2xl font-bold mb-2">Dúvidas sobre os termos?</h4>
+<p class="text-surface-variant/80 text-sm">Nossa equipe de suporte jurídico está disponível para esclarecer qualquer ponto desta documentação.</p>
+</div>
+<button class="bg-primary hover:bg-primary-dim text-white px-6 py-3 rounded-xl font-bold transition-all active:scale-95 whitespace-nowrap">
+                        Falar com Suporte
+                    </button>
+</div>
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary/20 blur-3xl rounded-full -mr-10 -mt-10"></div>
+</div>
+<!-- 4. Pagamentos -->
+<article class="space-y-4">
+<h3 class="font-headline text-xl font-bold text-[#0066FF] flex items-center gap-2">
+<span class="w-1.5 h-6 bg-primary rounded-full"></span>
+                    4. Pagamentos e Cancelamentos
+                </h3>
+<div class="space-y-3 text-on-surface-variant leading-relaxed">
+<p>Todos os pagamentos são processados através de parceiros seguros. O SevGen retém uma taxa de serviço sobre as transações concluídas para manutenção da plataforma.</p>
+<p>Cancelamentos seguem a política específica de cada prestador, respeitando o Código de Defesa do Consumidor.</p>
+</div>
+</article>
+<!-- 5. Propriedade Intelectual -->
+<article class="space-y-4">
+<h3 class="font-headline text-xl font-bold text-[#0066FF] flex items-center gap-2">
+<span class="w-1.5 h-6 bg-primary rounded-full"></span>
+                    5. Propriedade Intelectual
+                </h3>
+<div class="space-y-3 text-on-surface-variant leading-relaxed">
+<p>A marca SevGen, logotipos, designs e código-fonte são de propriedade exclusiva da SevGen Marketplace S.A. O uso não autorizado é passível de sanções legais.</p>
+</div>
+</article>
+<!-- 6. Limitação de Responsabilidade -->
+<article class="space-y-4">
+<h3 class="font-headline text-xl font-bold text-[#0066FF] flex items-center gap-2">
+<span class="w-1.5 h-6 bg-primary rounded-full"></span>
+                    6. Limitação de Responsabilidade
+                </h3>
+<div class="space-y-3 text-on-surface-variant leading-relaxed">
+<p>O SevGen não se responsabiliza pela qualidade técnica dos serviços prestados, sendo esta de responsabilidade integral do profissional contratado. Atuamos apenas como facilitadores da conexão e transação financeira.</p>
+</div>
+</article>
+<!-- Footer Note -->
+<div class="pt-12 border-t border-surface-container-high text-center">
+<p class="text-on-surface-variant text-xs italic">Ao continuar navegando em nossa plataforma, você confirma que leu e compreendeu estes termos.</p>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full h-20 flex justify-around items-center px-6 pb-safe bg-white/80 backdrop-blur-md shadow-[0_-1px_0_0_rgba(0,0,0,0.05)] rounded-t-2xl z-50">
+<a class="flex flex-col items-center justify-center text-[#5a6061] px-4 py-1.5 hover:text-[#0066FF] transition-colors active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-['Inter'] text-[11px] font-medium tracking-wide">Início</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5a6061] px-4 py-1.5 hover:text-[#0066FF] transition-colors active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+<span class="font-['Inter'] text-[11px] font-medium tracking-wide">Explorar</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5a6061] px-4 py-1.5 hover:text-[#0066FF] transition-colors active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+<span class="font-['Inter'] text-[11px] font-medium tracking-wide">Pedidos</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-[#dae1ff] text-[#0066FF] rounded-xl px-4 py-1.5 active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="person" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="font-['Inter'] text-[11px] font-bold tracking-wide">Perfil</span>
+</a>
+</nav>
+</body></html>
