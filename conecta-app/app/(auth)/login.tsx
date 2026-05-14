@@ -9,6 +9,7 @@ import {
   Platform,
   ActivityIndicator,
   Alert,
+  Modal,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
@@ -27,6 +28,31 @@ export default function LoginScreen() {
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const [resetVisible, setResetVisible] = useState(false);
+  const [resetEmail, setResetEmail] = useState('');
+  const [resetEmailError, setResetEmailError] = useState('');
+  const [resetLoading, setResetLoading] = useState(false);
+  const [resetSent, setResetSent] = useState(false);
+
+  const openReset = () => {
+    setResetEmail('');
+    setResetEmailError('');
+    setResetSent(false);
+    setResetVisible(true);
+  };
+
+  const handleResetSubmit = async () => {
+    if (!EMAIL_REGEX.test(resetEmail.trim())) {
+      setResetEmailError('Informe um e-mail válido.');
+      return;
+    }
+    setResetEmailError('');
+    setResetLoading(true);
+    await new Promise(r => setTimeout(r, 1200));
+    setResetLoading(false);
+    setResetSent(true);
+  };
 
   const validate = () => {
     let valid = true;
@@ -106,7 +132,7 @@ export default function LoginScreen() {
             <View style={styles.passwordGroup}>
               <View style={styles.passwordLabelRow}>
                 <Text style={styles.passwordLabel}>SENHA</Text>
-                <Pressable>
+                <Pressable onPress={openReset}>
                   <Text style={styles.forgotLink}>Esqueceu a senha?</Text>
                 </Pressable>
               </View>
@@ -158,6 +184,66 @@ export default function LoginScreen() {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
+      {/* Reset password modal */}
+      <Modal
+        visible={resetVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setResetVisible(false)}
+      >
+        <Pressable style={styles.backdrop} onPress={() => setResetVisible(false)}>
+          <Pressable style={styles.resetCard} onPress={() => {}}>
+            {resetSent ? (
+              <>
+                <View style={styles.resetIconWrap}>
+                  <MaterialIcons name="mark-email-read" size={32} color={Colors.primary} />
+                </View>
+                <Text style={styles.resetTitle}>E-mail enviado!</Text>
+                <Text style={styles.resetSubtitle}>
+                  Se este endereço estiver cadastrado, você receberá um link para redefinir sua senha em breve.
+                </Text>
+                <GradientButton
+                  label="Fechar"
+                  onPress={() => setResetVisible(false)}
+                  style={styles.resetCta}
+                />
+              </>
+            ) : (
+              <>
+                <View style={styles.resetIconWrap}>
+                  <MaterialIcons name="lock-reset" size={32} color={Colors.primary} />
+                </View>
+                <Text style={styles.resetTitle}>Redefinir senha</Text>
+                <Text style={styles.resetSubtitle}>
+                  Insira seu e-mail e enviaremos um link para criar uma nova senha.
+                </Text>
+                <InputField
+                  label="E-mail"
+                  placeholder="seu@email.com"
+                  value={resetEmail}
+                  onChangeText={text => {
+                    setResetEmail(text);
+                    if (resetEmailError) setResetEmailError('');
+                  }}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  icon="mail"
+                  errorMessage={resetEmailError}
+                />
+                <GradientButton
+                  label={resetLoading ? 'Enviando…' : 'Enviar link'}
+                  onPress={handleResetSubmit}
+                  disabled={resetLoading}
+                  style={styles.resetCta}
+                />
+                <Pressable onPress={() => setResetVisible(false)} style={styles.resetCancel}>
+                  <Text style={styles.resetCancelLabel}>Cancelar</Text>
+                </Pressable>
+              </>
+            )}
+          </Pressable>
+        </Pressable>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -300,6 +386,60 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 14,
     color: Colors.onSurface,
+  },
+
+  // Reset modal
+  backdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.45)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: Spacing.xl,
+  },
+  resetCard: {
+    width: '100%',
+    backgroundColor: Colors.surfaceContainerLowest,
+    borderRadius: Radius.lg,
+    padding: Spacing.xxxl,
+    gap: Spacing.xxl,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.12,
+    shadowRadius: 32,
+    elevation: 10,
+  },
+  resetIconWrap: {
+    alignSelf: 'center',
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: Colors.primaryContainer,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  resetTitle: {
+    fontFamily: FontFamily.headlineExtraBold,
+    fontSize: 22,
+    color: Colors.onSurface,
+    textAlign: 'center',
+    letterSpacing: -0.4,
+  },
+  resetSubtitle: {
+    fontFamily: FontFamily.bodyRegular,
+    fontSize: 14,
+    color: Colors.onSurfaceVariant,
+    textAlign: 'center',
+    lineHeight: 20,
+  },
+  resetCta: { marginTop: Spacing.xs },
+  resetCancel: {
+    alignItems: 'center',
+    paddingVertical: Spacing.sm,
+  },
+  resetCancelLabel: {
+    fontFamily: FontFamily.bodySemiBold,
+    fontSize: 14,
+    color: Colors.outline,
   },
 
   // Footer
