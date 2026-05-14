@@ -7,6 +7,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { router } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
 import { TopAppBar } from '@/components/ui/top-app-bar';
 import { Colors, FontFamily, Spacing, Radius } from '@/constants/theme';
@@ -146,12 +147,14 @@ export default function PaymentHistoryScreen() {
                 {group.transactions.map((tx, idx) => {
                   const s = STATUS_STYLE[tx.status];
                   return (
-                    <View
+                    <Pressable
                       key={tx.id}
-                      style={[
+                      style={({ pressed }) => [
                         styles.txItem,
                         idx < group.transactions.length - 1 && styles.txItemBorder,
+                        pressed && { backgroundColor: Colors.surfaceContainerLow },
                       ]}
+                      onPress={() => router.push('/(account)/receipt' as any)}
                     >
                       <View style={[styles.txIconBox, { backgroundColor: tx.iconBg }]}>
                         <MaterialIcons name={tx.icon} size={22} color={tx.iconColor} />
@@ -168,7 +171,7 @@ export default function PaymentHistoryScreen() {
                           </Text>
                         </View>
                       </View>
-                    </View>
+                    </Pressable>
                   );
                 })}
               </View>
