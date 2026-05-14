@@ -95,7 +95,12 @@ export default function PaymentsScreen() {
                   idx < SAVED_CARDS.length - 1 && styles.cardRowBorder,
                   pressed && { backgroundColor: Colors.surfaceContainerLow },
                 ]}
-                onPress={comingSoon}
+                onPress={() =>
+                  router.push({
+                    pathname: '/(account)/card-detail' as any,
+                    params: { brand: card.brand, last4: card.last4, expiry: card.expiry },
+                  })
+                }
               >
                 <View style={styles.cardIconWrap}>
                   <MaterialIcons name="credit-card" size={22} color={Colors.primary} />
