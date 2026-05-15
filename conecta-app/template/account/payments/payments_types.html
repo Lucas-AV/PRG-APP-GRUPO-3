@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+
+<html class="light" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "outline-variant": "#adb3b4",
+              "primary-fixed": "#dae1ff",
+              "on-tertiary-fixed-variant": "#5a5470",
+              "surface-container-lowest": "#ffffff",
+              "surface-variant": "#dde4e5",
+              "tertiary-fixed": "#e1d8fa",
+              "tertiary-container": "#e1d8fa",
+              "inverse-surface": "#0c0f0f",
+              "on-primary-fixed-variant": "#0052d0",
+              "on-secondary-fixed": "#3f3f43",
+              "on-tertiary": "#fcf7ff",
+              "surface-container": "#ebeeef",
+              "secondary-container": "#e4e2e6",
+              "error": "#9f403d",
+              "primary-dim": "#004abd",
+              "background": "#f9f9f9",
+              "on-error": "#fff7f6",
+              "secondary-dim": "#535356",
+              "on-error-container": "#752121",
+              "error-container": "#fe8983",
+              "error-dim": "#4e0309",
+              "primary": "#0054d6",
+              "on-secondary": "#faf8fc",
+              "on-surface-variant": "#5a6061",
+              "surface-container-high": "#e4e9ea",
+              "inverse-on-surface": "#9c9d9d",
+              "secondary": "#5f5f62",
+              "on-primary-fixed": "#003894",
+              "on-tertiary-container": "#504b66",
+              "surface-bright": "#f9f9f9",
+              "secondary-fixed": "#e4e2e6",
+              "secondary-fixed-dim": "#d5d4d8",
+              "on-secondary-container": "#515155",
+              "surface-dim": "#d4dbdd",
+              "on-secondary-fixed-variant": "#5b5b5f",
+              "primary-fixed-dim": "#c7d3ff",
+              "on-primary-container": "#0049bb",
+              "on-background": "#2d3435",
+              "surface-container-low": "#f2f4f4",
+              "primary-container": "#dae1ff",
+              "on-primary": "#f8f7ff",
+              "surface-tint": "#0054d6",
+              "inverse-primary": "#5e8bff",
+              "surface-container-highest": "#dde4e5",
+              "outline": "#757c7d",
+              "on-tertiary-fixed": "#3d3852",
+              "on-surface": "#2d3435",
+              "surface": "#f9f9f9",
+              "tertiary": "#615b77",
+              "tertiary-dim": "#554f6b",
+              "tertiary-fixed-dim": "#d3caeb"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+        }
+        .signature-gradient {
+            background: linear-gradient(135deg, #0054d6 0%, #004abd 100%);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface font-body text-on-surface">
+<!-- TopAppBar -->
+<nav class="fixed top-0 w-full z-50 bg-[#f9f9f9] dark:bg-slate-950">
+<div class="flex items-center px-5 h-16 w-full max-w-7xl mx-auto">
+<button class="text-[#0066FF] dark:text-blue-400 active:scale-95 duration-200 mr-4">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+<h1 class="font-['Manrope'] font-bold text-lg tracking-tight">Pagamento</h1>
+</div>
+<div class="bg-[#f2f4f4] dark:bg-slate-900 h-[1px] w-full"></div>
+</nav>
+<!-- Content Canvas -->
+<main class="pt-20 pb-28 px-5 max-w-3xl mx-auto">
+<!-- Section 1: Wallet/Balance -->
+<section class="mb-8">
+<div class="bg-surface-container-lowest rounded-xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div>
+<span class="text-on-surface-variant font-label text-sm font-medium">Saldo SevGen</span>
+<div class="text-3xl font-headline font-extrabold text-on-surface tracking-tight mt-1">R$ 450,00</div>
+</div>
+<button class="signature-gradient text-on-primary py-3 px-6 rounded-lg font-headline font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[18px]" data-icon="add_circle">add_circle</span>
+                    Adicionar Saldo
+                </button>
+</div>
+</section>
+<!-- Section 2: Payment Methods -->
+<section class="mb-8">
+<div class="flex items-center justify-between mb-4">
+<h2 class="font-headline font-bold text-xl text-on-surface">Cartões salvos</h2>
+</div>
+<div class="space-y-4">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest p-4 rounded-xl flex items-center justify-between hover:bg-surface-container transition-colors cursor-pointer group">
+<div class="flex items-center gap-4">
+<div class="w-12 h-8 bg-surface-container-high rounded flex items-center justify-center overflow-hidden">
+<span class="material-symbols-outlined text-[#0066FF]" data-icon="credit_card">credit_card</span>
+</div>
+<div>
+<p class="font-headline font-bold text-on-surface">Visa final 1234</p>
+<p class="text-on-surface-variant text-xs font-medium">Expira em 08/27</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors" data-icon="chevron_right">chevron_right</span>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest p-4 rounded-xl flex items-center justify-between hover:bg-surface-container transition-colors cursor-pointer group">
+<div class="flex items-center gap-4">
+<div class="w-12 h-8 bg-surface-container-high rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-[#0066FF]" data-icon="credit_card">credit_card</span>
+</div>
+<div>
+<p class="font-headline font-bold text-on-surface">Mastercard final 5678</p>
+<p class="text-on-surface-variant text-xs font-medium">Expira em 12/25</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors" data-icon="chevron_right">chevron_right</span>
+</div>
+<!-- Add New Card -->
+<button class="w-full flex items-center gap-3 p-4 border-2 border-dashed border-outline-variant/30 rounded-xl text-primary font-headline font-bold hover:bg-primary-container/20 transition-all active:scale-[0.98]">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+                    + Adicionar novo cartão
+                </button>
+</div>
+</section>
+<!-- Section 3: Coupons/Discounts -->
+<section class="mb-8">
+<h2 class="font-headline font-bold text-xl text-on-surface mb-4">Cupons e Descontos</h2>
+<div class="bg-surface-container-highest rounded-full p-1.5 flex items-center pl-4 border border-transparent focus-within:border-primary/20 transition-all">
+<span class="material-symbols-outlined text-outline" data-icon="confirmation_number">confirmation_number</span>
+<input class="bg-transparent border-none focus:ring-0 flex-1 text-on-surface font-body text-sm placeholder:text-outline ml-2" placeholder="Inserir código de cupom" type="text"/>
+<button class="bg-surface-container-lowest text-primary px-6 py-2 rounded-full font-headline font-bold text-sm hover:bg-white active:scale-95 transition-all">
+                    Aplicar
+                </button>
+</div>
+<!-- Active Coupon Display -->
+<div class="mt-4 bg-primary-container/30 border border-primary/10 rounded-xl p-4 flex items-center gap-4">
+<div class="bg-primary text-on-primary rounded-lg p-2">
+<span class="material-symbols-outlined" data-icon="percent" data-weight="fill" style="font-variation-settings: 'FILL' 1;">percent</span>
+</div>
+<div>
+<p class="font-headline font-bold text-on-primary-container text-sm">SEVGEN20</p>
+<p class="text-on-surface-variant text-xs">20% de desconto no próximo serviço</p>
+</div>
+<button class="ml-auto text-error text-xs font-bold px-2 py-1">Remover</button>
+</div>
+</section>
+<!-- Section 4: Integrated History Preview -->
+<section>
+<div class="flex items-center justify-between mb-4">
+<h2 class="font-headline font-bold text-xl text-on-surface">Últimas Transações</h2>
+<a class="text-primary text-xs font-bold hover:underline" href="#">Ver histórico completo</a>
+</div>
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden">
+<!-- Transaction 1 -->
+<div class="flex items-center gap-4 p-4 hover:bg-surface-container transition-colors">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="plumbing">plumbing</span>
+</div>
+<div class="flex-1">
+<p class="font-headline font-bold text-on-surface text-sm">Encanador Profissional</p>
+<p class="text-on-surface-variant text-[11px] font-medium">Ontem • 14:30</p>
+</div>
+<div class="text-right">
+<p class="font-headline font-bold text-on-surface text-sm">R$ 180,00</p>
+<p class="text-green-600 text-[10px] font-bold">Concluído</p>
+</div>
+</div>
+<div class="mx-4 h-[1px] bg-surface-container"></div>
+<!-- Transaction 2 -->
+<div class="flex items-center gap-4 p-4 hover:bg-surface-container transition-colors">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="cleaning_services">cleaning_services</span>
+</div>
+<div class="flex-1">
+<p class="font-headline font-bold text-on-surface text-sm">Limpeza Residencial</p>
+<p class="text-on-surface-variant text-[11px] font-medium">12 Set 2023</p>
+</div>
+<div class="text-right">
+<p class="font-headline font-bold text-on-surface text-sm">R$ 150,00</p>
+<p class="text-green-600 text-[10px] font-bold">Concluído</p>
+</div>
+</div>
+<div class="mx-4 h-[1px] bg-surface-container"></div>
+<!-- Transaction 3 -->
+<div class="flex items-center gap-4 p-4 hover:bg-surface-container transition-colors">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="electric_bolt">electric_bolt</span>
+</div>
+<div class="flex-1">
+<p class="font-headline font-bold text-on-surface text-sm">Reparo Elétrico</p>
+<p class="text-on-surface-variant text-[11px] font-medium">05 Set 2023</p>
+</div>
+<div class="text-right">
+<p class="font-headline font-bold text-on-surface text-sm">R$ 120,00</p>
+<p class="text-green-600 text-[10px] font-bold">Concluído</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 rounded-t-2xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-[0_-8px_32px_rgba(0,0,0,0.04)] border-t border-[#adb3b4]/20">
+<div class="flex justify-around items-center h-20 pb-safe px-4 w-full">
+<!-- Início -->
+<button class="flex flex-col items-center justify-center text-[#5a6061] dark:text-slate-500 hover:text-[#0066FF] dark:hover:text-blue-300 transition-all duration-300 ease-out">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-['Inter'] text-[11px] font-medium tracking-wide">Início</span>
+</button>
+<!-- Busca -->
+<button class="flex flex-col items-center justify-center text-[#5a6061] dark:text-slate-500 hover:text-[#0066FF] dark:hover:text-blue-300 transition-all duration-300 ease-out">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+<span class="font-['Inter'] text-[11px] font-medium tracking-wide">Busca</span>
+</button>
+<!-- Pedidos -->
+<button class="flex flex-col items-center justify-center text-[#5a6061] dark:text-slate-500 hover:text-[#0066FF] dark:hover:text-blue-300 transition-all duration-300 ease-out">
+<span class="material-symbols-outlined" data-icon="shopping_bag">shopping_bag</span>
+<span class="font-['Inter'] text-[11px] font-medium tracking-wide">Pedidos</span>
+</button>
+<!-- Perfil (Active) -->
+<button class="flex flex-col items-center justify-center text-[#0066FF] dark:text-blue-400 font-semibold transition-all duration-300 ease-out">
+<span class="material-symbols-outlined" data-icon="person" data-weight="fill" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="font-['Inter'] text-[11px] font-medium tracking-wide">Perfil</span>
+</button>
+</div>
+</nav>
+</body></html>
