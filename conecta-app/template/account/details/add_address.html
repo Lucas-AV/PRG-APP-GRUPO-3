@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+
+<html class="light" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "secondary-fixed-dim": "#d5d4d8",
+              "on-primary-container": "#0049bb",
+              "surface-tint": "#0054d6",
+              "inverse-primary": "#5e8bff",
+              "on-secondary-container": "#515155",
+              "on-error": "#fff7f6",
+              "on-background": "#2d3435",
+              "surface-container": "#ebeeef",
+              "error-container": "#fe8983",
+              "error-dim": "#4e0309",
+              "tertiary-fixed-dim": "#d3caeb",
+              "primary-fixed-dim": "#c7d3ff",
+              "surface-variant": "#dde4e5",
+              "on-tertiary-fixed-variant": "#5a5470",
+              "secondary-container": "#e4e2e6",
+              "primary-container": "#dae1ff",
+              "on-surface": "#2d3435",
+              "primary-dim": "#004abd",
+              "surface-container-high": "#e4e9ea",
+              "on-primary-fixed-variant": "#0052d0",
+              "primary-fixed": "#dae1ff",
+              "surface-bright": "#f9f9f9",
+              "surface-dim": "#d4dbdd",
+              "outline": "#757c7d",
+              "background": "#f9f9f9",
+              "inverse-surface": "#0c0f0f",
+              "primary": "#0054d6",
+              "surface-container-lowest": "#ffffff",
+              "tertiary-fixed": "#e1d8fa",
+              "secondary": "#5f5f62",
+              "on-secondary-fixed": "#3f3f43",
+              "secondary-fixed": "#e4e2e6",
+              "outline-variant": "#adb3b4",
+              "inverse-on-surface": "#9c9d9d",
+              "on-surface-variant": "#5a6061",
+              "on-tertiary-container": "#504b66",
+              "on-tertiary": "#fcf7ff",
+              "on-secondary": "#faf8fc",
+              "surface-container-low": "#f2f4f4",
+              "surface-container-highest": "#dde4e5",
+              "error": "#9f403d",
+              "on-primary-fixed": "#003894",
+              "on-secondary-fixed-variant": "#5b5b5f",
+              "tertiary-container": "#e1d8fa",
+              "tertiary": "#615b77",
+              "on-tertiary-fixed": "#3d3852",
+              "on-error-container": "#752121",
+              "secondary-dim": "#535356",
+              "on-primary": "#f8f7ff",
+              "tertiary-dim": "#554f6b",
+              "surface": "#f9f9f9"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.5rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      body {
+        font-family: 'Inter', sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+      h1, h2, h3 {
+        font-family: 'Manrope', sans-serif;
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 flex items-center px-5 h-16 w-full bg-[#f9f9f9] dark:bg-slate-950 no-border bg-[#f2f4f4] dark:bg-slate-900 flat no shadows">
+<button class="mr-4 text-[#0066FF] dark:text-blue-400 active:scale-95 duration-200 hover:bg-[#ebeeef] dark:hover:bg-slate-800 transition-colors p-2 rounded-full">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+<h1 class="font-['Manrope'] text-lg font-bold tracking-tight text-[#2d3435] dark:text-slate-100">Cadastrar Endereço</h1>
+</header>
+<main class="pt-20 px-5 space-y-8 max-w-md mx-auto">
+<!-- Map Preview Section -->
+<section class="relative">
+<div class="w-full h-44 rounded-xl overflow-hidden bg-surface-container-highest">
+<img alt="Minimalist map interface showing a pinpoint location in a clean urban layout with soft grey and blue tones" class="w-full h-full object-cover" data-location="São Paulo, Brazil" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1EUq8xtvlsNsn6wcSS4sBwWCGM8jaVD1uc5Vw1JQmKIpTUw29btf8UF1KwRWBkpaI07ix_HEh-8NA5Nh-wpUDRw-5yuBVEYpjAKDBjoLSWGBIDtop4GkJYCrzXb7SFCW-Ku_3nH5E_c4EjK3RC6R5gkwFyK5DxbENJppJM68cootupnUqMeNT9FUYwXL1lsa--tpUG1hx3kUIv4SOIMGPrP5hQQPUgcyKgvqyKrWxX9J4EB0-H7FK9zNBXONYGun80CliqRvow6c"/>
+<div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+<span class="material-symbols-outlined text-primary text-4xl" style="font-variation-settings: 'FILL' 1;">location_on</span>
+</div>
+</div>
+<div class="mt-3 flex items-center gap-2">
+<span class="material-symbols-outlined text-outline text-sm" data-icon="my_location">my_location</span>
+<p class="text-on-surface-variant text-xs font-medium">Sua localização atual aproximada</p>
+</div>
+</section>
+<!-- Form Section -->
+<form class="space-y-6">
+<!-- Bento-style Form Grid -->
+<div class="grid grid-cols-12 gap-4">
+<!-- CEP Field -->
+<div class="col-span-12">
+<label class="block text-on-surface-variant text-xs font-semibold mb-1.5 ml-1">CEP</label>
+<input class="w-full px-4 py-3.5 bg-surface-container-lowest border-none rounded-lg focus:ring-2 focus:ring-primary/20 text-on-surface placeholder:text-outline/50 transition-all" placeholder="00000-000" type="text"/>
+</div>
+<!-- Rua Field -->
+<div class="col-span-12">
+<label class="block text-on-surface-variant text-xs font-semibold mb-1.5 ml-1">Rua</label>
+<input class="w-full px-4 py-3.5 bg-surface-container-lowest border-none rounded-lg focus:ring-2 focus:ring-primary/20 text-on-surface placeholder:text-outline/50 transition-all" placeholder="Nome da rua ou avenida" type="text"/>
+</div>
+<!-- Número and Complemento -->
+<div class="col-span-5">
+<label class="block text-on-surface-variant text-xs font-semibold mb-1.5 ml-1">Número</label>
+<input class="w-full px-4 py-3.5 bg-surface-container-lowest border-none rounded-lg focus:ring-2 focus:ring-primary/20 text-on-surface placeholder:text-outline/50 transition-all" placeholder="123" type="text"/>
+</div>
+<div class="col-span-7">
+<label class="block text-on-surface-variant text-xs font-semibold mb-1.5 ml-1">Complemento</label>
+<input class="w-full px-4 py-3.5 bg-surface-container-lowest border-none rounded-lg focus:ring-2 focus:ring-primary/20 text-on-surface placeholder:text-outline/50 transition-all" placeholder="Apto, Bloco, etc" type="text"/>
+</div>
+<!-- Bairro Field -->
+<div class="col-span-12">
+<label class="block text-on-surface-variant text-xs font-semibold mb-1.5 ml-1">Bairro</label>
+<input class="w-full px-4 py-3.5 bg-surface-container-lowest border-none rounded-lg focus:ring-2 focus:ring-primary/20 text-on-surface placeholder:text-outline/50 transition-all" placeholder="Seu bairro" type="text"/>
+</div>
+<!-- Cidade and Estado -->
+<div class="col-span-8">
+<label class="block text-on-surface-variant text-xs font-semibold mb-1.5 ml-1">Cidade</label>
+<input class="w-full px-4 py-3.5 bg-surface-container-lowest border-none rounded-lg focus:ring-2 focus:ring-primary/20 text-on-surface placeholder:text-outline/50 transition-all" placeholder="Sua cidade" type="text"/>
+</div>
+<div class="col-span-4">
+<label class="block text-on-surface-variant text-xs font-semibold mb-1.5 ml-1">Estado</label>
+<input class="w-full px-4 py-3.5 bg-surface-container-lowest border-none rounded-lg focus:ring-2 focus:ring-primary/20 text-on-surface placeholder:text-outline/50 transition-all" placeholder="UF" type="text"/>
+</div>
+</div>
+<!-- Category/Label Chips -->
+<div class="space-y-3 pt-2">
+<label class="block text-on-surface text-sm font-bold ml-1">Salvar como</label>
+<div class="flex flex-wrap gap-2">
+<button class="flex items-center gap-2 px-4 py-2.5 rounded-full bg-primary-container text-on-primary-fixed-variant border border-primary/10 transition-all duration-200" type="button">
+<span class="material-symbols-outlined text-[18px]" data-icon="home" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="text-sm font-semibold">Casa</span>
+</button>
+<button class="flex items-center gap-2 px-4 py-2.5 rounded-full bg-surface-container-highest text-on-surface-variant hover:bg-surface-container transition-all duration-200" type="button">
+<span class="material-symbols-outlined text-[18px]" data-icon="work">work</span>
+<span class="text-sm font-medium">Trabalho</span>
+</button>
+<button class="flex items-center gap-2 px-4 py-2.5 rounded-full bg-surface-container-highest text-on-surface-variant hover:bg-surface-container transition-all duration-200" type="button">
+<span class="material-symbols-outlined text-[18px]" data-icon="more_horiz">more_horiz</span>
+<span class="text-sm font-medium">Outro</span>
+</button>
+</div>
+</div>
+<!-- Save Button -->
+<div class="pt-6">
+<button class="w-full h-14 bg-gradient-to-br from-primary to-primary-dim text-white rounded-lg font-bold text-base shadow-[0_8px_32px_rgba(0,84,214,0.15)] active:scale-[0.98] transition-all flex items-center justify-center" type="button">
+                    Salvar Endereço
+                </button>
+</div>
+</form>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 rounded-t-2xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl no-border shadow-[0_-1px_0_0_rgba(0,0,0,0.05)] shadow-lg flex justify-around items-center h-20 pb-safe px-4">
+<a class="flex flex-col items-center justify-center text-[#5a6061] dark:text-slate-500 hover:opacity-80 transition-opacity active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-['Inter'] text-[10px] font-medium mt-1">Início</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5a6061] dark:text-slate-500 hover:opacity-80 transition-opacity active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+<span class="font-['Inter'] text-[10px] font-medium mt-1">Busca</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5a6061] dark:text-slate-500 hover:opacity-80 transition-opacity active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span class="font-['Inter'] text-[10px] font-medium mt-1">Pedidos</span>
+</a>
+<!-- ACTIVE TAB: Profile (assuming address editing is a sub-section of profile/settings) -->
+<a class="flex flex-col items-center justify-center text-[#0066FF] dark:text-blue-400 font-semibold hover:opacity-80 transition-opacity active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="person" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="font-['Inter'] text-[10px] mt-1">Perfil</span>
+</a>
+</nav>
+</body></html>
