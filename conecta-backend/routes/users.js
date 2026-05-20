@@ -382,4 +382,67 @@ router.get('/:userId/transactions', (req, res) => {
   return res.json(transactions);
 });
 
+/**
+ * @swagger
+ * /users/{userId}/cards:
+ *   get:
+ *     summary: Lista os cartões salvos do usuário autenticado
+ *     tags: [Cartões]
+ *     security:
+ *       - bearerAuth: []
+ */
+router.get('/:userId/cards', (req, res) => {
+  const cards = db
+    .prepare('SELECT id, brand, last_four, expiry_month, expiry_year, created_at FROM cards WHERE user_id = ? ORDER BY created_at DESC')
+    .all(req.user.id);
+  return res.json(cards);
+});
+
+/**
+ * @swagger
+ * /users/{userId}/cards:
+ *   post:
+ *     summary: Salva um novo cartão do usuário autenticado
+ *     tags: [Cartões]
+ *     security:
+ *       - bearerAuth: []
+ */
+router.post('/:userId/cards', (req, res) => {
+  const { brand, last_four, expiry_month, expiry_year } = req.body;
+
+  if (!brand || !last_four || !expiry_month || !expiry_year) {
+    return res.status(400).json({ error: 'Campos obrigatórios: brand, last_four, expiry_month, expiry_year' });
+  }
+
+  if (!/^\d{4}$/.test(last_four)) {
+    return res.status(400).json({ error: 'last_four deve ter exatamente 4 dígitos' });
+  }
+
+  const result = db
+    .prepare('INSERT INTO cards (user_id, brand, last_four, expiry_month, expiry_year) VALUES (?, ?, ?, ?, ?)')
+    .run(req.user.id, brand, last_four, expiry_month, expiry_year);
+
+  const card = db.prepare('SELECT id, brand, last_four, expiry_month, expiry_year, created_at FROM cards WHERE id = ?').get(result.lastInsertRowid);
+  return res.status(201).json(card);
+});
+
+/**
+ * @swagger
+ * /users/{userId}/cards/{cardId}:
+ *   delete:
+ *     summary: Remove um cartão do usuário autenticado
+ *     tags: [Cartões]
+ *     security:
+ *       - bearerAuth: []
+ */
+router.delete('/:userId/cards/:cardId', (req, res) => {
+  const card = db.prepare('SELECT * FROM cards WHERE id = ?').get(req.params.cardId);
+
+  if (!card) return res.status(404).json({ error: 'Cartão não encontrado' });
+  if (card.user_id !== req.user.id) return res.status(403).json({ error: 'Acesso negado' });
+
+  db.prepare('DELETE FROM cards WHERE id = ?').run(req.params.cardId);
+  return res.json({ message: 'Cartão removido com sucesso' });
+});
+
 module.exports = router;
