@@ -6,13 +6,17 @@ import {
   Pressable,
   StyleSheet,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { router } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
 import { GradientButton } from '@/components/ui/gradient-button';
 import { InputField } from '@/components/ui/input-field';
 import { TopAppBar } from '@/components/ui/top-app-bar';
 import { Colors, FontFamily, Spacing, Radius } from '@/constants/theme';
+import { useAuth } from '@/context/AuthContext';
+import { usersApi } from '@/services/api';
 
 type AddressType = 'casa' | 'trabalho' | 'outro';
 
@@ -23,6 +27,7 @@ const ADDRESS_CHIPS: { key: AddressType; label: string; icon: keyof typeof Mater
 ];
 
 export default function AddAddressScreen() {
+  const { user, token } = useAuth();
   const [addressType, setAddressType] = useState<AddressType>('casa');
   const [cep, setCep] = useState('');
   const [street, setStreet] = useState('');
@@ -31,9 +36,34 @@ export default function AddAddressScreen() {
   const [neighborhood, setNeighborhood] = useState('');
   const [city, setCity] = useState('');
   const [state, setState] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSave = () =>
-    Alert.alert('Endereço salvo', 'Seu endereço foi cadastrado com sucesso.', [{ text: 'OK' }]);
+  const handleSave = async () => {
+    if (!street || !city || !state) {
+      return Alert.alert('Atenção', 'Rua, cidade e estado são obrigatórios.');
+    }
+    if (!user || !token) return;
+    setLoading(true);
+    try {
+      await usersApi.addAddress(user.id, {
+        type: addressType,
+        zip_code: cep || undefined,
+        street,
+        number: number || undefined,
+        complement: complement || undefined,
+        neighborhood: neighborhood || undefined,
+        city,
+        state,
+      }, token);
+      Alert.alert('Endereço salvo', 'Seu endereço foi cadastrado com sucesso.', [
+        { text: 'OK', onPress: () => router.back() },
+      ]);
+    } catch (e: any) {
+      Alert.alert('Erro', e.message ?? 'Não foi possível salvar o endereço.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -149,7 +179,7 @@ export default function AddAddressScreen() {
           </View>
         </View>
 
-        <GradientButton label="Salvar Endereço" onPress={handleSave} />
+        <GradientButton label={loading ? 'Salvando…' : 'Salvar Endereço'} onPress={handleSave} disabled={loading} />
       </ScrollView>
     </SafeAreaView>
   );
