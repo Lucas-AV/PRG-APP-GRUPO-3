@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   StyleSheet,
   TextInput,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
@@ -14,48 +15,42 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { GradientButton } from '@/components/ui/gradient-button';
 import { TopAppBar } from '@/components/ui/top-app-bar';
 import { Colors, FontFamily, Spacing, Radius } from '@/constants/theme';
+import { useAuth } from '@/context/AuthContext';
+import { transactionsApi, Transaction } from '@/services/api';
 
 const SAVED_CARDS = [
   { id: '1', brand: 'Visa', last4: '1234', expiry: '08/27' },
   { id: '2', brand: 'Mastercard', last4: '5678', expiry: '12/25' },
 ];
 
-const RECENT_TRANSACTIONS = [
-  {
-    id: '1',
-    icon: 'build' as const,
-    iconBg: '#eff6ff',
-    iconColor: '#2563eb',
-    title: 'Encanador Profissional',
-    date: 'Ontem • 14:30',
-    amount: 'R$ 180,00',
-  },
-  {
-    id: '2',
-    icon: 'brush' as const,
-    iconBg: '#f5f3ff',
-    iconColor: '#7c3aed',
-    title: 'Limpeza Residencial',
-    date: '12 Set 2023',
-    amount: 'R$ 150,00',
-  },
-  {
-    id: '3',
-    icon: 'flash-on' as const,
-    iconBg: '#eff6ff',
-    iconColor: '#2563eb',
-    title: 'Reparo Elétrico',
-    date: '05 Set 2023',
-    amount: 'R$ 120,00',
-  },
-];
+
+const STATUS_LABEL: Record<string, string> = {
+  concluido: 'Concluído',
+  pendente: 'Pendente',
+  cancelado: 'Cancelado',
+};
+
+const STATUS_COLOR: Record<string, string> = {
+  concluido: '#16a34a',
+  pendente: '#d97706',
+  cancelado: '#e11d48',
+};
 
 export default function PaymentsScreen() {
+  const { user, token } = useAuth();
+  const [recentTransactions, setRecentTransactions] = useState<Transaction[]>([]);
   const [couponCode, setCouponCode] = useState('');
   const [activeCoupon, setActiveCoupon] = useState<{ code: string; description: string } | null>({
     code: 'SEVGEN20',
     description: '20% de desconto no próximo serviço',
   });
+
+  useEffect(() => {
+    if (!user || !token) return;
+    transactionsApi.list(user.id, token)
+      .then(txs => setRecentTransactions(txs.slice(0, 3)))
+      .catch(() => setRecentTransactions([]));
+  }, [user, token]);
 
   const comingSoon = () =>
     Alert.alert('Em desenvolvimento', 'Esta funcionalidade estará disponível em breve.', [{ text: 'OK' }]);
@@ -167,24 +162,32 @@ export default function PaymentsScreen() {
             </Pressable>
           </View>
           <View style={styles.transactionsCard}>
-            {RECENT_TRANSACTIONS.map((tx, idx) => (
-              <View key={tx.id}>
-                <View style={styles.txRow}>
-                  <View style={[styles.txIconWrap, { backgroundColor: tx.iconBg }]}>
-                    <MaterialIcons name={tx.icon} size={20} color={tx.iconColor} />
+            {recentTransactions.length === 0 ? (
+              <Text style={styles.emptyTransactions}>Nenhuma transação encontrada.</Text>
+            ) : (
+              recentTransactions.map((tx, idx) => (
+                <View key={tx.id}>
+                  <View style={styles.txRow}>
+                    <View style={[styles.txIconWrap, { backgroundColor: '#eff6ff' }]}>
+                      <MaterialIcons name={'build' as const} size={20} color={'#2563eb'} />
+                    </View>
+                    <View style={styles.txInfo}>
+                      <Text style={styles.txTitle}>{tx.service_name}</Text>
+                      <Text style={styles.txDate}>
+                        {new Date(tx.paid_at).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}
+                      </Text>
+                    </View>
+                    <View style={styles.txRight}>
+                      <Text style={styles.txAmount}>{`R$ ${tx.amount.toFixed(2).replace('.', ',')}`}</Text>
+                      <Text style={[styles.txStatus, { color: STATUS_COLOR[tx.status] ?? '#16a34a' }]}>
+                        {STATUS_LABEL[tx.status] ?? tx.status}
+                      </Text>
+                    </View>
                   </View>
-                  <View style={styles.txInfo}>
-                    <Text style={styles.txTitle}>{tx.title}</Text>
-                    <Text style={styles.txDate}>{tx.date}</Text>
-                  </View>
-                  <View style={styles.txRight}>
-                    <Text style={styles.txAmount}>{tx.amount}</Text>
-                    <Text style={styles.txStatus}>Concluído</Text>
-                  </View>
+                  {idx < recentTransactions.length - 1 && <View style={styles.txDivider} />}
                 </View>
-                {idx < RECENT_TRANSACTIONS.length - 1 && <View style={styles.txDivider} />}
-              </View>
-            ))}
+              ))
+            )}
           </View>
         </View>
       </ScrollView>
@@ -403,5 +406,12 @@ const styles = StyleSheet.create({
     height: StyleSheet.hairlineWidth,
     backgroundColor: Colors.surfaceContainer,
     marginHorizontal: Spacing.base,
+  },
+  emptyTransactions: {
+    fontFamily: FontFamily.bodyRegular,
+    fontSize: 14,
+    color: Colors.onSurfaceVariant,
+    textAlign: 'center',
+    padding: Spacing.xxl,
   },
 });
