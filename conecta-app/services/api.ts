@@ -133,4 +133,16 @@ export const usersApi = {
       method: 'DELETE',
       body: JSON.stringify(data),
     }, token),
+
+  listAddresses: (userId: number, token: string) =>
+    request<Address[]>(`/users/${userId}/addresses`, {}, token),
+
+  addAddress: (userId: number, data: Omit<Address, 'id' | 'user_id' | 'created_at'>, token: string) =>
+    request<Address>(`/users/${userId}/addresses`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }, token),
+
+  deleteAddress: (userId: number, addressId: number, token: string) =>
+    request<{ message: string }>(`/users/${userId}/addresses/${addressId}`, { method: 'DELETE' }, token),
 };
