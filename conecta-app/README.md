@@ -2,11 +2,13 @@
 
 Aplicativo mobile de prestação de serviços sob demanda (modelo similar ao iFood para serviços). Conecta clientes com prestadores verificados na sua região.
 
-> **Projeto acadêmico** — PRG-APP-GRUPO-3. Fase atual: frontend mockado.
+> **Projeto acadêmico** — PRG-APP-GRUPO-3. Fase atual: frontend com dados mockados e backend básico integrado.
 
 ---
 
 ## Stack
+
+### Frontend (`conecta-app/`)
 
 | Camada | Tecnologia |
 |---|---|
@@ -19,6 +21,17 @@ Aplicativo mobile de prestação de serviços sob demanda (modelo similar ao iFo
 | Fontes | Manrope + Inter via @expo-google-fonts |
 | Ícones | @expo/vector-icons (MaterialIcons) |
 | Safe Area | react-native-safe-area-context |
+| Armazenamento seguro | expo-secure-store (token JWT) |
+
+### Backend (`conecta-backend/`)
+
+| Camada | Tecnologia |
+|---|---|
+| Servidor | Node.js + Express |
+| Banco de dados | SQLite via better-sqlite3 |
+| Autenticação | JWT (jsonwebtoken) + bcryptjs |
+| Documentação da API | Swagger UI (swagger-jsdoc + swagger-ui-express) |
+| Porta padrão | 3000 |
 
 ---
 
@@ -26,99 +39,85 @@ Aplicativo mobile de prestação de serviços sob demanda (modelo similar ao iFo
 
 ### Pré-requisitos
 
-Certifique-se de ter instalado:
+| Ferramenta | Versão mínima |
+|---|---|
+| Node.js | 18+ |
+| npm | 9+ |
+| Git | qualquer |
 
-| Ferramenta | Versão mínima | Link |
-|---|---|---|
-| Node.js | 18+ | https://nodejs.org |
-| npm | 9+ (vem com o Node) | — |
-| Git | qualquer | https://git-scm.com |
-| Expo CLI | instalado via npx | — |
-
-Para rodar no dispositivo físico:
-- **Expo Go** — instale no [Android](https://play.google.com/store/apps/details?id=host.exp.exponent) ou [iOS](https://apps.apple.com/app/expo-go/id982107779)
-
-Para rodar em emulador/simulador (opcional):
-- **Android** — Android Studio com um AVD configurado
-- **iOS** — Xcode com simulador (somente macOS)
+Para rodar no dispositivo físico: instale o **Expo Go** no [Android](https://play.google.com/store/apps/details?id=host.exp.exponent) ou [iOS](https://apps.apple.com/app/expo-go/id982107779).
 
 ---
 
-### 1. Clonar o repositório
+### Frontend
 
 ```bash
-git clone https://github.com/Lucas-AV/PRG-APP-GRUPO-3.git
+# 1. Entrar na pasta do app
 cd PRG-APP-GRUPO-3/conecta-app
-```
 
-### 2. Instalar as dependências
-
-```bash
+# 2. Instalar dependências
 npm install
-```
 
-Isso instala todas as dependências listadas no `package.json`, incluindo Expo SDK, React Native, fontes e demais bibliotecas.
-
-### 3. Iniciar o servidor de desenvolvimento
-
-```bash
+# 3. Iniciar o servidor de desenvolvimento
 npx expo start
 ```
 
-O terminal exibirá um **QR code**. Escolha como abrir:
+No terminal, escaneie o QR code com o Expo Go ou use os atalhos:
 
-| Opção | Como usar |
+| Tecla | Ação |
 |---|---|
-| Expo Go (celular) | Escaneie o QR code com o app Expo Go |
-| Android Emulator | Pressione `a` no terminal (requer Android Studio) |
-| iOS Simulator | Pressione `i` no terminal (requer Xcode, somente macOS) |
-| Navegador (Web) | Pressione `w` no terminal |
+| `a` | Abre no emulador Android |
+| `i` | Abre no simulador iOS (somente macOS) |
+| `w` | Abre no navegador |
 
-Ou use os atalhos diretos:
-
-```bash
-npm run android   # abre no emulador Android
-npm run ios       # abre no simulador iOS (macOS)
-npm run web       # abre no navegador
-```
-
-### 4. (Opcional) Verificar o código
+### Backend
 
 ```bash
-npm run lint
+# 1. Entrar na pasta do backend
+cd PRG-APP-GRUPO-3/conecta-backend
+
+# 2. Instalar dependências
+npm install
+
+# 3. Popular o banco com dados iniciais (opcional)
+node db/seed.js
+
+# 4. Iniciar o servidor
+node index.js
 ```
+
+O servidor sobe em `http://localhost:3000`.
+A documentação Swagger fica em `http://localhost:3000/api-docs`.
+
+> **Atenção:** o app mobile precisa apontar para o IP local da sua máquina, não `localhost`. Edite `services/api.ts` e substitua o `BASE_URL` pelo IP da sua rede (ex.: `http://192.168.x.x:3000`).
 
 ---
 
 ### Solução de problemas comuns
 
-**Erro ao instalar dependências**
 ```bash
-# Limpe o cache e reinstale
-rm -rf node_modules
-npm install
-```
+# Dependências corrompidas
+rm -rf node_modules && npm install
 
-**Metro bundler travado ou com cache corrompido**
-```bash
+# Metro bundler com cache corrompido
 npx expo start --clear
-```
 
-**Fontes não carregando**
-Verifique se `@expo-google-fonts/manrope` e `@expo-google-fonts/inter` foram instalados corretamente. Rode `npm install` novamente se necessário.
+# Porta 3000 ocupada (backend)
+# Encerre o processo que usa a porta ou altere PORT= em index.js
+```
 
 ---
 
 ## Funcionalidades implementadas
 
-### Login & Registro
-
-Telas de autenticação com design "Precision Minimalist".
+### Autenticação
 
 | Tela | Arquivo | Descrição |
 |---|---|---|
-| Login | `app/(auth)/login.tsx` | Email + senha, acesso via Google (mock), link para cadastro |
+| Login | `app/(auth)/login.tsx` | E-mail + senha; acesso via Google (mock); link para cadastro; **modal de redefinição de senha** |
 | Cadastro | `app/(auth)/sign-up.tsx` | Nome, e-mail, telefone, senha, confirmação, aceite de termos |
+
+**Modal de redefinição de senha** (integrado ao login): campo de e-mail com validação, estado de carregamento e tela de sucesso após envio.
 
 **Fluxo:** `Login` → `/(tabs)` · `Cadastro` → `Onboarding`
 
@@ -126,162 +125,243 @@ Telas de autenticação com design "Precision Minimalist".
 
 ### Onboarding
 
-Fluxo de configuração de perfil pós-cadastro. O número de passos varia por tipo de usuário:
+Fluxo de configuração pós-cadastro. Número de etapas varia por tipo de usuário:
 
-| Tipo | Passos |
+| Tipo | Etapas |
 |---|---|
-| Cliente | 3 passos (step1 → step2 → step4) |
-| Prestador | 4 passos (step1 → step2 → step3 → step4) |
-
-O tipo de usuário é selecionado no **step0** e propagado por todos os passos via parâmetro de rota `role`.
+| Cliente | 3 (step1 → step2 → step4) |
+| Prestador | 4 (step1 → step2 → step3 → step3b → step4) |
 
 | Tela | Arquivo | Conteúdo |
 |---|---|---|
-| Seleção de perfil | `app/(onboarding)/step0.tsx` | Cards "Sou Cliente" / "Sou Prestador" com radio |
-| Dados pessoais | `app/(onboarding)/step1.tsx` | Foto de perfil, nome completo; prestador também preenche especialidade |
-| Localização | `app/(onboarding)/step2.tsx` | Tipo (Casa/Trabalho), CEP, endereço completo, estado |
-| Perfil do prestador | `app/(onboarding)/step3.tsx` | Categorias de serviço, experiência profissional, bio, verificação de documentos |
-| Conclusão | `app/(onboarding)/step4.tsx` | Animação de sucesso, próximos passos, CTA para o app |
+| Seleção de perfil | `step0.tsx` | Cards "Sou Cliente" / "Sou Prestador" |
+| Dados pessoais | `step1.tsx` | Foto de perfil, nome; prestador também preenche especialidade |
+| Localização | `step2.tsx` | Tipo (Casa/Trabalho), CEP, endereço completo |
+| Perfil do prestador | `step3.tsx` | Categorias, experiência, bio |
+| Verificação de segurança | `step3b.tsx` | Upload de documento + confirmação de identidade (somente prestador) |
+| Conclusão | `step4.tsx` | Animação de sucesso + CTA para o app |
 
 ---
 
-### Visão do Prestador de Serviço
+### Navegação Principal (Abas)
 
-Área exclusiva do prestador para gerenciar o catálogo de serviços. Acessível pela aba **Serviços** na barra de navegação inferior.
-
-#### Listagem de Serviços
-
-**Arquivo:** `app/(tabs)/services.tsx`
-
-- Header com menu e atalhos de busca/notificações
-- Card CTA em gradiente "Expandir Catálogo" → navega para Criar Serviço
-- Seção **Serviços Ativos**: cards com ícone, preço, estatísticas (agendamentos + nota) e ações de Visualizar/Editar
-- Seção **Rascunhos**: cards com status de rascunho e link "Continuar Edição"
-- FAB `+` flutuante → navega para Criar Serviço
-
-#### Criar Serviço
-
-**Arquivo:** `app/(services)/create.tsx`
-
-Formulário em 4 passos dentro de um único scroll:
-
-1. **Informações Básicas** — nome e categoria (dropdown)
-2. **Preços e Duração** — modelo de preço (Fixo / A partir de), valor, duração (dropdown)
-3. **O que está incluso** — descrição livre em textarea
-4. **Fotos do Serviço** — grid de upload com placeholders
-
-Toggle "Publicar agora" + ações "Salvar e Publicar" / "Salvar como Rascunho".
-
-#### Editar Serviço
-
-**Arquivo:** `app/(services)/edit.tsx`
-
-- Edição inline do nome do serviço (input grande estilo editorial)
-- Categoria, modelo de preço, valor e duração editáveis
-- Textarea de descrição
-- Galeria de fotos com opção de remoção individual
-- Ação destrutiva "Excluir Serviço Permanentemente" (com confirmação via Alert)
-- Barra de ações: "Descartar" + "Salvar Alterações"
-
-#### Visualizar Serviço (Insights)
-
-**Arquivo:** `app/(services)/view.tsx`
-
-Dashboard de métricas do serviço:
-
-- Banner hero com gradiente e ícone da categoria
-- Card de status com toggle Ativo/Inativo, preço base, duração e barra de Pontuação de Visibilidade
-- Grid 2×2 de métricas: Faturamento, Agendamentos, Nota Média, Tempo de Resposta
-- Seção de avaliações recentes com estrelas e texto do cliente
-- Gráfico de atividade semanal (barras puras em RN) com destaque do dia de pico
+| Aba | Arquivo | Conteúdo |
+|---|---|---|
+| Home | `(tabs)/index.tsx` | Tela inicial |
+| Explorar | `(tabs)/explore.tsx` | Busca de serviços |
+| Agenda | `(tabs)/schedule.tsx` | Agendamentos |
+| Serviços | `(tabs)/services.tsx` | Catálogo do prestador |
+| Perfil | `(tabs)/profile.tsx` | Hub de configurações da conta |
 
 ---
 
-## Estrutura de rotas
+### Serviços (Visão do Prestador)
+
+#### Listagem de Serviços — `(tabs)/services.tsx`
+- Card CTA em gradiente "Expandir Catálogo"
+- Seção de **Serviços Ativos**: cards com ícone, preço, agendamentos, nota e ações Visualizar/Editar
+- Seção de **Rascunhos**: cards com link "Continuar Edição"
+- FAB `+` flutuante
+
+#### Criar Serviço — `(services)/create.tsx`
+Formulário em scroll único com 4 blocos: Informações Básicas, Preços e Duração, Descrição, Fotos. Toggle "Publicar agora" + ações Publicar/Rascunho.
+
+#### Editar Serviço — `(services)/edit.tsx`
+Edição inline de todos os campos + galeria com remoção individual + ação destrutiva "Excluir Serviço" com confirmação.
+
+#### Visualizar Serviço — `(services)/view.tsx`
+Dashboard com banner hero, toggle Ativo/Inativo, grid 2×2 de métricas (Faturamento, Agendamentos, Nota, Tempo de Resposta), avaliações recentes e gráfico de barras de atividade semanal.
+
+---
+
+### Conta e Configurações
+
+Hub principal em `(tabs)/profile.tsx` — 4 seções: Conta, Preferências, Segurança, Suporte & Legal.
+
+| Tela | Arquivo | Descrição |
+|---|---|---|
+| Editar Perfil | `(account)/edit-profile.tsx` | Foto de perfil, nome, e-mail, telefone, data de nascimento, endereço |
+| Alterar Senha | `(account)/change-password.tsx` | Senha atual + nova senha com validação em tempo real (8 chars, maiúscula, número) |
+| Cadastrar Endereço | `(account)/add-address.tsx` | Mapa placeholder, formulário CEP/rua/número/bairro/cidade, chips de tipo (Casa/Trabalho/Outro) |
+| Excluir Conta | `(account)/delete-account.tsx` | Aviso editorial, confirmação por senha, Alert duplo de confirmação |
+| Privacidade e Segurança | `(account)/privacy-security.tsx` | Toggle biometria + 2FA, permissões do app, visibilidade do perfil, gestão de dados |
+| Suporte e Ajuda | `(account)/support.tsx` | Card de status do suporte, contatos (WhatsApp/E-mail/Ligar), FAQ categorizado |
+| Termos de Uso | `(account)/use-terms.tsx` | 6 artigos legais com card de destaque escuro + rodapé |
+| Assinaturas | `(account)/plans.tsx` | Segmented control por role: aba Cliente (plano Free + upgrade) e aba Prestador (Básico vs Elite Pro) |
+
+---
+
+### Pagamentos
+
+| Tela | Arquivo | Descrição |
+|---|---|---|
+| Pagamentos | `(account)/payments.tsx` | Saldo da carteira, cartões salvos, campo de cupom com cupom ativo, últimas transações |
+| Histórico | `(account)/payment-history.tsx` | Chips de filtro (mês/trimestre/ano), transações agrupadas por mês com badges de status (Concluído/Pendente/Cancelado) |
+| Adicionar Cartão | `(account)/new-card.tsx` | Preview interativo do cartão (atualiza em tempo real), formatação automática do número, toggle "Salvar com segurança" |
+| Detalhes do Cartão | `(account)/card-detail.tsx` | Preview gradient do cartão, informações (bandeira, número mascarado, validade, tipo), toggle "Cartão padrão", uso recente, remoção com confirmação |
+| Comprovante | `(account)/receipt.tsx` | Header de sucesso, card do serviço, detalhes em bento (data, valor, método, código com copiar), botões Baixar/Ajuda/Voltar |
+
+**Fluxo de navegação:**
+```
+Configurações → Pagamentos → Histórico → Comprovante
+                           → Adicionar Cartão
+                           → Detalhes do Cartão → Comprovante
+```
+
+---
+
+## Backend API
+
+### Endpoints
+
+#### Autenticação (`/auth`)
+
+| Método | Rota | Descrição |
+|---|---|---|
+| `POST` | `/auth/register` | Cadastra novo usuário (name, email, password, role, phone?) |
+| `POST` | `/auth/login` | Autentica e retorna token JWT |
+
+#### Serviços (`/services`) — requer Bearer token
+
+| Método | Rota | Descrição |
+|---|---|---|
+| `GET` | `/services` | Lista serviços do usuário autenticado |
+| `POST` | `/services` | Cria novo serviço |
+| `PUT` | `/services/:id` | Atualiza serviço existente |
+| `DELETE` | `/services/:id` | Remove serviço |
+
+### Estrutura do banco (SQLite)
+
+```
+users       → id, name, email, phone, password_hash, role, created_at
+services    → id, user_id, name, category, price, duration, description, status, created_at
+```
+
+### Estrutura do backend
+
+```
+conecta-backend/
+├── index.js              → Express + CORS + Swagger
+├── db/
+│   ├── database.js       → conexão SQLite (better-sqlite3)
+│   └── seed.js           → dados iniciais
+├── middleware/
+│   └── auth.js           → authMiddleware JWT
+└── routes/
+    ├── auth.js           → register + login
+    └── services.js       → CRUD de serviços
+```
+
+---
+
+## Estrutura de rotas (frontend)
 
 ```
 app/
-├── index.tsx                   → redireciona para /(auth)/login
-├── _layout.tsx                 → root Stack + carregamento de fontes
+├── index.tsx                        → redireciona para /(auth)/login
+├── _layout.tsx                      → root Stack + carregamento de fontes
 │
 ├── (auth)/
-│   ├── _layout.tsx             → Stack com animação fade
-│   ├── login.tsx
+│   ├── login.tsx                    → login + modal de reset de senha
 │   └── sign-up.tsx
 │
 ├── (onboarding)/
-│   ├── _layout.tsx             → Stack slide_from_right, sem gesto de voltar
-│   ├── step0.tsx               → seleção de perfil
-│   ├── step1.tsx               → dados pessoais
-│   ├── step2.tsx               → localização
-│   ├── step3.tsx               → perfil prestador (somente role=prestador)
-│   └── step4.tsx               → conclusão
+│   ├── step0.tsx                    → seleção de perfil
+│   ├── step1.tsx                    → dados pessoais
+│   ├── step2.tsx                    → localização
+│   ├── step3.tsx                    → perfil prestador
+│   ├── step3b.tsx                   → verificação de identidade (prestador)
+│   └── step4.tsx                    → conclusão
 │
 ├── (tabs)/
-│   ├── _layout.tsx             → TabNavigator com 4 abas
-│   ├── index.tsx               → Home (placeholder)
-│   ├── schedule.tsx            → Agenda (placeholder)
-│   ├── services.tsx            → Meus Serviços (prestador)
-│   └── profile.tsx             → Perfil (placeholder)
+│   ├── index.tsx                    → Home
+│   ├── explore.tsx                  → Explorar
+│   ├── schedule.tsx                 → Agenda
+│   ├── services.tsx                 → Meus Serviços (prestador)
+│   └── profile.tsx                  → Hub de configurações
 │
-└── (services)/
-    ├── _layout.tsx             → Stack slide_from_right
-    ├── create.tsx              → criar serviço
-    ├── edit.tsx                → editar serviço
-    └── view.tsx                → visualizar insights do serviço
+├── (services)/
+│   ├── create.tsx
+│   ├── edit.tsx
+│   └── view.tsx
+│
+└── (account)/
+    ├── edit-profile.tsx
+    ├── change-password.tsx
+    ├── add-address.tsx
+    ├── delete-account.tsx
+    ├── privacy-security.tsx
+    ├── support.tsx
+    ├── use-terms.tsx
+    ├── plans.tsx
+    ├── payments.tsx
+    ├── payment-history.tsx
+    ├── new-card.tsx
+    ├── card-detail.tsx
+    └── receipt.tsx
 ```
 
 ---
 
 ## Design System
 
-Especificação completa em `template/DESIGN.md`. Princípios principais:
+Princípios centrais:
 
-- **Sem bordas 1px** — separação por mudança de superfície (`surfaceContainerLow` → `surfaceContainerLowest`)
-- **Tipografia** — Manrope (headlines) + Inter (body/labels)
-- **Botões CTA** — sempre com LinearGradient `#0054d6 → #004abd` a 135°
-- **Elevação** — camadas tonais, sombra apenas em elementos flutuantes (FAB, modais)
-- **Espaçamento mínimo de margem lateral** — `Spacing.xl` (20 px)
+- **Separação por superfície** — sem bordas 1px; hierarquia por camadas tonais (`surfaceContainerLow` → `surfaceContainerLowest`)
+- **Tipografia** — Manrope (headlines/títulos) + Inter (body/labels)
+- **CTA** — sempre `LinearGradient` `#0054d6 → #004abd` a 135°
+- **Elevação** — sombra apenas em elementos flutuantes (FAB, modais, cards em destaque)
+- **Margem lateral mínima** — `Spacing.xl` (20 px)
 
 ### Tokens (`constants/theme.ts`)
 
 | Token | Valor |
 |---|---|
 | `Colors.primary` | `#0054d6` |
-| `Colors.background` | `#f9f9f9` |
+| `Colors.surface` | `#f9f9f9` |
 | `Colors.surfaceContainerLowest` | `#ffffff` |
 | `Colors.onSurface` | `#2d3435` |
+| `Colors.error` | `#9f403d` |
 | `Spacing.xl` | `20` |
-| `Radius.xl` | `24` |
+| `Radius.lg` | `16` |
 
-### Componentes UI reutilizáveis (`components/ui/`)
+### Componentes reutilizáveis (`components/ui/`)
 
 | Componente | Descrição |
 |---|---|
-| `GradientButton` | Botão CTA com gradiente signature, estado desabilitado, escala no press |
-| `InputField` | Campo com label flutuante, ícone opcional, suporte a senha e multiline |
-| `TopAppBar` | Header com safe area, botão voltar e badge de passo |
-| `ProgressBar` | Barra de progresso do onboarding com label e percentual |
-
----
-
-## Próximas implementações previstas
-
-- [ ] Visão do Cliente (home, busca de serviços, contratação)
-- [ ] Tela de Agendamentos (prestador e cliente)
-- [ ] Tela de Perfil
-- [ ] Integração com backend / API real
-- [ ] Notificações push
+| `GradientButton` | Botão CTA com gradiente signature, estado desabilitado e escala no press |
+| `InputField` | Campo com label, ícone opcional, suporte a senha e multiline |
+| `TopAppBar` | Header com safe area e botão voltar |
+| `ProgressBar` | Barra de progresso do onboarding |
 
 ---
 
 ## Scripts disponíveis
 
+### Frontend
+
 | Comando | Descrição |
 |---|---|
 | `npx expo start` | Inicia servidor de desenvolvimento |
-| `npm run android` | Abre direto no emulador Android |
-| `npm run ios` | Abre direto no simulador iOS |
+| `npm run android` | Abre no emulador Android |
+| `npm run ios` | Abre no simulador iOS |
 | `npm run web` | Abre no navegador |
 | `npm run lint` | Executa ESLint |
-| `npm run reset-project` | Reseta para projeto em branco (move `app/` para `app-example/`) |
+
+### Backend
+
+| Comando | Descrição |
+|---|---|
+| `node index.js` | Inicia o servidor na porta 3000 |
+| `node db/seed.js` | Popula o banco com dados iniciais |
+
+---
+
+## Pendente / Próximas etapas
+
+- [ ] Tela Home do cliente (busca de serviços, categorias, destaques)
+- [ ] Tela de Agendamentos (cliente e prestador)
+- [ ] Tela Explorar (busca com filtros)
+- [ ] Endpoints de backend: perfil, endereço, troca de senha
+- [ ] Notificações push
+- [ ] Upload real de imagens (foto de perfil, fotos do serviço)

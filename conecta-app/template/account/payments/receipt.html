@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+
+<html class="light" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "error-dim": "#4e0309",
+              "tertiary": "#615b77",
+              "surface-container-low": "#f2f4f4",
+              "surface-bright": "#f9f9f9",
+              "on-secondary-fixed-variant": "#5b5b5f",
+              "background": "#f9f9f9",
+              "error-container": "#fe8983",
+              "inverse-on-surface": "#9c9d9d",
+              "surface-variant": "#dde4e5",
+              "on-surface": "#2d3435",
+              "surface-container": "#ebeeef",
+              "tertiary-dim": "#554f6b",
+              "on-surface-variant": "#5a6061",
+              "on-tertiary-fixed": "#3d3852",
+              "surface-container-high": "#e4e9ea",
+              "surface-dim": "#d4dbdd",
+              "surface-container-highest": "#dde4e5",
+              "error": "#9f403d",
+              "on-tertiary-container": "#504b66",
+              "on-tertiary-fixed-variant": "#5a5470",
+              "on-secondary": "#faf8fc",
+              "on-primary-fixed-variant": "#0052d0",
+              "surface-tint": "#0054d6",
+              "on-error-container": "#752121",
+              "on-error": "#fff7f6",
+              "on-background": "#2d3435",
+              "secondary-fixed-dim": "#d5d4d8",
+              "primary-container": "#dae1ff",
+              "outline-variant": "#adb3b4",
+              "primary-fixed-dim": "#c7d3ff",
+              "surface": "#f9f9f9",
+              "primary-fixed": "#dae1ff",
+              "primary": "#0054d6",
+              "on-secondary-fixed": "#3f3f43",
+              "on-tertiary": "#fcf7ff",
+              "on-primary": "#f8f7ff",
+              "secondary-container": "#e4e2e6",
+              "on-secondary-container": "#515155",
+              "surface-container-lowest": "#ffffff",
+              "tertiary-container": "#e1d8fa",
+              "outline": "#757c7d",
+              "secondary-fixed": "#e4e2e6",
+              "tertiary-fixed": "#e1d8fa",
+              "inverse-primary": "#5e8bff",
+              "secondary-dim": "#535356",
+              "inverse-surface": "#0c0f0f",
+              "primary-dim": "#004abd",
+              "secondary": "#5f5f62",
+              "on-primary-container": "#0049bb",
+              "tertiary-fixed-dim": "#d3caeb",
+              "on-primary-fixed": "#003894"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.5rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .signature-gradient {
+        background: linear-gradient(135deg, #0054d6 0%, #004abd 100%);
+      }
+      body {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface font-body text-on-surface">
+<!-- TopAppBar -->
+<nav class="bg-[#f9f9f9] dark:bg-slate-950 flex items-center justify-between px-5 h-16 w-full docked full-width top-0 sticky z-50 no-border bg-[#f2f4f4] dark:bg-slate-900">
+<div class="flex items-center gap-4">
+<button class="text-[#0066FF] dark:text-blue-400 active:scale-95 duration-200 hover:bg-[#ebeeef] dark:hover:bg-slate-800 transition-colors p-2 rounded-full">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+<h1 class="font-['Manrope'] font-bold text-lg text-[#2d3435] dark:text-slate-100">Comprovante</h1>
+</div>
+<div class="w-10"></div> <!-- Spacer for symmetry -->
+</nav>
+<main class="max-w-md mx-auto px-5 pb-32 pt-8">
+<!-- Success Header -->
+<section class="flex flex-col items-center text-center mb-10">
+<div class="w-20 h-20 bg-primary-container rounded-full flex items-center justify-center mb-6 shadow-sm">
+<span class="material-symbols-outlined text-primary text-5xl font-bold" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<h2 class="font-headline font-extrabold text-2xl tracking-tight text-on-surface mb-2">Pagamento Realizado com Sucesso!</h2>
+<p class="font-body text-on-surface-variant text-sm">Sua transação foi processada com segurança.</p>
+</section>
+<!-- Service Summary Card -->
+<div class="bg-surface-container-lowest rounded-xl p-4 mb-8 flex items-center gap-4 shadow-[0_8px_32px_rgba(45,52,53,0.04)]">
+<img alt="EV Charger Installation" class="w-16 h-16 rounded-lg object-cover" data-alt="Modern electric vehicle home charging station installed on a clean garage wall with subtle lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWtHP1DuTJOVs4SPsbM6GBB9dh1m3sBFQB42yvS6vVxFcZuWAauM14oOeUeFDhVqdvDh7n6KjfP7JaoV8ERcRZ6N2uNCYDJLVxsYNM4R-KoiiAwt5WMTFswSjRflEaZYgbCVESBBr76z5q1Y5E_OtZzPPhIEf-EC0_MszzBzuFlryOa2SUYs5v7esTRkrgiOVIrSzi95PRH5M5txi7SZAPDdgqGQMcJG4Ka11fsJdOKHGA48HntuXBEUpRtxE4RS1q77Ruu7j341A"/>
+<div class="flex-1">
+<h3 class="font-headline font-bold text-on-surface text-base">Instalação de Carregador EV</h3>
+<div class="flex items-center gap-2 mt-1">
+<img alt="Provider" class="w-5 h-5 rounded-full object-cover" data-alt="Professional female electrician headshot with a friendly smile and confident demeanor" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAIvhNJOb3ekZOuLE1k6_qfy-VxFbyKNJZQbsvmFiWeA7yYaWuqhjAsGm2ahvbD5-AaquEAEFMPUcM-j-BEAf6OrnF1P1-ZktKnfDVIxaeGnFhea6NP2C4dy41C-Ue_5YWbxC6xm1dLpvs0204IeyCUiF7MmkTsEvif3vRWsj9der5pMLwNI5ms9_cHr_OP1zosTnPOW6fBdFmuSG66U40QCGl8H2I4MEiUliKCl1Cw5863f7EYIjBPweo10ul3SAsuVZisk3emgOk"/>
+<p class="font-body text-on-surface-variant text-xs">Jane Doe</p>
+</div>
+</div>
+</div>
+<!-- Transaction Details Bento-ish Layout -->
+<section class="space-y-4 mb-8">
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-surface-container-low p-4 rounded-xl">
+<p class="font-label text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Data e Hora</p>
+<p class="font-body text-sm font-semibold">24 Jan 2024, 14:30</p>
+</div>
+<div class="bg-surface-container-low p-4 rounded-xl">
+<p class="font-label text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Valor Total</p>
+<p class="font-body text-sm font-bold text-primary">R$ 450,00</p>
+</div>
+</div>
+<div class="bg-surface-container-low p-4 rounded-xl flex justify-between items-center">
+<div>
+<p class="font-label text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Método de Pagamento</p>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-on-surface-variant text-sm" data-icon="credit_card">credit_card</span>
+<p class="font-body text-sm font-semibold">Visa •••• 1234</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline-variant" data-icon="verified" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+<div class="bg-surface-container-low p-4 rounded-xl">
+<p class="font-label text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Código da Transação</p>
+<div class="flex justify-between items-center">
+<p class="font-body text-sm font-mono text-on-surface">#SV-987654321</p>
+<button class="text-primary active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-sm" data-icon="content_copy">content_copy</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Description -->
+<section class="mb-10 px-2">
+<h4 class="font-headline font-bold text-xs uppercase tracking-widest text-on-surface-variant mb-3">Resumo dos Serviços</h4>
+<p class="font-body text-sm text-on-surface-variant leading-relaxed">
+                Instalação profissional de estação de carregamento de Nível 2. Inclui avaliação de atualização do painel e montagem.
+            </p>
+</section>
+<!-- Action Buttons -->
+<div class="flex flex-col gap-3">
+<button class="signature-gradient w-full py-4 rounded-lg font-headline font-bold text-on-primary flex items-center justify-center gap-2 shadow-lg shadow-primary/10 active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined" data-icon="download">download</span>
+                Baixar Comprovante
+            </button>
+<button class="bg-secondary-container w-full py-4 rounded-lg font-headline font-bold text-on-secondary-container flex items-center justify-center gap-2 active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+                Preciso de Ajuda
+            </button>
+<button class="w-full py-4 font-headline font-bold text-primary hover:opacity-80 transition-opacity flex items-center justify-center gap-1">
+                Voltar para o Início
+            </button>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="bg-[#ffffff]/80 dark:bg-slate-900/80 backdrop-blur-xl fixed bottom-0 left-0 w-full flex justify-around items-center px-6 pb-6 pt-3 z-50 no-border shadow-[0_-8px_32px_rgba(45,52,53,0.04)]">
+<a class="flex flex-col items-center justify-center text-[#5a6061] dark:text-slate-500 px-5 py-2 hover:opacity-80 transition-opacity active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="home">home</span>
+<span class="font-['Inter'] font-medium text-[10px] uppercase tracking-wider">Início</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5a6061] dark:text-slate-500 px-5 py-2 hover:opacity-80 transition-opacity active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="person">person</span>
+<span class="font-['Inter'] font-medium text-[10px] uppercase tracking-wider">Perfil</span>
+</a>
+</nav>
+</body></html>

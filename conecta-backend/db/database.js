@@ -30,6 +30,30 @@ db.exec(`
     status TEXT DEFAULT 'rascunho',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   );
+
+  CREATE TABLE IF NOT EXISTS addresses (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    type TEXT DEFAULT 'casa',
+    zip_code TEXT,
+    street TEXT NOT NULL,
+    number TEXT,
+    complement TEXT,
+    neighborhood TEXT,
+    city TEXT NOT NULL,
+    state TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+
+  CREATE TABLE IF NOT EXISTS transactions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    service_name TEXT NOT NULL,
+    provider_name TEXT,
+    amount REAL NOT NULL,
+    status TEXT DEFAULT 'concluido',
+    paid_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
 `);
 
 module.exports = db;
