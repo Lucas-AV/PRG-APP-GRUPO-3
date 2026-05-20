@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -5,12 +6,15 @@ import {
   Pressable,
   Switch,
   StyleSheet,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, FontFamily, GradientColors, Spacing, Radius } from '@/constants/theme';
+import { useAuth } from '@/context/AuthContext';
+import { servicesApi, Service } from '@/services/api';
 
 type Metric = { icon: React.ComponentProps<typeof MaterialIcons>['name']; label: string; value: string; badge: string; badgeColor: string; badgeBg: string };
 type Review = { name: string; date: string; rating: number; text: string };
@@ -96,7 +100,38 @@ function StarRow({ count }: { count: number }) {
 export default function ViewServiceScreen() {
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
-  const data = MOCK[id ?? '1'] ?? MOCK['1'];
+  const { token } = useAuth();
+  const [service, setService] = useState<Service | null>(null);
+  const [loadingService, setLoadingService] = useState(true);
+
+  useEffect(() => {
+    if (!id || !token) return;
+    servicesApi.get(Number(id), token)
+      .then(setService)
+      .catch(() => {})
+      .finally(() => setLoadingService(false));
+  }, [id, token]);
+
+  const fallback = MOCK[id ?? '1'] ?? MOCK['1'];
+  const data = {
+    ...fallback,
+    title: service?.name ?? fallback.title,
+    category: service?.category ?? fallback.category,
+    price: service?.price != null
+      ? `R$ ${service.price.toFixed(2).replace('.', ',')}`
+      : fallback.price,
+    duration: service?.duration ?? fallback.duration,
+    isActive: service ? service.status === 'ativo' : fallback.isActive,
+    description: service?.description ?? fallback.description,
+  };
+
+  if (loadingService) {
+    return (
+      <SafeAreaView style={styles.container} edges={['left', 'right']}>
+        <ActivityIndicator style={{ flex: 1 }} color={Colors.primary} />
+      </SafeAreaView>
+    );
+  }
 
   const maxBar = 120;
   const peakIdx = data.weeklyData.indexOf(Math.max(...data.weeklyData));
