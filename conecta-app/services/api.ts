@@ -96,3 +96,25 @@ export const servicesApi = {
   remove: (id: number, token: string) =>
     request<{ message: string }>(`/services/${id}`, { method: 'DELETE' }, token),
 };
+
+// ── Users ─────────────────────────────────────────────────────────────────────
+
+export const usersApi = {
+  update: (id: number, data: { name?: string; email?: string; phone?: string }, token: string) =>
+    request<User>(`/users/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }, token),
+
+  changePassword: (id: number, data: { current_password: string; new_password: string }, token: string) =>
+    request<{ message: string }>(`/users/${id}/password`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }, token),
+
+  deleteAccount: (id: number, data: { password: string }, token: string) =>
+    request<{ message: string }>(`/users/${id}`, {
+      method: 'DELETE',
+      body: JSON.stringify(data),
+    }, token),
+};
