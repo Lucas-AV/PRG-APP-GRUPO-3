@@ -134,3 +134,20 @@ export const usersApi = {
       body: JSON.stringify(data),
     }, token),
 };
+
+// ── Transactions ───────────────────────────────────────────────────────────────
+
+export interface Transaction {
+  id: number;
+  user_id: number;
+  service_name: string;
+  provider_name?: string;
+  amount: number;
+  status: 'concluido' | 'pendente' | 'cancelado';
+  paid_at: string;
+}
+
+export const transactionsApi = {
+  list: (userId: number, token: string) =>
+    request<Transaction[]>(`/users/${userId}/transactions`, {}, token),
+};

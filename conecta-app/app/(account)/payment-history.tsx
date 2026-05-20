@@ -1,16 +1,19 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   View,
   Text,
   ScrollView,
   Pressable,
   StyleSheet,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
 import { TopAppBar } from '@/components/ui/top-app-bar';
 import { Colors, FontFamily, Spacing, Radius } from '@/constants/theme';
+import { useAuth } from '@/context/AuthContext';
+import { transactionsApi, Transaction } from '@/services/api';
 
 type Filter = 'mes' | 'trimestre' | 'ano';
 type TxStatus = 'Concluído' | 'Pendente' | 'Cancelado';
@@ -21,69 +24,11 @@ const FILTERS: { key: Filter; label: string }[] = [
   { key: 'ano', label: '2023' },
 ];
 
-interface Transaction {
-  id: string;
-  icon: 'flash-on' | 'brush' | 'build' | 'ac-unit';
-  iconBg: string;
-  iconColor: string;
-  title: string;
-  date: string;
-  amount: string;
-  status: TxStatus;
-}
-
-const TRANSACTION_GROUPS: { month: string; transactions: Transaction[] }[] = [
-  {
-    month: 'Janeiro 2024',
-    transactions: [
-      {
-        id: '1',
-        icon: 'flash-on',
-        iconBg: '#eff6ff',
-        iconColor: '#2563eb',
-        title: 'Reparo Elétrico — João Silva',
-        date: '15 Jan, 14:30',
-        amount: 'R$ 150,00',
-        status: 'Concluído',
-      },
-      {
-        id: '2',
-        icon: 'brush',
-        iconBg: '#f5f3ff',
-        iconColor: '#7c3aed',
-        title: 'Limpeza Residencial — Ana Clara',
-        date: '12 Jan, 09:00',
-        amount: 'R$ 220,00',
-        status: 'Pendente',
-      },
-    ],
-  },
-  {
-    month: 'Dezembro 2023',
-    transactions: [
-      {
-        id: '3',
-        icon: 'build',
-        iconBg: '#fff1f2',
-        iconColor: '#e11d48',
-        title: 'Reparo Hidráulico — Marcos Lima',
-        date: '28 Dez, 16:15',
-        amount: 'R$ 380,00',
-        status: 'Cancelado',
-      },
-      {
-        id: '4',
-        icon: 'ac-unit',
-        iconBg: '#eff6ff',
-        iconColor: '#2563eb',
-        title: 'Manutenção Ar-Condicionado',
-        date: '20 Dez, 10:30',
-        amount: 'R$ 490,00',
-        status: 'Concluído',
-      },
-    ],
-  },
-];
+const STATUS_MAP: Record<string, TxStatus> = {
+  concluido: 'Concluído',
+  pendente: 'Pendente',
+  cancelado: 'Cancelado',
+};
 
 const STATUS_STYLE: Record<TxStatus, { bg: string; text: string }> = {
   'Concluído': { bg: '#f0fdf4', text: '#16a34a' },
@@ -92,7 +37,34 @@ const STATUS_STYLE: Record<TxStatus, { bg: string; text: string }> = {
 };
 
 export default function PaymentHistoryScreen() {
+  const { user, token } = useAuth();
   const [filter, setFilter] = useState<Filter>('mes');
+  const [groups, setGroups] = useState<{ month: string; transactions: Transaction[] }[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!user || !token) return;
+    transactionsApi.list(user.id, token)
+      .then(txs => {
+        // Group by month
+        const map = new Map<string, Transaction[]>();
+        for (const tx of txs) {
+          const d = new Date(tx.paid_at);
+          const key = d.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+          const capitalized = key.charAt(0).toUpperCase() + key.slice(1);
+          if (!map.has(capitalized)) map.set(capitalized, []);
+          map.get(capitalized)!.push(tx);
+        }
+        setGroups(Array.from(map.entries()).map(([month, transactions]) => ({ month, transactions })));
+      })
+      .catch(() => setGroups([]))
+      .finally(() => setLoading(false));
+  }, [user, token]);
+
+  if (loading) return <ActivityIndicator style={{ flex: 1 }} color={Colors.primary} />;
+
+  const thisMonth = groups[0]?.transactions.reduce((sum, tx) => sum + tx.amount, 0) ?? 0;
+  const totalLabel = `R$ ${thisMonth.toFixed(2).replace('.', ',')}`;
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -106,7 +78,7 @@ export default function PaymentHistoryScreen() {
           <View style={styles.summaryInner}>
             <Text style={styles.summaryLabel}>Total Gasto este mês</Text>
             <View style={styles.summaryAmountRow}>
-              <Text style={styles.summaryAmount}>R$ 1.240,00</Text>
+              <Text style={styles.summaryAmount}>{totalLabel}</Text>
               <View style={styles.trendBadge}>
                 <MaterialIcons name="trending-up" size={14} color="#16a34a" />
                 <Text style={styles.trendText}>+5%</Text>
@@ -137,7 +109,7 @@ export default function PaymentHistoryScreen() {
 
         {/* Transaction groups */}
         <View style={styles.groups}>
-          {TRANSACTION_GROUPS.map(group => (
+          {groups.map(group => (
             <View key={group.month} style={styles.group}>
               <View style={styles.groupHeader}>
                 <Text style={styles.groupMonth}>{group.month}</Text>
@@ -145,7 +117,18 @@ export default function PaymentHistoryScreen() {
               </View>
               <View style={styles.groupTransactions}>
                 {group.transactions.map((tx, idx) => {
-                  const s = STATUS_STYLE[tx.status];
+                  const status = STATUS_MAP[tx.status] ?? 'Concluído';
+                  const s = STATUS_STYLE[status];
+                  const title = tx.provider_name
+                    ? `${tx.service_name} — ${tx.provider_name}`
+                    : tx.service_name;
+                  const amount = `R$ ${tx.amount.toFixed(2).replace('.', ',')}`;
+                  const date = new Date(tx.paid_at).toLocaleDateString('pt-BR', {
+                    day: '2-digit',
+                    month: 'short',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  });
                   return (
                     <Pressable
                       key={tx.id}
@@ -156,18 +139,18 @@ export default function PaymentHistoryScreen() {
                       ]}
                       onPress={() => router.push('/(account)/receipt' as any)}
                     >
-                      <View style={[styles.txIconBox, { backgroundColor: tx.iconBg }]}>
-                        <MaterialIcons name={tx.icon} size={22} color={tx.iconColor} />
+                      <View style={[styles.txIconBox, { backgroundColor: '#eff6ff' }]}>
+                        <MaterialIcons name="build" size={22} color="#2563eb" />
                       </View>
                       <View style={styles.txInfo}>
-                        <Text style={styles.txTitle}>{tx.title}</Text>
-                        <Text style={styles.txDate}>{tx.date}</Text>
+                        <Text style={styles.txTitle}>{title}</Text>
+                        <Text style={styles.txDate}>{date}</Text>
                       </View>
                       <View style={styles.txRight}>
-                        <Text style={styles.txAmount}>{tx.amount}</Text>
+                        <Text style={styles.txAmount}>{amount}</Text>
                         <View style={[styles.statusBadge, { backgroundColor: s.bg }]}>
                           <Text style={[styles.statusText, { color: s.text }]}>
-                            {tx.status.toUpperCase()}
+                            {status.toUpperCase()}
                           </Text>
                         </View>
                       </View>
