@@ -6,6 +6,7 @@ import {
   Pressable,
   StyleSheet,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
@@ -15,20 +16,32 @@ import { InputField } from '@/components/ui/input-field';
 import { TopAppBar } from '@/components/ui/top-app-bar';
 import { Colors, FontFamily, Spacing, Radius } from '@/constants/theme';
 import { useAuth } from '@/context/AuthContext';
+import { usersApi } from '@/services/api';
 
 export default function EditProfileScreen() {
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   const [name, setName] = useState(user?.name ?? '');
   const [email, setEmail] = useState(user?.email ?? '');
   const [phone, setPhone] = useState(user?.phone ?? '');
   const [birthdate, setBirthdate] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const initials = name
     ? name.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase()
     : 'U';
 
-  const handleSave = () =>
-    Alert.alert('Alterações salvas', 'Seu perfil foi atualizado com sucesso.', [{ text: 'OK' }]);
+  const handleSave = async () => {
+    if (!user || !token) return;
+    setLoading(true);
+    try {
+      await usersApi.update(user.id, { name, email, phone }, token);
+      Alert.alert('Alterações salvas', 'Seu perfil foi atualizado com sucesso.', [{ text: 'OK' }]);
+    } catch (e: any) {
+      Alert.alert('Erro', e.message ?? 'Não foi possível salvar as alterações.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -116,7 +129,7 @@ export default function EditProfileScreen() {
 
         {/* Save */}
         <View style={styles.footer}>
-          <GradientButton label="Salvar Alterações" onPress={handleSave} />
+          <GradientButton label={loading ? 'Salvando…' : 'Salvar Alterações'} onPress={handleSave} disabled={loading} />
           <Text style={styles.privacyNote}>
             Suas informações são tratadas de acordo com nossa Política de Privacidade.
           </Text>
