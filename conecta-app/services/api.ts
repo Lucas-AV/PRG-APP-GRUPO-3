@@ -97,6 +97,22 @@ export const servicesApi = {
     request<{ message: string }>(`/services/${id}`, { method: 'DELETE' }, token),
 };
 
+// ── Addresses ─────────────────────────────────────────────────────────────────
+
+export interface Address {
+  id: number;
+  user_id: number;
+  type: 'casa' | 'trabalho' | 'outro';
+  zip_code?: string;
+  street: string;
+  number?: string;
+  complement?: string;
+  neighborhood?: string;
+  city: string;
+  state: string;
+  created_at: string;
+}
+
 // ── Users ─────────────────────────────────────────────────────────────────────
 
 export const usersApi = {
