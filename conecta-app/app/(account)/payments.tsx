@@ -16,12 +16,7 @@ import { GradientButton } from '@/components/ui/gradient-button';
 import { TopAppBar } from '@/components/ui/top-app-bar';
 import { Colors, FontFamily, Spacing, Radius } from '@/constants/theme';
 import { useAuth } from '@/context/AuthContext';
-import { transactionsApi, Transaction } from '@/services/api';
-
-const SAVED_CARDS = [
-  { id: '1', brand: 'Visa', last4: '1234', expiry: '08/27' },
-  { id: '2', brand: 'Mastercard', last4: '5678', expiry: '12/25' },
-];
+import { transactionsApi, Transaction, cardsApi, Card } from '@/services/api';
 
 
 const STATUS_LABEL: Record<string, string> = {
@@ -39,6 +34,7 @@ const STATUS_COLOR: Record<string, string> = {
 export default function PaymentsScreen() {
   const { user, token } = useAuth();
   const [recentTransactions, setRecentTransactions] = useState<Transaction[]>([]);
+  const [cards, setCards] = useState<Card[]>([]);
   const [couponCode, setCouponCode] = useState('');
   const [activeCoupon, setActiveCoupon] = useState<{ code: string; description: string } | null>({
     code: 'SEVGEN20',
@@ -51,6 +47,15 @@ export default function PaymentsScreen() {
       .then(txs => setRecentTransactions(txs.slice(0, 3)))
       .catch(() => setRecentTransactions([]));
   }, [user, token]);
+
+  const loadCards = () => {
+    if (!user || !token) return;
+    cardsApi.list(user.id, token)
+      .then(setCards)
+      .catch(() => setCards([]));
+  };
+
+  useEffect(() => { loadCards(); }, [user, token]);
 
   const comingSoon = () =>
     Alert.alert('Em desenvolvimento', 'Esta funcionalidade estará disponível em breve.', [{ text: 'OK' }]);
@@ -82,31 +87,39 @@ export default function PaymentsScreen() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Cartões salvos</Text>
           <View style={styles.cardsContainer}>
-            {SAVED_CARDS.map((card, idx) => (
-              <Pressable
-                key={card.id}
-                style={({ pressed }) => [
-                  styles.cardRow,
-                  idx < SAVED_CARDS.length - 1 && styles.cardRowBorder,
-                  pressed && { backgroundColor: Colors.surfaceContainerLow },
-                ]}
-                onPress={() =>
-                  router.push({
-                    pathname: '/(account)/card-detail' as any,
-                    params: { brand: card.brand, last4: card.last4, expiry: card.expiry },
-                  })
-                }
-              >
-                <View style={styles.cardIconWrap}>
-                  <MaterialIcons name="credit-card" size={22} color={Colors.primary} />
-                </View>
-                <View style={styles.cardInfo}>
-                  <Text style={styles.cardBrand}>{card.brand} final {card.last4}</Text>
-                  <Text style={styles.cardExpiry}>Expira em {card.expiry}</Text>
-                </View>
-                <MaterialIcons name="chevron-right" size={20} color={Colors.outline} />
-              </Pressable>
-            ))}
+            {cards.length === 0 ? (
+              <Text style={styles.emptyCards}>Nenhum cartão salvo.</Text>
+            ) : (
+              cards.map((card, idx) => (
+                <Pressable
+                  key={card.id.toString()}
+                  style={({ pressed }) => [
+                    styles.cardRow,
+                    idx < cards.length - 1 && styles.cardRowBorder,
+                    pressed && { backgroundColor: Colors.surfaceContainerLow },
+                  ]}
+                  onPress={() =>
+                    router.push({
+                      pathname: '/(account)/card-detail' as any,
+                      params: {
+                        brand: card.brand,
+                        last4: card.last_four,
+                        expiry: `${card.expiry_month}/${card.expiry_year}`,
+                      },
+                    })
+                  }
+                >
+                  <View style={styles.cardIconWrap}>
+                    <MaterialIcons name="credit-card" size={22} color={Colors.primary} />
+                  </View>
+                  <View style={styles.cardInfo}>
+                    <Text style={styles.cardBrand}>{card.brand} final {card.last_four}</Text>
+                    <Text style={styles.cardExpiry}>Expira em {card.expiry_month}/{card.expiry_year}</Text>
+                  </View>
+                  <MaterialIcons name="chevron-right" size={20} color={Colors.outline} />
+                </Pressable>
+              ))
+            )}
           </View>
           <Pressable
             style={({ pressed }) => [styles.addCardBtn, pressed && { opacity: 0.7 }]}
@@ -254,6 +267,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.02,
     shadowRadius: 8,
     elevation: 1,
+  },
+  emptyCards: {
+    fontFamily: FontFamily.bodyRegular,
+    fontSize: 13,
+    color: Colors.onSurfaceVariant,
+    textAlign: 'center',
+    paddingVertical: Spacing.xl,
   },
   cardRow: {
     flexDirection: 'row',

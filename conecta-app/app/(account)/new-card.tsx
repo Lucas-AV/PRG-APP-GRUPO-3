@@ -12,9 +12,12 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { router } from 'expo-router';
 import { GradientButton } from '@/components/ui/gradient-button';
 import { TopAppBar } from '@/components/ui/top-app-bar';
 import { Colors, FontFamily, Spacing, Radius } from '@/constants/theme';
+import { useAuth } from '@/context/AuthContext';
+import { cardsApi } from '@/services/api';
 
 const CARD_WIDTH = Dimensions.get('window').width - Spacing.xl * 2;
 const CARD_HEIGHT = CARD_WIDTH / 1.586;
@@ -31,22 +34,54 @@ function formatExpiry(raw: string) {
   return digits;
 }
 
+function detectBrand(number: string): string {
+  const digits = number.replace(/\s/g, '');
+  if (/^4/.test(digits)) return 'Visa';
+  if (/^5[1-5]/.test(digits) || /^2(2[2-9]|[3-6]\d|7[01])/.test(digits)) return 'Mastercard';
+  if (/^3[47]/.test(digits)) return 'Amex';
+  if (/^6(?:011|5)/.test(digits)) return 'Discover';
+  return 'Outro';
+}
+
 export default function NewCardScreen() {
+  const { user, token } = useAuth();
   const [cardNumber, setCardNumber] = useState('');
   const [cardName, setCardName] = useState('');
   const [expiry, setExpiry] = useState('');
   const [cvv, setCvv] = useState('');
   const [saveCard, setSaveCard] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const displayedNumber = cardNumber || '•••• •••• •••• ••••';
   const displayedName = cardName ? cardName.toUpperCase() : 'SEU NOME AQUI';
   const displayedExpiry = expiry || 'MM/AA';
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!cardNumber || !cardName || !expiry || !cvv) {
       return Alert.alert('Atenção', 'Preencha todos os campos para continuar.');
     }
-    Alert.alert('Cartão adicionado', 'Seu cartão foi salvo com sucesso.', [{ text: 'OK' }]);
+    if (!user || !token) return;
+
+    const digits = cardNumber.replace(/\s/g, '');
+    const last_four = digits.slice(-4);
+    const brand = detectBrand(cardNumber);
+    const [expiry_month, expiry_year] = expiry.split('/');
+
+    if (!expiry_month || !expiry_year) {
+      return Alert.alert('Atenção', 'Preencha todos os campos do cartão.');
+    }
+
+    setLoading(true);
+    try {
+      await cardsApi.add(user.id, { brand, last_four, expiry_month, expiry_year }, token);
+      Alert.alert('Cartão adicionado', 'Seu cartão foi salvo com sucesso.', [
+        { text: 'OK', onPress: () => router.back() },
+      ]);
+    } catch (e: any) {
+      Alert.alert('Erro', e.message ?? 'Não foi possível salvar o cartão.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -177,7 +212,7 @@ export default function NewCardScreen() {
             />
           </View>
 
-          <GradientButton label="Salvar Cartão" onPress={handleSave} />
+          <GradientButton label={loading ? 'Salvando...' : 'Salvar Cartão'} onPress={handleSave} />
         </View>
       </ScrollView>
     </SafeAreaView>
