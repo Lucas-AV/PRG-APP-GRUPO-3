@@ -187,7 +187,7 @@ export default function ProfileScreen() {
 
         {/* Conta */}
         <SettingsSection title="Conta">
-          <SettingsRow icon="location-on" label="Endereços" accent onPress={() => router.push('/(account)/add-address' as any)} />
+          <SettingsRow icon="location-on" label="Endereços" accent onPress={() => router.push('/(account)/addresses' as any)} />
           <SettingsRow icon="payment" label="Pagamentos" accent onPress={() => router.push('/(account)/payments' as any)} />
           <SettingsRow icon="loyalty" label="Assinaturas" accent isLast onPress={() => router.push('/(account)/plans' as any)} />
         </SettingsSection>
