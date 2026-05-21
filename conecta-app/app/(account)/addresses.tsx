@@ -34,7 +34,10 @@ export default function AddressesScreen() {
   const [loading, setLoading] = useState(true);
 
   const load = useCallback(() => {
-    if (!user || !token) return;
+    if (!user || !token) {
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     usersApi.listAddresses(user.id, token)
       .then(setAddresses)
@@ -42,7 +45,7 @@ export default function AddressesScreen() {
       .finally(() => setLoading(false));
   }, [user, token]);
 
-  useFocusEffect(load);
+  useFocusEffect(useCallback(() => { load(); }, [load]));
 
   const handleDelete = (id: number) => {
     if (!user || !token) return;
