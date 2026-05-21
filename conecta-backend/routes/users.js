@@ -359,6 +359,85 @@ router.delete('/:userId/addresses/:id', (req, res) => {
 
 /**
  * @swagger
+ * /users/{userId}/addresses/{id}:
+ *   put:
+ *     summary: Atualiza um endereço do usuário autenticado
+ *     tags: [Endereços]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               type:
+ *                 type: string
+ *                 enum: [casa, trabalho, outro]
+ *               zip_code:
+ *                 type: string
+ *               street:
+ *                 type: string
+ *               number:
+ *                 type: string
+ *               complement:
+ *                 type: string
+ *               neighborhood:
+ *                 type: string
+ *               city:
+ *                 type: string
+ *               state:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Endereço atualizado
+ *       403:
+ *         description: Acesso negado
+ *       404:
+ *         description: Endereço não encontrado
+ */
+router.put('/:userId/addresses/:id', (req, res) => {
+  const address = db.prepare('SELECT * FROM addresses WHERE id = ?').get(req.params.id);
+
+  if (!address) return res.status(404).json({ error: 'Endereço não encontrado' });
+  if (address.user_id !== req.user.id) return res.status(403).json({ error: 'Acesso negado' });
+
+  const { type, zip_code, street, number, complement, neighborhood, city, state } = req.body;
+
+  db.prepare(`
+    UPDATE addresses
+    SET type = ?, zip_code = ?, street = ?, number = ?, complement = ?, neighborhood = ?, city = ?, state = ?
+    WHERE id = ?
+  `).run(
+    type ?? address.type,
+    zip_code !== undefined ? zip_code : address.zip_code,
+    street ?? address.street,
+    number !== undefined ? number : address.number,
+    complement !== undefined ? complement : address.complement,
+    neighborhood !== undefined ? neighborhood : address.neighborhood,
+    city ?? address.city,
+    state ?? address.state,
+    req.params.id
+  );
+
+  const updated = db.prepare('SELECT * FROM addresses WHERE id = ?').get(req.params.id);
+  return res.json(updated);
+});
+
+/**
+ * @swagger
  * /users/{userId}/transactions:
  *   get:
  *     summary: Lista o histórico de transações do usuário autenticado
