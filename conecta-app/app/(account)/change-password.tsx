@@ -12,8 +12,11 @@ import { GradientButton } from '@/components/ui/gradient-button';
 import { InputField } from '@/components/ui/input-field';
 import { TopAppBar } from '@/components/ui/top-app-bar';
 import { Colors, FontFamily, Spacing, Radius } from '@/constants/theme';
+import { useAuth } from '@/context/AuthContext';
+import { usersApi } from '@/services/api';
 
 export default function ChangePasswordScreen() {
+  const { user, token } = useAuth();
   const [current, setCurrent] = useState('');
   const [next, setNext] = useState('');
   const [confirm, setConfirm] = useState('');
@@ -30,11 +33,17 @@ export default function ChangePasswordScreen() {
     if (next !== confirm)
       return Alert.alert('Atenção', 'As senhas não coincidem.');
 
+    if (!user || !token) return;
     setLoading(true);
-    await new Promise(r => setTimeout(r, 1000));
-    setLoading(false);
-    Alert.alert('Senha atualizada', 'Sua senha foi alterada com sucesso.', [{ text: 'OK' }]);
-    setCurrent(''); setNext(''); setConfirm('');
+    try {
+      await usersApi.changePassword(user.id, { current_password: current, new_password: next }, token);
+      Alert.alert('Senha atualizada', 'Sua senha foi alterada com sucesso.', [{ text: 'OK' }]);
+      setCurrent(''); setNext(''); setConfirm('');
+    } catch (e: any) {
+      Alert.alert('Erro', e.message ?? 'Não foi possível alterar a senha.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

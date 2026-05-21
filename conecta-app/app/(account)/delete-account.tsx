@@ -15,9 +15,10 @@ import { InputField } from '@/components/ui/input-field';
 import { TopAppBar } from '@/components/ui/top-app-bar';
 import { Colors, FontFamily, Spacing, Radius } from '@/constants/theme';
 import { useAuth } from '@/context/AuthContext';
+import { usersApi } from '@/services/api';
 
 export default function DeleteAccountScreen() {
-  const { logout } = useAuth();
+  const { user, token, logout } = useAuth();
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -33,9 +34,15 @@ export default function DeleteAccountScreen() {
           style: 'destructive',
           onPress: async () => {
             setLoading(true);
-            await new Promise(r => setTimeout(r, 1200));
-            await logout();
-            router.replace('/(auth)/login');
+            try {
+              if (!user || !token) throw new Error('Sessão inválida');
+              await usersApi.deleteAccount(user.id, { password }, token);
+              await logout();
+              router.replace('/(auth)/login');
+            } catch (e: any) {
+              setLoading(false);
+              Alert.alert('Erro', e.message ?? 'Não foi possível excluir a conta.');
+            }
           },
         },
       ]
