@@ -23,6 +23,7 @@ interface InputFieldProps {
   multiline?: boolean;
   numberOfLines?: number;
   errorMessage?: string;
+  maxLength?: number;
 }
 
 export function InputField({
@@ -38,6 +39,7 @@ export function InputField({
   multiline,
   numberOfLines,
   errorMessage,
+  maxLength,
 }: InputFieldProps) {
   const [showPassword, setShowPassword] = useState(false);
   const isPassword = secureTextEntry;
@@ -71,6 +73,7 @@ export function InputField({
           multiline={multiline}
           numberOfLines={numberOfLines}
           textAlignVertical={multiline ? 'top' : 'center'}
+          maxLength={maxLength}
         />
         {isPassword && (
           <Pressable
