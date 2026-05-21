@@ -416,21 +416,29 @@ router.put('/:userId/addresses/:id', (req, res) => {
 
   const { type, zip_code, street, number, complement, neighborhood, city, state } = req.body;
 
-  db.prepare(`
-    UPDATE addresses
-    SET type = ?, zip_code = ?, street = ?, number = ?, complement = ?, neighborhood = ?, city = ?, state = ?
-    WHERE id = ?
-  `).run(
-    type ?? address.type,
-    zip_code !== undefined ? zip_code : address.zip_code,
-    street ?? address.street,
-    number !== undefined ? number : address.number,
-    complement !== undefined ? complement : address.complement,
-    neighborhood !== undefined ? neighborhood : address.neighborhood,
-    city ?? address.city,
-    state ?? address.state,
-    req.params.id
-  );
+  if (street !== undefined && !street) return res.status(400).json({ error: 'street não pode ser vazio' });
+  if (city !== undefined && !city) return res.status(400).json({ error: 'city não pode ser vazio' });
+  if (state !== undefined && !state) return res.status(400).json({ error: 'state não pode ser vazio' });
+
+  try {
+    db.prepare(`
+      UPDATE addresses
+      SET type = ?, zip_code = ?, street = ?, number = ?, complement = ?, neighborhood = ?, city = ?, state = ?
+      WHERE id = ?
+    `).run(
+      type ?? address.type,
+      zip_code !== undefined ? zip_code : address.zip_code,
+      street ?? address.street,
+      number !== undefined ? number : address.number,
+      complement !== undefined ? complement : address.complement,
+      neighborhood !== undefined ? neighborhood : address.neighborhood,
+      city ?? address.city,
+      state ?? address.state,
+      req.params.id
+    );
+  } catch (err) {
+    return res.status(500).json({ error: 'Erro ao atualizar endereço' });
+  }
 
   const updated = db.prepare('SELECT * FROM addresses WHERE id = ?').get(req.params.id);
   return res.json(updated);
