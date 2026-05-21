@@ -186,6 +186,27 @@ export const metricsApi = {
     request<ServiceMetrics>(`/services/${serviceId}/metrics`, {}, token),
 };
 
+// ── Reviews ───────────────────────────────────────────────────────────────────
+
+export interface ServiceReview {
+  id: number;
+  rating: number;
+  comment?: string;
+  created_at: string;
+  reviewer_name: string;
+}
+
+export const reviewsApi = {
+  list: (serviceId: number) =>
+    request<ServiceReview[]>(`/services/${serviceId}/reviews`),
+
+  create: (serviceId: number, data: { rating: number; comment?: string }, token: string) =>
+    request<ServiceReview>(`/services/${serviceId}/reviews`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }, token),
+};
+
 // ── Transactions ───────────────────────────────────────────────────────────────
 
 export interface Transaction {
