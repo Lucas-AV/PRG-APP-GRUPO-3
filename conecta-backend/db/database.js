@@ -83,6 +83,16 @@ db.exec(`
     features TEXT NOT NULL DEFAULT '[]',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   );
+
+  CREATE TABLE IF NOT EXISTS subscriptions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    plan_id INTEGER NOT NULL REFERENCES plans(id),
+    status TEXT NOT NULL DEFAULT 'ativa',
+    started_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    expires_at DATETIME,
+    UNIQUE(user_id)
+  );
 `);
 
 const plansCount = db.prepare('SELECT COUNT(*) as n FROM plans').get();
