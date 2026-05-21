@@ -101,7 +101,6 @@ export default function ViewServiceScreen() {
   const insets = useSafeAreaInsets();
   const { token } = useAuth();
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { token } = useAuth();
   const [service, setService] = useState<Service | null>(null);
   const [loadingService, setLoadingService] = useState(true);
   const [apiMetrics, setApiMetrics] = useState<ServiceMetrics | null>(null);
