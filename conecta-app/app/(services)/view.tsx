@@ -14,7 +14,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, FontFamily, GradientColors, Spacing, Radius } from '@/constants/theme';
 import { useAuth } from '@/context/AuthContext';
-import { servicesApi, Service, metricsApi, ServiceMetrics } from '@/services/api';
+import { servicesApi, Service, metricsApi, ServiceMetrics, reviewsApi, ServiceReview } from '@/services/api';
 
 type Metric = { icon: React.ComponentProps<typeof MaterialIcons>['name']; label: string; value: string; badge: string; badgeColor: string; badgeBg: string };
 type Review = { name: string; date: string; rating: number; text: string };
@@ -105,6 +105,7 @@ export default function ViewServiceScreen() {
   const [service, setService] = useState<Service | null>(null);
   const [loadingService, setLoadingService] = useState(true);
   const [apiMetrics, setApiMetrics] = useState<ServiceMetrics | null>(null);
+  const [apiReviews, setApiReviews] = useState<ServiceReview[] | null>(null);
 
   useEffect(() => {
     if (!id || !token) return;
@@ -113,6 +114,13 @@ export default function ViewServiceScreen() {
       .catch(() => {})
       .finally(() => setLoadingService(false));
   }, [id, token]);
+
+  useEffect(() => {
+    if (!id) return;
+    const serviceId = parseInt(id, 10);
+    if (isNaN(serviceId)) return;
+    reviewsApi.list(serviceId).then(setApiReviews).catch(() => {});
+  }, [id]);
 
   const fallback = MOCK[id ?? '1'] ?? MOCK['1'];
   const data = {
@@ -126,6 +134,15 @@ export default function ViewServiceScreen() {
     isActive: service ? service.status === 'ativo' : fallback.isActive,
     description: service?.description ?? fallback.description,
   };
+
+  const displayedReviews: Review[] = apiReviews
+    ? apiReviews.map(r => ({
+        name: r.reviewer_name,
+        date: new Date(r.created_at).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' }),
+        rating: r.rating,
+        text: r.comment ?? '',
+      }))
+    : data.reviews;
 
   if (loadingService) {
     return (
@@ -275,7 +292,7 @@ export default function ViewServiceScreen() {
             </Pressable>
           </View>
 
-          {data.reviews.map((review, i) => (
+          {displayedReviews.map((review, i) => (
             <View key={i} style={styles.reviewCard}>
               <View style={styles.reviewHeader}>
                 <View style={styles.reviewAuthorRow}>
