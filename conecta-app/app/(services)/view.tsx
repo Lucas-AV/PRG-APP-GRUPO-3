@@ -14,7 +14,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, FontFamily, GradientColors, Spacing, Radius } from '@/constants/theme';
 import { useAuth } from '@/context/AuthContext';
-import { servicesApi, Service } from '@/services/api';
+import { servicesApi, Service, metricsApi, ServiceMetrics } from '@/services/api';
 
 type Metric = { icon: React.ComponentProps<typeof MaterialIcons>['name']; label: string; value: string; badge: string; badgeColor: string; badgeBg: string };
 type Review = { name: string; date: string; rating: number; text: string };
@@ -99,10 +99,12 @@ function StarRow({ count }: { count: number }) {
 
 export default function ViewServiceScreen() {
   const insets = useSafeAreaInsets();
+  const { token } = useAuth();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { token } = useAuth();
   const [service, setService] = useState<Service | null>(null);
   const [loadingService, setLoadingService] = useState(true);
+  const [apiMetrics, setApiMetrics] = useState<ServiceMetrics | null>(null);
 
   useEffect(() => {
     if (!id || !token) return;
@@ -133,8 +135,25 @@ export default function ViewServiceScreen() {
     );
   }
 
+  useEffect(() => {
+    if (!id || !token) return;
+    const serviceId = parseInt(id, 10);
+    if (isNaN(serviceId)) return;
+    metricsApi.get(serviceId, token).then(setApiMetrics).catch(() => {});
+  }, [id, token]);
+
+  const computedMetrics: Metric[] = apiMetrics
+    ? [
+        { icon: 'trending-up', label: 'Faturamento', value: `R$ ${apiMetrics.total_revenue.toLocaleString('pt-BR')}`, badge: 'Total', badgeColor: '#065F46', badgeBg: '#D1FAE5' },
+        { icon: 'event-available', label: 'Agendamentos', value: String(apiMetrics.total_bookings), badge: 'Total', badgeColor: Colors.onSurfaceVariant, badgeBg: Colors.surfaceContainerLow },
+        { icon: 'star', label: 'Nota Média', value: apiMetrics.avg_rating.toFixed(1), badge: '★ Top', badgeColor: Colors.primary, badgeBg: Colors.primaryContainer },
+        { icon: 'schedule', label: 'Resp. Média', value: '—', badge: 'Rápido', badgeColor: Colors.primary, badgeBg: Colors.primaryContainer },
+      ]
+    : data.metrics;
+
+  const weeklyData = apiMetrics?.weekly_data ?? data.weeklyData;
   const maxBar = 120;
-  const peakIdx = data.weeklyData.indexOf(Math.max(...data.weeklyData));
+  const peakIdx = weeklyData.indexOf(Math.max(...weeklyData));
 
   return (
     <SafeAreaView style={styles.container} edges={['left', 'right']}>
@@ -231,7 +250,7 @@ export default function ViewServiceScreen() {
 
         {/* Metrics grid */}
         <View style={styles.metricsGrid}>
-          {data.metrics.map((m, i) => (
+          {computedMetrics.map((m, i) => (
             <View key={i} style={styles.metricCard}>
               <View style={styles.metricCardTop}>
                 <View style={styles.metricIconBox}>
@@ -280,7 +299,7 @@ export default function ViewServiceScreen() {
           <Text style={styles.sectionTitle}>Atividade Semanal</Text>
           <View style={styles.chartCard}>
             <View style={styles.chartBars}>
-              {data.weeklyData.map((pct, i) => (
+              {weeklyData.map((pct, i) => (
                 <View key={i} style={styles.barWrapper}>
                   <View
                     style={[
