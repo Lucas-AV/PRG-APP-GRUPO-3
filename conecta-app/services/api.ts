@@ -143,6 +143,12 @@ export const usersApi = {
       body: JSON.stringify(data),
     }, token),
 
+  updateAddress: (userId: number, addressId: number, data: Partial<Omit<Address, 'id' | 'user_id' | 'created_at'>>, token: string) =>
+    request<Address>(`/users/${userId}/addresses/${addressId}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }, token),
+
   deleteAddress: (userId: number, addressId: number, token: string) =>
     request<{ message: string }>(`/users/${userId}/addresses/${addressId}`, { method: 'DELETE' }, token),
 };
