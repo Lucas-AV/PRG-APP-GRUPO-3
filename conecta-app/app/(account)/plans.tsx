@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -6,6 +6,7 @@ import {
   Pressable,
   StyleSheet,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -14,15 +15,53 @@ import { GradientButton } from '@/components/ui/gradient-button';
 import { TopAppBar } from '@/components/ui/top-app-bar';
 import { Colors, FontFamily, GradientColors, Spacing, Radius } from '@/constants/theme';
 import { useAuth } from '@/context/AuthContext';
+import { plansApi, subscriptionsApi, Plan, Subscription } from '@/services/api';
 
 type Tab = 'cliente' | 'prestador';
 
 export default function PlansScreen() {
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   const [tab, setTab] = useState<Tab>(user?.role === 'prestador' ? 'prestador' : 'cliente');
+  const [plans, setPlans] = useState<Plan[]>([]);
+  const [subscription, setSubscription] = useState<Subscription | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [subscribing, setSubscribing] = useState(false);
 
-  const comingSoon = () =>
-    Alert.alert('Em desenvolvimento', 'Assinaturas estarão disponíveis em breve.', [{ text: 'OK' }]);
+  const loadData = async (role: Tab) => {
+    setLoading(true);
+    try {
+      const [fetchedPlans, fetchedSub] = await Promise.all([
+        plansApi.list(role),
+        user && token ? subscriptionsApi.get(user.id, token) : Promise.resolve(null),
+      ]);
+      setPlans(fetchedPlans);
+      setSubscription(fetchedSub);
+    } catch {
+      setPlans([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => { loadData(tab); }, [tab]);
+
+  const handleSubscribe = async (planId: number) => {
+    if (!user || !token) return;
+    setSubscribing(true);
+    try {
+      const newSub = await subscriptionsApi.subscribe(user.id, planId, token);
+      setSubscription(newSub);
+      Alert.alert('Assinatura ativada', `Você agora tem o plano ${newSub.plan_name}!`, [{ text: 'OK' }]);
+    } catch (e: any) {
+      Alert.alert('Erro', e.message ?? 'Não foi possível realizar a assinatura.');
+    } finally {
+      setSubscribing(false);
+    }
+  };
+
+  const freePlan = plans.find(p => p.price === 0);
+  const premiumPlan = plans.find(p => p.price > 0);
+  const activePlanId = subscription?.is_subscribed ? subscription.plan_id : freePlan?.id;
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -52,17 +91,48 @@ export default function PlansScreen() {
           </Pressable>
         </View>
 
-        {tab === 'cliente' ? (
-          <ClientTab onSubscribe={comingSoon} />
+        {loading ? (
+          <ActivityIndicator size="large" color={Colors.primary} style={{ marginTop: Spacing.xxxl }} />
+        ) : tab === 'cliente' ? (
+          <ClientTab
+            freePlan={freePlan}
+            premiumPlan={premiumPlan}
+            subscription={subscription}
+            activePlanId={activePlanId}
+            onSubscribe={handleSubscribe}
+            subscribing={subscribing}
+          />
         ) : (
-          <WorkerTab onSubscribe={comingSoon} />
+          <WorkerTab
+            freePlan={freePlan}
+            premiumPlan={premiumPlan}
+            subscription={subscription}
+            activePlanId={activePlanId}
+            onSubscribe={handleSubscribe}
+            subscribing={subscribing}
+          />
         )}
       </ScrollView>
     </SafeAreaView>
   );
 }
 
-function ClientTab({ onSubscribe }: { onSubscribe: () => void }) {
+type TabProps = {
+  freePlan?: Plan;
+  premiumPlan?: Plan;
+  subscription: Subscription | null;
+  activePlanId?: number;
+  onSubscribe: (planId: number) => void;
+  subscribing: boolean;
+};
+
+function ClientTab({ freePlan, premiumPlan, subscription, activePlanId, onSubscribe, subscribing }: TabProps) {
+  const isOnFree = !subscription?.is_subscribed;
+  const activeName = subscription?.is_subscribed ? subscription.plan_name : (freePlan?.name ?? 'Free');
+  const activeFeatures = subscription?.is_subscribed
+    ? subscription.features
+    : (freePlan?.features ?? []);
+
   return (
     <View style={tabs.wrap}>
       {/* Current plan card */}
@@ -71,56 +141,72 @@ function ClientTab({ onSubscribe }: { onSubscribe: () => void }) {
           <View style={tabs.planBadge}>
             <Text style={tabs.planBadgeText}>PLANO ATIVO</Text>
           </View>
-          <Text style={tabs.planTitle}>Plano Free</Text>
-          <Text style={tabs.planSub}>Ideal para quem está começando e busca serviços pontuais.</Text>
-          <View style={tabs.planFeatures}>
-            <PlanFeature label="Acesso a todos os serviços" />
-            <PlanFeature label="Histórico de agendamentos" />
+          <Text style={tabs.planTitle}>{activeName}</Text>
+          <Text style={tabs.planSub}>
+            {isOnFree
+              ? 'Ideal para quem está começando e busca serviços pontuais.'
+              : `Assinatura ativa • R$ ${subscription?.plan_price?.toFixed(2)}/mês`}
+          </Text>
+          {activeFeatures.length > 0 && (
+            <View style={tabs.planFeatures}>
+              {activeFeatures.map((f, i) => <PlanFeature key={i} label={f} />)}
+            </View>
+          )}
+          {subscription?.is_subscribed && (
+            <Pressable
+              style={({ pressed }) => [tabs.manageBtn, pressed && { opacity: 0.8 }]}
+              onPress={() => freePlan && onSubscribe(freePlan.id)}
+            >
+              <Text style={tabs.manageBtnLabel}>Cancelar Assinatura</Text>
+            </Pressable>
+          )}
+        </View>
+        {isOnFree && (
+          <View style={tabs.planStats}>
+            <Text style={tabs.planStatsNumber}>Free</Text>
+            <Text style={tabs.planStatsLabel}>PLANO ATUAL</Text>
           </View>
-          <Pressable
-            style={({ pressed }) => [tabs.manageBtn, pressed && { opacity: 0.8 }]}
-            onPress={onSubscribe}
-          >
-            <Text style={tabs.manageBtnLabel}>Gerenciar Plano</Text>
-          </Pressable>
-        </View>
-        <View style={tabs.planStats}>
-          <Text style={tabs.planStatsNumber}>08</Text>
-          <Text style={tabs.planStatsLabel}>AGENDAMENTOS ESTE MÊS</Text>
-        </View>
+        )}
       </View>
 
       {/* Upgrade section */}
-      <View style={tabs.upgradeSection}>
-        <Text style={tabs.upgradeTitle}>Recomendado para você</Text>
-        <View style={tabs.premiumCard}>
-          <View style={tabs.premiumLeft}>
-            <View style={tabs.premiumHeader}>
-              <MaterialIcons name="workspace-premium" size={22} color={Colors.primary} />
-              <Text style={tabs.premiumName}>Conecta Plus</Text>
+      {premiumPlan && activePlanId !== premiumPlan.id && (
+        <View style={tabs.upgradeSection}>
+          <Text style={tabs.upgradeTitle}>Recomendado para você</Text>
+          <View style={tabs.premiumCard}>
+            <View style={tabs.premiumLeft}>
+              <View style={tabs.premiumHeader}>
+                <MaterialIcons name="workspace-premium" size={22} color={Colors.primary} />
+                <Text style={tabs.premiumName}>{premiumPlan.name}</Text>
+              </View>
+              <View style={tabs.premiumPrice}>
+                <Text style={tabs.premiumAmount}>R$ {premiumPlan.price.toFixed(2)}</Text>
+                <Text style={tabs.premiumPeriod}>/{premiumPlan.billing_cycle}</Text>
+              </View>
+              {premiumPlan.features.length > 0 && (
+                <View style={tabs.premiumFeatures}>
+                  {premiumPlan.features.map((f, i) => (
+                    <PremiumFeature key={i} icon="flash-on" title={f} sub="" />
+                  ))}
+                </View>
+              )}
+              <GradientButton
+                label={subscribing ? 'Aguarde...' : 'Assinar Agora'}
+                onPress={() => onSubscribe(premiumPlan.id)}
+              />
             </View>
-            <View style={tabs.premiumPrice}>
-              <Text style={tabs.premiumAmount}>R$ 19,90</Text>
-              <Text style={tabs.premiumPeriod}>/mês</Text>
-            </View>
-            <View style={tabs.premiumFeatures}>
-              <PremiumFeature icon="flash-on" title="Prioridade em agendamentos" sub="Sua solicitação aparece primeiro." />
-              <PremiumFeature icon="local-offer" title="Cupons exclusivos mensais" sub="Descontos de até 20% em serviços." />
-              <PremiumFeature icon="verified-user" title="Selo de cliente VIP" sub="Destaque seu perfil na plataforma." />
-            </View>
-            <GradientButton label="Assinar Agora" onPress={onSubscribe} />
           </View>
-        </View>
 
-        {/* Support bento card */}
-        <View style={tabs.supportCard}>
-          <View style={tabs.supportIcon}>
-            <MaterialIcons name="support-agent" size={24} color={Colors.primary} />
+          {/* Support bento card */}
+          <View style={tabs.supportCard}>
+            <View style={tabs.supportIcon}>
+              <MaterialIcons name="support-agent" size={24} color={Colors.primary} />
+            </View>
+            <Text style={tabs.supportTitle}>Suporte Prioritário</Text>
+            <Text style={tabs.supportSub}>Atendimento em menos de 5 minutos via chat direto no app.</Text>
           </View>
-          <Text style={tabs.supportTitle}>Suporte Prioritário</Text>
-          <Text style={tabs.supportSub}>Atendimento em menos de 5 minutos via chat direto no app.</Text>
         </View>
-      </View>
+      )}
 
       {/* Provider teaser */}
       <View style={tabs.providerTeaser}>
@@ -138,7 +224,7 @@ function ClientTab({ onSubscribe }: { onSubscribe: () => void }) {
   );
 }
 
-function WorkerTab({ onSubscribe }: { onSubscribe: () => void }) {
+function WorkerTab({ freePlan, premiumPlan, subscription, activePlanId, onSubscribe, subscribing }: TabProps) {
   const COMPARE_ROWS = [
     { benefit: 'Taxa de Intermediação', basic: '20%', elite: '12%' },
     { benefit: 'Selo de Verificado', basic: '—', elite: '✓' },
@@ -146,52 +232,68 @@ function WorkerTab({ onSubscribe }: { onSubscribe: () => void }) {
     { benefit: 'Visibilidade em Buscas', basic: 'Padrão', elite: 'Prioritária' },
   ];
 
+  const isOnFree = !subscription?.is_subscribed;
+  const activeName = subscription?.is_subscribed ? subscription.plan_name : (freePlan?.name ?? 'Básico');
+  const activeCost = subscription?.is_subscribed
+    ? `R$ ${subscription.plan_price.toFixed(2)}/mês`
+    : 'Grátis';
+  const activeFeatures = subscription?.is_subscribed
+    ? subscription.features
+    : (freePlan?.features ?? ['Visibilidade padrão', 'Taxa de serviço 20%']);
+
   return (
     <View style={tabs.wrap}>
       {/* Current plan */}
       <View style={tabs.workerCurrentCard}>
         <Text style={tabs.workerCurrentMeta}>SEU PLANO ATUAL</Text>
-        <Text style={tabs.workerCurrentTitle}>Plano Básico</Text>
+        <Text style={tabs.workerCurrentTitle}>{activeName}</Text>
         <View style={tabs.workerCurrentFeatures}>
-          <WorkerFeature icon="visibility" label="Visibilidade padrão" />
-          <WorkerFeature icon="percent" label="Taxa de serviço 20%" />
+          {activeFeatures.map((f, i) => (
+            <WorkerFeature key={i} icon="check-circle" label={f} />
+          ))}
         </View>
         <View style={tabs.workerCurrentCost}>
           <Text style={tabs.workerCostLabel}>Custo Mensal</Text>
-          <Text style={tabs.workerCostValue}>Grátis</Text>
+          <Text style={tabs.workerCostValue}>{activeCost}</Text>
         </View>
       </View>
 
       {/* Featured plan */}
-      <View style={tabs.eliteCard}>
-        <LinearGradient colors={GradientColors} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={tabs.eliteBadge}>
-          <Text style={tabs.eliteBadgeText}>RECOMENDADO</Text>
-        </LinearGradient>
+      {premiumPlan && activePlanId !== premiumPlan.id && (
+        <View style={tabs.eliteCard}>
+          <LinearGradient colors={GradientColors} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={tabs.eliteBadge}>
+            <Text style={tabs.eliteBadgeText}>RECOMENDADO</Text>
+          </LinearGradient>
 
-        <View style={tabs.eliteHeader}>
-          <Text style={tabs.eliteTitle}>Elite Pro</Text>
-          <MaterialIcons name="verified" size={28} color={Colors.primary} />
-        </View>
-        <Text style={tabs.eliteSub}>O plano definitivo para profissionais que buscam escala e autoridade no mercado.</Text>
-
-        <View style={tabs.eliteFeatures}>
-          <EliteFeature icon="verified-user" label="Selo de Verificado Profissional" />
-          <EliteFeature icon="trending-down" label="Taxa reduzida (12%)" />
-          <EliteFeature icon="bar-chart" label="Acesso a ferramentas de gestão avançadas" />
-          <EliteFeature icon="launch" label="Destaque nos resultados de busca" />
-        </View>
-
-        <View style={tabs.elitePrice}>
-          <Text style={tabs.elitePriceLabel}>INVESTIMENTO</Text>
-          <View style={tabs.elitePriceRow}>
-            <Text style={tabs.eliteCurrency}>R$</Text>
-            <Text style={tabs.eliteAmount}>49,90</Text>
+          <View style={tabs.eliteHeader}>
+            <Text style={tabs.eliteTitle}>{premiumPlan.name}</Text>
+            <MaterialIcons name="verified" size={28} color={Colors.primary} />
           </View>
-          <Text style={tabs.elitePeriod}>por mês</Text>
-        </View>
+          <Text style={tabs.eliteSub}>O plano definitivo para profissionais que buscam escala e autoridade no mercado.</Text>
 
-        <GradientButton label="Assinar Agora" onPress={onSubscribe} />
-      </View>
+          {premiumPlan.features.length > 0 && (
+            <View style={tabs.eliteFeatures}>
+              {premiumPlan.features.map((f, i) => (
+                <EliteFeature key={i} icon="verified-user" label={f} />
+              ))}
+            </View>
+          )}
+
+          <View style={tabs.elitePrice}>
+            <Text style={tabs.elitePriceLabel}>INVESTIMENTO</Text>
+            <View style={tabs.elitePriceRow}>
+              <Text style={tabs.eliteCurrency}>R$</Text>
+              <Text style={tabs.eliteAmount}>{premiumPlan.price.toFixed(2).replace('.', ',')}</Text>
+            </View>
+            <Text style={tabs.elitePeriod}>por {premiumPlan.billing_cycle}</Text>
+          </View>
+
+          <GradientButton
+            label={subscribing ? 'Aguarde...' : 'Assinar Agora'}
+            onPress={() => onSubscribe(premiumPlan.id)}
+          />
+        </View>
+      )}
 
       {/* Comparison table */}
       <View style={tabs.compareSection}>
@@ -234,7 +336,7 @@ function PremiumFeature({ icon, title, sub }: { icon: keyof typeof MaterialIcons
       <MaterialIcons name={icon} size={20} color={Colors.primary} />
       <View>
         <Text style={pf.title}>{title}</Text>
-        <Text style={pf.sub}>{sub}</Text>
+        {!!sub && <Text style={pf.sub}>{sub}</Text>}
       </View>
     </View>
   );

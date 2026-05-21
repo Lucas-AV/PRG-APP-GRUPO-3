@@ -207,6 +207,47 @@ export const reviewsApi = {
     }, token),
 };
 
+// ── Plans ─────────────────────────────────────────────────────────────────────
+
+export interface Plan {
+  id: number;
+  name: string;
+  role: 'cliente' | 'prestador';
+  price: number;
+  billing_cycle: string;
+  features: string[];
+}
+
+export const plansApi = {
+  list: (role: 'cliente' | 'prestador') =>
+    request<Plan[]>(`/plans?role=${role}`),
+};
+
+// ── Subscriptions ─────────────────────────────────────────────────────────────
+
+export interface Subscription {
+  id?: number;
+  plan_id?: number;
+  plan_name: string;
+  plan_price: number;
+  status: string;
+  features: string[];
+  is_subscribed: boolean;
+  started_at?: string;
+  expires_at?: string;
+}
+
+export const subscriptionsApi = {
+  get: (userId: number, token: string) =>
+    request<Subscription>(`/users/${userId}/subscription`, {}, token),
+
+  subscribe: (userId: number, planId: number, token: string) =>
+    request<Subscription>(`/users/${userId}/subscription`, {
+      method: 'POST',
+      body: JSON.stringify({ plan_id: planId }),
+    }, token),
+};
+
 // ── Transactions ───────────────────────────────────────────────────────────────
 
 export interface Transaction {
