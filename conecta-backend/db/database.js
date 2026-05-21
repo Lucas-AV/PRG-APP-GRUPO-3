@@ -54,6 +54,16 @@ db.exec(`
     status TEXT DEFAULT 'concluido',
     paid_at DATETIME DEFAULT CURRENT_TIMESTAMP
   );
+
+  CREATE TABLE IF NOT EXISTS cards (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    brand TEXT NOT NULL,
+    last_four TEXT NOT NULL,
+    expiry_month TEXT NOT NULL,
+    expiry_year TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
 `);
 
 module.exports = db;
