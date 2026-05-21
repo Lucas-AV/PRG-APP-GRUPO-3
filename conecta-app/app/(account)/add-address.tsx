@@ -69,6 +69,7 @@ export default function AddAddressScreen() {
   };
 
   const fetchViaCep = async (digits: string) => {
+    if (cepLoading) return;
     setCepLoading(true);
     try {
       const res = await fetch(`https://viacep.com.br/ws/${digits}/json/`);
@@ -153,6 +154,7 @@ export default function AddAddressScreen() {
                 value={cep}
                 onChangeText={handleCepChange}
                 keyboardType="numeric"
+                maxLength={9}
               />
             </View>
             {cepLoading && (
