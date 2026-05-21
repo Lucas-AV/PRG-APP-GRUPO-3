@@ -172,6 +172,20 @@ export const cardsApi = {
     request<{ message: string }>(`/users/${userId}/cards/${cardId}`, { method: 'DELETE' }, token),
 };
 
+// ── Metrics ───────────────────────────────────────────────────────────────────
+
+export interface ServiceMetrics {
+  total_revenue: number;
+  total_bookings: number;
+  avg_rating: number;
+  weekly_data: number[];
+}
+
+export const metricsApi = {
+  get: (serviceId: number, token: string) =>
+    request<ServiceMetrics>(`/services/${serviceId}/metrics`, {}, token),
+};
+
 // ── Transactions ───────────────────────────────────────────────────────────────
 
 export interface Transaction {
