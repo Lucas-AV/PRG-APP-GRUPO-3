@@ -147,6 +147,31 @@ export const usersApi = {
     request<{ message: string }>(`/users/${userId}/addresses/${addressId}`, { method: 'DELETE' }, token),
 };
 
+// ── Cards ─────────────────────────────────────────────────────────────────────
+
+export interface Card {
+  id: number;
+  brand: string;
+  last_four: string;
+  expiry_month: string;
+  expiry_year: string;
+  created_at: string;
+}
+
+export const cardsApi = {
+  list: (userId: number, token: string) =>
+    request<Card[]>(`/users/${userId}/cards`, {}, token),
+
+  add: (userId: number, data: { brand: string; last_four: string; expiry_month: string; expiry_year: string }, token: string) =>
+    request<Card>(`/users/${userId}/cards`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }, token),
+
+  remove: (userId: number, cardId: number, token: string) =>
+    request<{ message: string }>(`/users/${userId}/cards/${cardId}`, { method: 'DELETE' }, token),
+};
+
 // ── Transactions ───────────────────────────────────────────────────────────────
 
 export interface Transaction {
