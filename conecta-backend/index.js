@@ -7,6 +7,8 @@ const authRoutes = require('./routes/auth');
 const servicesRoutes = require('./routes/services');
 const usersRoutes = require('./routes/users');
 const metricsRoutes = require('./routes/metrics');
+const reviewsRoutes = require('./routes/reviews');
+const plansRoutes = require('./routes/plans');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -41,7 +43,9 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use('/auth', authRoutes);
 app.use('/services', servicesRoutes);
 app.use('/services', metricsRoutes);
+app.use('/services/:id/reviews', reviewsRoutes);
 app.use('/users', usersRoutes);
+app.use('/plans', plansRoutes);
 
 app.get('/', (req, res) => {
   res.json({ message: 'ConectaApp API está rodando', docs: `http://localhost:${PORT}/api-docs` });
