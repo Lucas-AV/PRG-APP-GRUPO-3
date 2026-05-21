@@ -113,7 +113,7 @@ export default function EditProfileScreen() {
             <Text style={styles.fieldLabel}>ENDEREÇO PRINCIPAL</Text>
             <Pressable
               style={({ pressed }) => [styles.addressCard, pressed && { backgroundColor: Colors.surfaceContainer }]}
-              onPress={() => router.push('/(account)/add-address' as any)}
+              onPress={() => router.push('/(account)/addresses' as any)}
             >
               <View style={styles.addressIconWrap}>
                 <MaterialIcons name="home" size={22} color={Colors.primary} />
