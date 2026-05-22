@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -5,12 +6,15 @@ import {
   Pressable,
   Switch,
   StyleSheet,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, FontFamily, GradientColors, Spacing, Radius } from '@/constants/theme';
+import { useAuth } from '@/context/AuthContext';
+import { servicesApi, Service, metricsApi, ServiceMetrics, reviewsApi, ServiceReview } from '@/services/api';
 
 type Metric = { icon: React.ComponentProps<typeof MaterialIcons>['name']; label: string; value: string; badge: string; badgeColor: string; badgeBg: string };
 type Review = { name: string; date: string; rating: number; text: string };
@@ -95,11 +99,77 @@ function StarRow({ count }: { count: number }) {
 
 export default function ViewServiceScreen() {
   const insets = useSafeAreaInsets();
+  const { token } = useAuth();
   const { id } = useLocalSearchParams<{ id: string }>();
-  const data = MOCK[id ?? '1'] ?? MOCK['1'];
+  const [service, setService] = useState<Service | null>(null);
+  const [loadingService, setLoadingService] = useState(true);
+  const [apiMetrics, setApiMetrics] = useState<ServiceMetrics | null>(null);
+  const [apiReviews, setApiReviews] = useState<ServiceReview[] | null>(null);
 
+  useEffect(() => {
+    if (!id || !token) return;
+    servicesApi.get(Number(id), token)
+      .then(setService)
+      .catch(() => {})
+      .finally(() => setLoadingService(false));
+  }, [id, token]);
+
+  useEffect(() => {
+    if (!id) return;
+    const serviceId = parseInt(id, 10);
+    if (isNaN(serviceId)) return;
+    reviewsApi.list(serviceId).then(setApiReviews).catch(() => {});
+  }, [id]);
+
+  const fallback = MOCK[id ?? '1'] ?? MOCK['1'];
+  const data = {
+    ...fallback,
+    title: service?.name ?? fallback.title,
+    category: service?.category ?? fallback.category,
+    price: service?.price != null
+      ? `R$ ${service.price.toFixed(2).replace('.', ',')}`
+      : fallback.price,
+    duration: service?.duration ?? fallback.duration,
+    isActive: service ? service.status === 'ativo' : fallback.isActive,
+    description: service?.description ?? fallback.description,
+  };
+
+  const displayedReviews: Review[] = apiReviews
+    ? apiReviews.map(r => ({
+        name: r.reviewer_name,
+        date: new Date(r.created_at).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' }),
+        rating: r.rating,
+        text: r.comment ?? '',
+      }))
+    : data.reviews;
+
+  if (loadingService) {
+    return (
+      <SafeAreaView style={styles.container} edges={['left', 'right']}>
+        <ActivityIndicator style={{ flex: 1 }} color={Colors.primary} />
+      </SafeAreaView>
+    );
+  }
+
+  useEffect(() => {
+    if (!id || !token) return;
+    const serviceId = parseInt(id, 10);
+    if (isNaN(serviceId)) return;
+    metricsApi.get(serviceId, token).then(setApiMetrics).catch(() => {});
+  }, [id, token]);
+
+  const computedMetrics: Metric[] = apiMetrics
+    ? [
+        { icon: 'trending-up', label: 'Faturamento', value: `R$ ${apiMetrics.total_revenue.toLocaleString('pt-BR')}`, badge: 'Total', badgeColor: '#065F46', badgeBg: '#D1FAE5' },
+        { icon: 'event-available', label: 'Agendamentos', value: String(apiMetrics.total_bookings), badge: 'Total', badgeColor: Colors.onSurfaceVariant, badgeBg: Colors.surfaceContainerLow },
+        { icon: 'star', label: 'Nota Média', value: apiMetrics.avg_rating.toFixed(1), badge: '★ Top', badgeColor: Colors.primary, badgeBg: Colors.primaryContainer },
+        { icon: 'schedule', label: 'Resp. Média', value: '—', badge: 'Rápido', badgeColor: Colors.primary, badgeBg: Colors.primaryContainer },
+      ]
+    : data.metrics;
+
+  const weeklyData = apiMetrics?.weekly_data ?? data.weeklyData;
   const maxBar = 120;
-  const peakIdx = data.weeklyData.indexOf(Math.max(...data.weeklyData));
+  const peakIdx = weeklyData.indexOf(Math.max(...weeklyData));
 
   return (
     <SafeAreaView style={styles.container} edges={['left', 'right']}>
@@ -196,7 +266,7 @@ export default function ViewServiceScreen() {
 
         {/* Metrics grid */}
         <View style={styles.metricsGrid}>
-          {data.metrics.map((m, i) => (
+          {computedMetrics.map((m, i) => (
             <View key={i} style={styles.metricCard}>
               <View style={styles.metricCardTop}>
                 <View style={styles.metricIconBox}>
@@ -221,7 +291,7 @@ export default function ViewServiceScreen() {
             </Pressable>
           </View>
 
-          {data.reviews.map((review, i) => (
+          {displayedReviews.map((review, i) => (
             <View key={i} style={styles.reviewCard}>
               <View style={styles.reviewHeader}>
                 <View style={styles.reviewAuthorRow}>
@@ -245,7 +315,7 @@ export default function ViewServiceScreen() {
           <Text style={styles.sectionTitle}>Atividade Semanal</Text>
           <View style={styles.chartCard}>
             <View style={styles.chartBars}>
-              {data.weeklyData.map((pct, i) => (
+              {weeklyData.map((pct, i) => (
                 <View key={i} style={styles.barWrapper}>
                   <View
                     style={[

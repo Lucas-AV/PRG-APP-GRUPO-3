@@ -51,3 +51,4 @@ conecta-backend/db/*.db-journal
 conecta-backend/db/*.db-wal
 conecta-backend/db/*.db-shm
 conecta-app/conecta-app.code-workspace
+conecta-app/.mcp.json

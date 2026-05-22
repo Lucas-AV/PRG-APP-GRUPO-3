@@ -54,6 +54,79 @@ db.exec(`
     status TEXT DEFAULT 'concluido',
     paid_at DATETIME DEFAULT CURRENT_TIMESTAMP
   );
+
+  CREATE TABLE IF NOT EXISTS cards (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    brand TEXT NOT NULL,
+    last_four TEXT NOT NULL,
+    expiry_month TEXT NOT NULL,
+    expiry_year TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+
+  CREATE TABLE IF NOT EXISTS reviews (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    service_id INTEGER NOT NULL REFERENCES services(id) ON DELETE CASCADE,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    rating INTEGER NOT NULL CHECK(rating BETWEEN 1 AND 5),
+    comment TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+
+  CREATE TABLE IF NOT EXISTS plans (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    role TEXT NOT NULL,
+    price REAL NOT NULL DEFAULT 0,
+    billing_cycle TEXT NOT NULL DEFAULT 'mensal',
+    features TEXT NOT NULL DEFAULT '[]',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+
+  CREATE TABLE IF NOT EXISTS subscriptions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    plan_id INTEGER NOT NULL REFERENCES plans(id),
+    status TEXT NOT NULL DEFAULT 'ativa',
+    started_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    expires_at DATETIME,
+    UNIQUE(user_id)
+  );
 `);
+
+const plansCount = db.prepare('SELECT COUNT(*) as n FROM plans').get();
+if (plansCount.n === 0) {
+  const insertPlan = db.prepare(
+    'INSERT INTO plans (name, role, price, billing_cycle, features) VALUES (?, ?, ?, ?, ?)'
+  );
+  const seedPlans = db.transaction(() => {
+    insertPlan.run('Free', 'cliente', 0, 'mensal', JSON.stringify([
+      'Até 5 agendamentos por mês',
+      'Acesso ao catálogo de serviços',
+      'Suporte por e-mail',
+    ]));
+    insertPlan.run('Conecta Plus', 'cliente', 19.90, 'mensal', JSON.stringify([
+      'Agendamentos ilimitados',
+      'Prioridade no atendimento',
+      'Suporte prioritário 24/7',
+      'Descontos exclusivos',
+    ]));
+    insertPlan.run('Básico', 'prestador', 0, 'mensal', JSON.stringify([
+      'Cadastro de até 3 serviços',
+      'Taxa de intermediação de 20%',
+      'Perfil padrão na busca',
+      'Dashboard básico',
+    ]));
+    insertPlan.run('Elite Pro', 'prestador', 49.90, 'mensal', JSON.stringify([
+      'Serviços ilimitados',
+      'Taxa de intermediação de 12%',
+      'Prioridade nas buscas',
+      'Dashboard completo com exportação',
+      'Selo de verificado',
+    ]));
+  });
+  seedPlans();
+}
 
 module.exports = db;
