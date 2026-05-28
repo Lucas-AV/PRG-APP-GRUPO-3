@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "tertiary": "#615b77",
+              "on-primary-container": "#0049bb",
+              "outline-variant": "#adb3b4",
+              "on-primary-fixed": "#003894",
+              "on-surface-variant": "#5a6061",
+              "inverse-surface": "#0c0f0f",
+              "on-primary": "#f8f7ff",
+              "primary-fixed": "#dae1ff",
+              "tertiary-container": "#e1d8fa",
+              "secondary-container": "#e4e2e6",
+              "surface-container-high": "#e4e9ea",
+              "secondary-fixed-dim": "#d5d4d8",
+              "on-secondary-fixed-variant": "#5b5b5f",
+              "secondary": "#5f5f62",
+              "surface-tint": "#0054d6",
+              "on-secondary-container": "#515155",
+              "on-primary-fixed-variant": "#0052d0",
+              "on-error-container": "#752121",
+              "background": "#f9f9f9",
+              "on-background": "#2d3435",
+              "surface-container-lowest": "#ffffff",
+              "surface-container": "#ebeeef",
+              "on-error": "#fff7f6",
+              "on-surface": "#2d3435",
+              "surface-dim": "#d4dbdd",
+              "on-tertiary": "#fcf7ff",
+              "error-dim": "#4e0309",
+              "surface-variant": "#dde4e5",
+              "on-secondary-fixed": "#3f3f43",
+              "surface-container-highest": "#dde4e5",
+              "inverse-on-surface": "#9c9d9d",
+              "primary": "#0054d6",
+              "primary-container": "#dae1ff",
+              "on-tertiary-fixed-variant": "#5a5470",
+              "error": "#9f403d",
+              "error-container": "#fe8983",
+              "tertiary-dim": "#554f6b",
+              "primary-dim": "#004abd",
+              "outline": "#757c7d",
+              "tertiary-fixed-dim": "#d3caeb",
+              "tertiary-fixed": "#e1d8fa",
+              "primary-fixed-dim": "#c7d3ff",
+              "inverse-primary": "#5e8bff",
+              "surface-container-low": "#f2f4f4",
+              "secondary-dim": "#535356",
+              "on-tertiary-fixed": "#3d3852",
+              "on-secondary": "#faf8fc",
+              "surface-bright": "#f9f9f9",
+              "surface": "#f9f9f9",
+              "on-tertiary-container": "#504b66",
+              "secondary-fixed": "#e4e2e6"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.5rem", "lg": "0.75rem", "xl": "1rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface font-body text-on-surface antialiased">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md">
+<div class="flex items-center justify-between px-6 py-4 w-full">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-blue-600 dark:text-blue-400">grid_view</span>
+<h1 class="text-2xl font-extrabold tracking-tighter text-blue-700 dark:text-blue-500 font-headline">SevGen</h1>
+</div>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-slate-500 hover:opacity-80 transition-opacity">notifications</button>
+<div class="w-10 h-10 rounded-full overflow-hidden bg-surface-container-high ring-2 ring-primary/10">
+<img class="w-full h-full object-cover" data-alt="User profile photo avatar circular" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLpzBr8xoiZIfx3nQl6rgfnJrO63XuAPxZqxoWileXY-SOSGzgPcHJrNNGcWNNnpOMDrzpWdT6-nLiwzsBt3svOUAZVBYr1qGQNUEBPGMgyidrQhKe8gsJ19q3HFCZK52EMjA29zrY8L1OuBHfMcvy8xzOybEIe9jeBHL9GEh873WU_C-PW13SgTUqZzv3JR1_TxG4ChqXxnLiHqjF9WuKZhYgKo8vLNEJS8T3dkYkVCqsqkk5vhiYgsiQfTUBH0uMxnVLGVaeEdE"/>
+</div>
+</div>
+</div>
+</header>
+<main class="pt-24 pb-32 px-5 max-w-5xl mx-auto">
+<!-- Search & Greeting Section -->
+<section class="mb-10">
+<p class="font-body text-on-surface-variant text-sm mb-1">Hello, <span class="text-on-surface font-semibold">[User Name]</span></p>
+<h2 class="font-headline text-3xl font-extrabold tracking-tight mb-6">Find the perfect professional</h2>
+<div class="relative group">
+<div class="absolute inset-y-0 left-5 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline">search</span>
+</div>
+<input class="w-full pl-14 pr-14 py-4 bg-surface-container-highest border-none rounded-full text-on-surface placeholder:text-outline focus:ring-2 focus:ring-primary/20 transition-all" placeholder="Search for services: cleaning, repairs..." type="text"/>
+<div class="absolute inset-y-0 right-3 flex items-center">
+<button class="w-10 h-10 flex items-center justify-center bg-surface-container-lowest rounded-full shadow-sm text-primary">
+<span class="material-symbols-outlined">tune</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Hero: Popular Categories (Bento-inspired Grid) -->
+<section class="mb-12">
+<div class="flex justify-between items-end mb-6 px-1">
+<h3 class="font-headline text-xl font-bold tracking-tight">Popular Categories</h3>
+<a class="text-primary font-semibold text-xs uppercase tracking-widest hover:underline" href="#">View All</a>
+</div>
+<div class="grid grid-cols-4 gap-4">
+<!-- Category Cards -->
+<div class="group cursor-pointer">
+<div class="aspect-square bg-surface-container-lowest flex flex-col items-center justify-center rounded-xl transition-all group-hover:bg-primary-container/30 group-active:scale-95 duration-200">
+<span class="material-symbols-outlined text-primary mb-2 text-3xl">cleaning_services</span>
+<span class="font-label text-[11px] font-bold uppercase tracking-wider text-on-surface-variant group-hover:text-primary">Cleaning</span>
+</div>
+</div>
+<div class="group cursor-pointer">
+<div class="aspect-square bg-surface-container-lowest flex flex-col items-center justify-center rounded-xl transition-all group-hover:bg-primary-container/30 group-active:scale-95 duration-200">
+<span class="material-symbols-outlined text-primary mb-2 text-3xl">plumbing</span>
+<span class="font-label text-[11px] font-bold uppercase tracking-wider text-on-surface-variant group-hover:text-primary">Plumbing</span>
+</div>
+</div>
+<div class="group cursor-pointer">
+<div class="aspect-square bg-surface-container-lowest flex flex-col items-center justify-center rounded-xl transition-all group-hover:bg-primary-container/30 group-active:scale-95 duration-200">
+<span class="material-symbols-outlined text-primary mb-2 text-3xl">electric_bolt</span>
+<span class="font-label text-[11px] font-bold uppercase tracking-wider text-on-surface-variant group-hover:text-primary">Electrician</span>
+</div>
+</div>
+<div class="group cursor-pointer">
+<div class="aspect-square bg-surface-container-lowest flex flex-col items-center justify-center rounded-xl transition-all group-hover:bg-primary-container/30 group-active:scale-95 duration-200">
+<span class="material-symbols-outlined text-primary mb-2 text-3xl">school</span>
+<span class="font-label text-[11px] font-bold uppercase tracking-wider text-on-surface-variant group-hover:text-primary">Tutor</span>
+</div>
+</div>
+<div class="group cursor-pointer">
+<div class="aspect-square bg-surface-container-lowest flex flex-col items-center justify-center rounded-xl transition-all group-hover:bg-primary-container/30 group-active:scale-95 duration-200">
+<span class="material-symbols-outlined text-primary mb-2 text-3xl">imagesearch_roller</span>
+<span class="font-label text-[11px] font-bold uppercase tracking-wider text-on-surface-variant group-hover:text-primary">Painting</span>
+</div>
+</div>
+<div class="group cursor-pointer">
+<div class="aspect-square bg-surface-container-lowest flex flex-col items-center justify-center rounded-xl transition-all group-hover:bg-primary-container/30 group-active:scale-95 duration-200">
+<span class="material-symbols-outlined text-primary mb-2 text-3xl">pest_control</span>
+<span class="font-label text-[11px] font-bold uppercase tracking-wider text-on-surface-variant group-hover:text-primary">Pest Control</span>
+</div>
+</div>
+<div class="group cursor-pointer">
+<div class="aspect-square bg-surface-container-lowest flex flex-col items-center justify-center rounded-xl transition-all group-hover:bg-primary-container/30 group-active:scale-95 duration-200">
+<span class="material-symbols-outlined text-primary mb-2 text-3xl">hvac</span>
+<span class="font-label text-[11px] font-bold uppercase tracking-wider text-on-surface-variant group-hover:text-primary">HVAC Repair</span>
+</div>
+</div>
+<div class="group cursor-pointer">
+<div class="aspect-square bg-surface-container-lowest flex flex-col items-center justify-center rounded-xl transition-all group-hover:bg-primary-container/30 group-active:scale-95 duration-200">
+<span class="material-symbols-outlined text-primary mb-2 text-3xl">more_horiz</span>
+<span class="font-label text-[11px] font-bold uppercase tracking-wider text-on-surface-variant group-hover:text-primary">More</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Secondary: Featured Professionals (Horizontal Carousel) -->
+<section class="mb-12">
+<h3 class="font-headline text-xl font-bold tracking-tight mb-6 px-1">Featured Professionals Near You</h3>
+<div class="flex gap-4 overflow-x-auto no-scrollbar pb-4 -mx-5 px-5">
+<!-- Professional Card 1 -->
+<div class="min-w-[280px] bg-surface-container-lowest rounded-2xl overflow-hidden">
+<div class="relative h-40">
+<img class="w-full h-full object-cover" data-alt="Professional contractor smiling at site" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDYvz5DNWYKumUPqcHbsPW4oXDpyN1aawLRcHRWXFnuOg5IbdH_QwkwLBxdOAhh0GFR_iPArXrcN8FuD4YOTgAeTGDs-nA5PqLbrAnlI2WyVgvMTPkxWGMdA8AH1fkRh_5LJGI1T7jMSYhSaL8iHhLp2Ok5C5FToGPJZhYiHzgrL22wHUQJGUqTK8Z9Hx-xUHZJld_BFkBnM7Sf5tNlW-6AiozFaA7sCEv5QC5HI0dH82oVk2SVxf8NeMJjtrq1UNEqLqWaZlevTQ"/>
+<div class="absolute top-3 right-3 bg-white/90 backdrop-blur-md px-2 py-1 rounded-lg flex items-center gap-1">
+<span class="material-symbols-outlined text-amber-500 text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-xs font-bold text-on-surface">4.9</span>
+</div>
+</div>
+<div class="p-5">
+<h4 class="font-headline font-bold text-lg mb-1">[Professional Name]</h4>
+<p class="text-on-surface-variant text-sm mb-3">[SERVICE_TYPE]</p>
+<div class="flex items-center text-[11px] font-bold uppercase tracking-widest text-primary">
+<span class="material-symbols-outlined text-sm mr-1">near_me</span>
+                            [DISTANCE] KM AWAY
+                        </div>
+</div>
+</div>
+<!-- Professional Card 2 -->
+<div class="min-w-[280px] bg-surface-container-lowest rounded-2xl overflow-hidden">
+<div class="relative h-40">
+<img class="w-full h-full object-cover" data-alt="Handyman repairing household appliance" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBdsI7AlRE5Y8UVf7NA4Y7MfRVlL6yrakbEXSHbtAe2NABe8NHpHos6BpYPvQmw68PequalsJ4b-c4v13-3Esc9awoEK4qFLhzidjdiqUUjUWFJThaDKPlunxSFFlW8PKwP0BnFuuxd8Le8HZDBPePA-ldtlc0bZm61cMj6k40b8N1LeHfi3ZAp02k3bxKTvU3mteNZHseJmnRkwrTcnDYiAldeI4yzR33uLMVW6_iSoUFqIj-V8PsHdsENtwG4HeePPKseNMbUqsM"/>
+<div class="absolute top-3 right-3 bg-white/90 backdrop-blur-md px-2 py-1 rounded-lg flex items-center gap-1">
+<span class="material-symbols-outlined text-amber-500 text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-xs font-bold text-on-surface">4.7</span>
+</div>
+</div>
+<div class="p-5">
+<h4 class="font-headline font-bold text-lg mb-1">[Professional Name]</h4>
+<p class="text-on-surface-variant text-sm mb-3">[SERVICE_TYPE]</p>
+<div class="flex items-center text-[11px] font-bold uppercase tracking-widest text-primary">
+<span class="material-symbols-outlined text-sm mr-1">near_me</span>
+                            [DISTANCE] KM AWAY
+                        </div>
+</div>
+</div>
+<!-- Professional Card 3 -->
+<div class="min-w-[280px] bg-surface-container-lowest rounded-2xl overflow-hidden">
+<div class="relative h-40">
+<img class="w-full h-full object-cover" data-alt="Domestic helper cleaning modern kitchen" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDl6nnS_1yci62TCyJKWdDJpTGso1WVbB7SWS1dFycbQNVK5VKGbo0KBHPdjVNy5WW_hAwlevHZC2Jt65vNkzznm4XRfsrzC4tN34SaMywsGDXjI89hizixuHhSRavg0MLl0kc0eDEMSFwlhXwrbiL_bgS_jeXETbmplm2OaP6v_-8AN-T7N9zl81nantEZUNLGjh-mW9Os3nlPAqyMjkJKmr0OVdGPoq1uIH-bGAriAi8INsKdO4sZkyfQFOArpBJqh04oPU6xaK4"/>
+<div class="absolute top-3 right-3 bg-white/90 backdrop-blur-md px-2 py-1 rounded-lg flex items-center gap-1">
+<span class="material-symbols-outlined text-amber-500 text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-xs font-bold text-on-surface">4.8</span>
+</div>
+</div>
+<div class="p-5">
+<h4 class="font-headline font-bold text-lg mb-1">[Professional Name]</h4>
+<p class="text-on-surface-variant text-sm mb-3">[SERVICE_TYPE]</p>
+<div class="flex items-center text-[11px] font-bold uppercase tracking-widest text-primary">
+<span class="material-symbols-outlined text-sm mr-1">near_me</span>
+                            [DISTANCE] KM AWAY
+                        </div>
+</div>
+</div>
+</div>
+</section>
+<!-- Main: Recent or Quick Services (Vertical List) -->
+<section class="mb-8">
+<h3 class="font-headline text-xl font-bold tracking-tight mb-6 px-1">Recent or Quick Services</h3>
+<div class="space-y-4">
+<!-- Service Item 1 -->
+<div class="bg-surface-container-lowest p-4 rounded-2xl flex items-center justify-between gap-4">
+<div class="flex items-center gap-4">
+<div class="w-16 h-16 rounded-xl bg-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary-container">ac_unit</span>
+</div>
+<div>
+<h5 class="font-headline font-bold text-on-surface">[SERVICE_TITLE]</h5>
+<div class="flex items-center gap-2 mt-1">
+<span class="text-xs text-on-surface-variant">[PROVIDER_NAME]</span>
+<span class="flex items-center gap-0.5 text-[10px] font-bold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded-full">
+<span class="material-symbols-outlined text-[10px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                                    [RATING]
+                                </span>
+</div>
+</div>
+</div>
+<div class="text-right">
+<div class="text-sm font-extrabold text-on-surface mb-2">[PRICE]</div>
+<button class="bg-primary text-white text-[11px] font-bold uppercase tracking-widest px-6 py-2 rounded-full hover:opacity-90 active:scale-95 transition-all">Book</button>
+</div>
+</div>
+<!-- Service Item 2 -->
+<div class="bg-surface-container-lowest p-4 rounded-2xl flex items-center justify-between gap-4">
+<div class="flex items-center gap-4">
+<div class="w-16 h-16 rounded-xl bg-tertiary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-tertiary-container">water_drop</span>
+</div>
+<div>
+<h5 class="font-headline font-bold text-on-surface">[SERVICE_TITLE]</h5>
+<div class="flex items-center gap-2 mt-1">
+<span class="text-xs text-on-surface-variant">[PROVIDER_NAME]</span>
+<span class="flex items-center gap-0.5 text-[10px] font-bold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded-full">
+<span class="material-symbols-outlined text-[10px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                                    [RATING]
+                                </span>
+</div>
+</div>
+</div>
+<div class="text-right">
+<div class="text-sm font-extrabold text-on-surface mb-2">[PRICE]</div>
+<button class="bg-primary text-white text-[11px] font-bold uppercase tracking-widest px-6 py-2 rounded-full hover:opacity-90 active:scale-95 transition-all">Book</button>
+</div>
+</div>
+<!-- Service Item 3 -->
+<div class="bg-surface-container-lowest p-4 rounded-2xl flex items-center justify-between gap-4">
+<div class="flex items-center gap-4">
+<div class="w-16 h-16 rounded-xl bg-secondary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-secondary-container">construction</span>
+</div>
+<div>
+<h5 class="font-headline font-bold text-on-surface">[SERVICE_TITLE]</h5>
+<div class="flex items-center gap-2 mt-1">
+<span class="text-xs text-on-surface-variant">[PROVIDER_NAME]</span>
+<span class="flex items-center gap-0.5 text-[10px] font-bold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded-full">
+<span class="material-symbols-outlined text-[10px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                                    [RATING]
+                                </span>
+</div>
+</div>
+</div>
+<div class="text-right">
+<div class="text-sm font-extrabold text-on-surface mb-2">[PRICE]</div>
+<button class="bg-primary text-white text-[11px] font-bold uppercase tracking-widest px-6 py-2 rounded-full hover:opacity-90 active:scale-95 transition-all">Book</button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-8 pt-4 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl z-50 rounded-t-3xl shadow-2xl">
+<a class="flex flex-col items-center justify-center bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-2xl px-5 py-2 transform scale-90 duration-200 ease-out" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-inter text-[11px] font-semibold uppercase tracking-wider mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-2 hover:text-blue-500 transition-colors" href="#">
+<span class="material-symbols-outlined">event_note</span>
+<span class="font-inter text-[11px] font-semibold uppercase tracking-wider mt-1">Bookings</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-2 hover:text-blue-500 transition-colors" href="#">
+<span class="material-symbols-outlined">chat_bubble</span>
+<span class="font-inter text-[11px] font-semibold uppercase tracking-wider mt-1">Messages</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-2 hover:text-blue-500 transition-colors" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-inter text-[11px] font-semibold uppercase tracking-wider mt-1">Account</span>
+</a>
+</nav>
+</body></html>

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-container": "#e4e2e6",
+                        "on-error": "#fff7f6",
+                        "on-surface-variant": "#5a6061",
+                        "secondary-dim": "#535356",
+                        "error": "#9f403d",
+                        "on-primary-fixed-variant": "#0052d0",
+                        "primary-fixed": "#dae1ff",
+                        "primary-dim": "#004abd",
+                        "primary": "#0054d6",
+                        "tertiary-dim": "#554f6b",
+                        "inverse-primary": "#5e8bff",
+                        "surface-container-low": "#f2f4f4",
+                        "surface-variant": "#dde4e5",
+                        "outline": "#757c7d",
+                        "on-primary-container": "#0049bb",
+                        "inverse-on-surface": "#9c9d9d",
+                        "surface-container": "#ebeeef",
+                        "surface": "#f9f9f9",
+                        "on-tertiary-container": "#504b66",
+                        "on-secondary": "#faf8fc",
+                        "on-secondary-fixed": "#3f3f43",
+                        "on-error-container": "#752121",
+                        "on-background": "#2d3435",
+                        "inverse-surface": "#0c0f0f",
+                        "tertiary-fixed": "#e1d8fa",
+                        "error-dim": "#4e0309",
+                        "tertiary-container": "#e1d8fa",
+                        "on-tertiary-fixed": "#3d3852",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-highest": "#dde4e5",
+                        "on-secondary-container": "#515155",
+                        "on-primary-fixed": "#003894",
+                        "error-container": "#fe8983",
+                        "primary-container": "#dae1ff",
+                        "primary-fixed-dim": "#c7d3ff",
+                        "tertiary": "#615b77",
+                        "outline-variant": "#adb3b4",
+                        "surface-container-high": "#e4e9ea",
+                        "on-surface": "#2d3435",
+                        "secondary": "#5f5f62",
+                        "on-tertiary-fixed-variant": "#5a5470",
+                        "surface-dim": "#d4dbdd",
+                        "surface-bright": "#f9f9f9",
+                        "on-secondary-fixed-variant": "#5b5b5f",
+                        "on-primary": "#f8f7ff",
+                        "background": "#f9f9f9",
+                        "on-tertiary": "#fcf7ff",
+                        "secondary-fixed-dim": "#d5d4d8",
+                        "tertiary-fixed-dim": "#d3caeb",
+                        "surface-tint": "#0054d6",
+                        "secondary-fixed": "#e4e2e6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.5rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, h4 { font-family: 'Manrope', sans-serif; }
+        .tap-highlight-none { -webkit-tap-highlight-color: transparent; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl docked full-width top-0 z-50 sticky shadow-sm shadow-zinc-200/50 dark:shadow-none">
+<div class="flex justify-between items-center w-full px-5 py-3">
+<button class="flex items-center justify-center p-2 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined text-blue-600" data-icon="arrow_back">arrow_back</span>
+</button>
+<h1 class="font-['Manrope'] font-bold text-lg tracking-tight text-on-surface">Reviews &amp; Ratings</h1>
+<button class="flex items-center justify-center p-2 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined text-zinc-500" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+</header>
+<main class="max-w-2xl mx-auto px-5 py-8">
+<!-- Summary Section: Tonal Layering -->
+<section class="bg-surface-container-lowest rounded-2xl p-6 mb-8">
+<div class="flex flex-col md:flex-row md:items-center gap-8">
+<!-- Large Rating Metric -->
+<div class="flex flex-col items-center justify-center space-y-1">
+<span class="text-6xl font-extrabold font-headline tracking-tighter text-on-surface">4.9</span>
+<div class="flex text-primary">
+<span class="material-symbols-outlined" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<span class="text-xs font-medium text-on-surface-variant font-label tracking-wide uppercase">214 Reviews</span>
+</div>
+<!-- Star Distribution Bar Chart -->
+<div class="flex-1 space-y-2">
+<div class="flex items-center gap-3">
+<span class="text-xs font-semibold w-2 text-on-surface-variant">5</span>
+<div class="flex-1 h-2 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[92%] rounded-full"></div>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<span class="text-xs font-semibold w-2 text-on-surface-variant">4</span>
+<div class="flex-1 h-2 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[6%] rounded-full"></div>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<span class="text-xs font-semibold w-2 text-on-surface-variant">3</span>
+<div class="flex-1 h-2 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[1%] rounded-full"></div>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<span class="text-xs font-semibold w-2 text-on-surface-variant">2</span>
+<div class="flex-1 h-2 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[0.5%] rounded-full"></div>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<span class="text-xs font-semibold w-2 text-on-surface-variant">1</span>
+<div class="flex-1 h-2 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[0.5%] rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Filter & Sorting Header -->
+<div class="flex items-center justify-between mb-8">
+<h2 class="text-xl font-bold tracking-tight">Recent Reviews</h2>
+<div class="flex items-center gap-2 px-4 py-2 bg-surface-container-high rounded-full hover:bg-surface-container transition-colors cursor-pointer active:scale-95 duration-150">
+<span class="text-sm font-medium font-label">Most Recent</span>
+<span class="material-symbols-outlined text-lg" data-icon="expand_more">expand_more</span>
+</div>
+</div>
+<!-- Scrollable Reviews List (No Dividers, tonal space instead) -->
+<div class="space-y-6">
+<!-- Review 1 -->
+<article class="bg-surface-container-lowest p-6 rounded-2xl shadow-sm shadow-zinc-200/40">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-3">
+<img alt="Client avatar" class="w-12 h-12 rounded-full object-cover" data-alt="close-up portrait of a professional woman with a warm smile in an office setting with natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAwc82zLeu0B7_p29mp9qroynrHleO2haoo2qTAcwvAXaVzpPfvMI-5Z11YD3rdqUlrBTu6LRUGc1MTX2dTJQ2yOu8auCrrpZ8cUUOjqWSIftUePg4HDUeDTzqpG1Xb7vk13ysmCdn7AgUO-3z2fLtgBIjsf9b4WF-UueSGMicaV18Oq7yxkLDw1OWdrSXgdVHc9pXIzaAHVRbp1agWadD5j8u3TaTnkpietf6-iZSGXj138sgYuSrSzqwXyRwIuDP5teZ3tTrjbrY"/>
+<div>
+<h3 class="font-bold text-on-surface">Sarah Mitchell</h3>
+<p class="text-xs text-on-surface-variant font-medium">October 12, 2023</p>
+</div>
+</div>
+<div class="flex text-primary gap-0.5">
+<span class="material-symbols-outlined text-lg" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-lg" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-lg" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-lg" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-lg" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+<p class="text-on-surface-variant text-sm leading-relaxed mb-4">
+                    Jane was incredibly professional and punctual. She fixed our outdated circuit breaker panel and took the time to explain exactly what was being done for safety. Highly recommend her services!
+                </p>
+<div class="flex gap-2">
+<img alt="Electrical work photo" class="w-24 h-24 rounded-lg object-cover" data-alt="close-up of a neatly organized modern electrical circuit breaker panel with clean wiring in a residential basement" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCRhxz_o_PlvKZo-Wc_gW1c3ikaoH04lrWzTQ1f3SqZQ9xZ7VgGJLXADJhGmuii4lUyZROlE1jAVGs_-T4MRgTuSXICFOyDAZcUGARQnLtLuJCWF7v0musgGNjkipYP0tuoYfSntJRaSLVmNsZFDspEAd1R_CQl8AAMMXcfrg0fZZg2rQvLe8nwj_qA2B24cRJqZMNqbaM1VqpQ0E_LWSc1vjRrAIy1y211WjB5GnhCtZ39rCPxEXKRr1UfQjfVKInHxxKWLj5nJ_c"/>
+<img alt="Service detail" class="w-24 h-24 rounded-lg object-cover" data-alt="detailed view of a professional electrician installing a modern smart light switch into a clean white wall" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDKwRjWi5qTJpYGHqbNhMbxY-neO2pUyRwi4DV263tX0_sJ2cwNLrrWXUUmlSaTdVarih9ZEEx9vvUTtEM5B8hL0leNL33Qa_Y2tlornU1RlPLpoyhvCHHSiKM4MIqha-BLFSVMc6bLNT1fBtZQljsjTRPHbFAWxTgcelD6yDiFS4MvShf8Z2rCKlpzFqFQQd4-EL2Pri8UFk4igFeENQMAe5YY13gHXW-E9jiq6TNMpFMq_viyP_otrVZlJnRmj7JwEO0MYl-YBbs"/>
+</div>
+</article>
+<!-- Review 2 -->
+<article class="bg-surface-container-lowest p-6 rounded-2xl shadow-sm shadow-zinc-200/40">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-3">
+<img alt="Client avatar" class="w-12 h-12 rounded-full object-cover" data-alt="headshot of a middle-aged man with short dark hair and a friendly expression, soft sunlight background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAEyt8aKGRoo4cASjst9rzYDo5SDJuSns-JeVJx5Lz4cPfQ0UZQ_SJfQsj05fapd5sPpds6lF7jjwnXhhxfbB6AIzO-FzYhoWXeZFtJI9IjFBWOpDqr0nmsr3xriTLJGtTMDj9DQMKW87pMu_Me_SAbZn_jTytcazT2aKIvtKNWVSYBy6kYDWDWk36_oIPQoWL-aCp-gu7rV2R2KueydTy2__u0XWSczeYV7HlLfgoxDng6h95HiKa_JLmxBeq4cwvnGaaJAykWnwA"/>
+<div>
+<h3 class="font-bold text-on-surface">David Chen</h3>
+<p class="text-xs text-on-surface-variant font-medium">October 5, 2023</p>
+</div>
+</div>
+<div class="flex text-primary gap-0.5">
+<span class="material-symbols-outlined text-lg" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-lg" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-lg" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-lg" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-lg" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+<p class="text-on-surface-variant text-sm leading-relaxed">
+                    Excellent service, very professional and punctual. Jane handled the full rewiring of our kitchen renovation with zero issues. Her attention to detail is remarkable.
+                </p>
+</article>
+<!-- Review 3 -->
+<article class="bg-surface-container-lowest p-6 rounded-2xl shadow-sm shadow-zinc-200/40">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-3">
+<img alt="Client avatar" class="w-12 h-12 rounded-full object-cover" data-alt="young man with glasses smiling outdoors in an urban environment with soft bokeh city lights background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBkjg3NyIQjmVGiXuOxRdcAQos0yYalbVHAMPK9auuLGdBHslnmE-OiT1MdCeA_cjG6AQoRSjyWuwhnGmj6TTln1G9_e2Rsk-E-y5Ej5BNuvAMu_HnjARKGZqDDgbGL4sAk48a1qYSGZs7tdh7Xob-86UuKCAHY8nWFTSGvZBmCLb44KaTG5hN-XzVDild1GrUtx475dbeK-VVnVzyrgxNC7ENLPTB_EcKUXImg6fBenBsyiRQ-7Apzzd9-h8pAuyl2IjWSwWwM8bQ"/>
+<div>
+<h3 class="font-bold text-on-surface">Marcus Thompson</h3>
+<p class="text-xs text-on-surface-variant font-medium">September 28, 2023</p>
+</div>
+</div>
+<div class="flex text-primary gap-0.5">
+<span class="material-symbols-outlined text-lg" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-lg" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-lg" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-lg" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-lg" data-icon="star">star</span>
+</div>
+</div>
+<p class="text-on-surface-variant text-sm leading-relaxed mb-4">
+                    Quick response time and honest pricing. Found the fault in our lighting circuit in under 20 minutes. Will definitely call again for future work.
+                </p>
+<div class="flex gap-2">
+<img alt="Testing work" class="w-24 h-24 rounded-lg object-cover" data-alt="close-up of a digital multimeter testing a wall outlet with precision tools and safety gloves visible" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCkS803vDsYrv55vDdMS_0xiJpx8VISdfBrxc5CUXgTqpedxYUhKigueJiiSTwEusNJ38cUIJasIlqGKWntGI-cMVko_VGgFWhUigGy7HTGXZRPa9A25BA3ZLLtug_nloC6Q5-qas_SfZD80kvGCu_LISP3f765OfwNxi4Mdx1Q26Nj9jxt0XnxNL4YUSl9Ql2z5DXj0nXonwJFjl443Te_4r-TnzuuyRdgm5MrG8TWtmYmWPnG1w5gB3SEEcg9Zp4CRY-Hv5VVt4Q"/>
+</div>
+</article>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pt-2 pb-6 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl z-50 rounded-t-2xl shadow-[0_-4px_24px_rgba(0,0,0,0.04)]">
+<a class="flex flex-col items-center justify-center text-zinc-400 dark:text-zinc-500 px-5 py-2 hover:text-blue-500 transition-all active:scale-90 duration-150 tap-highlight-none" href="#">
+<span class="material-symbols-outlined" data-icon="explore">explore</span>
+<span class="font-['Inter'] text-[10px] font-medium tracking-wide uppercase mt-1">Explore</span>
+</a>
+<a class="flex flex-col items-center justify-center text-zinc-400 dark:text-zinc-500 px-5 py-2 hover:text-blue-500 transition-all active:scale-90 duration-150 tap-highlight-none" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+<span class="font-['Inter'] text-[10px] font-medium tracking-wide uppercase mt-1">Bookings</span>
+</a>
+<a class="flex flex-col items-center justify-center text-zinc-400 dark:text-zinc-500 px-5 py-2 hover:text-blue-500 transition-all active:scale-90 duration-150 tap-highlight-none" href="#">
+<span class="material-symbols-outlined" data-icon="bookmark">bookmark</span>
+<span class="font-['Inter'] text-[10px] font-medium tracking-wide uppercase mt-1">Saved</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded-2xl px-5 py-2 transition-all active:scale-90 duration-150 tap-highlight-none" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-['Inter'] text-[10px] font-medium tracking-wide uppercase mt-1">Profile</span>
+</a>
+</nav>
+</body></html>
