@@ -43,6 +43,7 @@ export default function RootLayout() {
         <Stack.Screen name="(onboarding)" />
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="(services)" />
+        <Stack.Screen name="(client)" />
       </Stack>
       <StatusBar style="dark" backgroundColor="transparent" translucent />
     </AuthProvider>
