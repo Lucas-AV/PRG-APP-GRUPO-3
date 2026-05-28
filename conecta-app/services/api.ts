@@ -254,6 +254,31 @@ export const subscriptionsApi = {
     }, token),
 };
 
+// ── Public Services ───────────────────────────────────────────────────────────
+
+export interface PublicService {
+  id: number;
+  name: string;
+  category?: string;
+  price?: number;
+  price_type: 'fixo' | 'a_partir_de';
+  description?: string;
+  provider_id: number;
+  provider_name: string;
+  avg_rating: number | null;
+  review_count: number;
+}
+
+export const publicServicesApi = {
+  list: (params?: { category?: string; q?: string }) => {
+    const parts: string[] = [];
+    if (params?.category) parts.push(`category=${encodeURIComponent(params.category)}`);
+    if (params?.q) parts.push(`q=${encodeURIComponent(params.q)}`);
+    const qs = parts.length ? `?${parts.join('&')}` : '';
+    return request<PublicService[]>(`/services/public${qs}`);
+  },
+};
+
 // ── Transactions ───────────────────────────────────────────────────────────────
 
 export interface Transaction {

@@ -4,6 +4,7 @@ const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 
 const authRoutes = require('./routes/auth');
+const publicRoutes = require('./routes/public');
 const servicesRoutes = require('./routes/services');
 const usersRoutes = require('./routes/users');
 const metricsRoutes = require('./routes/metrics');
@@ -41,6 +42,7 @@ const swaggerSpec = swaggerJsdoc({
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
+app.use('/services', publicRoutes);   // público — sem auth — ANTES dos autenticados
 app.use('/auth', authRoutes);
 app.use('/services', servicesRoutes);
 app.use('/services', metricsRoutes);
