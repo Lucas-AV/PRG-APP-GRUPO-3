@@ -42,7 +42,8 @@ const swaggerSpec = swaggerJsdoc({
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-app.use('/services', publicRoutes);   // público — sem auth — ANTES dos autenticados
+app.use('/services', publicRoutes);   // público — sem auth
+app.use('/users', publicRoutes);      // público — sem auth (provider reviews)
 app.use('/auth', authRoutes);
 app.use('/services', servicesRoutes);
 app.use('/services', metricsRoutes);
