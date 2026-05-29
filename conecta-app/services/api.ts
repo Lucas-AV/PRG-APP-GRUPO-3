@@ -263,6 +263,7 @@ export interface PublicService {
   price?: number;
   price_type: 'fixo' | 'a_partir_de';
   description?: string;
+  duration?: string;
   provider_id: number;
   provider_name: string;
   avg_rating: number | null;
@@ -270,13 +271,40 @@ export interface PublicService {
 }
 
 export const publicServicesApi = {
-  list: (params?: { category?: string; q?: string }) => {
+  list: (params?: { category?: string; q?: string; provider_id?: number }) => {
     const parts: string[] = [];
     if (params?.category) parts.push(`category=${encodeURIComponent(params.category)}`);
     if (params?.q) parts.push(`q=${encodeURIComponent(params.q)}`);
+    if (params?.provider_id) parts.push(`provider_id=${params.provider_id}`);
     const qs = parts.length ? `?${parts.join('&')}` : '';
     return request<PublicService[]>(`/services/public${qs}`);
   },
+
+  getById: (id: number) =>
+    request<PublicService>(`/services/public/${id}`),
+};
+
+// ── Provider Reviews ──────────────────────────────────────────────────────────
+
+export interface ProviderReview {
+  id: number;
+  rating: number;
+  comment?: string;
+  created_at: string;
+  reviewer_name: string;
+  service_name: string;
+}
+
+export interface ProviderReviews {
+  avg_rating: number | null;
+  total_count: number;
+  distribution: Record<string, number>;
+  reviews: ProviderReview[];
+}
+
+export const providerApi = {
+  reviews: (userId: number) =>
+    request<ProviderReviews>(`/users/provider/${userId}/reviews`),
 };
 
 // ── Transactions ───────────────────────────────────────────────────────────────
