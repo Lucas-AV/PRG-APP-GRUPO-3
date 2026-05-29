@@ -255,7 +255,12 @@ export default function ProviderProfileScreen() {
                   </Text>
                   <View style={styles.starsRow}>
                     {[1, 2, 3, 4, 5].map(i => (
-                      <MaterialIcons key={i} name="star" size={18} color="#fbbf24" />
+                      <MaterialIcons
+                        key={i}
+                        name={i <= Math.round(reviewData.avg_rating ?? 0) ? 'star' : 'star-border'}
+                        size={18}
+                        color="#fbbf24"
+                      />
                     ))}
                   </View>
                   <Text style={styles.totalCount}>
