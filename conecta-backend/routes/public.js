@@ -40,7 +40,7 @@ router.get('/public', (req, res) => {
     conditions.push('(s.name LIKE ? OR s.description LIKE ?)');
     params.push(`%${q}%`, `%${q}%`);
   }
-  if (provider_id) {
+  if (provider_id && !isNaN(Number(provider_id))) {
     conditions.push('s.user_id = ?');
     params.push(Number(provider_id));
   }
@@ -96,7 +96,7 @@ router.get('/public/:id', (req, res) => {
     LEFT JOIN reviews r ON r.service_id = s.id
     WHERE s.id = ? AND s.status = 'ativo'
     GROUP BY s.id
-  `).get(req.params.id);
+  `).get(Number(req.params.id));
 
   if (!service) return res.status(404).json({ error: 'Serviço não encontrado' });
   return res.json(service);
@@ -129,7 +129,7 @@ router.get('/provider/:userId/reviews', (req, res) => {
     JOIN users u ON r.user_id = u.id
     WHERE s.user_id = ?
     ORDER BY r.created_at DESC
-  `).all(req.params.userId);
+  `).all(Number(req.params.userId));
 
   const total = reviews.length;
   const avg = total > 0
