@@ -7,6 +7,7 @@ import {
   StyleSheet,
   ActivityIndicator,
   Alert,
+  useWindowDimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -21,33 +22,45 @@ import { publicServicesApi, PublicService, providerApi, ProviderReviews } from '
 type Tab = 'servicos' | 'sobre' | 'avaliacoes';
 
 const TABS: { key: Tab; label: string }[] = [
-  { key: 'servicos', label: 'Serviços e Preços' },
-  { key: 'sobre', label: 'Sobre' },
-  { key: 'avaliacoes', label: 'Avaliações' },
-];
-
-const STATS = [
-  { icon: 'history-edu' as const,  labelKey: 'EXPERIÊNCIA',  value: '12 Anos'       },
-  { icon: 'task-alt'    as const,  labelKey: 'CONCLUÍDOS',   value: '850+ Projetos' },
-  { icon: 'bolt'        as const,  labelKey: 'RESPOSTA',     value: '< 15 Min'      },
+  { key: 'servicos',   label: 'Serviços e Preços' },
+  { key: 'sobre',      label: 'Sobre'             },
+  { key: 'avaliacoes', label: 'Avaliações'        },
 ];
 
 const MOCK_BIO =
-  'Profissional experiente com mais de 12 anos de atuação no mercado. ' +
-  'Comprometido com qualidade, pontualidade e satisfação total do cliente. ' +
-  'Atende residências, estabelecimentos comerciais e projetos industriais de pequeno porte.';
+  'Com mais de uma década de atuação no setor, dedico minha carreira a entregar soluções ' +
+  'seguras e inovadoras para residências e empresas. Meu compromisso vai além da execução ' +
+  'técnica: prezo pela transparência e pela segurança em cada etapa do trabalho. ' +
+  'Especialista em resolver problemas complexos com agilidade e precisão.';
 
-const MOCK_SPECIALTIES = [
-  { icon: 'bolt'        as const, label: 'Instalações Elétricas'  },
-  { icon: 'settings'    as const, label: 'Manutenção Preventiva'  },
-  { icon: 'home'        as const, label: 'Reformas Residenciais'  },
-  { icon: 'engineering' as const, label: 'Projetos Técnicos'      },
+const SPECIALTIES = [
+  { icon: 'home'        as const, label: 'Automação Residencial',               wide: false },
+  { icon: 'settings'    as const, label: 'Manutenção Preventiva',               wide: false },
+  { icon: 'bolt'        as const, label: 'Projetos Elétricos de Alta Complexidade', wide: true  },
 ];
 
-const MOCK_CERTS = [
-  { title: 'NR-10',           subtitle: 'Segurança em Instalações Elétricas' },
-  { title: 'CREA Registrado', subtitle: 'Conselho Regional de Engenharia'    },
-  { title: 'ISO 9001',        subtitle: 'Gestão da Qualidade'                },
+const CERTS = [
+  {
+    icon: 'workspace-premium' as const,
+    title: 'NR-10',
+    subtitle: 'Segurança em Instalações e Serviços em Eletricidade',
+  },
+  {
+    icon: 'electric-bolt' as const,
+    title: 'Especialista em Carregadores EV',
+    subtitle: 'Certificação Tesla & Schneider para Home Charging',
+  },
+];
+
+const PROJECT_GRADIENTS: [string, string][] = [
+  ['#1e3a8a', '#3b82f6'],
+  ['#065f46', '#10b981'],
+  ['#581c87', '#a855f7'],
+];
+const PROJECT_ICONS: Array<keyof typeof MaterialIcons.glyphMap> = [
+  'electrical-services',
+  'lightbulb',
+  'settings',
 ];
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -65,15 +78,16 @@ function formatPrice(s: PublicService) {
 
 export default function ProviderProfileScreen() {
   const { id, name } = useLocalSearchParams<{ id?: string; name?: string }>();
+  const { width } = useWindowDimensions();
   const providerId = Number(id);
   const providerName = name ?? 'Prestador';
 
-  const [activeTab, setActiveTab]     = useState<Tab>('servicos');
-  const [services, setServices]       = useState<PublicService[]>([]);
-  const [reviewData, setReviewData]   = useState<ProviderReviews | null>(null);
-  const [loadingServices, setLS]      = useState(true);
-  const [loadingReviews, setLR]       = useState(false);
-  const [reviewsLoaded, setRLoaded]   = useState(false);
+  const [activeTab, setActiveTab]   = useState<Tab>('servicos');
+  const [services, setServices]     = useState<PublicService[]>([]);
+  const [reviewData, setReviewData] = useState<ProviderReviews | null>(null);
+  const [loadingServices, setLS]    = useState(true);
+  const [loadingReviews, setLR]     = useState(false);
+  const [reviewsLoaded, setRLoaded] = useState(false);
 
   useEffect(() => {
     if (!providerId) return;
@@ -99,30 +113,32 @@ export default function ProviderProfileScreen() {
     if (tab === 'avaliacoes') loadReviews();
   };
 
-  // derive specialty label from first loaded service
   const specialty = services.length > 0
     ? (CATEGORIES.find(c => c.key === services[0].category)?.label ?? services[0].category)
     : null;
 
-  const avgRating = reviewData?.avg_rating ?? null;
+  const avgRating   = reviewData?.avg_rating ?? null;
   const reviewCount = reviewData?.total_count ?? 0;
+
+  // bento tile widths
+  const HPAD    = Spacing.xl * 2;
+  const GAP     = Spacing.md;
+  const halfCol = (width - HPAD - GAP) / 2;
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
 
       {/* ── TopAppBar ─────────────────────────────────────────────────── */}
       <View style={styles.topBar}>
-        <View style={styles.topBarLeft}>
-          <Pressable
-            style={({ pressed }) => [styles.iconBtn, pressed && { opacity: 0.6 }]}
-            onPress={() => router.back()}
-          >
-            <MaterialIcons name="arrow-back" size={24} color={Colors.primary} />
-          </Pressable>
-          <Text style={styles.topBarTitle}>Perfil do Profissional</Text>
-        </View>
+        <Pressable
+          style={({ pressed }) => [styles.iconBtn, pressed && { opacity: 0.6 }]}
+          onPress={() => router.back()}
+        >
+          <MaterialIcons name="arrow-back" size={24} color={Colors.primary} />
+        </Pressable>
+        <Text style={styles.topBarTitle}>Sobre o Profissional</Text>
         <Pressable style={({ pressed }) => [styles.iconBtn, pressed && { opacity: 0.6 }]}>
-          <MaterialIcons name="share" size={22} color={Colors.onSurfaceVariant} />
+          <MaterialIcons name="more-vert" size={24} color={Colors.primary} />
         </Pressable>
       </View>
 
@@ -131,88 +147,51 @@ export default function ProviderProfileScreen() {
         contentContainerStyle={styles.scroll}
       >
 
-        {/* ── Hero Section ──────────────────────────────────────────────── */}
+        {/* ── Hero — centrado ───────────────────────────────────────────── */}
         <View style={styles.hero}>
-          {/* Square avatar with gradient */}
+          {/* Circular avatar + verified badge */}
           <View style={styles.avatarWrap}>
-            <LinearGradient
-              colors={['#667eea', '#764ba2']}
-              style={styles.avatarGradient}
-            >
+            <LinearGradient colors={['#667eea', '#764ba2']} style={styles.avatarGradient}>
               <Text style={styles.avatarInitials}>{getInitials(providerName)}</Text>
             </LinearGradient>
+            <View style={styles.verifiedBadge}>
+              <MaterialIcons name="verified" size={14} color={Colors.onPrimary} />
+            </View>
           </View>
 
-          {/* Info block */}
-          <View style={styles.heroInfo}>
-            <View style={styles.nameRow}>
-              <Text style={styles.heroName} numberOfLines={2}>{providerName}</Text>
-              <MaterialIcons name="verified" size={20} color={Colors.primary} />
-            </View>
+          <Text style={styles.heroName}>{providerName}</Text>
+          {specialty && <Text style={styles.heroSpecialty}>{specialty}</Text>}
 
-            {specialty && (
-              <Text style={styles.heroSpecialty} numberOfLines={1}>
-                {specialty}
-              </Text>
-            )}
-
-            {/* Stars + rating */}
-            <View style={styles.ratingRow}>
-              <View style={styles.starsRow}>
-                {[1, 2, 3, 4, 5].map(i => (
-                  <MaterialIcons
-                    key={i}
-                    name="star"
-                    size={16}
-                    color={avgRating !== null && i <= Math.round(avgRating) ? '#f59e0b' : Colors.outlineVariant}
-                  />
-                ))}
-              </View>
-              {avgRating !== null && (
-                <>
-                  <Text style={styles.ratingNum}>{avgRating.toFixed(1)}</Text>
-                  {reviewCount > 0 && (
-                    <Text style={styles.ratingCount}>({reviewCount} avaliações)</Text>
-                  )}
-                </>
+          {/* Rating pill */}
+          {avgRating !== null && (
+            <View style={styles.ratingPill}>
+              <MaterialIcons name="star" size={14} color="#f59e0b" />
+              <Text style={styles.ratingNum}>{avgRating.toFixed(1)}</Text>
+              {reviewCount > 0 && (
+                <Text style={styles.ratingCount}>({reviewCount} avaliações)</Text>
               )}
             </View>
-          </View>
+          )}
         </View>
 
-        {/* ── Stats Chips Row ───────────────────────────────────────────── */}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.statsRow}
-        >
-          {STATS.map(stat => (
-            <View key={stat.labelKey} style={styles.statChip}>
-              <MaterialIcons name={stat.icon} size={22} color={Colors.primary} />
-              <View style={styles.statText}>
-                <Text style={styles.statLabel}>{stat.labelKey}</Text>
-                <Text style={styles.statValue}>{stat.value}</Text>
-              </View>
-            </View>
-          ))}
-        </ScrollView>
-
-        {/* ── Tabs (Segmented Control) ──────────────────────────────────── */}
-        <View style={styles.segmented}>
+        {/* ── Tab Navigation ────────────────────────────────────────────── */}
+        <View style={styles.tabNav}>
           {TABS.map(tab => (
             <Pressable
               key={tab.key}
-              style={[styles.segment, activeTab === tab.key && styles.segmentActive]}
+              style={[styles.tabItem, activeTab === tab.key && styles.tabItemActive]}
               onPress={() => handleTabPress(tab.key)}
             >
-              <Text style={[styles.segmentLabel, activeTab === tab.key && styles.segmentLabelActive]}>
+              <Text style={[styles.tabLabel, activeTab === tab.key && styles.tabLabelActive]}>
                 {tab.label}
               </Text>
             </Pressable>
           ))}
         </View>
 
-        {/* ── Tab: Serviços e Preços ────────────────────────────────────── */}
+        {/* ══════════════════════════════════════════════════════════════
+            Tab: Serviços e Preços
+        ══════════════════════════════════════════════════════════════ */}
         {activeTab === 'servicos' && (
           <View style={styles.tabContent}>
             {loadingServices ? (
@@ -233,9 +212,7 @@ export default function ProviderProfileScreen() {
                 >
                   <View style={styles.serviceBody}>
                     <View style={styles.serviceTopRow}>
-                      <Text style={styles.serviceName} numberOfLines={1}>
-                        {service.name}
-                      </Text>
+                      <Text style={styles.serviceName} numberOfLines={1}>{service.name}</Text>
                       <Text style={styles.servicePrice}>{formatPrice(service)}</Text>
                     </View>
                     {service.description ? (
@@ -262,35 +239,91 @@ export default function ProviderProfileScreen() {
           </View>
         )}
 
-        {/* ── Tab: Sobre ────────────────────────────────────────────────── */}
+        {/* ══════════════════════════════════════════════════════════════
+            Tab: Sobre
+        ══════════════════════════════════════════════════════════════ */}
         {activeTab === 'sobre' && (
           <View style={styles.tabContent}>
-            <Text style={styles.bio}>{MOCK_BIO}</Text>
 
-            <Text style={styles.subheading}>Especialidades</Text>
-            <View style={styles.specialtyGrid}>
-              {MOCK_SPECIALTIES.map(s => (
-                <View key={s.label} style={styles.specialtyChip}>
-                  <MaterialIcons name={s.icon} size={15} color={Colors.primary} />
-                  <Text style={styles.specialtyLabel}>{s.label}</Text>
-                </View>
-              ))}
-            </View>
-
-            <Text style={styles.subheading}>Certificações</Text>
-            {MOCK_CERTS.map(c => (
-              <View key={c.title} style={styles.certRow}>
-                <MaterialIcons name="verified-user" size={20} color={Colors.primary} />
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.certTitle}>{c.title}</Text>
-                  <Text style={styles.certSub}>{c.subtitle}</Text>
+            {/* ── Biografia ─────────────────────────────────────────── */}
+            <View style={styles.bioSection}>
+              <View style={styles.bioHeader}>
+                <Text style={styles.sectionTitle}>Biografia</Text>
+                <View style={styles.expBadge}>
+                  <Text style={styles.expBadgeText}>12 ANOS EXP.</Text>
                 </View>
               </View>
-            ))}
+              <Text style={styles.bioText}>{MOCK_BIO}</Text>
+            </View>
+
+            {/* ── Especialidades (Bento Grid) ───────────────────────── */}
+            <View style={styles.specialtiesSection}>
+              <Text style={styles.sectionTitle}>Especialidades</Text>
+              <View style={styles.bentoGrid}>
+                {SPECIALTIES.map((spec, i) => (
+                  <View
+                    key={i}
+                    style={[
+                      styles.bentoCard,
+                      spec.wide
+                        ? { width: '100%' }
+                        : { width: halfCol },
+                    ]}
+                  >
+                    <MaterialIcons name={spec.icon} size={26} color={Colors.primary} />
+                    <Text style={styles.bentoLabel}>{spec.label}</Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+
+            {/* ── Certificações ─────────────────────────────────────── */}
+            <View style={styles.certsSection}>
+              <Text style={styles.sectionTitle}>Certificações</Text>
+              <View style={styles.certList}>
+                {CERTS.map(cert => (
+                  <View key={cert.title} style={styles.certRow}>
+                    <View style={styles.certIconBox}>
+                      <MaterialIcons name={cert.icon} size={22} color={Colors.onSurfaceVariant} />
+                    </View>
+                    <View style={styles.certText}>
+                      <Text style={styles.certTitle}>{cert.title}</Text>
+                      <Text style={styles.certSubtitle}>{cert.subtitle}</Text>
+                    </View>
+                  </View>
+                ))}
+              </View>
+            </View>
+
+            {/* ── Projetos Recentes ─────────────────────────────────── */}
+            <View style={styles.projectsSection}>
+              <View style={styles.projectsHeader}>
+                <Text style={styles.sectionTitle}>Projetos Recentes</Text>
+                <Pressable>
+                  <Text style={styles.seeAllLink}>Ver todos</Text>
+                </Pressable>
+              </View>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.projectsScroll}
+              >
+                {PROJECT_GRADIENTS.map((grad, i) => (
+                  <View key={i} style={styles.projectCard}>
+                    <LinearGradient colors={grad} style={styles.projectGradient}>
+                      <MaterialIcons name={PROJECT_ICONS[i]} size={36} color="rgba(255,255,255,0.85)" />
+                    </LinearGradient>
+                  </View>
+                ))}
+              </ScrollView>
+            </View>
+
           </View>
         )}
 
-        {/* ── Tab: Avaliações ──────────────────────────────────────────── */}
+        {/* ══════════════════════════════════════════════════════════════
+            Tab: Avaliações
+        ══════════════════════════════════════════════════════════════ */}
         {activeTab === 'avaliacoes' && (
           <View style={styles.tabContent}>
             {loadingReviews ? (
@@ -300,17 +333,13 @@ export default function ProviderProfileScreen() {
             ) : (
               <>
                 <View style={styles.ratingCard}>
-                  <Text style={styles.ratingBigNum}>
-                    {reviewData.avg_rating?.toFixed(1)}
-                  </Text>
+                  <Text style={styles.ratingBigNum}>{reviewData.avg_rating?.toFixed(1)}</Text>
                   <View style={styles.starsRow}>
                     {[1, 2, 3, 4, 5].map(i => (
                       <MaterialIcons key={i} name="star" size={20} color="#f59e0b" />
                     ))}
                   </View>
-                  <Text style={styles.ratingCardCount}>
-                    {reviewData.total_count} avaliações
-                  </Text>
+                  <Text style={styles.ratingCardCount}>{reviewData.total_count} avaliações</Text>
                 </View>
 
                 {reviewData.reviews.slice(0, 5).map(review => (
@@ -344,19 +373,20 @@ export default function ProviderProfileScreen() {
                     })
                   }
                 >
-                  <Text style={styles.seeAllLabel}>Ver todas as avaliações</Text>
+                  <Text style={styles.seeAllBtnLabel}>Ver todas as avaliações</Text>
                   <MaterialIcons name="chevron-right" size={18} color={Colors.primary} />
                 </Pressable>
               </>
             )}
           </View>
         )}
+
       </ScrollView>
 
       {/* ── CTA fixo ─────────────────────────────────────────────────── */}
       <View style={styles.ctaWrap}>
         <Pressable
-          style={({ pressed }) => [styles.ctaBtn, pressed && { opacity: 0.9 }]}
+          style={({ pressed }) => [styles.ctaBtn, pressed && { opacity: 0.92 }]}
           onPress={() =>
             Alert.alert('Em breve', 'A funcionalidade de agendamento estará disponível em breve.')
           }
@@ -368,7 +398,6 @@ export default function ProviderProfileScreen() {
             style={styles.ctaGradient}
           >
             <Text style={styles.ctaLabel}>Agendar uma Consulta</Text>
-            <MaterialIcons name="calendar-month" size={20} color={Colors.onPrimary} />
           </LinearGradient>
         </Pressable>
       </View>
@@ -382,14 +411,13 @@ export default function ProviderProfileScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.surface },
 
-  // TopAppBar
+  // TopAppBar — icon esquerda / título centro / icon direita
   topBar: {
     flexDirection: 'row', alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: Spacing.xl, paddingVertical: Spacing.md,
-    backgroundColor: 'rgba(255,255,255,0.92)',
+    paddingHorizontal: Spacing.xl, height: 56,
+    backgroundColor: Colors.surface + 'CC',
   },
-  topBarLeft: { flexDirection: 'row', alignItems: 'center', gap: Spacing.base },
   topBarTitle: {
     fontFamily: FontFamily.headlineBold, fontSize: 17,
     color: Colors.onSurface, letterSpacing: -0.3,
@@ -401,116 +429,100 @@ const styles = StyleSheet.create({
 
   scroll: { paddingBottom: Spacing.xxxl * 3 },
 
-  // Hero
+  // Hero — centrado
   hero: {
-    flexDirection: 'row', gap: Spacing.xl,
+    alignItems: 'center',
+    paddingTop: Spacing.xxl,
+    paddingBottom: Spacing.xl,
     paddingHorizontal: Spacing.xl,
-    paddingTop: Spacing.xl, paddingBottom: Spacing.xxl,
+    gap: Spacing.xs,
   },
   avatarWrap: {
-    width: 120, height: 120, borderRadius: Radius.lg,
-    overflow: 'hidden',
-    shadowColor: '#000', shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1, shadowRadius: 12, elevation: 4,
+    position: 'relative',
+    marginBottom: Spacing.md,
   },
-  avatarGradient: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  avatarGradient: {
+    width: 112, height: 112, borderRadius: 56,
+    alignItems: 'center', justifyContent: 'center',
+    borderWidth: 4, borderColor: Colors.surfaceContainerLowest,
+    // shadow
+    shadowColor: '#000', shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.15, shadowRadius: 16, elevation: 6,
+  },
   avatarInitials: {
     fontFamily: FontFamily.headlineExtraBold,
-    fontSize: 44, color: 'rgba(255,255,255,0.9)', letterSpacing: -1,
+    fontSize: 40, color: 'rgba(255,255,255,0.92)', letterSpacing: -1,
   },
-  heroInfo: { flex: 1, gap: Spacing.sm, justifyContent: 'center' },
-  nameRow: { flexDirection: 'row', alignItems: 'flex-start', gap: Spacing.xs },
+  verifiedBadge: {
+    position: 'absolute', bottom: 4, right: 4,
+    width: 26, height: 26, borderRadius: 13,
+    backgroundColor: Colors.primary,
+    alignItems: 'center', justifyContent: 'center',
+    borderWidth: 2, borderColor: Colors.surfaceContainerLowest,
+  },
   heroName: {
     fontFamily: FontFamily.headlineExtraBold,
-    fontSize: 24, color: Colors.onSurface,
-    letterSpacing: -0.8, flex: 1,
+    fontSize: 28, color: Colors.onSurface, letterSpacing: -1,
+    textAlign: 'center',
   },
   heroSpecialty: {
     fontFamily: FontFamily.bodyMedium,
-    fontSize: 14, color: Colors.onSurfaceVariant,
+    fontSize: 15, color: Colors.onSurfaceVariant,
+    textAlign: 'center',
   },
-  ratingRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  starsRow: { flexDirection: 'row', gap: 2 },
-  ratingNum: {
-    fontFamily: FontFamily.headlineBold,
-    fontSize: 14, color: Colors.onSurface,
+  ratingPill: {
+    flexDirection: 'row', alignItems: 'center', gap: 4,
+    backgroundColor: Colors.surfaceContainerHigh,
+    paddingHorizontal: Spacing.md, paddingVertical: 5,
+    borderRadius: Radius.full, marginTop: 4,
   },
-  ratingCount: {
-    fontFamily: FontFamily.bodyRegular,
-    fontSize: 12, color: Colors.onSurfaceVariant,
-  },
+  ratingNum: { fontFamily: FontFamily.headlineBold, fontSize: 13, color: Colors.onSurface },
+  ratingCount: { fontFamily: FontFamily.bodyRegular, fontSize: 12, color: Colors.onSurfaceVariant },
 
-  // Stats
-  statsRow: {
-    paddingHorizontal: Spacing.xl,
-    paddingBottom: Spacing.xl,
-    gap: Spacing.md,
-  },
-  statChip: {
-    flexDirection: 'row', alignItems: 'center',
-    gap: Spacing.md,
-    backgroundColor: Colors.surfaceContainerLow,
-    paddingHorizontal: Spacing.base, paddingVertical: Spacing.md,
-    borderRadius: Radius.lg,
-  },
-  statText: { gap: 2 },
-  statLabel: {
-    fontFamily: FontFamily.bodySemiBold,
-    fontSize: 9, color: Colors.onSurfaceVariant,
-    letterSpacing: 1, textTransform: 'uppercase',
-  },
-  statValue: {
-    fontFamily: FontFamily.headlineBold,
-    fontSize: 13, color: Colors.onSurface,
-  },
-
-  // Segmented tabs
-  segmented: {
+  // Tab navigation — rounded-xl (não rounded-full)
+  tabNav: {
     flexDirection: 'row',
     marginHorizontal: Spacing.xl,
     marginBottom: Spacing.xl,
-    backgroundColor: Colors.surfaceContainerHighest,
-    borderRadius: Radius.full,
-    padding: 6,
-    gap: 4,
+    backgroundColor: Colors.surfaceContainerLow,
+    borderRadius: Radius.lg,
+    padding: 4,
+    gap: 2,
   },
-  segment: {
-    flex: 1, paddingVertical: 10,
-    borderRadius: Radius.full,
-    alignItems: 'center',
+  tabItem: {
+    flex: 1, paddingVertical: Spacing.md - 2,
+    borderRadius: Radius.md, alignItems: 'center',
   },
-  segmentActive: {
+  tabItemActive: {
     backgroundColor: Colors.surfaceContainerLowest,
     shadowColor: '#000', shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.08, shadowRadius: 4, elevation: 2,
+    shadowOpacity: 0.07, shadowRadius: 4, elevation: 2,
   },
-  segmentLabel: {
+  tabLabel: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 12, color: Colors.onSurfaceVariant,
+    textAlign: 'center',
   },
-  segmentLabelActive: {
+  tabLabelActive: {
     fontFamily: FontFamily.headlineBold,
     color: Colors.primary,
   },
 
-  // Tab content
-  tabContent: { paddingHorizontal: Spacing.xl, gap: Spacing.md },
+  // Tab content wrapper
+  tabContent: { paddingHorizontal: Spacing.xl, gap: Spacing.xxl },
   loader: { marginTop: Spacing.xxxl },
   emptyText: {
     fontFamily: FontFamily.bodyRegular, fontSize: 14,
-    color: Colors.onSurfaceVariant, textAlign: 'center',
-    marginTop: Spacing.xxxl,
+    color: Colors.onSurfaceVariant, textAlign: 'center', marginTop: Spacing.xxxl,
   },
 
-  // Service cards
+  // Serviços tab
   serviceCard: {
     backgroundColor: Colors.surfaceContainerLowest,
-    borderRadius: Radius.lg,
-    padding: Spacing.xl,
+    borderRadius: Radius.lg, padding: Spacing.xl,
     flexDirection: 'row', alignItems: 'center', gap: Spacing.base,
-    elevation: 1,
-    shadowColor: '#000', shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.04, shadowRadius: 4,
+    elevation: 1, shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.04, shadowRadius: 4,
   },
   serviceBody: { flex: 1, gap: Spacing.xs },
   serviceTopRow: {
@@ -518,78 +530,121 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start', gap: Spacing.sm,
   },
   serviceName: {
-    fontFamily: FontFamily.headlineBold,
-    fontSize: 16, color: Colors.onSurface,
-    flex: 1, letterSpacing: -0.2,
+    fontFamily: FontFamily.headlineBold, fontSize: 16,
+    color: Colors.onSurface, flex: 1, letterSpacing: -0.2,
   },
   servicePrice: {
     fontFamily: FontFamily.headlineExtraBold,
-    fontSize: 16, color: Colors.primary,
-    flexShrink: 0,
+    fontSize: 16, color: Colors.primary, flexShrink: 0,
   },
   serviceDesc: {
-    fontFamily: FontFamily.bodyRegular,
-    fontSize: 13, color: Colors.onSurfaceVariant,
-    lineHeight: 19,
+    fontFamily: FontFamily.bodyRegular, fontSize: 13,
+    color: Colors.onSurfaceVariant, lineHeight: 19,
   },
   addBtn: {
     width: 48, height: 48, borderRadius: Radius.full,
     backgroundColor: Colors.primaryContainer,
-    alignItems: 'center', justifyContent: 'center',
-    flexShrink: 0,
+    alignItems: 'center', justifyContent: 'center', flexShrink: 0,
   },
 
-  // Sobre tab
-  bio: {
-    fontFamily: FontFamily.bodyRegular,
-    fontSize: 14, color: Colors.onSurface, lineHeight: 22,
+  // Sobre tab — Biografia
+  bioSection: { gap: Spacing.md },
+  bioHeader: {
+    flexDirection: 'row', alignItems: 'center',
+    justifyContent: 'space-between',
   },
-  subheading: {
-    fontFamily: FontFamily.headlineSemiBold,
-    fontSize: 15, color: Colors.onSurface,
-    letterSpacing: -0.2, marginTop: Spacing.sm,
+  sectionTitle: {
+    fontFamily: FontFamily.headlineBold,
+    fontSize: 20, color: Colors.onSurface, letterSpacing: -0.5,
   },
-  specialtyGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm },
-  specialtyChip: {
-    flexDirection: 'row', alignItems: 'center', gap: Spacing.xs,
+  expBadge: {
     backgroundColor: Colors.primaryContainer,
-    paddingHorizontal: Spacing.md, paddingVertical: Spacing.xs + 2,
-    borderRadius: Radius.full,
+    paddingHorizontal: Spacing.sm, paddingVertical: 3,
+    borderRadius: Radius.sm,
   },
-  specialtyLabel: {
-    fontFamily: FontFamily.bodyMedium,
-    fontSize: 12, color: Colors.primary,
+  expBadgeText: {
+    fontFamily: FontFamily.bodySemiBold, fontSize: 10,
+    color: Colors.primary, letterSpacing: 1,
   },
-  certRow: {
-    flexDirection: 'row', alignItems: 'flex-start', gap: Spacing.md,
+  bioText: {
+    fontFamily: FontFamily.bodyRegular, fontSize: 16,
+    color: Colors.onSurfaceVariant, lineHeight: 26,
+  },
+
+  // Sobre tab — Especialidades (Bento)
+  specialtiesSection: { gap: Spacing.base },
+  bentoGrid: {
+    flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.md,
+  },
+  bentoCard: {
     backgroundColor: Colors.surfaceContainerLowest,
-    borderRadius: Radius.md, padding: Spacing.md,
+    borderRadius: Radius.lg, padding: Spacing.xl,
+    gap: Spacing.md,
+    elevation: 1, shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.04, shadowRadius: 4,
   },
-  certTitle: {
+  bentoLabel: {
     fontFamily: FontFamily.bodySemiBold, fontSize: 13, color: Colors.onSurface,
   },
-  certSub: {
-    fontFamily: FontFamily.bodyRegular, fontSize: 12, color: Colors.onSurfaceVariant,
+
+  // Sobre tab — Certificações
+  certsSection: { gap: Spacing.base },
+  certList: { gap: Spacing.md },
+  certRow: {
+    flexDirection: 'row', alignItems: 'center', gap: Spacing.base,
+    backgroundColor: Colors.surfaceContainerLow,
+    borderRadius: Radius.lg, padding: Spacing.base,
+  },
+  certIconBox: {
+    width: 48, height: 48, borderRadius: Radius.md,
+    backgroundColor: Colors.surfaceContainerHighest,
+    alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+  },
+  certText: { flex: 1, gap: 2 },
+  certTitle: {
+    fontFamily: FontFamily.headlineBold, fontSize: 14, color: Colors.onSurface,
+  },
+  certSubtitle: {
+    fontFamily: FontFamily.bodyRegular, fontSize: 12,
+    color: Colors.onSurfaceVariant, lineHeight: 17,
   },
 
-  // Reviews tab
+  // Sobre tab — Projetos Recentes
+  projectsSection: { gap: Spacing.base },
+  projectsHeader: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+  },
+  seeAllLink: {
+    fontFamily: FontFamily.headlineBold,
+    fontSize: 13, color: Colors.primary,
+  },
+  projectsScroll: { gap: Spacing.base, paddingRight: Spacing.xl },
+  projectCard: {
+    width: 220, height: 140, borderRadius: Radius.lg,
+    overflow: 'hidden',
+    elevation: 2, shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.08, shadowRadius: 8,
+  },
+  projectGradient: {
+    flex: 1, alignItems: 'center', justifyContent: 'center',
+  },
+
+  // Avaliações tab
   ratingCard: {
-    backgroundColor: Colors.surfaceContainerLow,
-    borderRadius: Radius.lg,
-    paddingVertical: Spacing.xxl,
-    alignItems: 'center', gap: Spacing.xs,
+    backgroundColor: Colors.surfaceContainerLow, borderRadius: Radius.lg,
+    paddingVertical: Spacing.xxl, alignItems: 'center', gap: Spacing.xs,
   },
   ratingBigNum: {
     fontFamily: FontFamily.headlineExtraBold,
     fontSize: 56, color: Colors.onSurface, letterSpacing: -3,
   },
+  starsRow: { flexDirection: 'row', gap: 2 },
   ratingCardCount: {
-    fontFamily: FontFamily.bodyRegular,
-    fontSize: 13, color: Colors.onSurfaceVariant,
+    fontFamily: FontFamily.bodyRegular, fontSize: 13, color: Colors.onSurfaceVariant,
   },
   reviewCard: {
-    backgroundColor: Colors.surfaceContainerLowest,
-    borderRadius: Radius.md, padding: Spacing.base, gap: Spacing.xs,
+    backgroundColor: Colors.surfaceContainerLowest, borderRadius: Radius.md,
+    padding: Spacing.base, gap: Spacing.xs,
   },
   reviewHeaderRow: {
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
@@ -609,23 +664,24 @@ const styles = StyleSheet.create({
     gap: Spacing.xs, paddingVertical: Spacing.md,
     backgroundColor: Colors.surfaceContainerHighest, borderRadius: Radius.md,
   },
-  seeAllLabel: {
+  seeAllBtnLabel: {
     fontFamily: FontFamily.bodySemiBold, fontSize: 13, color: Colors.primary,
   },
 
-  // Fixed CTA
+  // CTA fixo
   ctaWrap: {
     paddingHorizontal: Spacing.xl, paddingVertical: Spacing.base,
     backgroundColor: Colors.surface,
   },
   ctaBtn: { borderRadius: Radius.lg, overflow: 'hidden' },
   ctaGradient: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-    gap: Spacing.sm, paddingVertical: Spacing.base + 2,
+    height: 56, alignItems: 'center', justifyContent: 'center',
     borderRadius: Radius.lg,
+    shadowColor: Colors.primary, shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.2, shadowRadius: 20, elevation: 6,
   },
   ctaLabel: {
     fontFamily: FontFamily.headlineBold,
-    fontSize: 16, color: Colors.onPrimary, letterSpacing: -0.2,
+    fontSize: 17, color: Colors.onPrimary, letterSpacing: -0.2,
   },
 });
