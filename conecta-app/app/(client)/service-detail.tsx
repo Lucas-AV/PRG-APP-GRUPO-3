@@ -3,29 +3,33 @@ import {
   View,
   Text,
   ScrollView,
+  Pressable,
   StyleSheet,
   ActivityIndicator,
   Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
-import { GradientButton } from '@/components/ui/gradient-button';
-import { TopAppBar } from '@/components/ui/top-app-bar';
-import { Colors, FontFamily, Spacing, Radius } from '@/constants/theme';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Colors, FontFamily, Spacing, Radius, GradientColors } from '@/constants/theme';
 import { CATEGORIES } from '@/constants/categories';
-import {
-  publicServicesApi,
-  PublicService,
-  reviewsApi,
-  ServiceReview,
-} from '@/services/api';
+import { publicServicesApi, PublicService, reviewsApi, ServiceReview } from '@/services/api';
+
+// ── Constants ─────────────────────────────────────────────────────────────────
 
 const INCLUDED_ITEMS = [
-  'Mão de obra qualificada',
-  'Garantia de 90 dias',
-  'Materiais básicos inclusos',
+  'Materiais básicos de fixação e cabeamento padrão',
+  'Mão de obra qualificada por profissionais certificados',
+  'Certificado de garantia de 12 meses na instalação',
+  'Teste de funcionamento e configuração inicial',
 ];
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+function getInitials(name: string) {
+  return name.split(' ').slice(0, 2).map(w => w[0]?.toUpperCase() ?? '').join('');
+}
 
 function formatPrice(service: PublicService): string {
   if (!service.price) return 'Sob consulta';
@@ -33,46 +37,46 @@ function formatPrice(service: PublicService): string {
   return `${prefix}R$ ${service.price.toFixed(2).replace('.', ',')}`;
 }
 
-function getInitials(name: string): string {
-  return name
-    .split(' ')
-    .slice(0, 2)
-    .map(w => w[0]?.toUpperCase() ?? '')
-    .join('');
+function formatPriceLabel(service: PublicService): { label: string | null; value: string } {
+  if (!service.price) return { label: null, value: 'Sob consulta' };
+  return {
+    label: service.price_type === 'a_partir_de' ? 'A PARTIR DE' : null,
+    value: `R$ ${service.price.toFixed(2).replace('.', ',')}`,
+  };
 }
 
+// ── Component ─────────────────────────────────────────────────────────────────
+
 export default function ServiceDetailScreen() {
-  const { serviceId, providerName } = useLocalSearchParams<{
-    serviceId?: string;
-    providerName?: string;
-  }>();
+  // accept both 'id' (new callers) and 'serviceId' (legacy) for compatibility
+  const params = useLocalSearchParams<{ id?: string; serviceId?: string }>();
+  const rawId = params.id ?? params.serviceId;
 
   const [service, setService] = useState<PublicService | null>(null);
   const [reviews, setReviews] = useState<ServiceReview[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading]  = useState(true);
 
   useEffect(() => {
-    if (!serviceId) return;
-    const id = Number(serviceId);
+    if (!rawId) return;
+    const numId = Number(rawId);
     Promise.all([
-      publicServicesApi.getById(id),
-      reviewsApi.list(id),
+      publicServicesApi.getById(numId),
+      reviewsApi.list(numId),
     ])
-      .then(([svc, rvs]) => {
-        setService(svc);
-        setReviews(rvs);
-      })
+      .then(([svc, rvs]) => { setService(svc); setReviews(rvs); })
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, [serviceId]);
+  }, [rawId]);
 
   const cat = service ? CATEGORIES.find(c => c.key === service.category) : null;
+
+  // ── Loading / error states ───────────────────────────────────────────────
 
   if (loading) {
     return (
       <SafeAreaView style={styles.container} edges={['top']}>
-        <TopAppBar title="Detalhes" />
-        <View style={styles.loaderWrap}>
+        <TopNav title="" />
+        <View style={styles.centerWrap}>
           <ActivityIndicator color={Colors.primary} />
         </View>
       </SafeAreaView>
@@ -82,272 +86,374 @@ export default function ServiceDetailScreen() {
   if (!service) {
     return (
       <SafeAreaView style={styles.container} edges={['top']}>
-        <TopAppBar title="Serviço não encontrado" />
-        <View style={styles.loaderWrap}>
+        <TopNav title="" />
+        <View style={styles.centerWrap}>
           <Text style={styles.errorText}>Serviço não encontrado.</Text>
         </View>
       </SafeAreaView>
     );
   }
 
+  const priceFormatted = formatPriceLabel(service);
+
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <TopAppBar title={service.name} />
+      <TopNav title="" />
 
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scroll}
-      >
-        {/* Hero */}
-        <View style={[styles.hero, { backgroundColor: cat?.color ?? Colors.primaryContainer }]}>
-          <MaterialIcons
-            name={cat?.icon ?? 'home-repair-service'}
-            size={56}
-            color={Colors.primary}
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
+
+        {/* ── Hero ──────────────────────────────────────────────────────── */}
+        <View style={styles.heroWrap}>
+          <LinearGradient
+            colors={[cat?.color ?? Colors.primaryContainer, Colors.primaryContainer + '80', '#1a1a2e']}
+            style={styles.heroGradient}
+          >
+            <MaterialIcons
+              name={cat?.icon ?? 'home-repair-service'}
+              size={80}
+              color="rgba(255,255,255,0.25)"
+            />
+          </LinearGradient>
+          {/* Fade-to-dark overlay at bottom */}
+          <LinearGradient
+            colors={['transparent', 'rgba(0,0,0,0.55)']}
+            style={styles.heroOverlay}
           />
         </View>
 
-        {/* Info card */}
-        <View style={styles.infoCard}>
-          {service.category ? (
-            <View style={styles.categoryBadge}>
-              <Text style={styles.categoryBadgeText}>{service.category}</Text>
-            </View>
-          ) : null}
-          <Text style={styles.serviceName}>{service.name}</Text>
-          <View style={styles.metaRow}>
-            {service.avg_rating != null ? (
-              <>
-                <MaterialIcons name="star" size={14} color="#fbbf24" />
-                <Text style={styles.metaText}>
-                  {service.avg_rating.toFixed(1)} ({service.review_count})
-                </Text>
-              </>
-            ) : (
-              <Text style={styles.metaText}>Novo</Text>
-            )}
-            <Text style={styles.metaSep}>·</Text>
-            <Text style={styles.price}>{formatPrice(service)}</Text>
+        {/* ── Header Card (overlapping hero) ─────────────────────────── */}
+        <View style={styles.headerCard}>
+          {/* "Serviço Premium" badge */}
+          <View style={styles.premiumBadge}>
+            <Text style={styles.premiumBadgeText}>Serviço Premium</Text>
           </View>
-          {service.duration ? (
-            <View style={styles.durationRow}>
-              <MaterialIcons name="schedule" size={14} color={Colors.outline} />
-              <Text style={styles.durationText}>{service.duration}</Text>
-            </View>
-          ) : null}
-        </View>
 
-        {/* Body */}
-        <View style={styles.body}>
-          {/* Left: description + checklist */}
-          <View style={styles.mainCol}>
-            {service.description ? (
-              <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Sobre o serviço</Text>
-                <Text style={styles.description}>{service.description}</Text>
+          <Text style={styles.serviceName}>{service.name}</Text>
+
+          {/* Rating row */}
+          {service.avg_rating != null ? (
+            <View style={styles.ratingRow}>
+              <MaterialIcons name="star" size={15} color="#eab308" />
+              <Text style={styles.ratingNum}>{service.avg_rating.toFixed(1)}</Text>
+              <Text style={styles.ratingCount}>({service.review_count} avaliações)</Text>
+            </View>
+          ) : (
+            <Text style={styles.ratingCount}>Novo serviço</Text>
+          )}
+
+          {/* Divider + price/duration row */}
+          <View style={styles.divider} />
+          <View style={styles.priceRow}>
+            <View style={styles.priceBlock}>
+              {priceFormatted.label && (
+                <Text style={styles.priceLabel}>{priceFormatted.label}</Text>
+              )}
+              <Text style={styles.priceValue}>{priceFormatted.value}</Text>
+            </View>
+            {service.duration ? (
+              <View style={styles.durationChip}>
+                <MaterialIcons name="schedule" size={17} color={Colors.outline} />
+                <Text style={styles.durationText}>{service.duration}</Text>
               </View>
             ) : null}
+          </View>
+        </View>
 
+        {/* ── Content area ──────────────────────────────────────────────── */}
+        <View style={styles.content}>
+
+          {/* Sobre o serviço */}
+          {service.description ? (
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>O que está incluso</Text>
+              <Text style={styles.sectionTitle}>Sobre o serviço</Text>
+              <Text style={styles.descText}>{service.description}</Text>
+            </View>
+          ) : null}
+
+          {/* O que está incluso */}
+          <View style={styles.includedCard}>
+            <Text style={styles.sectionTitle}>O que está incluso</Text>
+            <View style={styles.checkList}>
               {INCLUDED_ITEMS.map(item => (
                 <View key={item} style={styles.checkRow}>
-                  <MaterialIcons name="check-circle" size={16} color="#16a34a" />
+                  <MaterialIcons name="check-circle" size={20} color={Colors.primary} />
                   <Text style={styles.checkText}>{item}</Text>
                 </View>
               ))}
             </View>
           </View>
 
-          {/* Right: reviews preview */}
-          {reviews.length > 0 ? (
-            <View style={styles.sideCol}>
-              <Text style={styles.sectionTitle}>Avaliações</Text>
-              {reviews.slice(0, 2).map(review => (
-                <View key={review.id} style={styles.reviewPreview}>
-                  <View style={styles.reviewAvatarSmall}>
-                    <Text style={styles.reviewAvatarText}>
-                      {getInitials(review.reviewer_name)}
-                    </Text>
-                  </View>
-                  <View style={{ flex: 1, gap: 2 }}>
-                    <Text style={styles.reviewerName}>{review.reviewer_name}</Text>
-                    <View style={styles.starsRow}>
-                      {Array.from({ length: review.rating }).map((_, i) => (
-                        <MaterialIcons key={i} name="star" size={10} color="#fbbf24" />
-                      ))}
+          {/* Avaliações preview */}
+          {reviews.length > 0 && (
+            <View style={styles.section}>
+              <View style={styles.reviewsHeader}>
+                <Text style={styles.sectionTitle}>Avaliações</Text>
+                <Pressable
+                  onPress={() =>
+                    router.push({
+                      pathname: '/(client)/provider-reviews' as any,
+                      params: {
+                        userId: String(service.provider_id),
+                        name: service.provider_name,
+                      },
+                    })
+                  }
+                >
+                  <Text style={styles.seeAllLink}>VER TODAS</Text>
+                </Pressable>
+              </View>
+              <View style={styles.reviewsList}>
+                {reviews.slice(0, 2).map(review => (
+                  <View key={review.id} style={styles.reviewCard}>
+                    <View style={styles.reviewCardHeader}>
+                      <View style={styles.reviewAvatar}>
+                        <Text style={styles.reviewAvatarText}>
+                          {getInitials(review.reviewer_name)}
+                        </Text>
+                      </View>
+                      <View style={styles.reviewMeta}>
+                        <Text style={styles.reviewerName}>{review.reviewer_name}</Text>
+                        <View style={styles.starsRow}>
+                          {Array.from({ length: review.rating }).map((_, i) => (
+                            <MaterialIcons key={i} name="star" size={12} color="#eab308" />
+                          ))}
+                          {Array.from({ length: 5 - review.rating }).map((_, i) => (
+                            <MaterialIcons key={`e${i}`} name="star-border" size={12} color={Colors.outlineVariant} />
+                          ))}
+                        </View>
+                      </View>
                     </View>
                     {review.comment ? (
-                      <Text style={styles.reviewComment} numberOfLines={2}>
-                        "{review.comment}"
-                      </Text>
+                      <Text style={styles.reviewComment}>"{review.comment}"</Text>
                     ) : null}
                   </View>
-                </View>
-              ))}
+                ))}
+              </View>
             </View>
-          ) : null}
+          )}
+
         </View>
       </ScrollView>
 
-      {/* CTA fixo */}
+      {/* ── Fixed CTA ─────────────────────────────────────────────────── */}
       <View style={styles.ctaWrap}>
-        <GradientButton
-          label="Agendar agora"
+        <Pressable
+          style={({ pressed }) => [styles.ctaBtn, pressed && { opacity: 0.92 }]}
           onPress={() =>
-            Alert.alert(
-              'Em breve',
-              'A funcionalidade de agendamento estará disponível em breve.',
-            )
+            Alert.alert('Em breve', 'A funcionalidade de agendamento estará disponível em breve.')
           }
-        />
+        >
+          <LinearGradient
+            colors={GradientColors}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={styles.ctaGradient}
+          >
+            <MaterialIcons name="calendar-today" size={20} color={Colors.onPrimary} />
+            <Text style={styles.ctaLabel}>Agendar agora</Text>
+          </LinearGradient>
+        </Pressable>
       </View>
+
     </SafeAreaView>
   );
 }
 
+// ── TopNav subcomponent ───────────────────────────────────────────────────────
+
+function TopNav({ title }: { title: string }) {
+  return (
+    <View style={styles.topNav}>
+      <View style={styles.topNavLeft}>
+        <Pressable
+          style={({ pressed }) => [styles.iconBtn, pressed && { opacity: 0.6 }]}
+          onPress={() => router.back()}
+        >
+          <MaterialIcons name="arrow-back" size={22} color={Colors.onSurfaceVariant} />
+        </Pressable>
+        {title ? <Text style={styles.topNavTitle}>{title}</Text> : null}
+      </View>
+      <Pressable style={({ pressed }) => [styles.iconBtn, pressed && { opacity: 0.6 }]}>
+        <MaterialIcons name="share" size={22} color={Colors.onSurfaceVariant} />
+      </Pressable>
+    </View>
+  );
+}
+
+// ── Styles ────────────────────────────────────────────────────────────────────
+
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.surface },
-  loaderWrap: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  centerWrap: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   errorText: {
-    fontFamily: FontFamily.bodyRegular,
-    fontSize: 14,
-    color: Colors.onSurfaceVariant,
+    fontFamily: FontFamily.bodyRegular, fontSize: 14, color: Colors.onSurfaceVariant,
   },
+
+  // TopNav
+  topNav: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    paddingHorizontal: Spacing.xl, height: 56,
+    backgroundColor: 'rgba(255,255,255,0.85)',
+    shadowColor: '#000', shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.04, shadowRadius: 4, elevation: 2,
+  },
+  topNavLeft: { flexDirection: 'row', alignItems: 'center', gap: Spacing.base },
+  topNavTitle: {
+    fontFamily: FontFamily.headlineBold, fontSize: 17, color: Colors.onSurfaceVariant,
+  },
+  iconBtn: {
+    width: 40, height: 40, borderRadius: Radius.full,
+    alignItems: 'center', justifyContent: 'center',
+  },
+
   scroll: { paddingBottom: Spacing.xxxl * 3 },
 
-  hero: {
-    height: 140,
-    alignItems: 'center',
-    justifyContent: 'center',
+  // Hero
+  heroWrap: { height: 300, position: 'relative' },
+  heroGradient: { position: 'absolute', inset: 0, flex: 1, alignItems: 'center', justifyContent: 'center' } as any,
+  heroOverlay: {
+    position: 'absolute', bottom: 0, left: 0, right: 0, height: 120,
   },
 
-  infoCard: {
+  // Header card (overlaps hero)
+  headerCard: {
     marginHorizontal: Spacing.xl,
-    marginTop: -Spacing.xl,
+    marginTop: -Spacing.xxxl,
     backgroundColor: Colors.surfaceContainerLowest,
     borderRadius: Radius.lg,
-    padding: Spacing.base,
+    padding: Spacing.xl,
     gap: Spacing.sm,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
+    elevation: 6,
+    shadowColor: '#000', shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1, shadowRadius: 20,
+    zIndex: 10,
   },
-  categoryBadge: {
+  premiumBadge: {
     alignSelf: 'flex-start',
     backgroundColor: Colors.primaryContainer,
-    paddingHorizontal: Spacing.md,
-    paddingVertical: 2,
+    paddingHorizontal: 10, paddingVertical: 3,
     borderRadius: Radius.full,
   },
-  categoryBadgeText: {
-    fontFamily: FontFamily.bodySemiBold,
-    fontSize: 11,
+  premiumBadgeText: {
+    fontFamily: FontFamily.bodySemiBold, fontSize: 11,
     color: Colors.primary,
   },
   serviceName: {
-    fontFamily: FontFamily.headlineBold,
-    fontSize: 18,
-    color: Colors.onSurface,
-    letterSpacing: -0.3,
+    fontFamily: FontFamily.headlineExtraBold, fontSize: 22,
+    color: Colors.onSurface, letterSpacing: -0.6, lineHeight: 28,
   },
-  metaRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.xs },
-  metaText: {
-    fontFamily: FontFamily.bodyMedium,
-    fontSize: 13,
-    color: Colors.onSurfaceVariant,
+  ratingRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  ratingNum: {
+    fontFamily: FontFamily.headlineBold, fontSize: 13, color: Colors.onSurface,
   },
-  metaSep: {
-    fontFamily: FontFamily.bodyRegular,
-    fontSize: 13,
-    color: Colors.outlineVariant,
+  ratingCount: {
+    fontFamily: FontFamily.bodyRegular, fontSize: 13, color: Colors.onSurfaceVariant,
   },
-  price: {
-    fontFamily: FontFamily.bodySemiBold,
-    fontSize: 14,
-    color: Colors.primary,
+  divider: {
+    height: 1, backgroundColor: Colors.surfaceContainer, marginVertical: Spacing.sm,
   },
-  durationRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.xs },
-  durationText: {
-    fontFamily: FontFamily.bodyRegular,
-    fontSize: 12,
-    color: Colors.onSurfaceVariant,
+  priceRow: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
   },
-
-  body: {
-    flexDirection: 'row',
-    padding: Spacing.xl,
-    gap: Spacing.base,
-    alignItems: 'flex-start',
+  priceBlock: { gap: 2 },
+  priceLabel: {
+    fontFamily: FontFamily.bodyMedium, fontSize: 10,
+    color: Colors.onSurfaceVariant, letterSpacing: 1,
   },
-  mainCol: { flex: 3, gap: Spacing.xl },
-  sideCol: { flex: 2, gap: Spacing.md },
-
-  section: { gap: Spacing.sm },
-  sectionTitle: {
-    fontFamily: FontFamily.headlineSemiBold,
-    fontSize: 14,
-    color: Colors.onSurface,
-    letterSpacing: -0.2,
+  priceValue: {
+    fontFamily: FontFamily.headlineExtraBold, fontSize: 24,
+    color: Colors.primary, letterSpacing: -0.5,
   },
-  description: {
-    fontFamily: FontFamily.bodyRegular,
-    fontSize: 13,
-    color: Colors.onSurface,
-    lineHeight: 20,
-  },
-  checkRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.sm,
-  },
-  checkText: {
-    fontFamily: FontFamily.bodyRegular,
-    fontSize: 13,
-    color: Colors.onSurface,
-  },
-
-  reviewPreview: {
-    flexDirection: 'row',
-    gap: Spacing.sm,
-    backgroundColor: Colors.surfaceContainerLowest,
+  durationChip: {
+    flexDirection: 'row', alignItems: 'center', gap: Spacing.xs,
+    backgroundColor: Colors.surfaceContainerLow,
+    paddingHorizontal: Spacing.md, paddingVertical: Spacing.sm,
     borderRadius: Radius.md,
-    padding: Spacing.sm,
   },
-  reviewAvatarSmall: {
-    width: 28,
-    height: 28,
-    borderRadius: Radius.full,
-    backgroundColor: Colors.primaryContainer,
-    alignItems: 'center',
-    justifyContent: 'center',
+  durationText: {
+    fontFamily: FontFamily.bodyMedium, fontSize: 13, color: Colors.onSurfaceVariant,
+  },
+
+  // Content
+  content: {
+    paddingHorizontal: Spacing.xl,
+    paddingTop: Spacing.xxl,
+    gap: Spacing.xxl,
+  },
+  section: { gap: Spacing.md },
+  sectionTitle: {
+    fontFamily: FontFamily.headlineBold, fontSize: 17,
+    color: Colors.onSurface, letterSpacing: -0.3,
+  },
+  descText: {
+    fontFamily: FontFamily.bodyRegular, fontSize: 14,
+    color: Colors.onSurfaceVariant, lineHeight: 22,
+  },
+
+  // Included card
+  includedCard: {
+    backgroundColor: Colors.surfaceContainerLow,
+    borderRadius: Radius.lg, padding: Spacing.xl, gap: Spacing.base,
+  },
+  checkList: { gap: Spacing.base },
+  checkRow: { flexDirection: 'row', alignItems: 'flex-start', gap: Spacing.md },
+  checkText: {
+    fontFamily: FontFamily.bodyMedium, fontSize: 14,
+    color: Colors.onSurface, flex: 1, lineHeight: 21,
+  },
+
+  // Reviews preview
+  reviewsHeader: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+  },
+  seeAllLink: {
+    fontFamily: FontFamily.headlineBold, fontSize: 11,
+    color: Colors.primary, letterSpacing: 1.5,
+  },
+  reviewsList: { gap: Spacing.md },
+  reviewCard: {
+    backgroundColor: Colors.surfaceContainerLowest,
+    borderRadius: Radius.lg, padding: Spacing.xl,
+    gap: Spacing.md, borderWidth: 1,
+    borderColor: Colors.outlineVariant + '1A',
+    elevation: 1, shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.04, shadowRadius: 4,
+  },
+  reviewCardHeader: { flexDirection: 'row', alignItems: 'center', gap: Spacing.md },
+  reviewAvatar: {
+    width: 40, height: 40, borderRadius: 20,
+    backgroundColor: Colors.surfaceContainerHighest,
+    alignItems: 'center', justifyContent: 'center',
   },
   reviewAvatarText: {
-    fontFamily: FontFamily.bodySemiBold,
-    fontSize: 10,
-    color: Colors.primary,
+    fontFamily: FontFamily.headlineBold, fontSize: 13, color: Colors.primary,
   },
+  reviewMeta: { gap: 3 },
   reviewerName: {
-    fontFamily: FontFamily.bodySemiBold,
-    fontSize: 11,
-    color: Colors.onSurface,
+    fontFamily: FontFamily.headlineBold, fontSize: 13, color: Colors.onSurface,
   },
   starsRow: { flexDirection: 'row', gap: 1 },
   reviewComment: {
-    fontFamily: FontFamily.bodyRegular,
-    fontSize: 10,
-    color: Colors.onSurfaceVariant,
-    fontStyle: 'italic',
+    fontFamily: FontFamily.bodyRegular, fontSize: 13,
+    color: Colors.onSurfaceVariant, fontStyle: 'italic', lineHeight: 20,
   },
 
+  // CTA
   ctaWrap: {
-    paddingHorizontal: Spacing.xl,
-    paddingBottom: Spacing.xl,
-    paddingTop: Spacing.md,
-    backgroundColor: Colors.surface,
-    borderTopWidth: 1,
-    borderTopColor: Colors.surfaceContainerHighest,
+    paddingHorizontal: Spacing.xl, paddingVertical: Spacing.base,
+    backgroundColor: 'rgba(255,255,255,0.85)',
+    shadowColor: '#000', shadowOffset: { width: 0, height: -10 },
+    shadowOpacity: 0.06, shadowRadius: 20, elevation: 8,
+  },
+  ctaBtn: { borderRadius: Radius.lg, overflow: 'hidden' },
+  ctaGradient: {
+    height: 56, flexDirection: 'row', alignItems: 'center',
+    justifyContent: 'center', gap: Spacing.md, borderRadius: Radius.lg,
+    shadowColor: Colors.primary, shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.2, shadowRadius: 20,
+  },
+  ctaLabel: {
+    fontFamily: FontFamily.headlineBold, fontSize: 17,
+    color: Colors.onPrimary, letterSpacing: -0.2,
   },
 });
