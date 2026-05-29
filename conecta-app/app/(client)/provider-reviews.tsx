@@ -3,22 +3,52 @@ import {
   View,
   Text,
   ScrollView,
+  Pressable,
   StyleSheet,
   ActivityIndicator,
+  useWindowDimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
-import { TopAppBar } from '@/components/ui/top-app-bar';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, FontFamily, Spacing, Radius } from '@/constants/theme';
-import { providerApi, ProviderReviews } from '@/services/api';
+import { providerApi, ProviderReviews, ProviderReview } from '@/services/api';
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+function getInitials(name: string) {
+  return name.split(' ').slice(0, 2).map(w => w[0]?.toUpperCase() ?? '').join('');
+}
+
+const AVATAR_GRADIENTS: [string, string][] = [
+  ['#667eea', '#764ba2'],
+  ['#f093fb', '#f5576c'],
+  ['#4facfe', '#00f2fe'],
+  ['#43e97b', '#38f9d7'],
+  ['#fa709a', '#fee140'],
+  ['#a18cd1', '#fbc2eb'],
+  ['#fccb90', '#d57eeb'],
+];
+
+// Gradient pairs for photo placeholder thumbnails (shown on select reviews)
+const THUMB_GRADIENTS: [string, string][] = [
+  ['#1e3a8a', '#3b82f6'],
+  ['#065f46', '#10b981'],
+  ['#7c2d12', '#f97316'],
+];
+
+const THUMB_ICONS: Array<keyof typeof MaterialIcons.glyphMap> = [
+  'electrical-services',
+  'lightbulb',
+  'build',
+];
+
+// ── Component ─────────────────────────────────────────────────────────────────
 
 export default function ProviderReviewsScreen() {
-  const { userId, name } = useLocalSearchParams<{
-    userId?: string;
-    name?: string;
-  }>();
-  const providerName = name ?? 'Prestador';
+  const { userId } = useLocalSearchParams<{ userId?: string; name?: string }>();
+  const { width } = useWindowDimensions();
 
   const [data, setData] = useState<ProviderReviews | null>(null);
   const [loading, setLoading] = useState(true);
@@ -32,17 +62,36 @@ export default function ProviderReviewsScreen() {
       .finally(() => setLoading(false));
   }, [userId]);
 
+  // bar chart: right column width = total width - left column (rating) - gap
+  const HPAD   = Spacing.xl * 2;
+  const GAP    = Spacing.xxl;
+  const LEFT_W = 100;
+  const barW   = width - HPAD - GAP - LEFT_W;
+
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <TopAppBar title={`Avaliações de ${providerName}`} />
+
+      {/* ── TopAppBar ─────────────────────────────────────────────────── */}
+      <View style={styles.topBar}>
+        <Pressable
+          style={({ pressed }) => [styles.iconBtn, pressed && { opacity: 0.6 }]}
+          onPress={() => router.back()}
+        >
+          <MaterialIcons name="arrow-back" size={24} color={Colors.primary} />
+        </Pressable>
+        <Text style={styles.topBarTitle}>Avaliações e Notas</Text>
+        <Pressable style={({ pressed }) => [styles.iconBtn, pressed && { opacity: 0.6 }]}>
+          <MaterialIcons name="more-vert" size={24} color={Colors.onSurfaceVariant} />
+        </Pressable>
+      </View>
 
       {loading ? (
-        <View style={styles.loaderWrap}>
+        <View style={styles.centerWrap}>
           <ActivityIndicator color={Colors.primary} />
         </View>
       ) : !data || data.total_count === 0 ? (
-        <View style={styles.loaderWrap}>
-          <MaterialIcons name="rate-review" size={48} color={Colors.outlineVariant} />
+        <View style={styles.centerWrap}>
+          <MaterialIcons name="rate-review" size={52} color={Colors.outlineVariant} />
           <Text style={styles.emptyText}>Nenhuma avaliação ainda.</Text>
         </View>
       ) : (
@@ -50,200 +99,277 @@ export default function ProviderReviewsScreen() {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scroll}
         >
-          {/* Rating summary card */}
-          <View style={styles.summaryCard}>
-            <Text style={styles.ratingBig}>{data.avg_rating?.toFixed(1)}</Text>
-            <View style={styles.starsRow}>
-              {[1, 2, 3, 4, 5].map(i => (
-                <MaterialIcons key={i} name="star" size={22} color="#fbbf24" />
-              ))}
-            </View>
-            <Text style={styles.totalCount}>{data.total_count} Avaliações</Text>
 
-            {/* Distribution bars */}
-            <View style={styles.distribution}>
+          {/* ── Summary card (2 colunas) ──────────────────────────────── */}
+          <View style={styles.summaryCard}>
+            {/* Esquerda: nota grande + estrelas + contagem */}
+            <View style={styles.summaryLeft}>
+              <Text style={styles.ratingBig}>{data.avg_rating?.toFixed(1)}</Text>
+              <View style={styles.starsRow}>
+                {[1, 2, 3, 4, 5].map(i => (
+                  <MaterialIcons key={i} name="star" size={20} color={Colors.primary} />
+                ))}
+              </View>
+              <Text style={styles.totalCount}>
+                {data.total_count} AVALIAÇÕES
+              </Text>
+            </View>
+
+            {/* Direita: barras de distribuição */}
+            <View style={[styles.summaryRight, { width: barW }]}>
               {[5, 4, 3, 2, 1].map(star => {
                 const count = data.distribution[star] ?? 0;
-                const pct = data.total_count > 0
-                  ? Math.round((count / data.total_count) * 100)
+                const pct   = data.total_count > 0
+                  ? (count / data.total_count) * 100
                   : 0;
                 return (
                   <View key={star} style={styles.barRow}>
-                    <MaterialIcons name="star" size={12} color="#fbbf24" />
-                    <Text style={styles.barStar}>{star}</Text>
+                    <Text style={styles.barNum}>{star}</Text>
                     <View style={styles.barTrack}>
-                      <View
-                        style={[
-                          styles.barFill,
-                          { width: `${pct}%` as any },
-                        ]}
-                      />
+                      <View style={[styles.barFill, { width: `${pct}%` as any }]} />
                     </View>
-                    <Text style={styles.barPct}>{pct}%</Text>
                   </View>
                 );
               })}
             </View>
           </View>
 
-          {/* Reviews list */}
-          <Text style={styles.listHeader}>Avaliações Recentes</Text>
+          {/* ── Filter header ─────────────────────────────────────────── */}
+          <View style={styles.listHeader}>
+            <Text style={styles.listTitle}>Avaliações Recentes</Text>
+            <Pressable style={({ pressed }) => [styles.sortPill, pressed && { opacity: 0.8 }]}>
+              <Text style={styles.sortLabel}>Mais Recentes</Text>
+              <MaterialIcons name="expand-more" size={18} color={Colors.onSurface} />
+            </Pressable>
+          </View>
+
+          {/* ── Reviews list ──────────────────────────────────────────── */}
           <View style={styles.reviewsList}>
-            {data.reviews.map(review => (
-              <View key={review.id} style={styles.reviewCard}>
-                <View style={styles.reviewTopRow}>
-                  <View style={styles.reviewerInfo}>
-                    <Text style={styles.reviewerName}>{review.reviewer_name}</Text>
-                    <View style={styles.serviceChip}>
-                      <Text style={styles.serviceChipText} numberOfLines={1}>
-                        {review.service_name}
-                      </Text>
-                    </View>
-                  </View>
-                  <Text style={styles.reviewDate}>
-                    {new Date(review.created_at).toLocaleDateString('pt-BR')}
-                  </Text>
-                </View>
-                <View style={styles.starsRow}>
-                  {Array.from({ length: review.rating }).map((_, i) => (
-                    <MaterialIcons key={i} name="star" size={14} color="#fbbf24" />
-                  ))}
-                  {Array.from({ length: 5 - review.rating }).map((_, i) => (
-                    <MaterialIcons key={`empty-${i}`} name="star-outline" size={14} color={Colors.outlineVariant} />
-                  ))}
-                </View>
-                {review.comment ? (
-                  <Text style={styles.reviewComment}>"{review.comment}"</Text>
-                ) : null}
-              </View>
+            {data.reviews.map((review, idx) => (
+              <ReviewCard key={review.id} review={review} index={idx} />
             ))}
           </View>
+
         </ScrollView>
       )}
     </SafeAreaView>
   );
 }
 
+// ── ReviewCard subcomponent ───────────────────────────────────────────────────
+
+function ReviewCard({ review, index }: { review: ProviderReview; index: number }) {
+  const grad    = AVATAR_GRADIENTS[index % AVATAR_GRADIENTS.length];
+  const hasThumb = index % 2 === 0 && index < THUMB_GRADIENTS.length * 2;
+  const thumbIdx = Math.floor(index / 2) % THUMB_GRADIENTS.length;
+
+  return (
+    <View style={styles.reviewCard}>
+      {/* Header row: avatar+name+date LEFT · stars RIGHT */}
+      <View style={styles.reviewHeader}>
+        <View style={styles.reviewerRow}>
+          <LinearGradient colors={grad} style={styles.reviewerAvatar}>
+            <Text style={styles.reviewerInitials}>{getInitials(review.reviewer_name)}</Text>
+          </LinearGradient>
+          <View style={styles.reviewerMeta}>
+            <Text style={styles.reviewerName}>{review.reviewer_name}</Text>
+            <Text style={styles.reviewDate}>
+              {new Date(review.created_at).toLocaleDateString('pt-BR', {
+                day: 'numeric', month: 'long', year: 'numeric',
+              })}
+            </Text>
+          </View>
+        </View>
+        <View style={styles.reviewStars}>
+          {Array.from({ length: review.rating }).map((_, i) => (
+            <MaterialIcons key={i} name="star" size={16} color={Colors.primary} />
+          ))}
+          {Array.from({ length: 5 - review.rating }).map((_, i) => (
+            <MaterialIcons key={`e${i}`} name="star-border" size={16} color={Colors.outlineVariant} />
+          ))}
+        </View>
+      </View>
+
+      {/* Comment */}
+      {review.comment ? (
+        <Text style={styles.reviewComment}>{review.comment}</Text>
+      ) : null}
+
+      {/* Service chip */}
+      {review.service_name ? (
+        <View style={styles.serviceChip}>
+          <MaterialIcons name="home-repair-service" size={11} color={Colors.onSurfaceVariant} />
+          <Text style={styles.serviceChipText} numberOfLines={1}>
+            {review.service_name}
+          </Text>
+        </View>
+      ) : null}
+
+      {/* Optional photo thumbnails */}
+      {hasThumb && (
+        <View style={styles.thumbsRow}>
+          {THUMB_GRADIENTS.slice(thumbIdx, thumbIdx + 2).map((tg, ti) => (
+            <View key={ti} style={styles.thumb}>
+              <LinearGradient colors={tg} style={styles.thumbGradient}>
+                <MaterialIcons
+                  name={THUMB_ICONS[(thumbIdx + ti) % THUMB_ICONS.length]}
+                  size={22}
+                  color="rgba(255,255,255,0.8)"
+                />
+              </LinearGradient>
+            </View>
+          ))}
+        </View>
+      )}
+    </View>
+  );
+}
+
+// ── Styles ────────────────────────────────────────────────────────────────────
+
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.surface },
-  loaderWrap: {
-    flex: 1, alignItems: 'center', justifyContent: 'center',
-    gap: Spacing.md,
+
+  // TopAppBar
+  topBar: {
+    flexDirection: 'row', alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: Spacing.xl, height: 56,
+    backgroundColor: 'rgba(255,255,255,0.92)',
+    shadowColor: '#000', shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.04, shadowRadius: 4, elevation: 2,
   },
-  emptyText: {
-    fontFamily: FontFamily.bodyRegular,
-    fontSize: 14,
-    color: Colors.onSurfaceVariant,
+  topBarTitle: {
+    fontFamily: FontFamily.headlineBold, fontSize: 17,
+    color: Colors.onSurface, letterSpacing: -0.3,
   },
-  scroll: {
-    padding: Spacing.xl,
-    gap: Spacing.xl,
-    paddingBottom: Spacing.xxxl * 2,
+  iconBtn: {
+    width: 40, height: 40, borderRadius: Radius.full,
+    alignItems: 'center', justifyContent: 'center',
   },
 
-  // Summary card
+  centerWrap: {
+    flex: 1, alignItems: 'center', justifyContent: 'center', gap: Spacing.md,
+  },
+  emptyText: {
+    fontFamily: FontFamily.bodyRegular, fontSize: 14, color: Colors.onSurfaceVariant,
+  },
+
+  scroll: {
+    paddingHorizontal: Spacing.xl,
+    paddingTop: Spacing.xl,
+    paddingBottom: Spacing.xxxl * 2,
+    gap: Spacing.xxl,
+  },
+
+  // Summary card — 2 colunas
   summaryCard: {
-    backgroundColor: Colors.surfaceContainerLow,
-    borderRadius: Radius.lg,
-    padding: Spacing.xl,
-    alignItems: 'center',
-    gap: Spacing.md,
+    backgroundColor: Colors.surfaceContainerLowest,
+    borderRadius: 20, padding: Spacing.xl,
+    flexDirection: 'row', alignItems: 'center',
+    gap: Spacing.xxl,
+    elevation: 1, shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.04, shadowRadius: 4,
+  },
+  summaryLeft: {
+    width: 100, alignItems: 'center', gap: Spacing.xs,
   },
   ratingBig: {
     fontFamily: FontFamily.headlineExtraBold,
-    fontSize: 56,
-    color: Colors.onSurface,
-    letterSpacing: -3,
+    fontSize: 56, color: Colors.onSurface, letterSpacing: -3,
   },
-  starsRow: { flexDirection: 'row', gap: 3 },
+  starsRow: { flexDirection: 'row', gap: 2 },
   totalCount: {
-    fontFamily: FontFamily.bodyRegular,
-    fontSize: 14,
-    color: Colors.onSurfaceVariant,
-  },
-
-  // Distribution
-  distribution: { width: '100%', gap: Spacing.xs },
-  barRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.sm,
-  },
-  barStar: {
     fontFamily: FontFamily.bodyMedium,
-    fontSize: 12,
-    color: Colors.onSurfaceVariant,
-    width: 10,
+    fontSize: 9, color: Colors.onSurfaceVariant,
+    letterSpacing: 1, textAlign: 'center',
+  },
+  summaryRight: { gap: Spacing.sm },
+  barRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
+  barNum: {
+    fontFamily: FontFamily.bodySemiBold,
+    fontSize: 12, color: Colors.onSurfaceVariant, width: 10,
   },
   barTrack: {
-    flex: 1,
-    height: 8,
-    backgroundColor: Colors.surfaceContainerHighest,
-    borderRadius: Radius.full,
-    overflow: 'hidden',
+    flex: 1, height: 8,
+    backgroundColor: Colors.surfaceContainer,
+    borderRadius: Radius.full, overflow: 'hidden',
   },
   barFill: {
-    height: '100%',
-    backgroundColor: Colors.primary,
+    height: '100%', backgroundColor: Colors.primary, borderRadius: Radius.full,
+  },
+
+  // Filter header
+  listHeader: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+  },
+  listTitle: {
+    fontFamily: FontFamily.headlineBold, fontSize: 20,
+    color: Colors.onSurface, letterSpacing: -0.5,
+  },
+  sortPill: {
+    flexDirection: 'row', alignItems: 'center', gap: 4,
+    backgroundColor: Colors.surfaceContainerHigh,
+    paddingHorizontal: Spacing.base, paddingVertical: Spacing.sm,
     borderRadius: Radius.full,
   },
-  barPct: {
-    fontFamily: FontFamily.bodyMedium,
-    fontSize: 11,
-    color: Colors.onSurfaceVariant,
-    width: 32,
-    textAlign: 'right',
+  sortLabel: {
+    fontFamily: FontFamily.bodyMedium, fontSize: 13, color: Colors.onSurface,
   },
 
   // Reviews list
-  listHeader: {
-    fontFamily: FontFamily.headlineSemiBold,
-    fontSize: 16,
-    color: Colors.onSurface,
-    letterSpacing: -0.3,
-  },
-  reviewsList: { gap: Spacing.md },
+  reviewsList: { gap: Spacing.xl },
   reviewCard: {
     backgroundColor: Colors.surfaceContainerLowest,
-    borderRadius: Radius.md,
-    padding: Spacing.base,
-    gap: Spacing.sm,
+    borderRadius: 20, padding: Spacing.xl,
+    gap: Spacing.md,
+    elevation: 1, shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.04, shadowRadius: 6,
   },
-  reviewTopRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  reviewHeader: {
+    flexDirection: 'row', justifyContent: 'space-between',
     alignItems: 'flex-start',
-    gap: Spacing.sm,
   },
-  reviewerInfo: { flex: 1, gap: 4 },
+  reviewerRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.md, flex: 1 },
+  reviewerAvatar: {
+    width: 48, height: 48, borderRadius: 24,
+    alignItems: 'center', justifyContent: 'center',
+  },
+  reviewerInitials: {
+    fontFamily: FontFamily.headlineBold, fontSize: 16,
+    color: 'rgba(255,255,255,0.92)',
+  },
+  reviewerMeta: { gap: 2 },
   reviewerName: {
-    fontFamily: FontFamily.bodySemiBold,
-    fontSize: 13,
-    color: Colors.onSurface,
+    fontFamily: FontFamily.headlineBold, fontSize: 14, color: Colors.onSurface,
   },
+  reviewDate: {
+    fontFamily: FontFamily.bodyMedium, fontSize: 11, color: Colors.onSurfaceVariant,
+  },
+  reviewStars: { flexDirection: 'row', gap: 1, paddingTop: 2 },
+
+  reviewComment: {
+    fontFamily: FontFamily.bodyRegular, fontSize: 14,
+    color: Colors.onSurfaceVariant, lineHeight: 22,
+  },
+
   serviceChip: {
+    flexDirection: 'row', alignItems: 'center', gap: 4,
     alignSelf: 'flex-start',
     backgroundColor: Colors.surfaceContainerHighest,
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: 2,
+    paddingHorizontal: Spacing.sm, paddingVertical: 3,
     borderRadius: Radius.full,
   },
   serviceChipText: {
-    fontFamily: FontFamily.bodyMedium,
-    fontSize: 10,
-    color: Colors.onSurfaceVariant,
+    fontFamily: FontFamily.bodyMedium, fontSize: 10, color: Colors.onSurfaceVariant,
   },
-  reviewDate: {
-    fontFamily: FontFamily.bodyRegular,
-    fontSize: 11,
-    color: Colors.outlineVariant,
-    flexShrink: 0,
+
+  // Photo thumbnails
+  thumbsRow: { flexDirection: 'row', gap: Spacing.sm },
+  thumb: {
+    width: 96, height: 96, borderRadius: Radius.lg, overflow: 'hidden',
+    elevation: 1, shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.06, shadowRadius: 4,
   },
-  reviewComment: {
-    fontFamily: FontFamily.bodyRegular,
-    fontSize: 13,
-    color: Colors.onSurfaceVariant,
-    fontStyle: 'italic',
-    lineHeight: 20,
-  },
+  thumbGradient: { flex: 1, alignItems: 'center', justifyContent: 'center' },
 });
