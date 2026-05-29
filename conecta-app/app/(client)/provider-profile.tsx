@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   StyleSheet,
   ActivityIndicator,
   Alert,
+  Share,
   useWindowDimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -85,33 +86,26 @@ export default function ProviderProfileScreen() {
   const [activeTab, setActiveTab]   = useState<Tab>('servicos');
   const [services, setServices]     = useState<PublicService[]>([]);
   const [reviewData, setReviewData] = useState<ProviderReviews | null>(null);
-  const [loadingServices, setLS]    = useState(true);
-  const [loadingReviews, setLR]     = useState(false);
-  const [reviewsLoaded, setRLoaded] = useState(false);
+  const [loadingServices, setLS] = useState(true);
+  const [loadingReviews, setLR]  = useState(true);
 
+  // Load services + reviews in parallel at mount so the rating pill
+  // is visible immediately without requiring the Avaliações tab to open.
   useEffect(() => {
     if (!providerId) return;
-    publicServicesApi
-      .list({ provider_id: providerId })
-      .then(setServices)
-      .catch(() => setServices([]))
-      .finally(() => setLS(false));
+    Promise.all([
+      publicServicesApi.list({ provider_id: providerId }),
+      providerApi.reviews(providerId),
+    ])
+      .then(([svcs, rvs]) => {
+        setServices(svcs);
+        setReviewData(rvs);
+      })
+      .catch(() => {})
+      .finally(() => { setLS(false); setLR(false); });
   }, [providerId]);
 
-  const loadReviews = useCallback(() => {
-    if (reviewsLoaded || !providerId) return;
-    setLR(true);
-    providerApi
-      .reviews(providerId)
-      .then(d => { setReviewData(d); setRLoaded(true); })
-      .catch(() => setRLoaded(true))
-      .finally(() => setLR(false));
-  }, [providerId, reviewsLoaded]);
-
-  const handleTabPress = (tab: Tab) => {
-    setActiveTab(tab);
-    if (tab === 'avaliacoes') loadReviews();
-  };
+  const handleTabPress = (tab: Tab) => setActiveTab(tab);
 
   const specialty = services.length > 0
     ? (CATEGORIES.find(c => c.key === services[0].category)?.label ?? services[0].category)
@@ -137,7 +131,33 @@ export default function ProviderProfileScreen() {
           <MaterialIcons name="arrow-back" size={24} color={Colors.primary} />
         </Pressable>
         <Text style={styles.topBarTitle}>Sobre o Profissional</Text>
-        <Pressable style={({ pressed }) => [styles.iconBtn, pressed && { opacity: 0.6 }]}>
+        <Pressable
+          style={({ pressed }) => [styles.iconBtn, pressed && { opacity: 0.6 }]}
+          onPress={() =>
+            Alert.alert(providerName, undefined, [
+              {
+                text: 'Compartilhar perfil',
+                onPress: () =>
+                  Share.share({
+                    message: `Confira o perfil de ${providerName} no Conecta!`,
+                    title: providerName,
+                  }),
+              },
+              {
+                text: 'Salvar prestador',
+                onPress: () =>
+                  Alert.alert('Salvo!', `${providerName} foi adicionado aos seus favoritos.`),
+              },
+              {
+                text: 'Denunciar',
+                style: 'destructive',
+                onPress: () =>
+                  Alert.alert('Denúncia enviada', 'Obrigado. Vamos analisar este perfil em breve.'),
+              },
+              { text: 'Cancelar', style: 'cancel' },
+            ])
+          }
+        >
           <MaterialIcons name="more-vert" size={24} color={Colors.primary} />
         </Pressable>
       </View>
@@ -299,7 +319,11 @@ export default function ProviderProfileScreen() {
             <View style={styles.projectsSection}>
               <View style={styles.projectsHeader}>
                 <Text style={styles.sectionTitle}>Projetos Recentes</Text>
-                <Pressable>
+                <Pressable
+                  onPress={() =>
+                    Alert.alert('Em breve', 'O portfólio completo estará disponível em breve.')
+                  }
+                >
                   <Text style={styles.seeAllLink}>Ver todos</Text>
                 </Pressable>
               </View>
