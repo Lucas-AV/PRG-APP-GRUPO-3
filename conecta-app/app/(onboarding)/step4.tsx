@@ -10,7 +10,6 @@ import {
   ScrollView,
   StyleSheet,
   Animated,
-  Alert,
 } from 'react-native';
 import Reanimated, { FadeIn } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -46,15 +45,7 @@ export default function Step4Screen() {
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   const handleEnterApp = () => {
-    if (isPrestador) {
-      router.replace('/(tabs)');
-    } else {
-      Alert.alert(
-        'Em desenvolvimento',
-        'A visão do cliente ainda está sendo desenvolvida. Por enquanto, apenas prestadores de serviço podem acessar o app.',
-        [{ text: 'Entendido', style: 'default' }]
-      );
-    }
+    router.replace('/(tabs)');
   };
 
   useEffect(() => {

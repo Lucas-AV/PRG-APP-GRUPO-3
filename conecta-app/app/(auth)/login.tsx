@@ -74,15 +74,7 @@ export default function LoginScreen() {
     setLoading(true);
     try {
       const user = await login(email.trim().toLowerCase(), password);
-      if (user.role === 'prestador') {
-        router.replace('/(tabs)');
-      } else {
-        Alert.alert(
-          'Em desenvolvimento',
-          'A visão do cliente ainda está sendo desenvolvida. Por enquanto, apenas prestadores de serviço podem acessar o app.',
-          [{ text: 'Entendido', style: 'default' }]
-        );
-      }
+      router.replace('/(tabs)');
     } catch (e: any) {
       Alert.alert('Erro ao entrar', e.message ?? 'Verifique seus dados e tente novamente.');
     } finally {
