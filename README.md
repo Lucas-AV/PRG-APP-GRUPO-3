@@ -14,4 +14,5 @@ npm start
 
 # Para rodar o app:
 cd conecta-app
+npx expo install
 npx expo start
