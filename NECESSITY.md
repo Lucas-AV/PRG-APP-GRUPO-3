@@ -73,3 +73,5 @@ FEATURE:
 - Permitir o cadastro de categoria de endereço personalizada
 - Criar tela de SOBRE do aplicativo com base no template, as partes de botões na tela de sobre devem ser pequenas abas expansiveis contendo um pequeno texto resumido sobre o conteudo da aba clicada
 - Desenvolver toda a parte de agendamento do sistema tanto a visão de cliente quanto a visão de prestador de serviço, começar extraindo prototipo do figma e então passando para o mapemento do backend das funções relacionadas + criação do banco de dados para isso
+- Adicionar redirecionamento ao clicar em botão de perfil na tela feed na appbar no canto superior direito
+- Tela de Notificações + historico
