@@ -44,7 +44,17 @@ BUGS:
 - O que aconteceu? Hub visual do professional com as informações está ficando cortado nos aparelhos
 - O que deveria acotnecer? As informações deveriam ser exibidas completamente.
 
-- Vincular dados do onboarding: Endereço não está sendo salvo como endereço para o cliente e para prestador de serviço
+- Vincular dados do onboarding: Endereço não está sendo salvo como endereço para o cliente e para prestador de serviço 
+- O que deveria acontecer? Os dados deveriam ser salvos no banco de dados do usuário logado que está sendo criado
+
+- Atualização de perfil: Salvar os dados de verdade do cliente e do prestador de serviço, eles não estão sendo salvos
+- O que deveria acontecer? Os dados deveriam ser salvos no banco de dados do usuário logado
+
+- Retomar cadastro do cliente e prestador de serviço no onboarding caso incompleto, ao invés de criar a conta
+- O que deveria acontecer? ao invés de criar a conta, o cliente ou prestador de serviço deveria ser redirecionado para o onboarding para completar os dados da conta dele
+
+- O botão de confirmação de assinatura não está funcionando
+- O que deveria acontecer? O botão deveria chamar uma função que vai levar o cliente para a tela de pagamento + Salvar o plano no banco de dados do cliente
 
 REFACTOR:
 - Feed: Refatorar para ficar parecido ou igual ao figma / Desenvolver estilo de visualização de detalhes por meio de scroll horizontal da direita para a esquerda
