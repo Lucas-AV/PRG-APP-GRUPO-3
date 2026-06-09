@@ -44,6 +44,8 @@ BUGS:
 - O que aconteceu? Hub visual do professional com as informações está ficando cortado nos aparelhos
 - O que deveria acotnecer? As informações deveriam ser exibidas completamente.
 
+- Vincular dados do onboarding: Endereço não está sendo salvo como endereço para o cliente e para prestador de serviço
+
 REFACTOR:
 - Feed: Refatorar para ficar parecido ou igual ao figma / Desenvolver estilo de visualização de detalhes por meio de scroll horizontal da direita para a esquerda
 - Feed: Barra de pesquisa fixa no topo do feed
