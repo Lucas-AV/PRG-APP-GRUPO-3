@@ -1,0 +1,1 @@
+Crie uma branch a partir da develop atualizada para esta tarefa, segue a descrição da tarefa, crie ela no padrão feat/nome-tarefa, depois de criar a branch, implemente a tarefa seguindo as boas práticas, por fim, crie um pulll request para a branch develop com a descrição da tarefa: ""
