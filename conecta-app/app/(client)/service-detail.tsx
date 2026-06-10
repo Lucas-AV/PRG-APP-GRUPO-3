@@ -253,7 +253,17 @@ export default function ServiceDetailScreen() {
         <Pressable
           style={({ pressed }) => [styles.ctaBtn, pressed && { opacity: 0.92 }]}
           onPress={() =>
-            Alert.alert('Em breve', 'A funcionalidade de agendamento estará disponível em breve.')
+            router.push({
+              pathname: '/(scheduling)/book' as any,
+              params: {
+                serviceId: String(service.id),
+                providerId: String(service.provider_id),
+                serviceName: service.name,
+                servicePrice: String(service.price ?? 0),
+                serviceDuration: service.duration ?? '',
+                providerName: service.provider_name,
+              },
+            })
           }
         >
           <LinearGradient
