@@ -323,3 +323,91 @@ export const transactionsApi = {
   list: (userId: number, token: string) =>
     request<Transaction[]>(`/users/${userId}/transactions`, {}, token),
 };
+
+// ── Availability ──────────────────────────────────────────────────────────────
+
+export interface AvailabilityDay {
+  day_of_week: number;
+  start_time: string | null;
+  end_time: string | null;
+  is_active: boolean;
+}
+
+export interface TimeSlot {
+  time: string;
+  is_occupied: boolean;
+  is_past: boolean;
+}
+
+export interface SlotsResponse {
+  date: string;
+  slots: TimeSlot[];
+}
+
+export const availabilityApi = {
+  get: (providerId: number) =>
+    request<AvailabilityDay[]>(`/users/${providerId}/availability`),
+
+  update: (providerId: number, days: AvailabilityDay[], token: string) =>
+    request<{ message: string }>(`/users/${providerId}/availability`, {
+      method: 'PUT',
+      body: JSON.stringify(days),
+    }, token),
+
+  slots: (providerId: number, date: string, serviceId: number) =>
+    request<SlotsResponse>(`/users/${providerId}/slots?date=${date}&serviceId=${serviceId}`),
+};
+
+// ── Appointments ──────────────────────────────────────────────────────────────
+
+export interface Appointment {
+  id: number;
+  client_id: number;
+  provider_id: number;
+  service_id: number;
+  scheduled_date: string;
+  scheduled_time: string;
+  duration_minutes: number;
+  status: 'confirmado' | 'cancelado' | 'concluido';
+  payment_method: 'pix' | 'cartao';
+  card_id: number | null;
+  card_brand: string | null;
+  card_last_four: string | null;
+  total_price: number;
+  service_name: string;
+  provider_name: string;
+  client_name: string;
+  client_address_street: string | null;
+  client_address_number: string | null;
+  client_address_neighborhood: string | null;
+  client_address_city: string | null;
+  client_address_state: string | null;
+  client_address_zip: string | null;
+  created_at: string;
+}
+
+export const appointmentsApi = {
+  list: (token: string) =>
+    request<Appointment[]>('/appointments', {}, token),
+
+  get: (id: number, token: string) =>
+    request<Appointment>(`/appointments/${id}`, {}, token),
+
+  create: (data: {
+    service_id: number;
+    provider_id: number;
+    scheduled_date: string;
+    scheduled_time: string;
+    payment_method: 'pix' | 'cartao';
+    card_id?: number;
+  }, token: string) =>
+    request<Appointment>('/appointments', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }, token),
+
+  cancel: (id: number, token: string) =>
+    request<{ message: string }>(`/appointments/${id}/cancel`, {
+      method: 'PATCH',
+    }, token),
+};
