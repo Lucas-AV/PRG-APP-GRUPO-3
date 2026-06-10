@@ -2,6 +2,7 @@ import { Tabs } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Colors, FontFamily } from '@/constants/theme';
 import { useAuth } from '@/context/AuthContext';
+import { useTranslation } from 'react-i18next';
 
 const TAB_BAR_STYLE = {
   backgroundColor: Colors.surfaceContainerLowest,
@@ -22,6 +23,7 @@ const TAB_LABEL_STYLE = {
 
 export default function TabLayout() {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const isClient = user?.role === 'cliente';
 
   return (
@@ -39,7 +41,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Início',
+          title: t('tabs.home'),
           tabBarIcon: ({ color, size }) => (
             <MaterialIcons name="home" size={size} color={color} />
           ),
@@ -50,7 +52,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="schedule"
         options={{
-          title: isClient ? 'Reservas' : 'Agenda',
+          title: isClient ? t('tabs.bookings') : 'Agenda',
           tabBarIcon: ({ color, size }) => (
             <MaterialIcons name="calendar-today" size={size} color={color} />
           ),
@@ -73,7 +75,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="messages"
         options={{
-          title: 'Mensagens',
+          title: t('tabs.messages'),
           href: isClient ? undefined : null,
           tabBarIcon: ({ color, size }) => (
             <MaterialIcons name="chat-bubble-outline" size={size} color={color} />
@@ -85,7 +87,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="profile"
         options={{
-          title: 'Conta',
+          title: t('tabs.account'),
           tabBarIcon: ({ color, size }) => (
             <MaterialIcons name="person-outline" size={size} color={color} />
           ),

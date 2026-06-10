@@ -15,6 +15,8 @@ interface AuthContextType {
     role: string;
   }) => Promise<User>;
   logout: () => Promise<void>;
+  updateUser: (updated: User) => Promise<void>;
+  markOnboardingComplete: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -71,8 +73,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
   };
 
+  const updateUser = async (updated: User) => {
+    await SecureStore.setItemAsync('user', JSON.stringify(updated));
+    setUser(updated);
+  };
+
+  const markOnboardingComplete = async () => {
+    if (!user) return;
+    await SecureStore.setItemAsync(`onboarding_${user.id}`, 'true');
+  };
+
   return (
-    <AuthContext.Provider value={{ user, token, isLoading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, token, isLoading, login, register, logout, updateUser, markOnboardingComplete }}>
       {children}
     </AuthContext.Provider>
   );

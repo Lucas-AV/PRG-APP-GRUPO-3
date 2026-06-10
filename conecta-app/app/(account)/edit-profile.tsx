@@ -19,7 +19,7 @@ import { useAuth } from '@/context/AuthContext';
 import { usersApi } from '@/services/api';
 
 export default function EditProfileScreen() {
-  const { user, token } = useAuth();
+  const { user, token, updateUser } = useAuth();
   const [name, setName] = useState(user?.name ?? '');
   const [email, setEmail] = useState(user?.email ?? '');
   const [phone, setPhone] = useState(user?.phone ?? '');
@@ -34,7 +34,8 @@ export default function EditProfileScreen() {
     if (!user || !token) return;
     setLoading(true);
     try {
-      await usersApi.update(user.id, { name, email, phone }, token);
+      const updated = await usersApi.update(user.id, { name, email, phone }, token);
+      await updateUser(updated);
       Alert.alert('Alterações salvas', 'Seu perfil foi atualizado com sucesso.', [{ text: 'OK' }]);
     } catch (e: any) {
       Alert.alert('Erro', e.message ?? 'Não foi possível salvar as alterações.');

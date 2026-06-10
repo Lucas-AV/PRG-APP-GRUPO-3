@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -26,7 +26,7 @@ interface InputFieldProps {
   maxLength?: number;
 }
 
-export function InputField({
+export const InputField = React.forwardRef<TextInput, InputFieldProps>(({
   label,
   placeholder,
   value,
@@ -40,7 +40,7 @@ export function InputField({
   numberOfLines,
   errorMessage,
   maxLength,
-}: InputFieldProps) {
+}, ref) => {
   const [showPassword, setShowPassword] = useState(false);
   const isPassword = secureTextEntry;
 
@@ -57,6 +57,7 @@ export function InputField({
           />
         )}
         <TextInput
+          ref={ref}
           style={[
             styles.input,
             icon && styles.inputWithIcon,
@@ -92,7 +93,7 @@ export function InputField({
       {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   wrapper: {

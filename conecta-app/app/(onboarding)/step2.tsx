@@ -1,10 +1,13 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import {
   View,
   Text,
   Pressable,
   ScrollView,
   StyleSheet,
+  Alert,
+  ActivityIndicator,
+  TextInput,
 } from 'react-native';
 import Animated, {
   FadeIn,
@@ -19,18 +22,22 @@ import { InputField } from '@/components/ui/input-field';
 import { TopAppBar } from '@/components/ui/top-app-bar';
 import { ProgressBar } from '@/components/ui/progress-bar';
 import { GradientButton } from '@/components/ui/gradient-button';
+import { MapPreview } from '@/components/ui/map-preview';
 import { Colors, FontFamily, Spacing, Radius } from '@/constants/theme';
+import { useAuth } from '@/context/AuthContext';
+import { usersApi } from '@/services/api';
 
 type LocationType = 'casa' | 'trabalho';
 
-const STATES = [
-  'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO',
-  'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI',
-  'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO',
-];
+function formatCep(raw: string): string {
+  const digits = raw.replace(/\D/g, '').slice(0, 8);
+  if (digits.length > 5) return `${digits.slice(0, 5)}-${digits.slice(5)}`;
+  return digits;
+}
 
 export default function Step2Screen() {
   const { role } = useLocalSearchParams<{ role: string }>();
+  const { user, token } = useAuth();
   const insets = useSafeAreaInsets();
   const isPrestador = role === 'prestador';
   const progress = isPrestador ? 2 / 5 : 2 / 3;
@@ -38,13 +45,17 @@ export default function Step2Screen() {
 
   const [locType, setLocType] = useState<LocationType>('casa');
   const [cep, setCep] = useState('');
-  const [address, setAddress] = useState('');
+  const [street, setStreet] = useState('');
   const [number, setNumber] = useState('');
   const [complement, setComplement] = useState('');
   const [neighborhood, setNeighborhood] = useState('');
   const [city, setCity] = useState('');
   const [state, setState] = useState('');
-  const [showStatePicker, setShowStatePicker] = useState(false);
+  const [cepLoading, setCepLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [autofilledFields, setAutofilledFields] = useState<Record<string, boolean>>({});
+
+  const numberInputRef = useRef<TextInput>(null);
 
   const activeIdx = useSharedValue(0);
   const pillWidth = useSharedValue(0);
@@ -59,7 +70,79 @@ export default function Step2Screen() {
     activeIdx.value = withSpring(idx, { damping: 30, stiffness: 180, mass: 0.8 });
   };
 
-  const handleContinue = () => {
+  const handleCepChange = (text: string) => {
+    const formatted = formatCep(text);
+    setCep(formatted);
+    const digits = formatted.replace(/\D/g, '');
+    if (digits.length === 8) {
+      fetchViaCep(digits);
+    } else {
+      setAutofilledFields({});
+    }
+  };
+
+  const fetchViaCep = async (digits: string) => {
+    if (cepLoading) return;
+    setCepLoading(true);
+    try {
+      const res = await fetch(`https://viacep.com.br/ws/${digits}/json/`);
+      const data = await res.json();
+      if (data.erro) {
+        Alert.alert('CEP não encontrado', 'Verifique o CEP e preencha os campos manualmente.');
+        return;
+      }
+      setStreet(data.logradouro ?? '');
+      setNeighborhood(data.bairro ?? '');
+      setCity(data.localidade ?? '');
+      setState(data.uf ?? '');
+      setAutofilledFields({
+        street: !!data.logradouro,
+        neighborhood: !!data.bairro,
+        city: !!data.localidade,
+        state: !!data.uf,
+      });
+      // Auto-focus on number field
+      setTimeout(() => numberInputRef.current?.focus(), 150);
+    } catch {
+      Alert.alert('Erro', 'Não foi possível consultar o CEP. Preencha manualmente.');
+    } finally {
+      setCepLoading(false);
+    }
+  };
+
+  const saveAddressToApi = async (): Promise<void> => {
+    if (!user || !token) return;
+    if (!street || !city || !state) return;
+
+    try {
+      await usersApi.addAddress(
+        user.id,
+        {
+          type: locType === 'casa' ? 'casa' : 'trabalho',
+          zip_code: cep.replace(/\D/g, '') || undefined,
+          street,
+          number: number || '-',
+          complement: complement || '-',
+          neighborhood: neighborhood || undefined,
+          city,
+          state,
+        },
+        token,
+      );
+    } catch {
+      Alert.alert(
+        'Endereço não salvo',
+        'Não foi possível salvar seu endereço agora. Você pode adicioná-lo depois em Perfil > Endereços.',
+        [{ text: 'Continuar mesmo assim' }],
+      );
+    }
+  };
+
+  const handleContinue = async () => {
+    setSaving(true);
+    await saveAddressToApi();
+    setSaving(false);
+
     const next = isPrestador ? '/(onboarding)/step3' : '/(onboarding)/step4';
     router.push({ pathname: next as any, params: { role } });
   };
@@ -69,177 +152,159 @@ export default function Step2Screen() {
       <TopAppBar title="SevGen" badge={badge} />
 
       <Animated.View entering={FadeIn.duration(300).delay(80)} style={styles.scroll}>
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
-      >
-        {/* Progress */}
-        <ProgressBar
-          progress={progress}
-          percentageLabel={`${Math.round(progress * 100)}%`}
-        />
-
-        {/* Headline */}
-        <View style={styles.headline}>
-          <Text style={styles.title}>Onde você está{'\n'}localizado?</Text>
-          <Text style={styles.subtitle}>
-            Precisamos do seu endereço para encontrar serviços e profissionais próximos a você.
-          </Text>
-        </View>
-
-        {/* Location type selector (pill segmented control) */}
-        <View
-          style={styles.segmentedTrack}
-          onLayout={(e) => {
-            pillWidth.value = (e.nativeEvent.layout.width - 12) / 2;
-          }}
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
         >
-          <Animated.View style={[styles.segmentedPill, pillAnimStyle]} />
-          {(['casa', 'trabalho'] as LocationType[]).map((t, idx) => {
-            const isActive = locType === t;
-            return (
-              <Pressable
-                key={t}
-                onPress={() => handleLocTypeChange(t, idx)}
-                style={styles.segmentedItem}
-              >
-                <MaterialIcons
-                  name={t === 'casa' ? 'home' : 'work'}
-                  size={18}
-                  color={isActive ? Colors.primary : Colors.onSurfaceVariant}
-                />
-                <Text
-                  style={[styles.segmentedLabel, isActive && styles.segmentedLabelActive]}
-                >
-                  {t === 'casa' ? 'Casa' : 'Trabalho'}
-                </Text>
-              </Pressable>
-            );
-          })}
-        </View>
-
-        {/* CEP field (full width) */}
-        <InputField
-          label="CEP"
-          placeholder="00000-000"
-          value={cep}
-          onChangeText={setCep}
-          keyboardType="numeric"
-        />
-
-        {/* Map preview (full width) */}
-        <Text style={styles.sectionLabel}>LOCALIZAÇÃO</Text>
-        <View style={styles.mapPreview}>
-          <MaterialIcons
-            name="location-on"
-            size={36}
-            color={Colors.primary}
+          {/* Progress */}
+          <ProgressBar
+            progress={progress}
+            percentageLabel={`${Math.round(progress * 100)}%`}
           />
-          <Text style={styles.mapLabel}>Mapa</Text>
-        </View>
 
-        {/* Address fields */}
-        <InputField
-          label="Endereço"
-          placeholder="Rua, Avenida ou Praça"
-          value={address}
-          onChangeText={setAddress}
-          autoCapitalize="words"
-        />
-
-        <View style={styles.twoCol}>
-          <View style={styles.flex1}>
-            <InputField
-              label="Número"
-              placeholder="123"
-              value={number}
-              onChangeText={setNumber}
-              keyboardType="numeric"
-            />
+          {/* Headline */}
+          <View style={styles.headline}>
+            <Text style={styles.title}>Onde você está{'\n'}localizado?</Text>
+            <Text style={styles.subtitle}>
+              Precisamos do seu endereço para encontrar serviços e profissionais próximos a você.
+            </Text>
           </View>
-          <View style={styles.flex1}>
-            <InputField
-              label="Complemento"
-              placeholder="Apto / Conjunto"
-              value={complement}
-              onChangeText={setComplement}
-              autoCapitalize="words"
-            />
-          </View>
-        </View>
 
-        <InputField
-          label="Bairro"
-          placeholder="Nome do bairro"
-          value={neighborhood}
-          onChangeText={setNeighborhood}
-          autoCapitalize="words"
-        />
-
-        <View style={styles.twoCol}>
-          <View style={styles.flex1}>
-            <InputField
-              label="Cidade"
-              placeholder="São Paulo"
-              value={city}
-              onChangeText={setCity}
-              autoCapitalize="words"
-            />
+          {/* Location type selector (pill segmented control) */}
+          <View
+            style={styles.segmentedTrack}
+            onLayout={(e) => {
+              pillWidth.value = (e.nativeEvent.layout.width - 12) / 2;
+            }}
+          >
+            <Animated.View style={[styles.segmentedPill, pillAnimStyle]} />
+            {(['casa', 'trabalho'] as LocationType[]).map((t, idx) => {
+              const isActive = locType === t;
+              return (
+                <Pressable
+                  key={t}
+                  onPress={() => handleLocTypeChange(t, idx)}
+                  style={styles.segmentedItem}
+                >
+                  <MaterialIcons
+                    name={t === 'casa' ? 'home' : 'work'}
+                    size={18}
+                    color={isActive ? Colors.primary : Colors.onSurfaceVariant}
+                  />
+                  <Text
+                    style={[styles.segmentedLabel, isActive && styles.segmentedLabelActive]}
+                  >
+                    {t === 'casa' ? 'Casa' : 'Trabalho'}
+                  </Text>
+                </Pressable>
+              );
+            })}
           </View>
-          <View style={styles.flex1}>
-            {/* State selector */}
-            <Text style={styles.stateLabel}>ESTADO</Text>
-            <Pressable
-              style={styles.stateSelector}
-              onPress={() => setShowStatePicker(!showStatePicker)}
-            >
-              <Text
-                style={[
-                  styles.stateSelectorText,
-                  !state && styles.stateSelectorPlaceholder,
-                ]}
-              >
-                {state || 'Selecione'}
-              </Text>
-              <MaterialIcons
-                name={showStatePicker ? 'keyboard-arrow-up' : 'keyboard-arrow-down'}
-                size={20}
-                color={Colors.outline}
+
+          {/* CEP field */}
+          <View style={styles.cepRow}>
+            <View style={{ flex: 1 }}>
+              <InputField
+                label="CEP"
+                placeholder="00000-000"
+                value={cep}
+                onChangeText={handleCepChange}
+                keyboardType="numeric"
+                maxLength={9}
               />
-            </Pressable>
-            {showStatePicker && (
-              <View style={styles.stateDropdown}>
-                <ScrollView style={styles.stateScroll} nestedScrollEnabled>
-                  {STATES.map((s) => (
-                    <Pressable
-                      key={s}
-                      style={styles.stateItem}
-                      onPress={() => {
-                        setState(s);
-                        setShowStatePicker(false);
-                      }}
-                    >
-                      <Text style={styles.stateItemText}>{s}</Text>
-                    </Pressable>
-                  ))}
-                </ScrollView>
-              </View>
+            </View>
+            {cepLoading && (
+              <ActivityIndicator color={Colors.primary} style={styles.cepSpinner} />
             )}
           </View>
-        </View>
-      </ScrollView>
+
+          {/* Map preview — real OpenStreetMap */}
+          <MapPreview
+            street={street}
+            number={number}
+            neighborhood={neighborhood}
+            city={city}
+            state={state}
+            zipCode={cep}
+            height={150}
+          />
+
+          {/* Address fields */}
+          <InputField
+            label="Endereço"
+            placeholder="Rua, Avenida ou Praça"
+            value={street}
+            onChangeText={setStreet}
+            autoCapitalize="words"
+            rightAction={autofilledFields.street ? <MaterialIcons name="check-circle" size={18} color="#10b981" /> : null}
+          />
+
+          <View style={styles.twoCol}>
+            <View style={styles.flex5}>
+              <InputField
+                ref={numberInputRef}
+                label="Número"
+                placeholder="123"
+                value={number}
+                onChangeText={setNumber}
+                keyboardType="numeric"
+              />
+            </View>
+            <View style={styles.flex7}>
+              <InputField
+                label="Complemento"
+                placeholder="Apto / Conjunto"
+                value={complement}
+                onChangeText={setComplement}
+                autoCapitalize="words"
+              />
+            </View>
+          </View>
+
+          <InputField
+            label="Bairro"
+            placeholder="Nome do bairro"
+            value={neighborhood}
+            onChangeText={setNeighborhood}
+            autoCapitalize="words"
+            rightAction={autofilledFields.neighborhood ? <MaterialIcons name="check-circle" size={18} color="#10b981" /> : null}
+          />
+
+          <View style={styles.twoCol}>
+            <View style={styles.flex8}>
+              <InputField
+                label="Cidade"
+                placeholder="São Paulo"
+                value={city}
+                onChangeText={setCity}
+                autoCapitalize="words"
+                rightAction={autofilledFields.city ? <MaterialIcons name="check-circle" size={18} color="#10b981" /> : null}
+              />
+            </View>
+            <View style={styles.flex4}>
+              <InputField
+                label="Estado"
+                placeholder="UF"
+                value={state}
+                onChangeText={t => setState(t.toUpperCase())}
+                autoCapitalize="characters"
+                maxLength={2}
+                rightAction={autofilledFields.state ? <MaterialIcons name="check-circle" size={18} color="#10b981" /> : null}
+              />
+            </View>
+          </View>
+        </ScrollView>
       </Animated.View>
 
       {/* Bottom nav */}
       <View style={[styles.bottomNav, { paddingBottom: Math.max(insets.bottom + 8, Spacing.xl) }]}>
-        <Pressable
-          style={({ pressed }) => [styles.draftBtn, pressed && { opacity: 0.6 }]}
-        >
-          <MaterialIcons name="save" size={18} color={Colors.onSurfaceVariant} />
-          <Text style={styles.draftLabel}>Salvar</Text>
-        </Pressable>
-        <GradientButton label="Continuar →" onPress={handleContinue} style={styles.continueBtn} />
+        <GradientButton
+          label={saving ? 'Salvando…' : 'Continuar →'}
+          onPress={handleContinue}
+          disabled={saving || cepLoading}
+          style={styles.continueBtn}
+        />
       </View>
     </SafeAreaView>
   );
@@ -315,27 +380,14 @@ const styles = StyleSheet.create({
     color: Colors.primary,
   },
 
-  sectionLabel: {
-    fontFamily: FontFamily.bodySemiBold,
-    fontSize: 10,
-    color: Colors.onSurfaceVariant,
-    letterSpacing: 1.2,
-    marginLeft: 2,
-    marginBottom: -Spacing.base,
-  },
-  mapPreview: {
-    height: 96,
-    backgroundColor: Colors.surfaceContainerHigh,
-    borderRadius: Radius.md,
+  // CEP row with spinner
+  cepRow: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    gap: Spacing.xs,
+    gap: Spacing.md,
   },
-  mapLabel: {
-    fontFamily: FontFamily.bodySemiBold,
-    fontSize: 10,
-    color: Colors.outline,
-    letterSpacing: 1,
+  cepSpinner: {
+    marginTop: Spacing.xl,
   },
 
   // Two-column layout
@@ -343,65 +395,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: Spacing.base,
   },
-  flex1: { flex: 1 },
-
-  // State selector
-  stateLabel: {
-    fontFamily: FontFamily.bodySemiBold,
-    fontSize: 10,
-    color: Colors.onSurfaceVariant,
-    letterSpacing: 1.2,
-    marginLeft: 2,
-    marginBottom: Spacing.sm,
-  },
-  stateSelector: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: Colors.surfaceContainerHighest,
-    borderRadius: Radius.md,
-    paddingHorizontal: Spacing.base,
-    paddingVertical: Spacing.base,
-  },
-  stateSelectorText: {
-    fontFamily: FontFamily.bodyRegular,
-    fontSize: 14,
-    color: Colors.onSurface,
-  },
-  stateSelectorPlaceholder: {
-    color: Colors.outline,
-  },
-  stateDropdown: {
-    position: 'absolute',
-    top: '100%',
-    left: 0,
-    right: 0,
-    zIndex: 100,
-    backgroundColor: Colors.surfaceContainerLowest,
-    borderRadius: Radius.md,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 12,
-    elevation: 8,
-    marginTop: 4,
-  },
-  stateScroll: { maxHeight: 160 },
-  stateItem: {
-    paddingHorizontal: Spacing.base,
-    paddingVertical: Spacing.md,
-  },
-  stateItemText: {
-    fontFamily: FontFamily.bodyRegular,
-    fontSize: 14,
-    color: Colors.onSurface,
-  },
+  flex4: { flex: 4 },
+  flex5: { flex: 5 },
+  flex7: { flex: 7 },
+  flex8: { flex: 8 },
 
   // Bottom nav
   bottomNav: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.md,
     paddingHorizontal: Spacing.xl,
     paddingTop: Spacing.xl + 4,
     backgroundColor: Colors.surfaceContainerLowest,
@@ -411,20 +411,7 @@ const styles = StyleSheet.create({
     shadowRadius: 16,
     elevation: 8,
   },
-  draftBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.xs,
-    paddingVertical: Spacing.base,
-    paddingHorizontal: Spacing.md,
-    borderRadius: Radius.sm,
-  },
-  draftLabel: {
-    fontFamily: FontFamily.bodySemiBold,
-    fontSize: 13,
-    color: Colors.onSurfaceVariant,
-  },
   continueBtn: {
-    flex: 1,
+    // full width
   },
 });

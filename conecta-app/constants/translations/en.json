@@ -1,0 +1,63 @@
+{
+  "tabs": {
+    "home": "Home",
+    "bookings": "Bookings",
+    "messages": "Messages",
+    "account": "Account"
+  },
+  "feed": {
+    "hello": "Hello,",
+    "headline": "Find the perfect professional",
+    "searchPlaceholder": "Search services: cleaning, repairs...",
+    "popularCategories": "Popular Categories",
+    "viewAll": "View all",
+    "featuredProfessionals": "Nearby Professionals",
+    "availableServices": "Available Services",
+    "nearYou": "NEAR YOU",
+    "book": "HIRE",
+    "loading": "Searching...",
+    "empty": "No services found."
+  },
+  "profile": {
+    "title": "Settings",
+    "editProfile": "Edit Profile",
+    "sections": {
+      "account": "Account",
+      "preferences": "Preferences",
+      "security": "Security",
+      "support": "Support & Legal"
+    },
+    "rows": {
+      "addresses": "Addresses",
+      "payments": "Payments",
+      "plans": "Subscriptions",
+      "notifications": "Notifications",
+      "language": "Language",
+      "darkMode": "Dark Mode",
+      "changePassword": "Change Password",
+      "privacy": "Privacy & Security",
+      "biometrics": "Biometrics",
+      "help": "Help",
+      "terms": "Terms of Use",
+      "about": "About"
+    },
+    "languageSelect": {
+      "title": "Change Language",
+      "message": "Choose your preferred language:",
+      "cancel": "Cancel"
+    },
+    "logout": "Sign Out",
+    "logoutAlert": {
+      "title": "Sign out",
+      "message": "Are you sure you want to sign out?",
+      "cancel": "Cancel",
+      "confirm": "Sign Out"
+    },
+    "version": "Version 2.4.0",
+    "inDevelopment": "In development",
+    "inDevelopmentMsg": "This feature will be available soon."
+  },
+  "common": {
+    "viewProfile": "View Profile"
+  }
+}

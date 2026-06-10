@@ -7,6 +7,7 @@ import {
   StyleSheet,
   ActivityIndicator,
   useWindowDimensions,
+  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -14,6 +15,18 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, FontFamily, Spacing, Radius } from '@/constants/theme';
 import { providerApi, ProviderReviews, ProviderReview } from '@/services/api';
+
+const CLIENT_IMAGES = [
+  'https://lh3.googleusercontent.com/aida-public/AB6AXuAwc82zLeu0B7_p29mp9qroynrHleO2haoo2qTAcwvAXaVzpPfvMI-5Z11YD3rdqUlrBTu6LRUGc1MTX2dTJQ2yOu8auCrrpZ8cUUOjqWSIftUePg4HDUeDTzqpG1Xb7vk13ysmCdn7AgUO-3z2fLtgBIjsf9b4WF-UueSGMicaV18Oq7yxkLDw1OWdrSXgdVHc9pXIzaAHVRbp1agWadD5j8u3TaTnkpietf6-iZSGXj138sgYuSrSzqwXyRwIuDP5teZ3tTrjbrY',
+  'https://lh3.googleusercontent.com/aida-public/AB6AXuAEyt8aKGRoo4cASjst9rzYDo5SDJuSns-JeVJx5Lz4cPfQ0UZQ_SJfQsj05fapd5sPpds6lF7jjwnXhhxfbB6AIzO-FzYhoWXeZFtJI9IjFBWOpDqr0nmsr3xriTLJGtTMDj9DQMKW87pMu_Me_SAbZn_jTytcazT2aKIvtKNWVSYBy6kYDWDWk36_oIPQoWL-aCp-gu7rV2R2KueydTy2__u0XWSczeYV7HlLfgoxDng6h95HiKa_JLmxBeq4cwvnGaaJAykWnwA',
+  'https://lh3.googleusercontent.com/aida-public/AB6AXuBkjg3NyIQjmVGiXuOxRdcAQos0yYalbVHAMPK9auuLGdBHslnmE-OiT1MdCeA_cjG6AQoRSjyWuwhnGmj6TTln1G9_e2Rsk-E-y5Ej5BNuvAMu_HnjARKGZqDDgbGL4sAk48a1qYSGZs7tdh7Xob-86UuKCAHY8nWFTSGvZBmCLb44KaTG5hN-XzVDild1GrUtx475dbeK-VVnVzyrgxNC7ENLPTB_EcKUXImg6fBenBsyiRQ-7Apzzd9-h8pAuyl2IjWSwWwM8bQ',
+];
+
+const ATTACHMENT_IMAGES = [
+  'https://lh3.googleusercontent.com/aida-public/AB6AXuCRhxz_o_PlvKZo-Wc_gW1c3ikaoH04lrWzTQ1f3SqZQ9xZ7VgGJLXADJhGmuii4lUyZROlE1jAVGs_-T4MRgTuSXICFOyDAZcUGARQnLtLuJCWF7v0musgGNjkipYP0tuoYfSntJRaSLVmNsZFDspEAd1R_CQl8AAMMXcfrg0fZZg2rQvLe8nwj_qA2B24cRJqZMNqbaM1VqpQ0E_LWSc1vjRrAIy1y211WjB5GnhCtZ39rCPxEXKRr1UfQjfVKInHxxKWLj5nJ_c',
+  'https://lh3.googleusercontent.com/aida-public/AB6AXuDKwRjWi5qTJpYGHqbNhMbxY-neO2pUyRwi4DV263tX0_sJ2cwNLrrWXUUmlSaTdVarih9ZEEx9vvUTtEM5B8hL0leNL33Qa_Y2tlornU1RlPLpoyhvCHHSiKM4MIqha-BLFSVMc6bLNT1fBtZQljsjTRPHbFAWxTgcelD6yDiFS4MvShf8Z2rCKlpzFqFQQd4-EL2Pri8UFk4igFeENQMAe5YY13gHXW-E9jiq6TNMpFMq_viyP_otrVZlJnRmj7JwEO0MYl-YBbs',
+  'https://lh3.googleusercontent.com/aida-public/AB6AXuCkS803vDsYrv55vDdMS_0xiJpx8VISdfBrxc5CUXgTqpedxYUhKigueJiiSTwEusNJ38cUIJasIlqGKWntGI-cMVko_VGgFWhUigGy7HTGXZRPa9A25BA3ZLLtug_nloC6Q5-qas_SfZD80kvGCu_LISP3f765OfwNxi4Mdx1Q26Nj9jxt0XnxNL4YUSl9Ql2z5DXj0nXonwJFjl443Te_4r-TnzuuyRdgm5MrG8TWtmYmWPnG1w5gB3SEEcg9Zp4CRY-Hv5VVt4Q',
+];
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -159,18 +172,20 @@ export default function ProviderReviewsScreen() {
 // ── ReviewCard subcomponent ───────────────────────────────────────────────────
 
 function ReviewCard({ review, index }: { review: ProviderReview; index: number }) {
-  const grad    = AVATAR_GRADIENTS[index % AVATAR_GRADIENTS.length];
-  const hasThumb = index % 2 === 0 && index < THUMB_GRADIENTS.length * 2;
-  const thumbIdx = Math.floor(index / 2) % THUMB_GRADIENTS.length;
+  const hasThumb = index % 2 === 0;
+  const thumbIdx = Math.floor(index / 2) % ATTACHMENT_IMAGES.length;
 
   return (
     <View style={styles.reviewCard}>
       {/* Header row: avatar+name+date LEFT · stars RIGHT */}
       <View style={styles.reviewHeader}>
         <View style={styles.reviewerRow}>
-          <LinearGradient colors={grad} style={styles.reviewerAvatar}>
-            <Text style={styles.reviewerInitials}>{getInitials(review.reviewer_name)}</Text>
-          </LinearGradient>
+          <View style={styles.reviewerAvatar}>
+            <Image
+              source={{ uri: CLIENT_IMAGES[index % CLIENT_IMAGES.length] }}
+              style={styles.reviewAvatarImage}
+            />
+          </View>
           <View style={styles.reviewerMeta}>
             <Text style={styles.reviewerName}>{review.reviewer_name}</Text>
             <Text style={styles.reviewDate}>
@@ -208,15 +223,9 @@ function ReviewCard({ review, index }: { review: ProviderReview; index: number }
       {/* Optional photo thumbnails */}
       {hasThumb && (
         <View style={styles.thumbsRow}>
-          {THUMB_GRADIENTS.slice(thumbIdx, thumbIdx + 2).map((tg, ti) => (
+          {ATTACHMENT_IMAGES.slice(thumbIdx, thumbIdx + 2).map((imgUrl, ti) => (
             <View key={ti} style={styles.thumb}>
-              <LinearGradient colors={tg} style={styles.thumbGradient}>
-                <MaterialIcons
-                  name={THUMB_ICONS[(thumbIdx + ti) % THUMB_ICONS.length]}
-                  size={22}
-                  color="rgba(255,255,255,0.8)"
-                />
-              </LinearGradient>
+              <Image source={{ uri: imgUrl }} style={styles.thumbImage} />
             </View>
           ))}
         </View>
@@ -334,10 +343,12 @@ const styles = StyleSheet.create({
   reviewerAvatar: {
     width: 48, height: 48, borderRadius: 24,
     alignItems: 'center', justifyContent: 'center',
+    overflow: 'hidden',
   },
-  reviewerInitials: {
-    fontFamily: FontFamily.headlineBold, fontSize: 16,
-    color: 'rgba(255,255,255,0.92)',
+  reviewAvatarImage: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
   },
   reviewerMeta: { gap: 2 },
   reviewerName: {
@@ -371,5 +382,9 @@ const styles = StyleSheet.create({
     elevation: 1, shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.06, shadowRadius: 4,
   },
-  thumbGradient: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  thumbImage: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+  },
 });

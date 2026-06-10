@@ -11,6 +11,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 import { GradientButton } from '@/components/ui/gradient-button';
 import { TopAppBar } from '@/components/ui/top-app-bar';
 import { Colors, FontFamily, GradientColors, Spacing, Radius } from '@/constants/theme';
@@ -25,7 +26,6 @@ export default function PlansScreen() {
   const [plans, setPlans] = useState<Plan[]>([]);
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [loading, setLoading] = useState(true);
-  const [subscribing, setSubscribing] = useState(false);
 
   const loadData = async (role: Tab) => {
     setLoading(true);
@@ -45,18 +45,17 @@ export default function PlansScreen() {
 
   useEffect(() => { loadData(tab); }, [tab]);
 
-  const handleSubscribe = async (planId: number) => {
-    if (!user || !token) return;
-    setSubscribing(true);
-    try {
-      const newSub = await subscriptionsApi.subscribe(user.id, planId, token);
-      setSubscription(newSub);
-      Alert.alert('Assinatura ativada', `Você agora tem o plano ${newSub.plan_name}!`, [{ text: 'OK' }]);
-    } catch (e: any) {
-      Alert.alert('Erro', e.message ?? 'Não foi possível realizar a assinatura.');
-    } finally {
-      setSubscribing(false);
-    }
+  const handleSubscribe = (planId: number) => {
+    const plan = plans.find(p => p.id === planId);
+    if (!plan) return;
+    router.push({
+      pathname: '/(account)/payments' as any,
+      params: {
+        subscribe_plan_id: String(plan.id),
+        subscribe_plan_name: plan.name,
+        subscribe_plan_price: String(plan.price),
+      },
+    });
   };
 
   const freePlan = plans.find(p => p.price === 0);
@@ -100,7 +99,6 @@ export default function PlansScreen() {
             subscription={subscription}
             activePlanId={activePlanId}
             onSubscribe={handleSubscribe}
-            subscribing={subscribing}
           />
         ) : (
           <WorkerTab
@@ -109,7 +107,6 @@ export default function PlansScreen() {
             subscription={subscription}
             activePlanId={activePlanId}
             onSubscribe={handleSubscribe}
-            subscribing={subscribing}
           />
         )}
       </ScrollView>
@@ -123,10 +120,9 @@ type TabProps = {
   subscription: Subscription | null;
   activePlanId?: number;
   onSubscribe: (planId: number) => void;
-  subscribing: boolean;
 };
 
-function ClientTab({ freePlan, premiumPlan, subscription, activePlanId, onSubscribe, subscribing }: TabProps) {
+function ClientTab({ freePlan, premiumPlan, subscription, activePlanId, onSubscribe }: TabProps) {
   const isOnFree = !subscription?.is_subscribed;
   const activeName = subscription?.is_subscribed ? subscription.plan_name : (freePlan?.name ?? 'Free');
   const activeFeatures = subscription?.is_subscribed
@@ -191,7 +187,7 @@ function ClientTab({ freePlan, premiumPlan, subscription, activePlanId, onSubscr
                 </View>
               )}
               <GradientButton
-                label={subscribing ? 'Aguarde...' : 'Assinar Agora'}
+                label="Assinar Agora"
                 onPress={() => onSubscribe(premiumPlan.id)}
               />
             </View>
@@ -224,7 +220,7 @@ function ClientTab({ freePlan, premiumPlan, subscription, activePlanId, onSubscr
   );
 }
 
-function WorkerTab({ freePlan, premiumPlan, subscription, activePlanId, onSubscribe, subscribing }: TabProps) {
+function WorkerTab({ freePlan, premiumPlan, subscription, activePlanId, onSubscribe }: TabProps) {
   const COMPARE_ROWS = [
     { benefit: 'Taxa de Intermediação', basic: '20%', elite: '12%' },
     { benefit: 'Selo de Verificado', basic: '—', elite: '✓' },
@@ -289,7 +285,7 @@ function WorkerTab({ freePlan, premiumPlan, subscription, activePlanId, onSubscr
           </View>
 
           <GradientButton
-            label={subscribing ? 'Aguarde...' : 'Assinar Agora'}
+            label="Assinar Agora"
             onPress={() => onSubscribe(premiumPlan.id)}
           />
         </View>

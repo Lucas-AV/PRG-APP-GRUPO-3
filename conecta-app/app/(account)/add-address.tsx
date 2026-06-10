@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Alert,
   ActivityIndicator,
+  TextInput,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -14,6 +15,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { GradientButton } from '@/components/ui/gradient-button';
 import { InputField } from '@/components/ui/input-field';
 import { TopAppBar } from '@/components/ui/top-app-bar';
+import { MapPreview } from '@/components/ui/map-preview';
 import { Colors, FontFamily, Spacing, Radius } from '@/constants/theme';
 import { useAuth } from '@/context/AuthContext';
 import { usersApi } from '@/services/api';
@@ -48,6 +50,9 @@ export default function AddAddressScreen() {
 
   const isEdit = !!params.id;
 
+  const numberInputRef = useRef<TextInput>(null);
+  const [autofilledFields, setAutofilledFields] = useState<Record<string, boolean>>({});
+
   const [addressType, setAddressType] = useState<AddressType>(params.type ?? 'casa');
   const [cep, setCep] = useState(params.zip_code ?? '');
   const [street, setStreet] = useState(params.street ?? '');
@@ -65,6 +70,8 @@ export default function AddAddressScreen() {
     const digits = formatted.replace(/\D/g, '');
     if (digits.length === 8) {
       fetchViaCep(digits);
+    } else {
+      setAutofilledFields({});
     }
   };
 
@@ -82,6 +89,17 @@ export default function AddAddressScreen() {
       setNeighborhood(data.bairro ?? '');
       setCity(data.localidade ?? '');
       setState(data.uf ?? '');
+      setAutofilledFields({
+        street: !!data.logradouro,
+        neighborhood: !!data.bairro,
+        city: !!data.localidade,
+        state: !!data.uf,
+      });
+
+      // Autofocus focus on the Number input automatically
+      setTimeout(() => {
+        numberInputRef.current?.focus();
+      }, 150);
     } catch {
       Alert.alert('Erro', 'Não foi possível consultar o CEP. Preencha os campos manualmente.');
     } finally {
@@ -100,8 +118,8 @@ export default function AddAddressScreen() {
         type: addressType,
         zip_code: cep.replace(/\D/g, '') || undefined,
         street,
-        number: number || undefined,
-        complement: complement || undefined,
+        number: number || '-',
+        complement: complement || '-',
         neighborhood: neighborhood || undefined,
         city,
         state,
@@ -133,16 +151,16 @@ export default function AddAddressScreen() {
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
-        {/* Map placeholder */}
-        <View style={styles.mapSection}>
-          <View style={styles.mapBox}>
-            <MaterialIcons name="location-on" size={40} color={Colors.primary} />
-          </View>
-          <View style={styles.mapNote}>
-            <MaterialIcons name="my-location" size={14} color={Colors.outline} />
-            <Text style={styles.mapNoteText}>Sua localização atual aproximada</Text>
-          </View>
-        </View>
+        {/* Map preview — real OpenStreetMap via Leaflet */}
+        <MapPreview
+          street={street}
+          number={number}
+          neighborhood={neighborhood}
+          city={city}
+          state={state}
+          zipCode={cep}
+          height={150}
+        />
 
         {/* Form */}
         <View style={styles.form}>
@@ -171,11 +189,13 @@ export default function AddAddressScreen() {
             value={street}
             onChangeText={setStreet}
             autoCapitalize="words"
+            rightAction={autofilledFields.street ? <MaterialIcons name="check-circle" size={18} color="#10b981" /> : null}
           />
 
           <View style={styles.row2col}>
             <View style={styles.col5}>
               <InputField
+                ref={numberInputRef}
                 label="Número"
                 placeholder="123"
                 value={number}
@@ -199,6 +219,7 @@ export default function AddAddressScreen() {
             value={neighborhood}
             onChangeText={setNeighborhood}
             autoCapitalize="words"
+            rightAction={autofilledFields.neighborhood ? <MaterialIcons name="check-circle" size={18} color="#10b981" /> : null}
           />
 
           <View style={styles.row2col}>
@@ -209,6 +230,7 @@ export default function AddAddressScreen() {
                 value={city}
                 onChangeText={setCity}
                 autoCapitalize="words"
+                rightAction={autofilledFields.city ? <MaterialIcons name="check-circle" size={18} color="#10b981" /> : null}
               />
             </View>
             <View style={styles.col4}>
@@ -219,6 +241,7 @@ export default function AddAddressScreen() {
                 onChangeText={t => setState(t.toUpperCase())}
                 autoCapitalize="characters"
                 maxLength={2}
+                rightAction={autofilledFields.state ? <MaterialIcons name="check-circle" size={18} color="#10b981" /> : null}
               />
             </View>
           </View>
@@ -268,21 +291,6 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing.xxxl * 2,
     gap: Spacing.xxxl,
   },
-  mapSection: { gap: Spacing.md },
-  mapBox: {
-    width: '100%',
-    height: 140,
-    borderRadius: Radius.md,
-    backgroundColor: Colors.surfaceContainerHighest,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  mapNote: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
-  mapNoteText: {
-    fontFamily: FontFamily.bodyMedium,
-    fontSize: 12,
-    color: Colors.onSurfaceVariant,
-  },
   form: { gap: Spacing.xxl },
   cepRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.md },
   cepSpinner: { marginTop: Spacing.xl },
@@ -307,12 +315,14 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm + 2,
     paddingHorizontal: Spacing.base,
     borderRadius: Radius.full,
-    backgroundColor: Colors.surfaceContainerHighest,
+    backgroundColor: Colors.surfaceContainerLowest,
+    borderWidth: 1,
+    borderColor: Colors.outlineVariant + '22',
   },
   chipActive: {
     backgroundColor: Colors.primaryContainer,
     borderWidth: 1,
-    borderColor: Colors.primary + '1A',
+    borderColor: Colors.primary + '33',
   },
   chipLabel: {
     fontFamily: FontFamily.bodyMedium,

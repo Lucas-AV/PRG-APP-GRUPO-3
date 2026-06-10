@@ -18,6 +18,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { GradientButton } from '@/components/ui/gradient-button';
 import { Colors, FontFamily, GradientColors, Spacing, Radius } from '@/constants/theme';
+import { useAuth } from '@/context/AuthContext';
 
 const NEXT_STEPS = [
   {
@@ -39,12 +40,14 @@ const NEXT_STEPS = [
 
 export default function Step4Screen() {
   const { role } = useLocalSearchParams<{ role: string }>();
+  const { markOnboardingComplete } = useAuth();
   const isPrestador = role === 'prestador';
 
   const scaleAnim = useRef(new Animated.Value(0)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
-  const handleEnterApp = () => {
+  const handleEnterApp = async () => {
+    await markOnboardingComplete();
     router.replace('/(tabs)');
   };
 

@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
+import * as SecureStore from 'expo-secure-store';
 import { MaterialIcons } from '@expo/vector-icons';
 import { GradientButton } from '@/components/ui/gradient-button';
 import { InputField } from '@/components/ui/input-field';
@@ -74,7 +75,12 @@ export default function LoginScreen() {
     setLoading(true);
     try {
       const user = await login(email.trim().toLowerCase(), password);
-      router.replace('/(tabs)');
+      const completed = await SecureStore.getItemAsync(`onboarding_${user.id}`);
+      if (completed === 'true') {
+        router.replace('/(tabs)');
+      } else {
+        router.replace('/(onboarding)/step0');
+      }
     } catch (e: any) {
       Alert.alert('Erro ao entrar', e.message ?? 'Verifique seus dados e tente novamente.');
     } finally {

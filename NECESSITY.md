@@ -32,7 +32,7 @@ BUGS:
 - O que deveria acontecer? Validar cupons + evitar sobreposição no teclado
 
 - O que aconteceu? A bottombar do aplicativo some quando trocamos de aba
-- O que deve acontecer? Ela deveria ser exibida o tempo inteiro (constante) tipo estilo ifodd
+- O que deve acontecer? Ela deveria ser exibida o tempo inteiro (constante) tipo estilo ifood
 
 - O que aconteceu? O tecladoe stá se sobrepondo aos campos de preenchimento de texto na tela de cadastro de cartão
 - O que deveria acontecer? O teclado deveria ficar abaixo destes campos, fazendo com que eles fossem focados na tela
@@ -44,22 +44,12 @@ BUGS:
 - O que aconteceu? Hub visual do professional com as informações está ficando cortado nos aparelhos
 - O que deveria acotnecer? As informações deveriam ser exibidas completamente.
 
-- Vincular dados do onboarding: Endereço não está sendo salvo como endereço para o cliente e para prestador de serviço 
-- O que deveria acontecer? Os dados deveriam ser salvos no banco de dados do usuário logado que está sendo criado
-
-- Atualização de perfil: Salvar os dados de verdade do cliente e do prestador de serviço, eles não estão sendo salvos
-- O que deveria acontecer? Os dados deveriam ser salvos no banco de dados do usuário logado
-
-- Retomar cadastro do cliente e prestador de serviço no onboarding caso incompleto, ao invés de criar a conta
-- O que deveria acontecer? ao invés de criar a conta, o cliente ou prestador de serviço deveria ser redirecionado para o onboarding para completar os dados da conta dele
-
-- O botão de confirmação de assinatura não está funcionando
-- O que deveria acontecer? O botão deveria chamar uma função que vai levar o cliente para a tela de pagamento + Salvar o plano no banco de dados do cliente
 
 REFACTOR:
 - Feed: Refatorar para ficar parecido ou igual ao figma / Desenvolver estilo de visualização de detalhes por meio de scroll horizontal da direita para a esquerda
 - Feed: Barra de pesquisa fixa no topo do feed
 - Feed: Badges de filtro de clique rapido
+
 - Profissional: Detalhamento de profissional: Primeira etapa da tela precisa ser refeita para ficar igual ao estilo do figma (Professional Detail / Discovery)
 - Profissional: Refazer a parte de cima da tela que exibe a imagem do perfil em miniatura redonda para ficar igual ao estilo do figma + badge de avaliações em média + quantidade
 - Modo escuro!
@@ -75,15 +65,10 @@ FEATURE:
 - Exibir previa do mapa de localização no telefone do endereço tbm
 - Exibir plano de assinatura como terceira etapa do onboarding para visão de cliente
 - Permitir cadastro de metodo de pagamento inicial no onboarding (etapa opcional do onboarding do aplicativo)
-- Tela dedicada para pesquisa baseada no template do figma
-- Tela de filtro baseado no template do figma
 - Tela ou aba ou melhoria da tela de suporte e ajuda para exibir algo quando o cliente clicar em "Perguntas Frequentes" e também detalhar tela de ver tudo
-- Controle de idioma básico no aplicativo + tela de seleção de idioma ou dialog
 - Pagamento: IMPORTANTE ! >>> Implementar sistema de pagamento simulado basico utilizando integração gratis com Stripe / MercadoPago / Pagbank (1 das 3 apenas, a que for mais fácil de preferencia) e linkar o uso dela ao sistema de assinaturas para fazer pagamentos e cobranças mensais <<< !
 - Pagamento: Cancelamento de assinatura tanto para cliente quanto prestador de serviço (Backend + tela)
 - Exibição de mapa nas telas de cadastro de endereço, tipo um google maps simples
 - Permitir o cadastro de categoria de endereço personalizada
-- Criar tela de SOBRE do aplicativo com base no template, as partes de botões na tela de sobre devem ser pequenas abas expansiveis contendo um pequeno texto resumido sobre o conteudo da aba clicada
 - Desenvolver toda a parte de agendamento do sistema tanto a visão de cliente quanto a visão de prestador de serviço, começar extraindo prototipo do figma e então passando para o mapemento do backend das funções relacionadas + criação do banco de dados para isso
-- Adicionar redirecionamento ao clicar em botão de perfil na tela feed na appbar no canto superior direito
 - Tela de Notificações + historico

@@ -2,32 +2,27 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import {
   View,
   Text,
-  TextInput,
   ScrollView,
   FlatList,
   Pressable,
   StyleSheet,
   ActivityIndicator,
   useWindowDimensions,
+  Image,
+  TextInput,
+  StatusBar,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, FontFamily, Spacing, Radius, GradientColors } from '@/constants/theme';
 import { CATEGORIES } from '@/constants/categories';
 import { useAuth } from '@/context/AuthContext';
 import { publicServicesApi, PublicService } from '@/services/api';
+import { useTranslation } from 'react-i18next';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
-
-function getInitials(name: string): string {
-  return name
-    .split(' ')
-    .slice(0, 2)
-    .map(w => w[0]?.toUpperCase() ?? '')
-    .join('');
-}
 
 function formatPrice(service: PublicService): string {
   if (!service.price) return 'Sob consulta';
@@ -35,30 +30,44 @@ function formatPrice(service: PublicService): string {
   return `${prefix}R$ ${service.price.toFixed(2).replace('.', ',')}`;
 }
 
-const CARD_GRADIENTS: [string, string][] = [
-  ['#667eea', '#764ba2'],
-  ['#f093fb', '#f5576c'],
-  ['#4facfe', '#00f2fe'],
-  ['#43e97b', '#38f9d7'],
-  ['#fa709a', '#fee140'],
+const PROVIDER_IMAGES: string[] = [
+  'https://lh3.googleusercontent.com/aida-public/AB6AXuDDYvz5DNWYKumUPqcHbsPW4oXDpyN1aawLRcHRWXFnuOg5IbdH_QwkwLBxdOAhh0GFR_iPArXrcN8FuD4YOTgAeTGDs-nA5PqLbrAnlI2WyVgvMTPkxWGMdA8AH1fkRh_5LJGI1T7jMSYhSaL8iHhLp2Ok5C5FToGPJZhYiHzgrL22wHUQJGUqTK8Z9Hx-xUHZJld_BFkBnM7Sf5tNlW-6AiozFaA7sCEv5QC5HI0dH82oVk2SVxf8NeMJjtrq1UNEqLqWaZlevTQ',
+  'https://lh3.googleusercontent.com/aida-public/AB6AXuBdsI7AlRE5Y8UVf7NA4Y7MfRVlL6yrakbEXSHbtAe2NABe8NHpHos6BpYPvQmw68PequalsJ4b-c4v13-3Esc9awoEK4qFLhzidjdiqUUjUWFJThaDKPlunxSFFlW8PKwP0BnFuuxd8Le8HZDBPePA-ldtlc0bZm61cMj6k40b8N1LeHfi3ZAp02k3bxKTvU3mteNZHseJmnRkwrTcnDYiAldeI4yzR33uLMVW6_iSoUFqIj-V8PsHdsENtwG4HeePPKseNMbUqsM',
+  'https://lh3.googleusercontent.com/aida-public/AB6AXuDl6nnS_1yci62TCyJKWdDJpTGso1WVbB7SWS1dFycbQNVK5VKGbo0KBHPdjVNy5WW_hAwlevHZC2Jt65vNkzznm4XRfsrzC4tN34SaMywsGDXjI89hizixuHhSRavg0MLl0kc0eDEMSFwlhXwrbiL_bgS_jeXETbmplm2OaP6v_-8AN-T7N9zl81nantEZUNLGjh-mW9Os3nlPAqyMjkJKmr0OVdGPoq1uIH-bGAriAi8INsKdO4sZkyfQFOArpBJqh04oPU6xaK4',
+];
+
+const QUICK_FILTERS = [
+  { key: 'todos',   label: 'Todos',            icon: 'grid-view'    as const },
+  { key: 'rating',  label: 'Melhor Avaliados', icon: 'star'         as const },
+  { key: 'preco',   label: 'Menor Preço',      icon: 'attach-money' as const },
+  { key: 'proximos',label: 'Mais Próximos',    icon: 'near-me'      as const },
 ];
 
 // ── Componente ────────────────────────────────────────────────────────────────
 
 export default function HomeScreen() {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const { width } = useWindowDimensions();
   const isClient = user?.role === 'cliente';
 
-  const [services, setServices] = useState<PublicService[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [searchText, setSearchText] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const params = useLocalSearchParams<{
+    sortBy?: string; distance?: string; rating?: string;
+    priceRange?: string; category?: string; applied?: string; q?: string;
+  }>();
 
+  const [services, setServices]           = useState<PublicService[]>([]);
+  const [loading, setLoading]             = useState(true);
+  const [searchText, setSearchText]       = useState(params.q ?? '');
+  const [searchFocused, setSearchFocused] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(params.category ?? null);
+  const [activeFilter, setActiveFilter]   = useState<string>('todos');
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const searchRef   = useRef<TextInput>(null);
+
+  // Grid tile size — 4 per row
   const HPAD = Spacing.xl * 2;
-  const GAPS = Spacing.sm * 3;
-  const tileSize = (width - HPAD - GAPS) / 4;
+  const tileSize = (width - HPAD - Spacing.sm * 3) / 4;
 
   const fetchServices = (category?: string, q?: string) => {
     setLoading(true);
@@ -69,7 +78,19 @@ export default function HomeScreen() {
       .finally(() => setLoading(false));
   };
 
-  useEffect(() => { fetchServices(); }, []);
+  useEffect(() => {
+    fetchServices(selectedCategory ?? undefined, searchText || undefined);
+  }, []);
+
+  useEffect(() => {
+    if (params.applied === 'true') {
+      const nextCategory = params.category || null;
+      const nextQ        = params.q || '';
+      setSelectedCategory(nextCategory);
+      setSearchText(nextQ);
+      fetchServices(nextCategory ?? undefined, nextQ || undefined);
+    }
+  }, [params.category, params.q, params.applied]);
 
   const handleSearchChange = (text: string) => {
     setSearchText(text);
@@ -95,6 +116,36 @@ export default function HomeScreen() {
     }).slice(0, 5);
   }, [services]);
 
+  const sortedServices = useMemo(() => {
+    let result = [...services];
+    if (params.applied === 'true') {
+      if (params.rating === '4.5+') result = result.filter(s => (s.avg_rating ?? 0) >= 4.5);
+      else if (params.rating === '4.0+') result = result.filter(s => (s.avg_rating ?? 0) >= 4.0);
+      if (params.priceRange) {
+        result = result.filter(s => {
+          const price = s.price ?? 0;
+          if (params.priceRange === 'R$')    return price <= 50;
+          if (params.priceRange === 'R$$')   return price > 50  && price <= 150;
+          if (params.priceRange === 'R$$$')  return price > 150 && price <= 300;
+          if (params.priceRange === 'R$$$$') return price > 300;
+          return true;
+        });
+      }
+    }
+    let sortMode = activeFilter;
+    if (params.applied === 'true' && params.sortBy) {
+      if (params.sortBy === 'Avaliação') sortMode = 'rating';
+      else if (params.sortBy === 'Preço') sortMode = 'preco';
+      else if (params.sortBy === 'Distância') sortMode = 'proximos';
+      else sortMode = 'todos';
+    }
+    if (sortMode === 'rating')   result.sort((a, b) => (b.avg_rating ?? 0) - (a.avg_rating ?? 0));
+    else if (sortMode === 'preco')    result.sort((a, b) => (a.price ?? Infinity) - (b.price ?? Infinity));
+    else if (sortMode === 'proximos') result.sort((a, b) => a.provider_id - b.provider_id);
+    return result;
+  }, [services, activeFilter, params.applied, params.sortBy, params.rating, params.priceRange]);
+
+  // ── Prestador placeholder ────────────────────────────────────────────────
   if (!isClient) {
     return (
       <SafeAreaView style={styles.container}>
@@ -111,70 +162,195 @@ export default function HomeScreen() {
     );
   }
 
+  // ── Hero header height ───────────────────────────────────────────────────
+  const firstName = user?.name?.split(' ')[0] ?? 'usuário';
+  const initials  = user?.name
+    ? user.name.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase()
+    : 'U';
+
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
 
-      {/* ── TopAppBar ─────────────────────────────────────────────────────── */}
-      <View style={styles.topBar}>
-        <View style={styles.topBarLeft}>
-          <MaterialIcons name="grid-view" size={22} color={Colors.primary} />
-          <Text style={styles.topBarLogo}>Conecta</Text>
-        </View>
-        <View style={styles.topBarRight}>
-          <Pressable style={styles.notifBtn}>
-            <MaterialIcons name="notifications-none" size={24} color={Colors.onSurfaceVariant} />
-          </Pressable>
-          <View style={styles.avatar}>
-            <Text style={styles.avatarText}>{getInitials(user?.name ?? 'U')}</Text>
-          </View>
-        </View>
-      </View>
-
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scroll}
-        keyboardShouldPersistTaps="handled"
-      >
-
-        {/* ── Saudação + Headline ───────────────────────────────────────── */}
-        <View style={styles.greetingSection}>
-          <Text style={styles.greetingLine}>
-            Olá,{' '}
-            <Text style={styles.greetingName}>
-              {user?.name?.split(' ')[0] ?? 'usuário'}
+      {/* ═══════════════════════════════════════════════════════════════════
+          HEADER FIXO — Logo + avatar + barra de pesquisa + filtros rápidos
+          ═══════════════════════════════════════════════════════════════════ */}
+      <View style={styles.header}>
+        {/* Linha 1: Logo + saudação + avatar */}
+        <View style={styles.headerTopRow}>
+          <View style={styles.headerGreeting}>
+            <Text style={styles.greetingSmall}>
+              {t('feed.hello')} <Text style={styles.greetingBold}>{firstName} 👋</Text>
             </Text>
-          </Text>
-          <Text style={styles.greetingHeadline}>
-            Encontre o profissional perfeito
-          </Text>
-        </View>
+            <Text style={styles.headerBrand}>Conecta</Text>
+          </View>
 
-        {/* ── Barra de busca ───────────────────────────────────────────── */}
-        <View style={styles.searchWrap}>
-          <View style={styles.searchBar}>
-            <View style={styles.searchIconWrap}>
-              <MaterialIcons name="search" size={22} color={Colors.outline} />
-            </View>
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Buscar serviços: limpeza, reparos..."
-              placeholderTextColor={Colors.outline}
-              value={searchText}
-              onChangeText={handleSearchChange}
-              returnKeyType="search"
-            />
-            <Pressable style={styles.filterBtn}>
-              <MaterialIcons name="tune" size={20} color={Colors.primary} />
+          <View style={styles.headerActions}>
+            <Pressable
+              style={styles.notifBtn}
+              onPress={() => {/* futura navegação para notificações */}}
+            >
+              <MaterialIcons name="notifications-none" size={24} color={Colors.onSurfaceVariant} />
+              {/* Badge de notificação */}
+              <View style={styles.notifDot} />
+            </Pressable>
+            <Pressable
+              style={styles.avatarBtn}
+              onPress={() => router.push('/(account)/edit-profile' as any)}
+            >
+              <Image
+                source={{ uri: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCLpzBr8xoiZIfx3nQl6rgfnJrO63XuAPxZqxoWileXY-SOSGzgPcHJrNNGcWNNnpOMDrzpWdT6-nLiwzsBt3svOUAZVBYr1qGQNUEBPGMgyidrQhKe8gsJ19q3HFCZK52EMjA29zrY8L1OuBHfMcvy8xzOybEIe9jeBHL9GEh873WU_C-PW13SgTUqZzv3JR1_TxG4ChqXxnLiHqjF9WuKZhYgKo8vLNEJS8T3dkYkVCqsqkk5vhiYgsiQfTUBH0uMxnVLGVaeEdE' }}
+                style={styles.avatarImage}
+              />
             </Pressable>
           </View>
         </View>
 
+        {/* Linha 2: Barra de pesquisa real (funcional) */}
+        <View style={[styles.searchContainer, searchFocused && styles.searchContainerFocused]}>
+          <MaterialIcons
+            name="search"
+            size={22}
+            color={searchFocused ? Colors.primary : Colors.outline}
+            style={styles.searchIcon}
+          />
+          <TextInput
+            ref={searchRef}
+            style={styles.searchInput}
+            placeholder={t('feed.searchPlaceholder')}
+            placeholderTextColor={Colors.outline}
+            value={searchText}
+            onChangeText={handleSearchChange}
+            onFocus={() => setSearchFocused(true)}
+            onBlur={() => setSearchFocused(false)}
+            returnKeyType="search"
+            onSubmitEditing={() =>
+              router.push({
+                pathname: '/(client)/search',
+                params: { q: searchText, category: selectedCategory ?? '' },
+              })
+            }
+          />
+          {searchText.length > 0 && (
+            <Pressable
+              style={styles.clearBtn}
+              onPress={() => {
+                setSearchText('');
+                fetchServices(selectedCategory ?? undefined, undefined);
+              }}
+            >
+              <MaterialIcons name="close" size={18} color={Colors.outline} />
+            </Pressable>
+          )}
+          <Pressable
+            style={[
+              styles.filterBtn,
+              params.applied === 'true' && { backgroundColor: Colors.primary },
+            ]}
+            onPress={() =>
+              router.push({
+                pathname: '/(client)/filter',
+                params: {
+                  source: 'feed',
+                  q: searchText,
+                  sortBy: params.sortBy || (activeFilter === 'rating' ? 'Avaliação' : activeFilter === 'preco' ? 'Preço' : activeFilter === 'proximos' ? 'Distância' : 'Relevância'),
+                  distance: params.distance || '5',
+                  rating: params.rating || 'Qualquer',
+                  priceRange: params.priceRange || 'R$$',
+                  category: selectedCategory || 'Reformas',
+                },
+              })
+            }
+          >
+            <MaterialIcons
+              name="tune"
+              size={20}
+              color={params.applied === 'true' ? Colors.onPrimary : Colors.primary}
+            />
+          </Pressable>
+        </View>
+
+        {/* Linha 3: Filtros rápidos */}
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.quickFiltersContent}
+        >
+          {QUICK_FILTERS.map(filter => {
+            const active = activeFilter === filter.key;
+            return (
+              <Pressable
+                key={filter.key}
+                style={[styles.filterPill, active && styles.filterPillActive]}
+                onPress={() => {
+                  setActiveFilter(filter.key);
+                  if (params.applied === 'true') {
+                    router.setParams({
+                      sortBy: undefined, distance: undefined,
+                      rating: undefined, priceRange: undefined, applied: undefined,
+                    });
+                  }
+                }}
+              >
+                <MaterialIcons
+                  name={filter.icon}
+                  size={14}
+                  color={active ? Colors.onPrimary : Colors.primary}
+                />
+                <Text style={[styles.filterPillText, active && styles.filterPillTextActive]}>
+                  {filter.label}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </ScrollView>
+
+        {/* Separador */}
+        <View style={styles.headerDivider} />
+      </View>
+
+      {/* ═══════════════════════════════════════════════════════════════════
+          CONTEÚDO SCROLLÁVEL
+          ═══════════════════════════════════════════════════════════════════ */}
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scroll}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
+      >
+
+        {/* ── Hero banner com headline ───────────────────────────────────── */}
+        <LinearGradient
+          colors={['#f0f4ff', '#faf5ff', '#fff']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.heroBanner}
+        >
+          <View style={styles.heroTextBlock}>
+            <Text style={styles.heroHeadline}>{t('feed.headline')}</Text>
+            <Text style={styles.heroSub}>
+              Profissionais verificados, serviços de qualidade perto de você.
+            </Text>
+          </View>
+          <View style={styles.heroStatsRow}>
+            {[
+              { value: '12k+', label: 'Profissionais' },
+              { value: '4.9★', label: 'Avaliação média' },
+              { value: '50+', label: 'Categorias' },
+            ].map(stat => (
+              <View key={stat.label} style={styles.heroStat}>
+                <Text style={styles.heroStatValue}>{stat.value}</Text>
+                <Text style={styles.heroStatLabel}>{stat.label}</Text>
+              </View>
+            ))}
+          </View>
+        </LinearGradient>
+
         {/* ── Categorias Populares ──────────────────────────────────────── */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Categorias Populares</Text>
-            <Pressable>
-              <Text style={styles.sectionLink}>Ver todos</Text>
+            <Text style={styles.sectionTitle}>{t('feed.popularCategories')}</Text>
+            <Pressable onPress={() => router.push({ pathname: '/(client)/search' })}>
+              <Text style={styles.sectionLink}>{t('feed.viewAll')}</Text>
             </Pressable>
           </View>
           <View style={styles.categoryGrid}>
@@ -191,11 +367,9 @@ export default function HomeScreen() {
                   ]}
                   onPress={() => handleCategoryPress(cat.key)}
                 >
-                  <MaterialIcons
-                    name={cat.icon}
-                    size={30}
-                    color={active ? Colors.primary : Colors.primary}
-                  />
+                  <View style={[styles.categoryIconWrap, active && styles.categoryIconWrapActive]}>
+                    <MaterialIcons name={cat.icon} size={26} color={active ? Colors.primary : Colors.onSurfaceVariant} />
+                  </View>
                   <Text style={[styles.categoryLabel, active && styles.categoryLabelActive]}>
                     {cat.label.toUpperCase()}
                   </Text>
@@ -205,22 +379,27 @@ export default function HomeScreen() {
           </View>
         </View>
 
+        {/* ── Conteúdo dinâmico ──────────────────────────────────────────── */}
         {loading ? (
           <View style={styles.loadingWrap}>
-            <ActivityIndicator color={Colors.primary} />
+            <ActivityIndicator color={Colors.primary} size="large" />
+            <Text style={styles.loadingText}>{t('feed.loading')}</Text>
           </View>
         ) : services.length === 0 ? (
           <View style={styles.emptyWrap}>
-            <MaterialIcons name="search-off" size={40} color={Colors.outlineVariant} />
-            <Text style={styles.emptyText}>Nenhum serviço encontrado.</Text>
+            <View style={styles.emptyIconWrap}>
+              <MaterialIcons name="search-off" size={36} color={Colors.outlineVariant} />
+            </View>
+            <Text style={styles.emptyTitle}>{t('feed.empty')}</Text>
+            <Text style={styles.emptySubtitle}>Tente ajustar seus filtros ou busca</Text>
           </View>
         ) : (
           <>
-            {/* ── Profissionais em Destaque ─────────────────────────────── */}
+            {/* Profissionais próximos */}
             {featuredProviders.length > 0 && (
               <View style={styles.section}>
                 <View style={styles.sectionHeader}>
-                  <Text style={styles.sectionTitle}>Profissionais Próximos</Text>
+                  <Text style={styles.sectionTitle}>{t('feed.featuredProfessionals')}</Text>
                 </View>
                 <FlatList
                   horizontal
@@ -228,75 +407,70 @@ export default function HomeScreen() {
                   data={featuredProviders}
                   keyExtractor={item => String(item.provider_id)}
                   contentContainerStyle={styles.carouselContent}
-                  renderItem={({ item, index }) => {
-                    const grad = CARD_GRADIENTS[index % CARD_GRADIENTS.length];
-                    return (
-                      <Pressable
-                        style={({ pressed }) => [
-                          styles.providerCard,
-                          pressed && { opacity: 0.88 },
-                        ]}
-                        onPress={() =>
-                          router.push({
-                            pathname: '/(client)/provider-profile' as any,
-                            params: {
-                              id: String(item.provider_id),
-                              name: item.provider_name,
-                            },
-                          })
-                        }
-                      >
-                        {/* Imagem / gradient */}
-                        <View style={styles.providerImageWrap}>
-                          <LinearGradient colors={grad} style={styles.providerGradient}>
-                            <Text style={styles.providerCardInitials}>
-                              {getInitials(item.provider_name)}
-                            </Text>
-                          </LinearGradient>
-                          {item.avg_rating !== null && (
-                            <View style={styles.ratingBadge}>
-                              <MaterialIcons name="star" size={12} color="#f59e0b" />
-                              <Text style={styles.ratingBadgeText}>
-                                {item.avg_rating.toFixed(1)}
-                              </Text>
-                            </View>
-                          )}
-                        </View>
-                        {/* Corpo */}
-                        <View style={styles.providerCardBody}>
-                          <Text style={styles.providerName} numberOfLines={1}>
-                            {item.provider_name}
-                          </Text>
-                          <Text style={styles.providerService} numberOfLines={1}>
-                            {item.name}
-                          </Text>
-                          <View style={styles.providerDistRow}>
-                            <MaterialIcons name="near-me" size={13} color={Colors.primary} />
-                            <Text style={styles.providerDist}>PRÓXIMO A VOCÊ</Text>
+                  renderItem={({ item, index }) => (
+                    <Pressable
+                      style={({ pressed }) => [styles.providerCard, pressed && { opacity: 0.88 }]}
+                      onPress={() =>
+                        router.push({
+                          pathname: '/(client)/provider-profile' as any,
+                          params: { id: String(item.provider_id), name: item.provider_name },
+                        })
+                      }
+                    >
+                      <View style={styles.providerImageWrap}>
+                        <Image
+                          source={{ uri: PROVIDER_IMAGES[index % PROVIDER_IMAGES.length] }}
+                          style={styles.providerCardImage}
+                        />
+                        <LinearGradient
+                          colors={['transparent', 'rgba(0,0,0,0.55)']}
+                          style={styles.providerImageGradient}
+                        />
+                        {item.avg_rating !== null && (
+                          <View style={styles.ratingBadge}>
+                            <MaterialIcons name="star" size={12} color="#f59e0b" />
+                            <Text style={styles.ratingBadgeText}>{item.avg_rating.toFixed(1)}</Text>
                           </View>
+                        )}
+                        <View style={styles.providerNearTag}>
+                          <MaterialIcons name="near-me" size={11} color={Colors.primary} />
+                          <Text style={styles.providerNearText}>{t('feed.nearYou')}</Text>
                         </View>
-                      </Pressable>
-                    );
-                  }}
+                      </View>
+                      <View style={styles.providerCardBody}>
+                        <Text style={styles.providerName} numberOfLines={1}>{item.provider_name}</Text>
+                        <Text style={styles.providerService} numberOfLines={1}>{item.name}</Text>
+                        <Pressable
+                          style={styles.providerBtn}
+                          onPress={() =>
+                            router.push({
+                              pathname: '/(client)/provider-profile' as any,
+                              params: { id: String(item.provider_id), name: item.provider_name },
+                            })
+                          }
+                        >
+                          <Text style={styles.providerBtnText}>{t('common.viewProfile')}</Text>
+                        </Pressable>
+                      </View>
+                    </Pressable>
+                  )}
                 />
               </View>
             )}
 
-            {/* ── Serviços Disponíveis ──────────────────────────────────── */}
+            {/* Serviços disponíveis */}
             <View style={styles.section}>
               <View style={styles.sectionHeader}>
-                <Text style={styles.sectionTitle}>Serviços Disponíveis</Text>
+                <Text style={styles.sectionTitle}>{t('feed.availableServices')}</Text>
+                <Text style={styles.sectionCount}>{sortedServices.length} serviços</Text>
               </View>
               <View style={styles.serviceList}>
-                {services.map(service => {
+                {sortedServices.map(service => {
                   const cat = CATEGORIES.find(c => c.key === service.category);
                   return (
                     <Pressable
                       key={service.id}
-                      style={({ pressed }) => [
-                        styles.serviceCard,
-                        pressed && { opacity: 0.88 },
-                      ]}
+                      style={({ pressed }) => [styles.serviceCard, pressed && { opacity: 0.88 }]}
                       onPress={() =>
                         router.push({
                           pathname: '/(client)/service-detail' as any,
@@ -316,11 +490,8 @@ export default function HomeScreen() {
                           color={Colors.onSurfaceVariant}
                         />
                       </View>
-
                       <View style={styles.serviceBody}>
-                        <Text style={styles.serviceName} numberOfLines={1}>
-                          {service.name}
-                        </Text>
+                        <Text style={styles.serviceName} numberOfLines={1}>{service.name}</Text>
                         <View style={styles.serviceMeta}>
                           <Text style={styles.serviceProvider} numberOfLines={1}>
                             {service.provider_name}
@@ -328,18 +499,15 @@ export default function HomeScreen() {
                           {service.avg_rating !== null && (
                             <View style={styles.ratingPill}>
                               <MaterialIcons name="star" size={10} color="#d97706" />
-                              <Text style={styles.ratingPillText}>
-                                {service.avg_rating.toFixed(1)}
-                              </Text>
+                              <Text style={styles.ratingPillText}>{service.avg_rating.toFixed(1)}</Text>
                             </View>
                           )}
                         </View>
                       </View>
-
                       <View style={styles.serviceRight}>
                         <Text style={styles.servicePrice}>{formatPrice(service)}</Text>
                         <View style={styles.bookBtn}>
-                          <Text style={styles.bookBtnText}>CONTRATAR</Text>
+                          <Text style={styles.bookBtnText}>{t('feed.book')}</Text>
                         </View>
                       </View>
                     </Pressable>
@@ -380,217 +548,457 @@ const styles = StyleSheet.create({
     lineHeight: 20, maxWidth: 280,
   },
 
-  // TopAppBar
-  topBar: {
-    flexDirection: 'row', alignItems: 'center',
+  // ── HEADER FIXO ──────────────────────────────────────────────────────────
+  header: {
+    backgroundColor: Colors.surface,
+    paddingHorizontal: Spacing.xl,
+    paddingTop: Spacing.md,
+    paddingBottom: 0,
+    gap: Spacing.md,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 4,
+    zIndex: 10,
+  },
+  headerTopRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: Spacing.xl,
-    paddingVertical: Spacing.md,
-    backgroundColor: 'rgba(255,255,255,0.92)',
-    borderBottomWidth: 0,
   },
-  topBarLeft: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
-  topBarLogo: {
-    fontFamily: FontFamily.headlineExtraBold,
-    fontSize: 22, color: Colors.primary, letterSpacing: -0.8,
-  },
-  topBarRight: { flexDirection: 'row', alignItems: 'center', gap: Spacing.md },
-  notifBtn: { padding: Spacing.xs },
-  avatar: {
-    width: 38, height: 38, borderRadius: Radius.full,
-    backgroundColor: Colors.primaryContainer,
-    alignItems: 'center', justifyContent: 'center',
-    borderWidth: 2, borderColor: Colors.primary + '1A',
-  },
-  avatarText: {
-    fontFamily: FontFamily.headlineBold, fontSize: 13, color: Colors.primary,
-  },
-
-  scroll: { paddingBottom: Spacing.xxxl * 2 },
-
-  // Greeting
-  greetingSection: {
-    paddingHorizontal: Spacing.xl,
-    paddingTop: Spacing.xl,
-    paddingBottom: Spacing.base,
-    gap: 4,
-  },
-  greetingLine: {
+  headerGreeting: { gap: 0 },
+  greetingSmall: {
     fontFamily: FontFamily.bodyRegular,
-    fontSize: 14, color: Colors.onSurfaceVariant,
+    fontSize: 13,
+    color: Colors.onSurfaceVariant,
   },
-  greetingName: { fontFamily: FontFamily.bodySemiBold, color: Colors.onSurface },
-  greetingHeadline: {
+  greetingBold: {
+    fontFamily: FontFamily.bodySemiBold,
+    color: Colors.onSurface,
+  },
+  headerBrand: {
     fontFamily: FontFamily.headlineExtraBold,
-    fontSize: 28, color: Colors.onSurface,
-    letterSpacing: -1,
+    fontSize: 24,
+    color: Colors.primary,
+    letterSpacing: -0.8,
+    marginTop: -2,
   },
+  headerActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+  },
+  notifBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: Radius.full,
+    backgroundColor: Colors.surfaceContainerLowest,
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+  },
+  notifDot: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: Colors.error,
+    borderWidth: 1.5,
+    borderColor: Colors.surface,
+  },
+  avatarBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: Radius.full,
+    overflow: 'hidden',
+    borderWidth: 2,
+    borderColor: Colors.primary + '33',
+  },
+  avatarImage: { width: '100%', height: '100%', resizeMode: 'cover' },
 
-  // Search bar
-  searchWrap: { paddingHorizontal: Spacing.xl, marginTop: Spacing.base, marginBottom: Spacing.xs },
-  searchBar: {
-    flexDirection: 'row', alignItems: 'center',
+  // Barra de pesquisa
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: Colors.surfaceContainerHighest,
     borderRadius: Radius.full,
     paddingLeft: Spacing.base,
     paddingRight: Spacing.xs,
-    paddingVertical: Spacing.md - 2,
+    paddingVertical: Spacing.xs,
+    borderWidth: 1.5,
+    borderColor: 'transparent',
   },
-  searchIconWrap: { marginRight: Spacing.sm },
+  searchContainerFocused: {
+    borderColor: Colors.primary + '66',
+    backgroundColor: Colors.surface,
+    shadowColor: Colors.primary,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  searchIcon: { marginRight: Spacing.sm },
   searchInput: {
-    flex: 1, fontFamily: FontFamily.bodyRegular,
-    fontSize: 14, color: Colors.onSurface,
+    flex: 1,
+    fontFamily: FontFamily.bodyRegular,
+    fontSize: 14,
+    color: Colors.onSurface,
+    paddingVertical: Spacing.sm + 2,
+  },
+  clearBtn: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: Spacing.xs,
   },
   filterBtn: {
-    width: 38, height: 38, borderRadius: Radius.full,
+    width: 38,
+    height: 38,
+    borderRadius: Radius.full,
     backgroundColor: Colors.surfaceContainerLowest,
-    alignItems: 'center', justifyContent: 'center',
-    shadowColor: '#000', shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.06, shadowRadius: 3, elevation: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.06,
+    shadowRadius: 3,
+    elevation: 1,
+  },
+
+  // Quick filters
+  quickFiltersContent: {
+    gap: Spacing.sm,
+    paddingVertical: Spacing.xs,
+    paddingRight: Spacing.sm,
+  },
+  filterPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.xs,
+    backgroundColor: Colors.surfaceContainerLowest,
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+    borderRadius: Radius.full,
+    borderWidth: 1,
+    borderColor: Colors.outlineVariant + '44',
+  },
+  filterPillActive: {
+    backgroundColor: Colors.primary,
+    borderColor: Colors.primary,
+  },
+  filterPillText: {
+    fontFamily: FontFamily.bodySemiBold,
+    fontSize: 12,
+    color: Colors.onSurfaceVariant,
+  },
+  filterPillTextActive: { color: Colors.onPrimary },
+
+  headerDivider: {
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: Colors.outlineVariant + '33',
+    marginHorizontal: -Spacing.xl,
+  },
+
+  // ── SCROLL ───────────────────────────────────────────────────────────────
+  scroll: { paddingBottom: Spacing.xxxl * 2 },
+
+  // Hero banner
+  heroBanner: {
+    marginHorizontal: Spacing.xl,
+    marginTop: Spacing.xxl,
+    borderRadius: Radius.xl,
+    padding: Spacing.xxl,
+    gap: Spacing.xl,
+    overflow: 'hidden',
+  },
+  heroTextBlock: { gap: Spacing.xs },
+  heroHeadline: {
+    fontFamily: FontFamily.headlineExtraBold,
+    fontSize: 26,
+    color: Colors.onSurface,
+    letterSpacing: -0.8,
+    lineHeight: 32,
+  },
+  heroSub: {
+    fontFamily: FontFamily.bodyRegular,
+    fontSize: 13,
+    color: Colors.onSurfaceVariant,
+    lineHeight: 18,
+  },
+  heroStatsRow: {
+    flexDirection: 'row',
+    gap: Spacing.xl,
+  },
+  heroStat: { gap: 2 },
+  heroStatValue: {
+    fontFamily: FontFamily.headlineBold,
+    fontSize: 18,
+    color: Colors.primary,
+    letterSpacing: -0.4,
+  },
+  heroStatLabel: {
+    fontFamily: FontFamily.bodyRegular,
+    fontSize: 11,
+    color: Colors.onSurfaceVariant,
   },
 
   // Sections
   section: { marginTop: Spacing.xxl },
   sectionHeader: {
-    flexDirection: 'row', alignItems: 'flex-end',
+    flexDirection: 'row',
+    alignItems: 'flex-end',
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.xl,
     marginBottom: Spacing.base,
   },
   sectionTitle: {
     fontFamily: FontFamily.headlineBold,
-    fontSize: 18, color: Colors.onSurface, letterSpacing: -0.4,
+    fontSize: 18,
+    color: Colors.onSurface,
+    letterSpacing: -0.4,
   },
   sectionLink: {
     fontFamily: FontFamily.bodySemiBold,
-    fontSize: 11, color: Colors.primary,
-    letterSpacing: 1.5, textTransform: 'uppercase',
+    fontSize: 11,
+    color: Colors.primary,
+    letterSpacing: 1.5,
+    textTransform: 'uppercase',
+  },
+  sectionCount: {
+    fontFamily: FontFamily.bodyRegular,
+    fontSize: 12,
+    color: Colors.onSurfaceVariant,
   },
 
   // Category grid
   categoryGrid: {
-    flexDirection: 'row', flexWrap: 'wrap',
-    paddingHorizontal: Spacing.xl, gap: Spacing.sm,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    paddingHorizontal: Spacing.xl,
+    gap: Spacing.sm,
   },
   categoryTile: {
     backgroundColor: Colors.surfaceContainerLowest,
     borderRadius: Radius.lg,
-    alignItems: 'center', justifyContent: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
     gap: 6,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.03,
+    shadowRadius: 4,
+    elevation: 1,
   },
   categoryTileActive: {
-    backgroundColor: Colors.primaryContainer + '4D',
+    backgroundColor: Colors.primaryContainer + '55',
+  },
+  categoryIconWrap: {
+    width: 44,
+    height: 44,
+    borderRadius: Radius.md,
+    backgroundColor: Colors.surfaceContainerHigh,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  categoryIconWrapActive: {
+    backgroundColor: Colors.primaryContainer,
   },
   categoryLabel: {
     fontFamily: FontFamily.bodySemiBold,
-    fontSize: 9, color: Colors.onSurfaceVariant,
-    textAlign: 'center', letterSpacing: 0.8,
+    fontSize: 9,
+    color: Colors.onSurfaceVariant,
+    textAlign: 'center',
+    letterSpacing: 0.6,
   },
   categoryLabelActive: { color: Colors.primary },
 
-  loadingWrap: { paddingVertical: Spacing.xxxl * 2, alignItems: 'center' },
-  emptyWrap: {
-    paddingVertical: Spacing.xxxl * 2, alignItems: 'center', gap: Spacing.md,
+  // Loading / empty
+  loadingWrap: {
+    paddingVertical: Spacing.xxxl * 2,
+    alignItems: 'center',
+    gap: Spacing.md,
   },
-  emptyText: {
-    fontFamily: FontFamily.bodyRegular, fontSize: 14, color: Colors.onSurfaceVariant,
+  loadingText: {
+    fontFamily: FontFamily.bodyRegular,
+    fontSize: 14,
+    color: Colors.onSurfaceVariant,
+  },
+  emptyWrap: {
+    paddingVertical: Spacing.xxxl * 2,
+    alignItems: 'center',
+    gap: Spacing.md,
+  },
+  emptyIconWrap: {
+    width: 72,
+    height: 72,
+    borderRadius: Radius.full,
+    backgroundColor: Colors.surfaceContainerHighest,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyTitle: {
+    fontFamily: FontFamily.headlineBold,
+    fontSize: 16,
+    color: Colors.onSurface,
+  },
+  emptySubtitle: {
+    fontFamily: FontFamily.bodyRegular,
+    fontSize: 13,
+    color: Colors.onSurfaceVariant,
   },
 
-  // Featured providers carousel
+  // Featured providers
   carouselContent: { paddingHorizontal: Spacing.xl, gap: Spacing.base },
   providerCard: {
-    width: 260,
+    width: 240,
     backgroundColor: Colors.surfaceContainerLowest,
     borderRadius: 20,
     overflow: 'hidden',
-    elevation: 2,
-    shadowColor: '#000', shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.07, shadowRadius: 8,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
   },
-  providerImageWrap: { height: 148, position: 'relative' },
-  providerGradient: {
-    flex: 1, alignItems: 'center', justifyContent: 'center',
-  },
-  providerCardInitials: {
-    fontFamily: FontFamily.headlineExtraBold,
-    fontSize: 40, color: 'rgba(255,255,255,0.9)',
-    letterSpacing: -1,
+  providerImageWrap: { height: 150, position: 'relative' },
+  providerCardImage: { width: '100%', height: '100%', resizeMode: 'cover' },
+  providerImageGradient: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 70,
   },
   ratingBadge: {
-    position: 'absolute', top: 10, right: 10,
-    flexDirection: 'row', alignItems: 'center', gap: 3,
-    backgroundColor: 'rgba(255,255,255,0.92)',
-    paddingHorizontal: Spacing.sm, paddingVertical: 4,
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+    backgroundColor: 'rgba(255,255,255,0.95)',
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 4,
     borderRadius: Radius.md,
   },
   ratingBadgeText: {
     fontFamily: FontFamily.headlineBold,
-    fontSize: 12, color: Colors.onSurface,
+    fontSize: 12,
+    color: Colors.onSurface,
   },
-  providerCardBody: {
-    padding: Spacing.xl, gap: 4,
+  providerNearTag: {
+    position: 'absolute',
+    bottom: 10,
+    left: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+    backgroundColor: 'rgba(255,255,255,0.9)',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: Radius.full,
   },
+  providerNearText: {
+    fontFamily: FontFamily.bodySemiBold,
+    fontSize: 9,
+    color: Colors.primary,
+    letterSpacing: 0.8,
+  },
+  providerCardBody: { padding: Spacing.base, gap: 4 },
   providerName: {
-    fontFamily: FontFamily.headlineBold, fontSize: 16, color: Colors.onSurface,
+    fontFamily: FontFamily.headlineBold,
+    fontSize: 15,
+    color: Colors.onSurface,
   },
   providerService: {
-    fontFamily: FontFamily.bodyRegular, fontSize: 13, color: Colors.onSurfaceVariant,
+    fontFamily: FontFamily.bodyRegular,
+    fontSize: 12,
+    color: Colors.onSurfaceVariant,
   },
-  providerDistRow: {
-    flexDirection: 'row', alignItems: 'center', gap: 3, marginTop: 4,
+  providerBtn: {
+    backgroundColor: Colors.primary,
+    paddingVertical: Spacing.sm,
+    borderRadius: Radius.md,
+    alignItems: 'center',
+    marginTop: Spacing.sm,
   },
-  providerDist: {
-    fontFamily: FontFamily.bodySemiBold, fontSize: 10,
-    color: Colors.primary, letterSpacing: 1.5,
+  providerBtnText: {
+    fontFamily: FontFamily.bodySemiBold,
+    fontSize: 12,
+    color: Colors.onPrimary,
   },
 
   // Services list
   serviceList: { paddingHorizontal: Spacing.xl, gap: Spacing.md },
   serviceCard: {
-    flexDirection: 'row', alignItems: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: Colors.surfaceContainerLowest,
-    borderRadius: 20, padding: Spacing.base,
+    borderRadius: 18,
+    padding: Spacing.base,
     gap: Spacing.base,
     elevation: 1,
-    shadowColor: '#000', shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.04, shadowRadius: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.04,
+    shadowRadius: 4,
   },
   serviceIconBox: {
-    width: 64, height: 64, borderRadius: Radius.lg,
-    alignItems: 'center', justifyContent: 'center',
+    width: 58,
+    height: 58,
+    borderRadius: Radius.lg,
+    alignItems: 'center',
+    justifyContent: 'center',
     flexShrink: 0,
   },
   serviceBody: { flex: 1, gap: 4 },
   serviceName: {
-    fontFamily: FontFamily.headlineBold, fontSize: 14, color: Colors.onSurface,
+    fontFamily: FontFamily.headlineBold,
+    fontSize: 14,
+    color: Colors.onSurface,
   },
   serviceMeta: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
   serviceProvider: {
-    fontFamily: FontFamily.bodyRegular, fontSize: 12, color: Colors.onSurfaceVariant,
+    fontFamily: FontFamily.bodyRegular,
+    fontSize: 12,
+    color: Colors.onSurfaceVariant,
+    flex: 1,
   },
   ratingPill: {
-    flexDirection: 'row', alignItems: 'center', gap: 2,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 2,
     backgroundColor: '#fef3c7',
-    paddingHorizontal: 5, paddingVertical: 2,
+    paddingHorizontal: 5,
+    paddingVertical: 2,
     borderRadius: Radius.full,
   },
   ratingPillText: {
     fontFamily: FontFamily.bodySemiBold,
-    fontSize: 10, color: '#b45309',
+    fontSize: 10,
+    color: '#b45309',
   },
   serviceRight: { alignItems: 'flex-end', gap: Spacing.sm, flexShrink: 0 },
   servicePrice: {
     fontFamily: FontFamily.headlineExtraBold,
-    fontSize: 13, color: Colors.onSurface,
+    fontSize: 13,
+    color: Colors.onSurface,
   },
   bookBtn: {
     backgroundColor: Colors.primary,
-    paddingHorizontal: Spacing.base, paddingVertical: Spacing.xs + 2,
+    paddingHorizontal: 16,
+    paddingVertical: 7,
     borderRadius: Radius.full,
   },
   bookBtnText: {
     fontFamily: FontFamily.bodySemiBold,
-    fontSize: 9, color: Colors.onPrimary,
-    letterSpacing: 1.2,
+    fontSize: 10,
+    color: Colors.onPrimary,
+    letterSpacing: 1,
   },
 });

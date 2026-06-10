@@ -7,6 +7,7 @@ import {
   StyleSheet,
   ActivityIndicator,
   Alert,
+  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -23,6 +24,23 @@ const INCLUDED_ITEMS = [
   'Mão de obra qualificada por profissionais certificados',
   'Certificado de garantia de 12 meses na instalação',
   'Teste de funcionamento e configuração inicial',
+];
+
+const MOCK_REVIEWS: ServiceReview[] = [
+  {
+    id: -1,
+    rating: 5,
+    reviewer_name: 'Ricardo M.',
+    comment: 'Serviço impecável. O profissional explicou cada passo e deixou a garagem limpa. O carregador está funcionando perfeitamente.',
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: -2,
+    rating: 5,
+    reviewer_name: 'Ana Luísa',
+    comment: 'Muito pontuais e profissionais. Recomendo fortemente para quem acabou de comprar um carro elétrico.',
+    created_at: new Date().toISOString(),
+  },
 ];
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -75,7 +93,7 @@ export default function ServiceDetailScreen() {
   if (loading) {
     return (
       <SafeAreaView style={styles.container} edges={['top']}>
-        <TopNav title="" />
+        <TopNav />
         <View style={styles.centerWrap}>
           <ActivityIndicator color={Colors.primary} />
         </View>
@@ -86,7 +104,7 @@ export default function ServiceDetailScreen() {
   if (!service) {
     return (
       <SafeAreaView style={styles.container} edges={['top']}>
-        <TopNav title="" />
+        <TopNav />
         <View style={styles.centerWrap}>
           <Text style={styles.errorText}>Serviço não encontrado.</Text>
         </View>
@@ -95,25 +113,20 @@ export default function ServiceDetailScreen() {
   }
 
   const priceFormatted = formatPriceLabel(service);
+  const reviewsToDisplay = reviews.length > 0 ? reviews : MOCK_REVIEWS;
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <TopNav title="" />
+      <TopNav />
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
 
         {/* ── Hero ──────────────────────────────────────────────────────── */}
         <View style={styles.heroWrap}>
-          <LinearGradient
-            colors={[cat?.color ?? Colors.primaryContainer, Colors.primaryContainer + '80', '#1a1a2e']}
-            style={styles.heroGradient}
-          >
-            <MaterialIcons
-              name={cat?.icon ?? 'home-repair-service'}
-              size={80}
-              color="rgba(255,255,255,0.25)"
-            />
-          </LinearGradient>
+          <Image
+            source={{ uri: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD9Jjk1nyObVUPrJ-VqE1Goa6Wndh6eWakL-h5m1o3qbZ73OZNV-58rLROcX7rNDKcobvWiLJnx0zB7Zg2i8cIuMda3eBje1wPPISi7BshH1kT5FTFhxTMWLGT5lb_d0nZEYCYYVUfYFXo2lbkP8As3c6MiCqlstv0d-EWIKqUQTqi0lviIxd2rVYMoZo_w6UC6iNXk61kIC50fRewkZQLHtAVFv34_CHqKtb5rMdYOE3rGlohCeUE35I8rO-031evGDEwasoqEsFA' }}
+            style={styles.heroImage}
+          />
           {/* Fade-to-dark overlay at bottom */}
           <LinearGradient
             colors={['transparent', 'rgba(0,0,0,0.55)']}
@@ -184,7 +197,7 @@ export default function ServiceDetailScreen() {
           </View>
 
           {/* Avaliações preview */}
-          {reviews.length > 0 && (
+          {reviewsToDisplay.length > 0 && (
             <View style={styles.section}>
               <View style={styles.reviewsHeader}>
                 <Text style={styles.sectionTitle}>Avaliações</Text>
@@ -203,7 +216,7 @@ export default function ServiceDetailScreen() {
                 </Pressable>
               </View>
               <View style={styles.reviewsList}>
-                {reviews.slice(0, 2).map(review => (
+                {reviewsToDisplay.slice(0, 2).map(review => (
                   <View key={review.id} style={styles.reviewCard}>
                     <View style={styles.reviewCardHeader}>
                       <View style={styles.reviewAvatar}>
@@ -224,7 +237,7 @@ export default function ServiceDetailScreen() {
                       </View>
                     </View>
                     {review.comment ? (
-                      <Text style={styles.reviewComment}>"{review.comment}"</Text>
+                      <Text style={styles.reviewComment}>{`"${review.comment}"`}</Text>
                     ) : null}
                   </View>
                 ))}
@@ -261,7 +274,7 @@ export default function ServiceDetailScreen() {
 
 // ── TopNav subcomponent ───────────────────────────────────────────────────────
 
-function TopNav({ title }: { title: string }) {
+function TopNav() {
   return (
     <View style={styles.topNav}>
       <View style={styles.topNavLeft}>
@@ -269,12 +282,12 @@ function TopNav({ title }: { title: string }) {
           style={({ pressed }) => [styles.iconBtn, pressed && { opacity: 0.6 }]}
           onPress={() => router.back()}
         >
-          <MaterialIcons name="arrow-back" size={22} color={Colors.onSurfaceVariant} />
+          <MaterialIcons name="arrow-back" size={22} color={Colors.secondary} />
         </Pressable>
-        {title ? <Text style={styles.topNavTitle}>{title}</Text> : null}
+        <Text style={styles.topNavLogo}>SevGen</Text>
       </View>
       <Pressable style={({ pressed }) => [styles.iconBtn, pressed && { opacity: 0.6 }]}>
-        <MaterialIcons name="share" size={22} color={Colors.onSurfaceVariant} />
+        <MaterialIcons name="share" size={22} color={Colors.secondary} />
       </Pressable>
     </View>
   );
@@ -298,8 +311,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.04, shadowRadius: 4, elevation: 2,
   },
   topNavLeft: { flexDirection: 'row', alignItems: 'center', gap: Spacing.base },
-  topNavTitle: {
-    fontFamily: FontFamily.headlineBold, fontSize: 17, color: Colors.onSurfaceVariant,
+  topNavLogo: {
+    fontFamily: FontFamily.headlineExtraBold,
+    fontSize: 18,
+    color: Colors.secondary,
+    letterSpacing: -0.5,
   },
   iconBtn: {
     width: 40, height: 40, borderRadius: Radius.full,
@@ -310,6 +326,11 @@ const styles = StyleSheet.create({
 
   // Hero
   heroWrap: { height: 300, position: 'relative' },
+  heroImage: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+  },
   heroGradient: { position: 'absolute', inset: 0, flex: 1, alignItems: 'center', justifyContent: 'center' } as any,
   heroOverlay: {
     position: 'absolute', bottom: 0, left: 0, right: 0, height: 120,

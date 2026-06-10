@@ -1,0 +1,63 @@
+{
+  "tabs": {
+    "home": "Home",
+    "bookings": "Agendamentos",
+    "messages": "Mensagens",
+    "account": "Conta"
+  },
+  "feed": {
+    "hello": "Olá,",
+    "headline": "Encontre o profissional perfeito",
+    "searchPlaceholder": "Buscar serviços: limpeza, reparos...",
+    "popularCategories": "Categorias Populares",
+    "viewAll": "Ver todos",
+    "featuredProfessionals": "Profissionais Próximos",
+    "availableServices": "Serviços Disponíveis",
+    "nearYou": "PRÓXIMO A VOCÊ",
+    "book": "CONTRATAR",
+    "loading": "Pesquisando...",
+    "empty": "Nenhum serviço encontrado."
+  },
+  "profile": {
+    "title": "Configurações",
+    "editProfile": "Editar Perfil",
+    "sections": {
+      "account": "Conta",
+      "preferences": "Preferências",
+      "security": "Segurança",
+      "support": "Suporte & Legal"
+    },
+    "rows": {
+      "addresses": "Endereços",
+      "payments": "Pagamentos",
+      "plans": "Assinaturas",
+      "notifications": "Notificações",
+      "language": "Idioma",
+      "darkMode": "Modo Escuro",
+      "changePassword": "Alterar Senha",
+      "privacy": "Privacidade e Segurança",
+      "biometrics": "Biometria",
+      "help": "Ajuda",
+      "terms": "Termos de Uso",
+      "about": "Sobre"
+    },
+    "languageSelect": {
+      "title": "Alterar Idioma",
+      "message": "Escolha o idioma de sua preferência:",
+      "cancel": "Cancelar"
+    },
+    "logout": "Sair da Conta",
+    "logoutAlert": {
+      "title": "Sair da conta",
+      "message": "Tem certeza que deseja sair?",
+      "cancel": "Cancelar",
+      "confirm": "Sair"
+    },
+    "version": "Versão 2.4.0",
+    "inDevelopment": "Em desenvolvimento",
+    "inDevelopmentMsg": "Esta funcionalidade estará disponível em breve."
+  },
+  "common": {
+    "viewProfile": "Ver Perfil"
+  }
+}
