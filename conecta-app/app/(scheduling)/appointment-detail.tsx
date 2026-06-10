@@ -196,8 +196,10 @@ export default function AppointmentDetailScreen() {
               <View style={styles.payMethodRow}>
                 <MaterialIcons name="credit-card" size={16} color={Colors.onSurfaceVariant} />
                 <Text style={styles.payMethodLabel}>
-                  {appointment.payment_method === 'cartao' && appointment.card_brand
-                    ? `${appointment.card_brand} •••• ${appointment.card_last_four}`
+                  {appointment.payment_method === 'cartao'
+                    ? appointment.card_brand
+                      ? `${appointment.card_brand} •••• ${appointment.card_last_four}`
+                      : 'Cartão de Crédito'
                     : 'Pix'}
                 </Text>
               </View>
@@ -250,7 +252,7 @@ const styles = StyleSheet.create({
   section: { gap: Spacing.md },
   sectionHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   sectionTitle: { fontFamily: FontFamily.headlineExtraBold, fontSize: 18, color: Colors.onSurface, letterSpacing: -0.3 },
-  sectionTag: { backgroundColor: Colors.surfaceContainer, borderRadius: Radius.xs, paddingHorizontal: Spacing.sm, paddingVertical: 2 },
+  sectionTag: { backgroundColor: Colors.surfaceContainer, borderRadius: Radius.sm, paddingHorizontal: Spacing.sm, paddingVertical: 2 },
   sectionTagText: { fontFamily: FontFamily.bodySemiBold, fontSize: 9, color: Colors.onSurfaceVariant, letterSpacing: 1.5, textTransform: 'uppercase' },
 
   detailGrid: { flexDirection: 'row', gap: Spacing.md },
