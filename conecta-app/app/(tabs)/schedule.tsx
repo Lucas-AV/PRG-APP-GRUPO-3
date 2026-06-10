@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -53,7 +53,8 @@ function generateCalendarCells(year: number, month: number): CalCell[] {
 
 export default function ScheduleScreen() {
   const { user, token } = useAuth();
-  const today = new Date();
+  const todayRef = useRef(new Date());
+  const today = todayRef.current;
   const todayStr = toDateStr(today);
   const [viewDate, setViewDate] = useState(new Date(today.getFullYear(), today.getMonth(), 1));
   const [selectedDate, setSelectedDate] = useState(todayStr);
@@ -139,7 +140,13 @@ export default function ScheduleScreen() {
                 <Pressable
                   key={idx}
                   style={[styles.calCell, isSel && styles.calCellSel]}
-                  onPress={() => cell.currentMonth && setSelectedDate(cell.dateStr)}
+                  onPress={() => {
+                    if (!cell.currentMonth) {
+                      const d = new Date(cell.dateStr + 'T12:00:00');
+                      setViewDate(new Date(d.getFullYear(), d.getMonth(), 1));
+                    }
+                    setSelectedDate(cell.dateStr);
+                  }}
                 >
                   <Text style={[styles.calDay, !cell.currentMonth && styles.calDayOut, isSel && styles.calDaySelected, isToday && !isSel && styles.calDayToday]}>
                     {cell.day}
@@ -207,7 +214,11 @@ export default function ScheduleScreen() {
           </View>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.nextScroll}>
             {nextDays.map(d => (
-              <Pressable key={d.dateStr} style={styles.nextCard} onPress={() => setSelectedDate(d.dateStr)}>
+              <Pressable key={d.dateStr} style={styles.nextCard} onPress={() => {
+                const parsed = new Date(d.dateStr + 'T12:00:00');
+                setViewDate(new Date(parsed.getFullYear(), parsed.getMonth(), 1));
+                setSelectedDate(d.dateStr);
+              }}>
                 <Text style={styles.nextLabel}>{d.label}</Text>
                 <Text style={styles.nextDay}>{d.dayNum}</Text>
                 <Text style={styles.nextCount}>{d.count > 0 ? `${d.count} Agendamento${d.count > 1 ? 's' : ''}` : 'Livre'}</Text>
