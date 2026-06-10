@@ -45,86 +45,111 @@ function parseDurationMinutes(duration) {
 // ── POST /appointments ────────────────────────────────────────────────────────
 
 router.post('/', (req, res) => {
-  if (req.user.role !== 'cliente') {
-    return res.status(403).json({ error: 'Apenas clientes podem criar agendamentos' });
+  try {
+    if (req.user.role !== 'cliente') {
+      return res.status(403).json({ error: 'Apenas clientes podem criar agendamentos' });
+    }
+
+    const { service_id, provider_id, scheduled_date, scheduled_time, payment_method, card_id } = req.body;
+
+    if (!service_id || !provider_id || !scheduled_date || !scheduled_time || !payment_method) {
+      return res.status(400).json({ error: 'service_id, provider_id, scheduled_date, scheduled_time e payment_method são obrigatórios' });
+    }
+
+    if (!['pix', 'cartao'].includes(payment_method)) {
+      return res.status(400).json({ error: 'payment_method deve ser pix ou cartao' });
+    }
+
+    if (payment_method === 'cartao') {
+      if (!card_id) return res.status(400).json({ error: 'card_id é obrigatório quando payment_method é cartao' });
+      const card = db.prepare('SELECT id FROM cards WHERE id = ? AND user_id = ?').get(card_id, req.user.id);
+      if (!card) return res.status(400).json({ error: 'Cartão não encontrado ou não pertence ao usuário' });
+    }
+
+    const service = db.prepare('SELECT * FROM services WHERE id = ? AND user_id = ?').get(service_id, provider_id);
+    if (!service) return res.status(404).json({ error: 'Serviço não encontrado' });
+
+    const conflict = db.prepare(
+      "SELECT id FROM appointments WHERE provider_id = ? AND scheduled_date = ? AND scheduled_time = ? AND status = 'confirmado'"
+    ).get(provider_id, scheduled_date, scheduled_time);
+    if (conflict) return res.status(409).json({ error: 'Este horário já foi reservado. Escolha outro.' });
+
+    const durationMinutes = parseDurationMinutes(service.duration);
+    const totalPrice = service.price || 0;
+
+    const result = db.prepare(`
+      INSERT INTO appointments
+        (client_id, provider_id, service_id, scheduled_date, scheduled_time, duration_minutes, payment_method, card_id, total_price)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).run(req.user.id, provider_id, service_id, scheduled_date, scheduled_time, durationMinutes, payment_method, payment_method === 'cartao' ? (card_id || null) : null, totalPrice);
+
+    const appt = db.prepare(APPOINTMENT_SELECT + ' WHERE a.id = ?').get(result.lastInsertRowid);
+    res.status(201).json(appt);
+  } catch (e) {
+    res.status(500).json({ error: e.message || 'Erro interno' });
   }
-
-  const { service_id, provider_id, scheduled_date, scheduled_time, payment_method, card_id } = req.body;
-
-  if (!service_id || !provider_id || !scheduled_date || !scheduled_time || !payment_method) {
-    return res.status(400).json({ error: 'service_id, provider_id, scheduled_date, scheduled_time e payment_method são obrigatórios' });
-  }
-
-  if (!['pix', 'cartao'].includes(payment_method)) {
-    return res.status(400).json({ error: 'payment_method deve ser pix ou cartao' });
-  }
-
-  if (payment_method === 'cartao') {
-    if (!card_id) return res.status(400).json({ error: 'card_id é obrigatório quando payment_method é cartao' });
-    const card = db.prepare('SELECT id FROM cards WHERE id = ? AND user_id = ?').get(card_id, req.user.id);
-    if (!card) return res.status(400).json({ error: 'Cartão não encontrado ou não pertence ao usuário' });
-  }
-
-  const service = db.prepare('SELECT * FROM services WHERE id = ? AND user_id = ?').get(service_id, provider_id);
-  if (!service) return res.status(404).json({ error: 'Serviço não encontrado' });
-
-  const conflict = db.prepare(
-    "SELECT id FROM appointments WHERE provider_id = ? AND scheduled_date = ? AND scheduled_time = ? AND status = 'confirmado'"
-  ).get(provider_id, scheduled_date, scheduled_time);
-  if (conflict) return res.status(409).json({ error: 'Este horário já foi reservado. Escolha outro.' });
-
-  const durationMinutes = parseDurationMinutes(service.duration);
-  const totalPrice = service.price || 0;
-
-  const result = db.prepare(`
-    INSERT INTO appointments
-      (client_id, provider_id, service_id, scheduled_date, scheduled_time, duration_minutes, payment_method, card_id, total_price)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `).run(req.user.id, provider_id, service_id, scheduled_date, scheduled_time, durationMinutes, payment_method, card_id || null, totalPrice);
-
-  const appt = db.prepare(APPOINTMENT_SELECT + ' WHERE a.id = ?').get(result.lastInsertRowid);
-  res.status(201).json(appt);
 });
 
 // ── GET /appointments ─────────────────────────────────────────────────────────
 
 router.get('/', (req, res) => {
-  const field = req.user.role === 'prestador' ? 'a.provider_id' : 'a.client_id';
-  const rows = db.prepare(
-    APPOINTMENT_SELECT + ` WHERE ${field} = ? ORDER BY a.scheduled_date DESC, a.scheduled_time DESC`
-  ).all(req.user.id);
-  res.json(rows);
+  try {
+    if (!['cliente', 'prestador'].includes(req.user.role)) {
+      return res.status(403).json({ error: 'Acesso negado' });
+    }
+    const field = req.user.role === 'prestador' ? 'a.provider_id' : 'a.client_id';
+    const rows = db.prepare(
+      APPOINTMENT_SELECT + ` WHERE ${field} = ? ORDER BY a.scheduled_date DESC, a.scheduled_time DESC`
+    ).all(req.user.id);
+    res.json(rows);
+  } catch (e) {
+    res.status(500).json({ error: e.message || 'Erro interno' });
+  }
 });
 
 // ── GET /appointments/:id ─────────────────────────────────────────────────────
 
 router.get('/:id', (req, res) => {
-  const appt = db.prepare(APPOINTMENT_SELECT + ' WHERE a.id = ?').get(parseInt(req.params.id));
-  if (!appt) return res.status(404).json({ error: 'Agendamento não encontrado' });
+  try {
+    const id = parseInt(req.params.id);
+    if (isNaN(id)) return res.status(400).json({ error: 'ID inválido' });
 
-  if (appt.client_id !== req.user.id && appt.provider_id !== req.user.id) {
-    return res.status(403).json({ error: 'Acesso negado' });
+    const appt = db.prepare(APPOINTMENT_SELECT + ' WHERE a.id = ?').get(id);
+    if (!appt) return res.status(404).json({ error: 'Agendamento não encontrado' });
+
+    if (appt.client_id !== req.user.id && appt.provider_id !== req.user.id) {
+      return res.status(403).json({ error: 'Acesso negado' });
+    }
+
+    res.json(appt);
+  } catch (e) {
+    res.status(500).json({ error: e.message || 'Erro interno' });
   }
-
-  res.json(appt);
 });
 
 // ── PATCH /appointments/:id/cancel ────────────────────────────────────────────
 
 router.patch('/:id/cancel', (req, res) => {
-  const appt = db.prepare('SELECT * FROM appointments WHERE id = ?').get(parseInt(req.params.id));
-  if (!appt) return res.status(404).json({ error: 'Agendamento não encontrado' });
+  try {
+    const id = parseInt(req.params.id);
+    if (isNaN(id)) return res.status(400).json({ error: 'ID inválido' });
 
-  if (appt.client_id !== req.user.id && appt.provider_id !== req.user.id) {
-    return res.status(403).json({ error: 'Acesso negado' });
+    const appt = db.prepare('SELECT * FROM appointments WHERE id = ?').get(id);
+    if (!appt) return res.status(404).json({ error: 'Agendamento não encontrado' });
+
+    if (appt.client_id !== req.user.id && appt.provider_id !== req.user.id) {
+      return res.status(403).json({ error: 'Acesso negado' });
+    }
+
+    if (appt.status !== 'confirmado') {
+      return res.status(400).json({ error: 'Apenas agendamentos confirmados podem ser cancelados' });
+    }
+
+    db.prepare("UPDATE appointments SET status = 'cancelado' WHERE id = ?").run(appt.id);
+    res.json({ message: 'Agendamento cancelado com sucesso' });
+  } catch (e) {
+    res.status(500).json({ error: e.message || 'Erro interno' });
   }
-
-  if (appt.status !== 'confirmado') {
-    return res.status(400).json({ error: 'Apenas agendamentos confirmados podem ser cancelados' });
-  }
-
-  db.prepare("UPDATE appointments SET status = 'cancelado' WHERE id = ?").run(appt.id);
-  res.json({ message: 'Agendamento cancelado com sucesso' });
 });
 
 module.exports = router;
