@@ -59,7 +59,7 @@ export default function ProviderAvailabilityScreen() {
     availabilityApi.get(user.id)
       .then(apiDays => setDays(mergeWithApi(apiDays)))
       .catch(() => {});
-  }, [user]);
+  }, [user?.id]);
 
   const updateDay = (idx: number, patch: Partial<DayConfig>) => {
     setDays(prev => prev.map((d, i) => i === idx ? { ...d, ...patch } : d));
@@ -70,10 +70,18 @@ export default function ProviderAvailabilityScreen() {
 
     for (const d of days) {
       if (d.is_active) {
+        if (!d.start_time.trim() || !d.end_time.trim()) {
+          Alert.alert('Horário inválido', `Preencha os horários de ${d.label}.`);
+          return;
+        }
         const [sh, sm] = d.start_time.split(':').map(Number);
         const [eh, em] = d.end_time.split(':').map(Number);
         if (isNaN(sh) || isNaN(sm) || isNaN(eh) || isNaN(em)) {
           Alert.alert('Horário inválido', `Verifique os horários de ${d.label}.`);
+          return;
+        }
+        if (sh > 23 || sm > 59 || eh > 23 || em > 59) {
+          Alert.alert('Horário inválido', `Horário fora do intervalo válido em ${d.label}.`);
           return;
         }
         if (sh * 60 + sm >= eh * 60 + em) {
@@ -83,12 +91,17 @@ export default function ProviderAvailabilityScreen() {
       }
     }
 
+    const normalise = (t: string) => {
+      const [h, m] = t.split(':').map(Number);
+      return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+    };
+
     setSaving(true);
     try {
       await availabilityApi.update(user.id, days.map(d => ({
         day_of_week: d.day_of_week,
-        start_time: d.start_time,
-        end_time: d.end_time,
+        start_time: d.is_active ? normalise(d.start_time) : d.start_time,
+        end_time: d.is_active ? normalise(d.end_time) : d.end_time,
         is_active: d.is_active,
       })), token);
       Alert.alert('Disponibilidade salva', 'Suas configurações foram atualizadas.');
