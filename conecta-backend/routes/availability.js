@@ -31,6 +31,9 @@ function minutesToTime(minutes) {
 
 router.get('/:providerId/availability', (req, res) => {
   const providerId = parseInt(req.params.providerId);
+  if (isNaN(providerId)) {
+    return res.status(400).json({ error: 'providerId inválido' });
+  }
   const rows = db.prepare(
     'SELECT day_of_week, start_time, end_time, is_active FROM availability WHERE provider_id = ?'
   ).all(providerId);
@@ -49,6 +52,9 @@ router.get('/:providerId/availability', (req, res) => {
 
 router.get('/:providerId/slots', (req, res) => {
   const providerId = parseInt(req.params.providerId);
+  if (isNaN(providerId)) {
+    return res.status(400).json({ error: 'providerId inválido' });
+  }
   const { date, serviceId } = req.query;
 
   if (!date || !serviceId) {
@@ -64,14 +70,18 @@ router.get('/:providerId/slots', (req, res) => {
 
   if (!avail) return res.json({ date, slots: [] });
 
-  const service = db.prepare('SELECT duration FROM services WHERE id = ?').get(parseInt(serviceId));
+  const parsedServiceId = parseInt(serviceId);
+  if (isNaN(parsedServiceId)) {
+    return res.status(400).json({ error: 'serviceId inválido' });
+  }
+  const service = db.prepare('SELECT duration FROM services WHERE id = ?').get(parsedServiceId);
   const durationMin = parseDurationMinutes(service ? service.duration : null);
 
   const startMin = timeToMinutes(avail.start_time);
   const endMin = timeToMinutes(avail.end_time);
 
   const now = new Date();
-  const todayStr = now.toISOString().split('T')[0];
+  const todayStr = now.toLocaleDateString('sv'); // ISO format, local timezone
   const nowMin = now.getHours() * 60 + now.getMinutes();
 
   const occupied = db.prepare(
@@ -97,6 +107,13 @@ router.get('/:providerId/slots', (req, res) => {
 
 router.put('/:providerId/availability', authMiddleware, (req, res) => {
   const providerId = parseInt(req.params.providerId);
+  if (isNaN(providerId)) {
+    return res.status(400).json({ error: 'providerId inválido' });
+  }
+
+  if (req.user.role !== 'prestador') {
+    return res.status(403).json({ error: 'Apenas prestadores podem alterar disponibilidade' });
+  }
 
   if (req.user.id !== providerId) {
     return res.status(403).json({ error: 'Acesso negado' });
@@ -119,6 +136,9 @@ router.put('/:providerId/availability', authMiddleware, (req, res) => {
   const transaction = db.transaction(() => {
     for (const day of days) {
       const { day_of_week, start_time, end_time, is_active } = day;
+      if (typeof day_of_week !== 'number' || day_of_week < 0 || day_of_week > 6) {
+        throw new Error(`day_of_week inválido: ${day_of_week}`);
+      }
       upsert.run(
         providerId,
         day_of_week,
@@ -129,7 +149,11 @@ router.put('/:providerId/availability', authMiddleware, (req, res) => {
     }
   });
 
-  transaction();
+  try {
+    transaction();
+  } catch (e) {
+    return res.status(400).json({ error: e.message || 'Dados inválidos' });
+  }
   res.json({ message: 'Disponibilidade atualizada com sucesso' });
 });
 
