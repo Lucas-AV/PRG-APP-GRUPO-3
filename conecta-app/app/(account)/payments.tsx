@@ -10,13 +10,13 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
 import { GradientButton } from '@/components/ui/gradient-button';
 import { TopAppBar } from '@/components/ui/top-app-bar';
 import { Colors, FontFamily, Spacing, Radius } from '@/constants/theme';
 import { useAuth } from '@/context/AuthContext';
-import { transactionsApi, Transaction, cardsApi, Card } from '@/services/api';
+import { transactionsApi, Transaction, cardsApi, Card, subscriptionsApi } from '@/services/api';
 
 
 const STATUS_LABEL: Record<string, string> = {
@@ -33,6 +33,15 @@ const STATUS_COLOR: Record<string, string> = {
 
 export default function PaymentsScreen() {
   const { user, token } = useAuth();
+  const {
+    subscribe_plan_id,
+    subscribe_plan_name,
+    subscribe_plan_price,
+  } = useLocalSearchParams<{
+    subscribe_plan_id?: string;
+    subscribe_plan_name?: string;
+    subscribe_plan_price?: string;
+  }>();
   const [recentTransactions, setRecentTransactions] = useState<Transaction[]>([]);
   const [cards, setCards] = useState<Card[]>([]);
   const [couponCode, setCouponCode] = useState('');
@@ -40,6 +49,25 @@ export default function PaymentsScreen() {
     code: 'SEVGEN20',
     description: '20% de desconto no próximo serviço',
   });
+  const [subscribing, setSubscribing] = useState(false);
+
+  const handleConfirmSubscription = async () => {
+    if (!user || !token || !subscribe_plan_id) return;
+    setSubscribing(true);
+    try {
+      const planId = parseInt(subscribe_plan_id, 10);
+      await subscriptionsApi.subscribe(user.id, planId, token);
+      Alert.alert(
+        'Assinatura ativada',
+        `Você agora tem o plano ${subscribe_plan_name}!`,
+        [{ text: 'OK', onPress: () => router.back() }],
+      );
+    } catch (e: any) {
+      Alert.alert('Erro', e.message ?? 'Não foi possível realizar a assinatura.');
+    } finally {
+      setSubscribing(false);
+    }
+  };
 
   useEffect(() => {
     if (!user || !token) return;
@@ -74,13 +102,37 @@ export default function PaymentsScreen() {
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
+        {/* Plan subscription checkout */}
+        {!!subscribe_plan_id && (
+          <View style={styles.checkoutCard}>
+            <View style={styles.checkoutHeader}>
+              <MaterialIcons name="workspace-premium" size={24} color={Colors.primary} />
+              <Text style={styles.checkoutTitle}>Confirmar Assinatura</Text>
+            </View>
+            <View style={styles.checkoutRow}>
+              <Text style={styles.checkoutPlanName}>{subscribe_plan_name}</Text>
+              <Text style={styles.checkoutPlanPrice}>
+                R$ {parseFloat(subscribe_plan_price ?? '0').toFixed(2).replace('.', ',')}/mês
+              </Text>
+            </View>
+            <Text style={styles.checkoutNote}>
+              O valor será cobrado no cartão selecionado abaixo.
+            </Text>
+            <GradientButton
+              label={subscribing ? 'Aguarde...' : 'Confirmar e Assinar'}
+              onPress={handleConfirmSubscription}
+              disabled={subscribing}
+            />
+          </View>
+        )}
+
         {/* Balance card */}
         <View style={styles.balanceCard}>
           <View style={styles.balanceInfo}>
             <Text style={styles.balanceLabel}>Saldo Conecta</Text>
             <Text style={styles.balanceAmount}>R$ 450,00</Text>
           </View>
-          <GradientButton label="Adicionar Saldo" onPress={comingSoon} style={{ alignSelf: 'stretch' }} />
+          <GradientButton label="Adicionar Saldo" onPress={() => router.push('/(account)/add-balance' as any)} style={{ alignSelf: 'stretch' }} />
         </View>
 
         {/* Saved cards */}
@@ -215,6 +267,48 @@ const styles = StyleSheet.create({
     paddingTop: Spacing.xxl,
     paddingBottom: Spacing.xxxl * 2,
     gap: Spacing.xxxl,
+  },
+  checkoutCard: {
+    backgroundColor: Colors.primaryContainer + '33',
+    borderRadius: Radius.lg,
+    padding: Spacing.xxl,
+    gap: Spacing.base,
+    borderWidth: 1,
+    borderColor: Colors.primary + '33',
+  },
+  checkoutHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    marginBottom: Spacing.xs,
+  },
+  checkoutTitle: {
+    fontFamily: FontFamily.headlineExtraBold,
+    fontSize: 18,
+    color: Colors.onSurface,
+    letterSpacing: -0.3,
+  },
+  checkoutRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  checkoutPlanName: {
+    fontFamily: FontFamily.headlineBold,
+    fontSize: 16,
+    color: Colors.onSurface,
+  },
+  checkoutPlanPrice: {
+    fontFamily: FontFamily.headlineExtraBold,
+    fontSize: 18,
+    color: Colors.primary,
+    letterSpacing: -0.5,
+  },
+  checkoutNote: {
+    fontFamily: FontFamily.bodyRegular,
+    fontSize: 12,
+    color: Colors.onSurfaceVariant,
+    marginBottom: Spacing.sm,
   },
   balanceCard: {
     backgroundColor: Colors.surfaceContainerLowest,
