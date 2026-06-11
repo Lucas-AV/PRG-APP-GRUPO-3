@@ -5,12 +5,13 @@ import {
   ScrollView,
   Pressable,
   StyleSheet,
-  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
+import Constants from 'expo-constants';
 import { Colors, FontFamily, Spacing, Radius } from '@/constants/theme';
+import { useComingSoonAlert } from '@/hooks/useComingSoonAlert';
 
 // ── Componente de Cartão Expansível (Collapsible Card) ───────────────────────
 interface ExpandableCardProps {
@@ -70,8 +71,8 @@ function ExpandableCard({ icon, title, summary, linkText, onLinkPress }: Expanda
 
 // ── Tela Sobre ───────────────────────────────────────────────────────────────
 export default function AboutScreen() {
-  const comingSoon = () =>
-    Alert.alert('Em desenvolvimento', 'Esta funcionalidade estará disponível em breve.', [{ text: 'OK' }]);
+  const comingSoon = useComingSoonAlert();
+  const appVersion = Constants.expoConfig?.version ?? '1.0.0';
 
   return (
     <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
@@ -99,7 +100,7 @@ export default function AboutScreen() {
           </View>
           <View style={styles.heroTitles}>
             <Text style={styles.heroName}>SevGen</Text>
-            <Text style={styles.heroVersion}>Versão 2.4.0</Text>
+            <Text style={styles.heroVersion}>Versão {appVersion}</Text>
           </View>
         </View>
 
@@ -292,6 +293,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: Colors.onSurfaceVariant,
     lineHeight: 22,
+    textAlign: 'justify',
   },
   linksSection: {
     gap: Spacing.md,

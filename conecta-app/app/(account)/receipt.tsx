@@ -4,37 +4,40 @@ import {
   ScrollView,
   Pressable,
   StyleSheet,
-  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
+import { useComingSoonAlert } from '@/hooks/useComingSoonAlert';
 import { MaterialIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { TopAppBar } from '@/components/ui/top-app-bar';
 import { Colors, FontFamily, GradientColors, Spacing, Radius } from '@/constants/theme';
 
-const RECEIPT = {
-  serviceName: 'Instalação de Carregador EV',
-  providerName: 'Jane Doe',
-  providerInitials: 'JD',
-  date: '24 Jan 2024, 14:30',
-  amount: 'R$ 450,00',
-  paymentMethod: 'Visa •••• 1234',
-  transactionCode: '#SV-987654321',
-  description:
-    'Instalação profissional de estação de carregamento de Nível 2. Inclui avaliação de atualização do painel e montagem.',
-  iconBg: '#eff6ff',
-  iconColor: '#2563eb',
-};
-
 export default function ReceiptScreen() {
-  const comingSoon = () =>
-    Alert.alert('Em desenvolvimento', 'Esta funcionalidade estará disponível em breve.', [{ text: 'OK' }]);
+  const {
+    serviceName = '',
+    providerName = '',
+    providerInitials = '?',
+    date = '',
+    amount = '',
+    paymentMethod = '',
+    transactionCode = '',
+    description = '',
+  } = useLocalSearchParams<{
+    serviceName?: string;
+    providerName?: string;
+    providerInitials?: string;
+    date?: string;
+    amount?: string;
+    paymentMethod?: string;
+    transactionCode?: string;
+    description?: string;
+  }>();
+
+  const comingSoon = useComingSoonAlert();
 
   const copyCode = () =>
-    Alert.alert('Copiado!', `${RECEIPT.transactionCode} copiado para a área de transferência.`, [
-      { text: 'OK' },
-    ]);
+    Alert.alert('Copiado!', `${transactionCode} copiado para a área de transferência.`, [{ text: 'OK' }]);
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -54,16 +57,16 @@ export default function ReceiptScreen() {
 
         {/* Service card */}
         <View style={styles.serviceCard}>
-          <View style={[styles.serviceIconBox, { backgroundColor: RECEIPT.iconBg }]}>
-            <MaterialIcons name="flash-on" size={28} color={RECEIPT.iconColor} />
+          <View style={styles.serviceIconBox}>
+            <MaterialIcons name="receipt-long" size={28} color={Colors.primary} />
           </View>
           <View style={styles.serviceInfo}>
-            <Text style={styles.serviceName}>{RECEIPT.serviceName}</Text>
+            <Text style={styles.serviceName}>{serviceName}</Text>
             <View style={styles.providerRow}>
               <View style={styles.providerAvatar}>
-                <Text style={styles.providerInitials}>{RECEIPT.providerInitials}</Text>
+                <Text style={styles.providerInitials}>{providerInitials}</Text>
               </View>
-              <Text style={styles.providerName}>{RECEIPT.providerName}</Text>
+              <Text style={styles.providerName}>{providerName}</Text>
             </View>
           </View>
         </View>
@@ -74,46 +77,52 @@ export default function ReceiptScreen() {
           <View style={styles.detailRow2}>
             <View style={[styles.detailCard, styles.flex1]}>
               <Text style={styles.detailLabel}>Data e Hora</Text>
-              <Text style={styles.detailValue}>{RECEIPT.date}</Text>
+              <Text style={styles.detailValue}>{date}</Text>
             </View>
             <View style={[styles.detailCard, styles.flex1]}>
               <Text style={styles.detailLabel}>Valor Total</Text>
-              <Text style={[styles.detailValue, { color: Colors.primary }]}>{RECEIPT.amount}</Text>
+              <Text style={[styles.detailValue, { color: Colors.primary }]}>{amount}</Text>
             </View>
           </View>
 
           {/* Payment method */}
-          <View style={[styles.detailCard, styles.detailRowBetween]}>
-            <View>
-              <Text style={styles.detailLabel}>Método de Pagamento</Text>
-              <View style={styles.paymentMethodRow}>
-                <MaterialIcons name="credit-card" size={16} color={Colors.onSurfaceVariant} />
-                <Text style={styles.detailValue}>{RECEIPT.paymentMethod}</Text>
+          {!!paymentMethod && (
+            <View style={[styles.detailCard, styles.detailRowBetween]}>
+              <View>
+                <Text style={styles.detailLabel}>Método de Pagamento</Text>
+                <View style={styles.paymentMethodRow}>
+                  <MaterialIcons name="credit-card" size={16} color={Colors.onSurfaceVariant} />
+                  <Text style={styles.detailValue}>{paymentMethod}</Text>
+                </View>
               </View>
+              <MaterialIcons name="verified" size={24} color={Colors.outlineVariant} />
             </View>
-            <MaterialIcons name="verified" size={24} color={Colors.outlineVariant} />
-          </View>
+          )}
 
           {/* Transaction code */}
-          <View style={[styles.detailCard, styles.detailRowBetween]}>
-            <View>
-              <Text style={styles.detailLabel}>Código da Transação</Text>
-              <Text style={[styles.detailValue, styles.mono]}>{RECEIPT.transactionCode}</Text>
+          {!!transactionCode && (
+            <View style={[styles.detailCard, styles.detailRowBetween]}>
+              <View>
+                <Text style={styles.detailLabel}>Código da Transação</Text>
+                <Text style={[styles.detailValue, styles.mono]}>{transactionCode}</Text>
+              </View>
+              <Pressable
+                style={({ pressed }) => [styles.copyBtn, pressed && { opacity: 0.6 }]}
+                onPress={copyCode}
+              >
+                <MaterialIcons name="content-copy" size={20} color={Colors.primary} />
+              </Pressable>
             </View>
-            <Pressable
-              style={({ pressed }) => [styles.copyBtn, pressed && { opacity: 0.6 }]}
-              onPress={copyCode}
-            >
-              <MaterialIcons name="content-copy" size={20} color={Colors.primary} />
-            </Pressable>
-          </View>
+          )}
         </View>
 
         {/* Service description */}
-        <View style={styles.descSection}>
-          <Text style={styles.descTitle}>Resumo dos Serviços</Text>
-          <Text style={styles.descText}>{RECEIPT.description}</Text>
-        </View>
+        {!!description && (
+          <View style={styles.descSection}>
+            <Text style={styles.descTitle}>Resumo dos Serviços</Text>
+            <Text style={styles.descText}>{description}</Text>
+          </View>
+        )}
 
         {/* Actions */}
         <View style={styles.actions}>
@@ -216,6 +225,7 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: Radius.md,
+    backgroundColor: Colors.primaryContainer,
     alignItems: 'center',
     justifyContent: 'center',
   },

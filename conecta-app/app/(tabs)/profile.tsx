@@ -14,6 +14,7 @@ import { router } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Colors, FontFamily, Spacing, Radius } from '@/constants/theme';
 import { useAuth } from '@/context/AuthContext';
+import { RoleBadge } from '@/components/ui/role-badge';
 import { useTranslation } from 'react-i18next';
 import {
   changeLanguage,
@@ -195,6 +196,7 @@ export default function ProfileScreen() {
             </View>
             <View style={styles.profileInfo}>
               <Text style={styles.profileName}>{user?.name ?? 'Usuário'}</Text>
+              <RoleBadge role={user?.role} />
               <Text style={styles.profileEmail}>{user?.email ?? ''}</Text>
               <Text style={styles.editLink}>{t('profile.editProfile')}</Text>
             </View>

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
   View,
   Text,
@@ -9,8 +9,6 @@ import {
   ActivityIndicator,
   useWindowDimensions,
   Image,
-  TextInput,
-  StatusBar,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -59,11 +57,8 @@ export default function HomeScreen() {
   const [services, setServices]           = useState<PublicService[]>([]);
   const [loading, setLoading]             = useState(true);
   const [searchText, setSearchText]       = useState(params.q ?? '');
-  const [searchFocused, setSearchFocused] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(params.category ?? null);
   const [activeFilter, setActiveFilter]   = useState<string>('todos');
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const searchRef   = useRef<TextInput>(null);
 
   // Grid tile size — 4 per row
   const HPAD = Spacing.xl * 2;
@@ -91,14 +86,6 @@ export default function HomeScreen() {
       fetchServices(nextCategory ?? undefined, nextQ || undefined);
     }
   }, [params.category, params.q, params.applied]);
-
-  const handleSearchChange = (text: string) => {
-    setSearchText(text);
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => {
-      fetchServices(selectedCategory ?? undefined, text);
-    }, 400);
-  };
 
   const handleCategoryPress = (key: string) => {
     if (key === 'Mais') return;
@@ -205,42 +192,22 @@ export default function HomeScreen() {
           </View>
         </View>
 
-        {/* Linha 2: Barra de pesquisa real (funcional) */}
-        <View style={[styles.searchContainer, searchFocused && styles.searchContainerFocused]}>
-          <MaterialIcons
-            name="search"
-            size={22}
-            color={searchFocused ? Colors.primary : Colors.outline}
-            style={styles.searchIcon}
-          />
-          <TextInput
-            ref={searchRef}
-            style={styles.searchInput}
-            placeholder={t('feed.searchPlaceholder')}
-            placeholderTextColor={Colors.outline}
-            value={searchText}
-            onChangeText={handleSearchChange}
-            onFocus={() => setSearchFocused(true)}
-            onBlur={() => setSearchFocused(false)}
-            returnKeyType="search"
-            onSubmitEditing={() =>
+        {/* Linha 2: Barra de pesquisa — navega para tela dedicada */}
+        <View style={styles.searchContainer}>
+          <Pressable
+            style={styles.searchFakeInput}
+            onPress={() =>
               router.push({
                 pathname: '/(client)/search',
                 params: { q: searchText, category: selectedCategory ?? '' },
               })
             }
-          />
-          {searchText.length > 0 && (
-            <Pressable
-              style={styles.clearBtn}
-              onPress={() => {
-                setSearchText('');
-                fetchServices(selectedCategory ?? undefined, undefined);
-              }}
-            >
-              <MaterialIcons name="close" size={18} color={Colors.outline} />
-            </Pressable>
-          )}
+          >
+            <MaterialIcons name="search" size={22} color={Colors.outline} style={styles.searchIcon} />
+            <Text style={searchText ? styles.searchInputText : styles.searchPlaceholder} numberOfLines={1}>
+              {searchText || t('feed.searchPlaceholder')}
+            </Text>
+          </Pressable>
           <Pressable
             style={[
               styles.filterBtn,
@@ -628,33 +595,25 @@ const styles = StyleSheet.create({
     paddingLeft: Spacing.base,
     paddingRight: Spacing.xs,
     paddingVertical: Spacing.xs,
-    borderWidth: 1.5,
-    borderColor: 'transparent',
   },
-  searchContainerFocused: {
-    borderColor: Colors.primary + '66',
-    backgroundColor: Colors.surface,
-    shadowColor: Colors.primary,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.12,
-    shadowRadius: 8,
-    elevation: 3,
+  searchFakeInput: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: Spacing.sm + 2,
   },
   searchIcon: { marginRight: Spacing.sm },
-  searchInput: {
+  searchPlaceholder: {
+    flex: 1,
+    fontFamily: FontFamily.bodyRegular,
+    fontSize: 14,
+    color: Colors.outline,
+  },
+  searchInputText: {
     flex: 1,
     fontFamily: FontFamily.bodyRegular,
     fontSize: 14,
     color: Colors.onSurface,
-    paddingVertical: Spacing.sm + 2,
-  },
-  clearBtn: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: Spacing.xs,
   },
   filterBtn: {
     width: 38,

@@ -16,71 +16,44 @@ import { Colors, FontFamily, GradientColors, Spacing, Radius } from '@/constants
 import { useAuth } from '@/context/AuthContext';
 import { servicesApi, Service, metricsApi, ServiceMetrics, reviewsApi, ServiceReview } from '@/services/api';
 
-type Metric = { icon: React.ComponentProps<typeof MaterialIcons>['name']; label: string; value: string; badge: string; badgeColor: string; badgeBg: string };
-type Review = { name: string; date: string; rating: number; text: string };
-type ServiceData = {
-  title: string;
-  category: string;
+type Metric = {
   icon: React.ComponentProps<typeof MaterialIcons>['name'];
-  price: string;
-  duration: string;
-  isActive: boolean;
-  description: string;
-  visibility: number;
-  metrics: Metric[];
-  weeklyData: number[];
-  reviews: Review[];
+  label: string;
+  value: string;
+  badge: string;
+  badgeColor: string;
+  badgeBg: string;
 };
 
 const DAYS = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
 const DAY_FULL = ['Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado', 'Domingo'];
 
-const MOCK: Record<string, ServiceData> = {
-  '1': {
-    title: 'Instalação de Tomadas',
-    category: 'Reformas e Manutenção',
-    icon: 'electrical-services',
-    price: 'R$ 80,00',
-    duration: '2h',
-    isActive: true,
-    description:
-      'Instalação profissional de tomadas e interruptores residenciais e comerciais. Inclui material básico, mão de obra e teste de funcionamento.',
-    visibility: 85,
-    metrics: [
-      { icon: 'trending-up', label: 'Faturamento', value: 'R$ 11.200', badge: '+12,5%', badgeColor: '#065F46', badgeBg: '#D1FAE5' },
-      { icon: 'event-available', label: 'Agendamentos', value: '124', badge: 'Total', badgeColor: Colors.onSurfaceVariant, badgeBg: Colors.surfaceContainerLow },
-      { icon: 'star', label: 'Nota Média', value: '4.9', badge: '★ Top', badgeColor: Colors.primary, badgeBg: Colors.primaryContainer },
-      { icon: 'schedule', label: 'Resp. Média', value: '1h 30m', badge: 'Rápido', badgeColor: Colors.primary, badgeBg: Colors.primaryContainer },
-    ],
-    weeklyData: [40, 60, 85, 50, 70, 30, 45],
-    reviews: [
-      { name: 'Carlos Mendes', date: '14 de Mar, 2024', rating: 5, text: 'Serviço impecável. Tomadas instaladas com precisão, sem sujeira e dentro do prazo combinado. Super recomendo!' },
-      { name: 'Ana Lima', date: '10 de Mar, 2024', rating: 5, text: 'Profissional pontual e educado. Resolveu o problema rapidinho e ainda fez uma conferência geral da instalação.' },
-    ],
-  },
-  '2': {
-    title: 'Manutenção de AC',
-    category: 'Reformas e Manutenção',
-    icon: 'ac-unit',
-    price: 'R$ 150,00',
-    duration: '3h',
-    isActive: true,
-    description:
-      'Limpeza completa e manutenção preventiva de ar-condicionado. Inclui higienização dos filtros, verificação do gás e teste de operação.',
-    visibility: 72,
-    metrics: [
-      { icon: 'trending-up', label: 'Faturamento', value: 'R$ 8.600', badge: '+8,2%', badgeColor: '#065F46', badgeBg: '#D1FAE5' },
-      { icon: 'event-available', label: 'Agendamentos', value: '86', badge: 'Total', badgeColor: Colors.onSurfaceVariant, badgeBg: Colors.surfaceContainerLow },
-      { icon: 'star', label: 'Nota Média', value: '4.7', badge: '★ Top', badgeColor: Colors.primary, badgeBg: Colors.primaryContainer },
-      { icon: 'schedule', label: 'Resp. Média', value: '2h 15m', badge: 'Rápido', badgeColor: Colors.primary, badgeBg: Colors.primaryContainer },
-    ],
-    weeklyData: [30, 45, 60, 80, 55, 40, 20],
-    reviews: [
-      { name: 'Roberto Silva', date: '05 de Mar, 2024', rating: 5, text: 'Excelente trabalho! O ar-condicionado estava horrível e após a limpeza ficou novo. Muito profissional.' },
-      { name: 'Juliana Costa', date: '28 de Fev, 2024', rating: 4, text: 'Bom serviço, atendeu no prazo e fez um bom trabalho. Recomendo.' },
-    ],
-  },
+const CATEGORY_ICONS: Record<string, React.ComponentProps<typeof MaterialIcons>['name']> = {
+  elétrica: 'electrical-services',
+  elétrico: 'electrical-services',
+  hidráulica: 'plumbing',
+  hidráulico: 'plumbing',
+  limpeza: 'cleaning-services',
+  pintura: 'format-paint',
+  jardinagem: 'grass',
+  tecnologia: 'computer',
+  reformas: 'build',
+  manutenção: 'build',
 };
+
+function getCategoryIcon(category?: string | null): React.ComponentProps<typeof MaterialIcons>['name'] {
+  if (!category) return 'miscellaneous-services';
+  const lower = category.toLowerCase();
+  for (const [key, icon] of Object.entries(CATEGORY_ICONS)) {
+    if (lower.includes(key)) return icon;
+  }
+  return 'miscellaneous-services';
+}
+
+function formatPrice(price?: number | null): string {
+  if (price == null) return '—';
+  return `R$ ${price.toFixed(2).replace('.', ',')}`;
+}
 
 function StarRow({ count }: { count: number }) {
   return (
@@ -101,11 +74,13 @@ export default function ViewServiceScreen() {
   const insets = useSafeAreaInsets();
   const { token } = useAuth();
   const { id } = useLocalSearchParams<{ id: string }>();
+
   const [service, setService] = useState<Service | null>(null);
   const [loadingService, setLoadingService] = useState(true);
   const [apiMetrics, setApiMetrics] = useState<ServiceMetrics | null>(null);
   const [apiReviews, setApiReviews] = useState<ServiceReview[] | null>(null);
 
+  // All hooks before any conditional return
   useEffect(() => {
     if (!id || !token) return;
     servicesApi.get(Number(id), token)
@@ -121,27 +96,12 @@ export default function ViewServiceScreen() {
     reviewsApi.list(serviceId).then(setApiReviews).catch(() => {});
   }, [id]);
 
-  const fallback = MOCK[id ?? '1'] ?? MOCK['1'];
-  const data = {
-    ...fallback,
-    title: service?.name ?? fallback.title,
-    category: service?.category ?? fallback.category,
-    price: service?.price != null
-      ? `R$ ${service.price.toFixed(2).replace('.', ',')}`
-      : fallback.price,
-    duration: service?.duration ?? fallback.duration,
-    isActive: service ? service.status === 'ativo' : fallback.isActive,
-    description: service?.description ?? fallback.description,
-  };
-
-  const displayedReviews: Review[] = apiReviews
-    ? apiReviews.map(r => ({
-        name: r.reviewer_name,
-        date: new Date(r.created_at).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' }),
-        rating: r.rating,
-        text: r.comment ?? '',
-      }))
-    : data.reviews;
+  useEffect(() => {
+    if (!id || !token) return;
+    const serviceId = parseInt(id, 10);
+    if (isNaN(serviceId)) return;
+    metricsApi.get(serviceId, token).then(setApiMetrics).catch(() => {});
+  }, [id, token]);
 
   if (loadingService) {
     return (
@@ -151,12 +111,30 @@ export default function ViewServiceScreen() {
     );
   }
 
-  useEffect(() => {
-    if (!id || !token) return;
-    const serviceId = parseInt(id, 10);
-    if (isNaN(serviceId)) return;
-    metricsApi.get(serviceId, token).then(setApiMetrics).catch(() => {});
-  }, [id, token]);
+  if (!service) {
+    return (
+      <SafeAreaView style={styles.container} edges={['left', 'right']}>
+        <View style={[styles.header, { paddingTop: insets.top }]}>
+          <Pressable style={styles.backBtn} onPress={() => router.back()}>
+            <MaterialIcons name="arrow-back" size={24} color={Colors.onSurface} />
+          </Pressable>
+          <Text style={styles.headerBrand}>Conecta</Text>
+          <View style={{ width: 40 }} />
+        </View>
+        <View style={styles.errorState}>
+          <MaterialIcons name="error-outline" size={48} color={Colors.outlineVariant} />
+          <Text style={styles.errorText}>Serviço não encontrado.</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  const serviceIcon = getCategoryIcon(service.category);
+  const isActive = service.status === 'ativo';
+  const weeklyData = apiMetrics?.weekly_data ?? [0, 0, 0, 0, 0, 0, 0];
+  const maxBar = 120;
+  const peakIdx = weeklyData.indexOf(Math.max(...weeklyData));
+  const hasWeeklyData = weeklyData.some(v => v > 0);
 
   const computedMetrics: Metric[] = apiMetrics
     ? [
@@ -165,11 +143,14 @@ export default function ViewServiceScreen() {
         { icon: 'star', label: 'Nota Média', value: apiMetrics.avg_rating.toFixed(1), badge: '★ Top', badgeColor: Colors.primary, badgeBg: Colors.primaryContainer },
         { icon: 'schedule', label: 'Resp. Média', value: '—', badge: 'Rápido', badgeColor: Colors.primary, badgeBg: Colors.primaryContainer },
       ]
-    : data.metrics;
+    : [];
 
-  const weeklyData = apiMetrics?.weekly_data ?? data.weeklyData;
-  const maxBar = 120;
-  const peakIdx = weeklyData.indexOf(Math.max(...weeklyData));
+  const displayedReviews = apiReviews?.map(r => ({
+    name: r.reviewer_name,
+    date: new Date(r.created_at).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' }),
+    rating: r.rating,
+    text: r.comment ?? '',
+  })) ?? [];
 
   return (
     <SafeAreaView style={styles.container} edges={['left', 'right']}>
@@ -178,7 +159,7 @@ export default function ViewServiceScreen() {
         <Pressable style={styles.backBtn} onPress={() => router.back()}>
           <MaterialIcons name="arrow-back" size={24} color={Colors.onSurface} />
         </Pressable>
-        <Text style={styles.headerBrand}>SevGen</Text>
+        <Text style={styles.headerBrand}>Conecta</Text>
         <Pressable style={styles.headerIconBtn}>
           <MaterialIcons name="notifications" size={24} color={Colors.onSurfaceVariant} />
         </Pressable>
@@ -196,17 +177,21 @@ export default function ViewServiceScreen() {
           end={{ x: 1, y: 1 }}
           style={styles.heroBanner}
         >
-          <View style={styles.heroCategoryBadge}>
-            <Text style={styles.heroCategoryText}>{data.category}</Text>
-          </View>
-          <MaterialIcons name={data.icon} size={64} color="rgba(255,255,255,0.25)" />
+          {!!service.category && (
+            <View style={styles.heroCategoryBadge}>
+              <Text style={styles.heroCategoryText}>{service.category}</Text>
+            </View>
+          )}
+          <MaterialIcons name={serviceIcon} size={64} color="rgba(255,255,255,0.25)" />
         </LinearGradient>
 
         {/* Hero info */}
         <View style={styles.heroInfo}>
           <View style={styles.heroTextWrap}>
-            <Text style={styles.heroTitle}>{data.title}</Text>
-            <Text style={styles.heroDesc} numberOfLines={2}>{data.description}</Text>
+            <Text style={styles.heroTitle}>{service.name}</Text>
+            {!!service.description && (
+              <Text style={styles.heroDesc} numberOfLines={2}>{service.description}</Text>
+            )}
           </View>
           <Pressable
             style={styles.editHeroBtn}
@@ -225,12 +210,12 @@ export default function ViewServiceScreen() {
             <Text style={styles.cardSectionTitle}>Status do Serviço</Text>
             <View style={styles.statusToggleRow}>
               <Switch
-                value={data.isActive}
+                value={isActive}
                 trackColor={{ false: Colors.outlineVariant, true: Colors.primary }}
                 thumbColor={Colors.surfaceContainerLowest}
               />
-              <Text style={[styles.statusLabel, { color: data.isActive ? Colors.primary : Colors.outline }]}>
-                {data.isActive ? 'Ativo' : 'Inativo'}
+              <Text style={[styles.statusLabel, { color: isActive ? Colors.primary : Colors.outline }]}>
+                {isActive ? 'Ativo' : 'Inativo'}
               </Text>
             </View>
           </View>
@@ -241,73 +226,73 @@ export default function ViewServiceScreen() {
                 <MaterialIcons name="payments" size={20} color={Colors.primary} />
                 <Text style={styles.infoRowLabel}>Preço base</Text>
               </View>
-              <Text style={styles.infoRowValue}>{data.price}</Text>
+              <Text style={styles.infoRowValue}>{formatPrice(service.price)}</Text>
             </View>
             <View style={styles.infoRow}>
               <View style={styles.infoRowLeft}>
                 <MaterialIcons name="schedule" size={20} color={Colors.primary} />
                 <Text style={styles.infoRowLabel}>Duração</Text>
               </View>
-              <Text style={styles.infoRowValue}>{data.duration}</Text>
-            </View>
-          </View>
-
-          {/* Visibility score */}
-          <View style={styles.visibilityCard}>
-            <Text style={styles.visibilityTitle}>Pontuação de Visibilidade</Text>
-            <Text style={styles.visibilitySubtitle}>
-              Seu serviço aparece em {data.visibility}% das buscas relevantes esta semana.
-            </Text>
-            <View style={styles.visibilityTrack}>
-              <View style={[styles.visibilityFill, { width: `${data.visibility}%` }]} />
+              <Text style={styles.infoRowValue}>{service.duration ?? '—'}</Text>
             </View>
           </View>
         </View>
 
         {/* Metrics grid */}
-        <View style={styles.metricsGrid}>
-          {computedMetrics.map((m, i) => (
-            <View key={i} style={styles.metricCard}>
-              <View style={styles.metricCardTop}>
-                <View style={styles.metricIconBox}>
-                  <MaterialIcons name={m.icon} size={20} color={Colors.primary} />
+        {computedMetrics.length > 0 && (
+          <View style={styles.metricsGrid}>
+            {computedMetrics.map((m, i) => (
+              <View key={i} style={styles.metricCard}>
+                <View style={styles.metricCardTop}>
+                  <View style={styles.metricIconBox}>
+                    <MaterialIcons name={m.icon} size={20} color={Colors.primary} />
+                  </View>
+                  <View style={[styles.metricBadge, { backgroundColor: m.badgeBg }]}>
+                    <Text style={[styles.metricBadgeText, { color: m.badgeColor }]}>{m.badge}</Text>
+                  </View>
                 </View>
-                <View style={[styles.metricBadge, { backgroundColor: m.badgeBg }]}>
-                  <Text style={[styles.metricBadgeText, { color: m.badgeColor }]}>{m.badge}</Text>
-                </View>
+                <Text style={styles.metricLabel}>{m.label}</Text>
+                <Text style={styles.metricValue}>{m.value}</Text>
               </View>
-              <Text style={styles.metricLabel}>{m.label}</Text>
-              <Text style={styles.metricValue}>{m.value}</Text>
-            </View>
-          ))}
-        </View>
+            ))}
+          </View>
+        )}
 
         {/* Reviews */}
         <View style={styles.section}>
           <View style={styles.sectionHead}>
             <Text style={styles.sectionTitle}>Avaliações Recentes</Text>
-            <Pressable>
-              <Text style={styles.sectionLink}>Ver todas</Text>
-            </Pressable>
+            {displayedReviews.length > 0 && (
+              <Pressable>
+                <Text style={styles.sectionLink}>Ver todas</Text>
+              </Pressable>
+            )}
           </View>
 
-          {displayedReviews.map((review, i) => (
-            <View key={i} style={styles.reviewCard}>
-              <View style={styles.reviewHeader}>
-                <View style={styles.reviewAuthorRow}>
-                  <View style={styles.reviewAvatar}>
-                    <MaterialIcons name="person" size={20} color={Colors.onSurfaceVariant} />
-                  </View>
-                  <View>
-                    <Text style={styles.reviewName}>{review.name}</Text>
-                    <Text style={styles.reviewDate}>{review.date}</Text>
-                  </View>
-                </View>
-                <StarRow count={review.rating} />
-              </View>
-              <Text style={styles.reviewText}>"{review.text}"</Text>
+          {displayedReviews.length === 0 ? (
+            <View style={styles.emptyCard}>
+              <MaterialIcons name="star-border" size={32} color={Colors.outlineVariant} />
+              <Text style={styles.emptyText}>Nenhuma avaliação ainda.</Text>
             </View>
-          ))}
+          ) : (
+            displayedReviews.map((review, i) => (
+              <View key={i} style={styles.reviewCard}>
+                <View style={styles.reviewHeader}>
+                  <View style={styles.reviewAuthorRow}>
+                    <View style={styles.reviewAvatar}>
+                      <MaterialIcons name="person" size={20} color={Colors.onSurfaceVariant} />
+                    </View>
+                    <View>
+                      <Text style={styles.reviewName}>{review.name}</Text>
+                      <Text style={styles.reviewDate}>{review.date}</Text>
+                    </View>
+                  </View>
+                  <StarRow count={review.rating} />
+                </View>
+                <Text style={styles.reviewText}>"{review.text}"</Text>
+              </View>
+            ))
+          )}
         </View>
 
         {/* Weekly activity chart */}
@@ -322,7 +307,7 @@ export default function ViewServiceScreen() {
                       styles.bar,
                       {
                         height: (pct / 100) * maxBar,
-                        backgroundColor: i === peakIdx ? Colors.primary : Colors.surfaceContainerHighest,
+                        backgroundColor: i === peakIdx && hasWeeklyData ? Colors.primary : Colors.surfaceContainerHighest,
                       },
                     ]}
                   />
@@ -334,10 +319,12 @@ export default function ViewServiceScreen() {
                 <Text key={d} style={styles.chartLabel}>{d}</Text>
               ))}
             </View>
-            <View style={styles.chartFooter}>
-              <Text style={styles.chartFooterLabel}>Dia mais ativo</Text>
-              <Text style={styles.chartFooterValue}>{DAY_FULL[peakIdx]}</Text>
-            </View>
+            {hasWeeklyData && (
+              <View style={styles.chartFooter}>
+                <Text style={styles.chartFooterLabel}>Dia mais ativo</Text>
+                <Text style={styles.chartFooterValue}>{DAY_FULL[peakIdx]}</Text>
+              </View>
+            )}
           </View>
         </View>
       </ScrollView>
@@ -382,6 +369,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 
+  errorState: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: Spacing.md,
+  },
+  errorText: {
+    fontFamily: FontFamily.bodyRegular,
+    fontSize: 14,
+    color: Colors.onSurfaceVariant,
+  },
+
   scroll: { flex: 1 },
   scrollContent: {
     gap: Spacing.xxl,
@@ -411,7 +410,6 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     textTransform: 'uppercase',
   },
-
   heroInfo: {
     paddingHorizontal: Spacing.xl,
     flexDirection: 'row',
@@ -476,7 +474,6 @@ const styles = StyleSheet.create({
     color: Colors.onSurface,
     letterSpacing: -0.3,
   },
-
   statusRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -491,7 +488,6 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.headlineBold,
     fontSize: 13,
   },
-
   infoRows: { gap: Spacing.sm },
   infoRow: {
     flexDirection: 'row',
@@ -516,37 +512,6 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.headlineBold,
     fontSize: 14,
     color: Colors.onSurface,
-  },
-
-  visibilityCard: {
-    backgroundColor: Colors.primaryContainer,
-    borderRadius: Radius.md,
-    padding: Spacing.xxl,
-    gap: Spacing.sm,
-  },
-  visibilityTitle: {
-    fontFamily: FontFamily.headlineBold,
-    fontSize: 14,
-    color: Colors.onPrimaryContainer,
-  },
-  visibilitySubtitle: {
-    fontFamily: FontFamily.bodyRegular,
-    fontSize: 12,
-    color: Colors.onPrimaryContainer,
-    opacity: 0.75,
-    lineHeight: 18,
-  },
-  visibilityTrack: {
-    height: 8,
-    borderRadius: Radius.full,
-    backgroundColor: 'rgba(255,255,255,0.4)',
-    overflow: 'hidden',
-    marginTop: Spacing.xs,
-  },
-  visibilityFill: {
-    height: '100%',
-    backgroundColor: Colors.primary,
-    borderRadius: Radius.full,
   },
 
   // Metrics
@@ -626,6 +591,21 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.headlineBold,
     fontSize: 13,
     color: Colors.primary,
+  },
+
+  // Empty state
+  emptyCard: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: Spacing.sm,
+    paddingVertical: Spacing.xxxl,
+    backgroundColor: Colors.surfaceContainerLowest,
+    borderRadius: Radius.xl,
+  },
+  emptyText: {
+    fontFamily: FontFamily.bodyRegular,
+    fontSize: 13,
+    color: Colors.onSurfaceVariant,
   },
 
   // Review card

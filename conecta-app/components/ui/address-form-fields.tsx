@@ -47,7 +47,10 @@ export function AddressFormFields({
     onChange({ cep: formatted });
     const digits = formatted.replace(/\D/g, '');
     if (digits.length === 8) fetchViaCep(digits);
-    else setAutofilledFields({});
+    else {
+      setAutofilledFields({});
+      onChange({ street: '', neighborhood: '', city: '', state: '' });
+    }
   };
 
   const fetchViaCep = async (digits: string) => {
