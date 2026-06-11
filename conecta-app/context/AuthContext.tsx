@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import * as SecureStore from 'expo-secure-store';
-import { authApi, User } from '@/services/api';
+import { authApi, User, GoogleNewUserResponse } from '@/services/api';
 
 interface AuthContextType {
   user: User | null;
@@ -14,6 +14,7 @@ interface AuthContextType {
     password: string;
     role: string;
   }) => Promise<User>;
+  loginWithGoogle: (access_token: string, role?: string) => Promise<User | GoogleNewUserResponse>;
   logout: () => Promise<void>;
   updateUser: (updated: User) => Promise<void>;
   markOnboardingComplete: () => Promise<void>;
@@ -54,6 +55,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return res.user;
   };
 
+  const loginWithGoogle = async (
+    access_token: string,
+    role?: string
+  ): Promise<User | GoogleNewUserResponse> => {
+    const result = await authApi.googleAuth({ access_token, role });
+    if ('isNewUser' in result) return result;
+    await persist(result.token, result.user);
+    return result.user;
+  };
+
   const register = async (data: {
     name: string;
     email: string;
@@ -84,7 +95,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, isLoading, login, register, logout, updateUser, markOnboardingComplete }}>
+    <AuthContext.Provider value={{ user, token, isLoading, login, loginWithGoogle, register, logout, updateUser, markOnboardingComplete }}>
       {children}
     </AuthContext.Provider>
   );
