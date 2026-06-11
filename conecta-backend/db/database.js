@@ -154,4 +154,10 @@ if (plansCount.n === 0) {
   seedPlans();
 }
 
+// Migration: adiciona google_id se ainda não existir
+const userCols = db.pragma('table_info(users)').map(c => c.name);
+if (!userCols.includes('google_id')) {
+  db.exec('ALTER TABLE users ADD COLUMN google_id TEXT');
+}
+
 module.exports = db;
