@@ -17,6 +17,7 @@ import { TopAppBar } from '@/components/ui/top-app-bar';
 import { Colors, FontFamily, Spacing, Radius } from '@/constants/theme';
 import { useAuth } from '@/context/AuthContext';
 import { transactionsApi, Transaction, cardsApi, Card, subscriptionsApi } from '@/services/api';
+import { useComingSoonAlert } from '@/hooks/useComingSoonAlert';
 
 
 const STATUS_LABEL: Record<string, string> = {
@@ -45,11 +46,9 @@ export default function PaymentsScreen() {
   const [recentTransactions, setRecentTransactions] = useState<Transaction[]>([]);
   const [cards, setCards] = useState<Card[]>([]);
   const [couponCode, setCouponCode] = useState('');
-  const [activeCoupon, setActiveCoupon] = useState<{ code: string; description: string } | null>({
-    code: 'SEVGEN20',
-    description: '20% de desconto no próximo serviço',
-  });
+  const [activeCoupon, setActiveCoupon] = useState<{ code: string; description: string } | null>(null);
   const [subscribing, setSubscribing] = useState(false);
+  const [balance, setBalance] = useState<number | null>(null);
 
   const handleConfirmSubscription = async () => {
     if (!user || !token || !subscribe_plan_id) return;
@@ -76,6 +75,13 @@ export default function PaymentsScreen() {
       .catch(() => setRecentTransactions([]));
   }, [user, token]);
 
+  useEffect(() => {
+    if (!user || !token) return;
+    subscriptionsApi.get(user.id, token)
+      .then(sub => setBalance(sub.is_subscribed ? sub.plan_price : 0))
+      .catch(() => setBalance(0));
+  }, [user, token]);
+
   const loadCards = () => {
     if (!user || !token) return;
     cardsApi.list(user.id, token)
@@ -85,8 +91,7 @@ export default function PaymentsScreen() {
 
   useEffect(() => { loadCards(); }, [user, token]);
 
-  const comingSoon = () =>
-    Alert.alert('Em desenvolvimento', 'Esta funcionalidade estará disponível em breve.', [{ text: 'OK' }]);
+  const comingSoon = useComingSoonAlert();
 
   const handleApplyCoupon = () => {
     if (!couponCode.trim()) return;
@@ -130,7 +135,11 @@ export default function PaymentsScreen() {
         <View style={styles.balanceCard}>
           <View style={styles.balanceInfo}>
             <Text style={styles.balanceLabel}>Saldo Conecta</Text>
-            <Text style={styles.balanceAmount}>R$ 450,00</Text>
+            <Text style={styles.balanceAmount}>
+              {balance == null
+                ? '—'
+                : `R$ ${balance.toFixed(2).replace('.', ',')}`}
+            </Text>
           </View>
           <GradientButton label="Adicionar Saldo" onPress={() => router.push('/(account)/add-balance' as any)} style={{ alignSelf: 'stretch' }} />
         </View>

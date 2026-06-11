@@ -4,9 +4,9 @@ import {
   ScrollView,
   Pressable,
   StyleSheet,
-  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { router } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
 import { GradientButton } from '@/components/ui/gradient-button';
 import { TopAppBar } from '@/components/ui/top-app-bar';
@@ -185,7 +185,7 @@ function DarkCtaCard() {
       </View>
       <Pressable
         style={({ pressed }) => [cta.btn, pressed && { opacity: 0.85 }]}
-        onPress={() => Alert.alert('Suporte', 'Redirecionando para o suporte...')}
+        onPress={() => router.push('/(account)/support')}
       >
         <Text style={cta.btnLabel}>Falar com Suporte</Text>
       </Pressable>

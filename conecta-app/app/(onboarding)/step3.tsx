@@ -34,14 +34,27 @@ export default function Step3Screen() {
   const { role } = useLocalSearchParams<{ role: string }>();
   const insets = useSafeAreaInsets();
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
-  const [jobTitle, setJobTitle] = useState('');
-  const [jobDesc, setJobDesc] = useState('');
+  const [experiences, setExperiences] = useState([{ jobTitle: '', jobDesc: '' }]);
   const [bio, setBio] = useState('');
 
   const toggleService = (key: string) => {
     setSelectedServices((prev) =>
       prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]
     );
+  };
+
+  const addExperience = () => {
+    setExperiences((prev) => [...prev, { jobTitle: '', jobDesc: '' }]);
+  };
+
+  const updateExperience = (index: number, field: 'jobTitle' | 'jobDesc', value: string) => {
+    setExperiences((prev) =>
+      prev.map((exp, i) => (i === index ? { ...exp, [field]: value } : exp))
+    );
+  };
+
+  const removeExperience = (index: number) => {
+    setExperiences((prev) => prev.filter((_, i) => i !== index));
   };
 
   return (
@@ -95,47 +108,56 @@ export default function Step3Screen() {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Experiência Profissional</Text>
-            <Pressable style={styles.addBtn}>
+            <Pressable style={styles.addBtn} onPress={addExperience}>
               <MaterialIcons name="add-circle" size={16} color={Colors.primary} />
               <Text style={styles.addBtnLabel}>ADICIONAR</Text>
             </Pressable>
           </View>
 
-          {/* Experience card */}
-          <View style={styles.expCard}>
-            <View style={styles.expCardAccent} />
-            <View style={styles.expCardContent}>
-              <Text style={styles.fieldLabel}>CARGO / FUNÇÃO</Text>
-              <TextInput
-                style={styles.fieldInput}
-                placeholder="Ex: Eletricista Residencial Sênior"
-                placeholderTextColor={Colors.outline}
-                value={jobTitle}
-                onChangeText={setJobTitle}
-              />
-              <Text style={[styles.fieldLabel, { marginTop: Spacing.base }]}>
-                DESCRIÇÃO DO TRABALHO
-              </Text>
-              <TextInput
-                style={[styles.fieldInput, styles.textarea]}
-                placeholder="Descreva suas atividades e especializações..."
-                placeholderTextColor={Colors.outline}
-                value={jobDesc}
-                onChangeText={setJobDesc}
-                multiline
-                numberOfLines={3}
-                textAlignVertical="top"
-              />
-              <Pressable style={styles.uploadCertBtn}>
-                <MaterialIcons name="upload-file" size={18} color={Colors.onSecondaryContainer} />
-                <Text style={styles.uploadCertLabel}>Enviar Certificado</Text>
-                <Text style={styles.uploadHint}>Opcional: PDF, PNG até 5MB</Text>
-              </Pressable>
+          {experiences.map((exp, index) => (
+            <View key={index} style={styles.expCard}>
+              <View style={styles.expCardAccent} />
+              <View style={styles.expCardContent}>
+                {experiences.length > 1 && (
+                  <Pressable
+                    style={styles.removeExpBtn}
+                    onPress={() => removeExperience(index)}
+                  >
+                    <MaterialIcons name="close" size={16} color={Colors.outline} />
+                  </Pressable>
+                )}
+                <Text style={styles.fieldLabel}>CARGO / FUNÇÃO</Text>
+                <TextInput
+                  style={styles.fieldInput}
+                  placeholder="Ex: Eletricista Residencial Sênior"
+                  placeholderTextColor={Colors.outline}
+                  value={exp.jobTitle}
+                  onChangeText={(v) => updateExperience(index, 'jobTitle', v)}
+                />
+                <Text style={[styles.fieldLabel, { marginTop: Spacing.base }]}>
+                  DESCRIÇÃO DO TRABALHO
+                </Text>
+                <TextInput
+                  style={[styles.fieldInput, styles.textarea]}
+                  placeholder="Descreva suas atividades e especializações..."
+                  placeholderTextColor={Colors.outline}
+                  value={exp.jobDesc}
+                  onChangeText={(v) => updateExperience(index, 'jobDesc', v)}
+                  multiline
+                  numberOfLines={3}
+                  textAlignVertical="top"
+                />
+                <Pressable style={styles.uploadCertBtn}>
+                  <MaterialIcons name="upload-file" size={18} color={Colors.onSecondaryContainer} />
+                  <Text style={styles.uploadCertLabel}>Enviar Certificado</Text>
+                  <Text style={styles.uploadHint}>Opcional: PDF, PNG até 5MB</Text>
+                </Pressable>
+              </View>
             </View>
-          </View>
+          ))}
 
           {/* Add more placeholder */}
-          <Pressable style={styles.addMoreCard}>
+          <Pressable style={styles.addMoreCard} onPress={addExperience}>
             <View style={styles.addMoreIcon}>
               <MaterialIcons name="work-history" size={24} color={Colors.outline} />
             </View>
@@ -264,6 +286,12 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: Colors.primary,
     letterSpacing: 1,
+  },
+
+  removeExpBtn: {
+    alignSelf: 'flex-end',
+    padding: 2,
+    marginBottom: Spacing.xs,
   },
 
   // Experience card

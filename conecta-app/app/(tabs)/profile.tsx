@@ -14,6 +14,7 @@ import { router } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Colors, FontFamily, Spacing, Radius } from '@/constants/theme';
 import { useAuth } from '@/context/AuthContext';
+import { RoleBadge } from '@/components/ui/role-badge';
 import { useTranslation } from 'react-i18next';
 import {
   changeLanguage,
@@ -195,6 +196,7 @@ export default function ProfileScreen() {
             </View>
             <View style={styles.profileInfo}>
               <Text style={styles.profileName}>{user?.name ?? 'Usuário'}</Text>
+              <RoleBadge role={user?.role} />
               <Text style={styles.profileEmail}>{user?.email ?? ''}</Text>
               <Text style={styles.editLink}>{t('profile.editProfile')}</Text>
             </View>
@@ -206,7 +208,22 @@ export default function ProfileScreen() {
         <SettingsSection title={t('profile.sections.account')}>
           <SettingsRow icon="location-on" label={t('profile.rows.addresses')} accent onPress={() => router.push('/(account)/addresses' as any)} />
           <SettingsRow icon="payment" label={t('profile.rows.payments')} accent onPress={() => router.push('/(account)/payments' as any)} />
-          <SettingsRow icon="loyalty" label={t('profile.rows.plans')} accent isLast onPress={() => router.push('/(account)/plans' as any)} />
+          <SettingsRow
+            icon="loyalty"
+            label={t('profile.rows.plans')}
+            accent
+            isLast={user?.role !== 'prestador'}
+            onPress={() => router.push('/(account)/plans' as any)}
+          />
+          {user?.role === 'prestador' && (
+            <SettingsRow
+              icon="event-available"
+              label="Minha Disponibilidade"
+              accent
+              isLast
+              onPress={() => router.push('/(scheduling)/provider-availability' as any)}
+            />
+          )}
         </SettingsSection>
 
         {/* Preferências */}

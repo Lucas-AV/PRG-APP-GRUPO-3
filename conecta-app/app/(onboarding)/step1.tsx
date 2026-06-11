@@ -15,18 +15,33 @@ import { TopAppBar } from '@/components/ui/top-app-bar';
 import { ProgressBar } from '@/components/ui/progress-bar';
 import { GradientButton } from '@/components/ui/gradient-button';
 import { Colors, FontFamily, Spacing, Radius } from '@/constants/theme';
+import { useAuth } from '@/context/AuthContext';
+import { usersApi } from '@/services/api';
 
 export default function Step1Screen() {
   const { role } = useLocalSearchParams<{ role: string }>();
   const insets = useSafeAreaInsets();
-  const [name, setName] = useState('');
+  const { user, token, updateUser } = useAuth();
+  const [name, setName] = useState(user?.name ?? '');
   const [specialty, setSpecialty] = useState('');
+  const [saving, setSaving] = useState(false);
 
   const isPrestador = role === 'prestador';
   const progress = isPrestador ? 1 / 5 : 1 / 3;
   const badge = isPrestador ? 'Passo 1 de 5' : 'Passo 1 de 3';
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
+    if (user && token && name.trim() && name.trim() !== user.name) {
+      setSaving(true);
+      try {
+        const updated = await usersApi.update(user.id, { name: name.trim() }, token);
+        await updateUser(updated);
+      } catch {
+        // silently continue — user can update later in edit-profile
+      } finally {
+        setSaving(false);
+      }
+    }
     router.push({ pathname: '/(onboarding)/step2', params: { role } });
   };
 
@@ -113,8 +128,9 @@ export default function Step1Screen() {
           <Text style={styles.draftLabel}>Salvar</Text>
         </Pressable>
         <GradientButton
-          label="Continuar →"
+          label={saving ? 'Salvando…' : 'Continuar →'}
           onPress={handleContinue}
+          disabled={saving}
           style={styles.continueBtn}
         />
       </View>

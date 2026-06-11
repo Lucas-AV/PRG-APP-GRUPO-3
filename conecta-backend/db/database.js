@@ -93,6 +93,31 @@ db.exec(`
     expires_at DATETIME,
     UNIQUE(user_id)
   );
+
+  CREATE TABLE IF NOT EXISTS availability (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    provider_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    day_of_week INTEGER NOT NULL CHECK(day_of_week BETWEEN 0 AND 6),
+    start_time TEXT NOT NULL,
+    end_time TEXT NOT NULL,
+    is_active INTEGER NOT NULL DEFAULT 1,
+    UNIQUE(provider_id, day_of_week)
+  );
+
+  CREATE TABLE IF NOT EXISTS appointments (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    client_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    provider_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    service_id INTEGER NOT NULL REFERENCES services(id) ON DELETE CASCADE,
+    scheduled_date TEXT NOT NULL,
+    scheduled_time TEXT NOT NULL,
+    duration_minutes INTEGER NOT NULL,
+    status TEXT NOT NULL DEFAULT 'confirmado' CHECK(status IN ('confirmado','cancelado','concluido')),
+    payment_method TEXT NOT NULL CHECK(payment_method IN ('pix','cartao')),
+    card_id INTEGER REFERENCES cards(id) ON DELETE SET NULL,
+    total_price REAL NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
 `);
 
 const plansCount = db.prepare('SELECT COUNT(*) as n FROM plans').get();
@@ -127,6 +152,12 @@ if (plansCount.n === 0) {
     ]));
   });
   seedPlans();
+}
+
+// Migration: adiciona google_id se ainda não existir
+const userCols = db.pragma('table_info(users)').map(c => c.name);
+if (!userCols.includes('google_id')) {
+  db.exec('ALTER TABLE users ADD COLUMN google_id TEXT');
 }
 
 module.exports = db;

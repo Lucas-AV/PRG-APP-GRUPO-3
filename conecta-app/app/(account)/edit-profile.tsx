@@ -16,6 +16,7 @@ import { InputField } from '@/components/ui/input-field';
 import { TopAppBar } from '@/components/ui/top-app-bar';
 import { Colors, FontFamily, Spacing, Radius } from '@/constants/theme';
 import { useAuth } from '@/context/AuthContext';
+import { RoleBadge } from '@/components/ui/role-badge';
 import { usersApi } from '@/services/api';
 
 export default function EditProfileScreen() {
@@ -67,6 +68,7 @@ export default function EditProfileScreen() {
             </Pressable>
           </View>
           <Text style={styles.avatarHint}>Toque para alterar a foto</Text>
+          <RoleBadge role={user?.role} />
         </View>
 
         {/* Form */}

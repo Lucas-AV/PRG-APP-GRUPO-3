@@ -6,20 +6,19 @@ import {
   Pressable,
   StyleSheet,
   Switch,
-  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
 import { TopAppBar } from '@/components/ui/top-app-bar';
 import { Colors, FontFamily, Spacing, Radius } from '@/constants/theme';
+import { useComingSoonAlert } from '@/hooks/useComingSoonAlert';
 
 export default function PrivacySecurityScreen() {
   const [biometrics, setBiometrics] = useState(true);
   const [publicProfile, setPublicProfile] = useState(false);
 
-  const comingSoon = () =>
-    Alert.alert('Em desenvolvimento', 'Esta funcionalidade estará disponível em breve.', [{ text: 'OK' }]);
+  const comingSoon = useComingSoonAlert();
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>

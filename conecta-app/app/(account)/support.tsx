@@ -1,9 +1,11 @@
+import { useState } from 'react';
 import {
   View,
   Text,
   ScrollView,
   Pressable,
   StyleSheet,
+  Linking,
   Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -12,22 +14,134 @@ import { GradientButton } from '@/components/ui/gradient-button';
 import { TopAppBar } from '@/components/ui/top-app-bar';
 import { Colors, FontFamily, Spacing, Radius } from '@/constants/theme';
 
-const FAQ_ITEMS = [
-  { icon: 'payment' as const, label: 'Pagamentos e Reembolsos' },
-  { icon: 'calendar-today' as const, label: 'Agendamentos e Cancelamentos' },
-  { icon: 'verified-user' as const, label: 'Segurança e Privacidade' },
-  { icon: 'help' as const, label: 'Como usar o Conecta' },
+// ── Dados ─────────────────────────────────────────────────────────────────────
+
+const FAQ_ITEMS: {
+  icon: keyof typeof MaterialIcons.glyphMap;
+  label: string;
+  content: string;
+}[] = [
+  {
+    icon: 'payment',
+    label: 'Pagamentos e Reembolsos',
+    content:
+      'Os pagamentos são processados de forma segura no momento do agendamento. Aceitamos cartões de crédito, débito e Pix. Em caso de cancelamento pelo prestador ou falha na execução do serviço, o reembolso é processado automaticamente em até 5 dias úteis para o mesmo método de pagamento utilizado. Cancelamentos feitos pelo cliente com menos de 24h de antecedência podem estar sujeitos à cobrança de taxa conforme política do prestador.',
+  },
+  {
+    icon: 'calendar-today',
+    label: 'Agendamentos e Cancelamentos',
+    content:
+      'Para agendar um serviço, acesse o perfil do prestador, escolha a data e horário disponíveis e confirme o pagamento. Você pode cancelar ou reagendar diretamente na tela de Agendamentos até 24h antes do horário marcado sem custos adicionais. Cancelamentos com menos de 24h podem gerar cobrança de taxa de conveniência. O prestador também pode propor novos horários caso precise reagendar.',
+  },
+  {
+    icon: 'verified-user',
+    label: 'Segurança e Privacidade',
+    content:
+      'Todos os prestadores cadastrados passam por verificação de identidade e validação de documentos antes de aparecerem na plataforma. Seus dados pessoais e financeiros são criptografados e nunca são compartilhados com terceiros sem sua autorização. Você pode solicitar a exclusão da sua conta e de todos os seus dados a qualquer momento nas configurações de privacidade.',
+  },
+  {
+    icon: 'help',
+    label: 'Como usar o Conecta',
+    content:
+      'Ao entrar no app, explore os serviços disponíveis na tela inicial ou use a busca para encontrar um prestador específico. Toque em um serviço para ver detalhes, avaliações e disponibilidade. Clique em "Agendar agora" para iniciar o fluxo de reserva. Após a conclusão do serviço, você será convidado a deixar uma avaliação — isso ajuda a manter a qualidade da plataforma.',
+  },
 ];
 
-const CONTACTS = [
-  { icon: 'chat' as const, label: 'WhatsApp' },
-  { icon: 'mail' as const, label: 'E-mail' },
-  { icon: 'call' as const, label: 'Ligar' },
+const CONTACTS: {
+  icon: keyof typeof MaterialIcons.glyphMap;
+  label: string;
+  action: () => void;
+}[] = [
+  {
+    icon: 'chat',
+    label: 'WhatsApp',
+    action: () =>
+      Linking.openURL('https://wa.me/5511999999999').catch(() =>
+        Alert.alert('Erro', 'Não foi possível abrir o WhatsApp.')
+      ),
+  },
+  {
+    icon: 'mail',
+    label: 'E-mail',
+    action: () =>
+      Linking.openURL('mailto:suporte@conectaapp.com.br').catch(() =>
+        Alert.alert('Erro', 'Não foi possível abrir o e-mail.')
+      ),
+  },
+  {
+    icon: 'call',
+    label: 'Ligar',
+    action: () =>
+      Linking.openURL('tel:+5511999999999').catch(() =>
+        Alert.alert('Erro', 'Não foi possível iniciar a ligação.')
+      ),
+  },
 ];
+
+// ── Expansion Panel ───────────────────────────────────────────────────────────
+
+interface FaqPanelProps {
+  icon: keyof typeof MaterialIcons.glyphMap;
+  label: string;
+  content: string;
+  expanded: boolean;
+  onToggle: () => void;
+}
+
+function FaqPanel({ icon, label, content, expanded, onToggle }: FaqPanelProps) {
+  return (
+    <Pressable
+      style={({ pressed }) => [
+        styles.panel,
+        pressed && !expanded && styles.panelPressed,
+        expanded && styles.panelExpanded,
+      ]}
+      onPress={onToggle}
+    >
+      <View style={styles.panelHeader}>
+        <View style={styles.panelLeft}>
+          <View style={styles.panelIconWrap}>
+            <MaterialIcons name={icon} size={20} color={Colors.onSurfaceVariant} />
+          </View>
+          <Text style={styles.panelLabel}>{label}</Text>
+        </View>
+        <MaterialIcons
+          name="chevron-right"
+          size={20}
+          color={Colors.outlineVariant}
+          style={{ transform: [{ rotate: expanded ? '90deg' : '0deg' }] }}
+        />
+      </View>
+      {expanded && (
+        <View style={styles.panelBody}>
+          <Text style={styles.panelContent}>{content}</Text>
+        </View>
+      )}
+    </Pressable>
+  );
+}
+
+// ── Tela ──────────────────────────────────────────────────────────────────────
 
 export default function SupportScreen() {
-  const comingSoon = () =>
-    Alert.alert('Em desenvolvimento', 'Esta funcionalidade estará disponível em breve.', [{ text: 'OK' }]);
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+  const [allExpanded, setAllExpanded] = useState(false);
+
+  const handleToggle = (idx: number) => {
+    if (allExpanded) {
+      setAllExpanded(false);
+      setExpandedIndex(expandedIndex === idx ? null : idx);
+    } else {
+      setExpandedIndex(expandedIndex === idx ? null : idx);
+    }
+  };
+
+  const handleToggleAll = () => {
+    setAllExpanded(prev => !prev);
+    setExpandedIndex(null);
+  };
+
+  const isPanelExpanded = (idx: number) => allExpanded || expandedIndex === idx;
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -51,7 +165,11 @@ export default function SupportScreen() {
               <MaterialIcons name="support-agent" size={32} color={Colors.primary} />
             </View>
           </View>
-          <GradientButton label="Iniciar Chat" onPress={comingSoon} style={{ marginTop: Spacing.xl }} />
+          <GradientButton
+            label="Iniciar Chat"
+            onPress={CONTACTS[0].action}
+            style={{ marginTop: Spacing.xl }}
+          />
         </View>
 
         {/* Fale conosco */}
@@ -62,7 +180,7 @@ export default function SupportScreen() {
               <Pressable
                 key={c.label}
                 style={({ pressed }) => [styles.contactCard, pressed && { opacity: 0.85 }]}
-                onPress={comingSoon}
+                onPress={c.action}
               >
                 <View style={styles.contactIconWrap}>
                   <MaterialIcons name={c.icon} size={24} color={Colors.primary} />
@@ -77,23 +195,20 @@ export default function SupportScreen() {
         <View style={styles.section}>
           <View style={styles.faqHeader}>
             <Text style={styles.sectionTitle}>Perguntas Frequentes</Text>
-            <Text style={styles.seeAll}>VER TUDO</Text>
+            <Pressable onPress={handleToggleAll} hitSlop={8}>
+              <Text style={styles.seeAll}>{allExpanded ? 'RECOLHER' : 'VER TUDO'}</Text>
+            </Pressable>
           </View>
-          <View style={styles.faqCard}>
+          <View style={styles.panelList}>
             {FAQ_ITEMS.map((item, idx) => (
-              <View key={item.label}>
-                <Pressable
-                  style={({ pressed }) => [styles.faqRow, pressed && { backgroundColor: Colors.surfaceContainerLow }]}
-                  onPress={comingSoon}
-                >
-                  <View style={styles.faqIconWrap}>
-                    <MaterialIcons name={item.icon} size={20} color={Colors.onSurfaceVariant} />
-                  </View>
-                  <Text style={styles.faqLabel}>{item.label}</Text>
-                  <MaterialIcons name="chevron-right" size={20} color={Colors.outlineVariant} />
-                </Pressable>
-                {idx < FAQ_ITEMS.length - 1 && <View style={styles.faqDivider} />}
-              </View>
+              <FaqPanel
+                key={item.label}
+                icon={item.icon}
+                label={item.label}
+                content={item.content}
+                expanded={isPanelExpanded(idx)}
+                onToggle={() => handleToggle(idx)}
+              />
             ))}
           </View>
         </View>
@@ -101,6 +216,8 @@ export default function SupportScreen() {
     </SafeAreaView>
   );
 }
+
+// ── Styles ────────────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.surface },
@@ -110,6 +227,8 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing.xxxl * 2,
     gap: Spacing.xxxl,
   },
+
+  // Status card
   statusCard: {
     backgroundColor: Colors.surfaceContainerLowest,
     borderRadius: Radius.lg,
@@ -148,6 +267,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+
+  // Section
   section: { gap: Spacing.base },
   sectionTitle: {
     fontFamily: FontFamily.headlineExtraBold,
@@ -155,6 +276,8 @@ const styles = StyleSheet.create({
     color: Colors.onSurface,
     letterSpacing: -0.4,
   },
+
+  // Contacts
   contactGrid: { flexDirection: 'row', gap: Spacing.md },
   contactCard: {
     flex: 1,
@@ -184,6 +307,8 @@ const styles = StyleSheet.create({
     letterSpacing: 0.8,
     textTransform: 'uppercase',
   },
+
+  // FAQ header
   faqHeader: { flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between' },
   seeAll: {
     fontFamily: FontFamily.bodySemiBold,
@@ -191,37 +316,59 @@ const styles = StyleSheet.create({
     color: Colors.primary,
     letterSpacing: 1.5,
   },
-  faqCard: {
+
+  // Expansion panels
+  panelList: { gap: Spacing.sm },
+  panel: {
     backgroundColor: Colors.surfaceContainerLowest,
     borderRadius: Radius.md,
-    overflow: 'hidden',
+    padding: Spacing.base,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.02,
     shadowRadius: 8,
     elevation: 1,
   },
-  faqRow: {
+  panelPressed: {
+    backgroundColor: Colors.surfaceContainerLow,
+  },
+  panelExpanded: {
+    backgroundColor: Colors.surfaceContainerLowest,
+  },
+  panelHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  panelLeft: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.base,
-    paddingVertical: Spacing.xl,
-    paddingHorizontal: Spacing.xl,
-  },
-  faqIconWrap: {
-    padding: Spacing.sm,
-    borderRadius: Radius.sm,
-    backgroundColor: Colors.surfaceContainer,
-  },
-  faqLabel: {
     flex: 1,
-    fontFamily: FontFamily.bodyMedium,
-    fontSize: 14,
-    color: Colors.onSurface,
   },
-  faqDivider: {
-    height: 1,
+  panelIconWrap: {
+    width: 40,
+    height: 40,
+    borderRadius: Radius.full,
     backgroundColor: Colors.surfaceContainer,
-    marginHorizontal: Spacing.xl,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  panelLabel: {
+    flex: 1,
+    fontFamily: FontFamily.headlineSemiBold,
+    fontSize: 15,
+    color: Colors.onSurface,
+    letterSpacing: -0.2,
+  },
+  panelBody: {
+    marginTop: Spacing.sm,
+    paddingLeft: 56, // alinha com o título (40px ícone + 16px gap)
+  },
+  panelContent: {
+    fontFamily: FontFamily.bodyRegular,
+    fontSize: 13,
+    color: Colors.onSurfaceVariant,
+    lineHeight: 20,
   },
 });

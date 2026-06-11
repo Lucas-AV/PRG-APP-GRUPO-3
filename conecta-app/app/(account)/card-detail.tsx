@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
   Switch,
   Alert,
   Dimensions,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -15,15 +16,11 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { TopAppBar } from '@/components/ui/top-app-bar';
 import { Colors, FontFamily, Spacing, Radius } from '@/constants/theme';
+import { useAuth } from '@/context/AuthContext';
+import { transactionsApi, Transaction } from '@/services/api';
 
 const CARD_WIDTH = Dimensions.get('window').width - Spacing.xl * 2;
 const CARD_HEIGHT = CARD_WIDTH / 1.586;
-
-const CARD_TRANSACTIONS = [
-  { id: '1', icon: 'build' as const, iconBg: '#eff6ff', iconColor: '#2563eb', title: 'Encanador Profissional', date: 'Ontem • 14:30', amount: 'R$ 180,00' },
-  { id: '2', icon: 'brush' as const, iconBg: '#f5f3ff', iconColor: '#7c3aed', title: 'Limpeza Residencial', date: '12 Set 2023', amount: 'R$ 150,00' },
-  { id: '3', icon: 'flash-on' as const, iconBg: '#eff6ff', iconColor: '#2563eb', title: 'Reparo Elétrico', date: '05 Set 2023', amount: 'R$ 120,00' },
-];
 
 const INFO_ROWS = [
   { label: 'Bandeira', icon: 'credit-card' as const },
@@ -39,7 +36,18 @@ export default function CardDetailScreen() {
     expiry: string;
   }>();
 
+  const { user, token } = useAuth();
   const [isDefault, setIsDefault] = useState(false);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [loadingTx, setLoadingTx] = useState(true);
+
+  useEffect(() => {
+    if (!user || !token) { setLoadingTx(false); return; }
+    transactionsApi.list(user.id, token)
+      .then(txs => setTransactions(txs.slice(0, 5)))
+      .catch(() => setTransactions([]))
+      .finally(() => setLoadingTx(false));
+  }, [user, token]);
 
   const infoValues = [
     brand as string,
@@ -150,29 +158,53 @@ export default function CardDetailScreen() {
 
         {/* Recent usage */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Uso Recente</Text>
+          <Text style={styles.sectionTitle}>Transações Recentes</Text>
           <View style={styles.transactionsCard}>
-            {CARD_TRANSACTIONS.map((tx, idx) => (
-              <View key={tx.id}>
-                <Pressable
-                  style={({ pressed }) => [
-                    styles.txRow,
-                    pressed && { backgroundColor: Colors.surfaceContainerLow },
-                  ]}
-                  onPress={() => router.push('/(account)/receipt' as any)}
-                >
-                  <View style={[styles.txIconWrap, { backgroundColor: tx.iconBg }]}>
-                    <MaterialIcons name={tx.icon} size={18} color={tx.iconColor} />
-                  </View>
-                  <View style={styles.txInfo}>
-                    <Text style={styles.txTitle}>{tx.title}</Text>
-                    <Text style={styles.txDate}>{tx.date}</Text>
-                  </View>
-                  <Text style={styles.txAmount}>{tx.amount}</Text>
-                </Pressable>
-                {idx < CARD_TRANSACTIONS.length - 1 && <View style={styles.txDivider} />}
-              </View>
-            ))}
+            {loadingTx ? (
+              <ActivityIndicator color={Colors.primary} style={{ paddingVertical: Spacing.xxl }} />
+            ) : transactions.length === 0 ? (
+              <Text style={styles.txEmpty}>Nenhuma transação encontrada.</Text>
+            ) : (
+              transactions.map((tx, idx) => (
+                <View key={tx.id}>
+                  <Pressable
+                    style={({ pressed }) => [
+                      styles.txRow,
+                      pressed && { backgroundColor: Colors.surfaceContainerLow },
+                    ]}
+                    onPress={() =>
+                      router.push({
+                        pathname: '/(account)/receipt' as any,
+                        params: {
+                          serviceName: tx.service_name,
+                          providerName: tx.provider_name ?? '',
+                          providerInitials: (tx.provider_name ?? '?').slice(0, 2).toUpperCase(),
+                          date: new Date(tx.paid_at).toLocaleDateString('pt-BR', {
+                            day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit',
+                          }),
+                          amount: `R$ ${tx.amount.toFixed(2).replace('.', ',')}`,
+                          paymentMethod: `${brand} •••• ${last4}`,
+                          transactionCode: `#TX-${tx.id}`,
+                          description: tx.service_name,
+                        },
+                      })
+                    }
+                  >
+                    <View style={styles.txIconWrap}>
+                      <MaterialIcons name="receipt-long" size={18} color={Colors.primary} />
+                    </View>
+                    <View style={styles.txInfo}>
+                      <Text style={styles.txTitle}>{tx.service_name}</Text>
+                      <Text style={styles.txDate}>
+                        {new Date(tx.paid_at).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' })}
+                      </Text>
+                    </View>
+                    <Text style={styles.txAmount}>R$ {tx.amount.toFixed(2).replace('.', ',')}</Text>
+                  </Pressable>
+                  {idx < transactions.length - 1 && <View style={styles.txDivider} />}
+                </View>
+              ))
+            )}
           </View>
         </View>
 
@@ -392,8 +424,16 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
+    backgroundColor: Colors.primaryContainer,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  txEmpty: {
+    fontFamily: FontFamily.bodyRegular,
+    fontSize: 13,
+    color: Colors.onSurfaceVariant,
+    textAlign: 'center',
+    paddingVertical: Spacing.xxl,
   },
   txInfo: { flex: 1, gap: 2 },
   txTitle: {
