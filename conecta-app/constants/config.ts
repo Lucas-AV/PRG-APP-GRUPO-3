@@ -14,3 +14,7 @@ function getApiUrl(): string {
 }
 
 export const API_BASE_URL = getApiUrl();
+
+// Substitua pelo Client ID gerado no Google Cloud Console
+// Formato: XXXXXXXX.apps.googleusercontent.com
+export const GOOGLE_WEB_CLIENT_ID = 'SEU_CLIENT_ID_AQUI.apps.googleusercontent.com';
