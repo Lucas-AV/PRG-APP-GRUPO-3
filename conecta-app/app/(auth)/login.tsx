@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -19,11 +19,16 @@ import { GradientButton } from '@/components/ui/gradient-button';
 import { InputField } from '@/components/ui/input-field';
 import { Colors, FontFamily, Spacing, Radius } from '@/constants/theme';
 import { useAuth } from '@/context/AuthContext';
+import * as WebBrowser from 'expo-web-browser';
+import * as Google from 'expo-auth-session/providers/google';
+import { GOOGLE_WEB_CLIENT_ID } from '@/constants/config';
+
+WebBrowser.maybeCompleteAuthSession();
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function LoginScreen() {
-  const { login } = useAuth();
+  const { login, loginWithGoogle } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState('');
@@ -35,6 +40,41 @@ export default function LoginScreen() {
   const [resetEmailError, setResetEmailError] = useState('');
   const [resetLoading, setResetLoading] = useState(false);
   const [resetSent, setResetSent] = useState(false);
+
+  const [_request, response, promptAsync] = Google.useAuthRequest({
+    webClientId: GOOGLE_WEB_CLIENT_ID,
+  });
+
+  const handleGoogleResponse = async (accessToken: string) => {
+    setLoading(true);
+    try {
+      const result = await loginWithGoogle(accessToken);
+      if ('isNewUser' in result) {
+        router.push({
+          pathname: '/(auth)/google-role' as any,
+          params: {
+            access_token: accessToken,
+            name: result.googleName,
+            email: result.googleEmail,
+          },
+        });
+        return;
+      }
+      const completed = await SecureStore.getItemAsync(`onboarding_${result.id}`);
+      router.replace(completed === 'true' ? '/(tabs)' : '/(onboarding)/step0');
+    } catch (e: any) {
+      Alert.alert('Erro ao entrar com Google', e.message ?? 'Tente novamente.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (response?.type === 'success') {
+      const accessToken = response.authentication?.accessToken;
+      if (accessToken) handleGoogleResponse(accessToken);
+    }
+  }, [response]);
 
   const openReset = () => {
     setResetEmail('');
@@ -162,6 +202,8 @@ export default function LoginScreen() {
             {/* Google button */}
             <Pressable
               style={({ pressed }) => [styles.googleBtn, pressed && { opacity: 0.85 }]}
+              onPress={() => promptAsync()}
+              disabled={loading}
             >
               <MaterialIcons name="language" size={20} color="#4285F4" />
               <Text style={styles.googleLabel}>Entrar com Google</Text>
