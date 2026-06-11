@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-error-container": "#752121",
+              "on-error": "#fff7f6",
+              "surface-tint": "#0054d6",
+              "on-secondary": "#faf8fc",
+              "on-primary-fixed-variant": "#0052d0",
+              "on-tertiary-fixed-variant": "#5a5470",
+              "on-tertiary-container": "#504b66",
+              "surface-dim": "#d4dbdd",
+              "surface-container-highest": "#dde4e5",
+              "error": "#9f403d",
+              "surface-container-high": "#e4e9ea",
+              "on-tertiary-fixed": "#3d3852",
+              "tertiary-dim": "#554f6b",
+              "on-surface-variant": "#5a6061",
+              "surface-container": "#ebeeef",
+              "on-surface": "#2d3435",
+              "surface-variant": "#dde4e5",
+              "inverse-on-surface": "#9c9d9d",
+              "error-container": "#fe8983",
+              "on-secondary-fixed-variant": "#5b5b5f",
+              "background": "#f9f9f9",
+              "surface-container-low": "#f2f4f4",
+              "surface-bright": "#f9f9f9",
+              "tertiary": "#615b77",
+              "error-dim": "#4e0309",
+              "on-primary-fixed": "#003894",
+              "tertiary-fixed-dim": "#d3caeb",
+              "on-primary-container": "#0049bb",
+              "secondary": "#5f5f62",
+              "primary-dim": "#004abd",
+              "inverse-surface": "#0c0f0f",
+              "secondary-dim": "#535356",
+              "inverse-primary": "#5e8bff",
+              "tertiary-fixed": "#e1d8fa",
+              "secondary-fixed": "#e4e2e6",
+              "outline": "#757c7d",
+              "tertiary-container": "#e1d8fa",
+              "surface-container-lowest": "#ffffff",
+              "on-secondary-container": "#515155",
+              "secondary-container": "#e4e2e6",
+              "on-primary": "#f8f7ff",
+              "on-tertiary": "#fcf7ff",
+              "on-secondary-fixed": "#3f3f43",
+              "primary-fixed": "#dae1ff",
+              "primary": "#0054d6",
+              "surface": "#f9f9f9",
+              "primary-fixed-dim": "#c7d3ff",
+              "secondary-fixed-dim": "#d5d4d8",
+              "primary-container": "#dae1ff",
+              "outline-variant": "#adb3b4",
+              "on-background": "#2d3435"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .signature-gradient {
+            background: linear-gradient(135deg, #0054d6 0%, #004abd 100%);
+        }
+        .glass-effect {
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        body {
+            background-color: #f9f9f9;
+            color: #2d3435;
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="min-h-screen pb-32">
+<!-- TopAppBar -->
+<nav class="fixed top-0 w-full z-50 bg-[#f9f9f9]/80 dark:bg-slate-950/80 backdrop-blur-md flex items-center justify-between px-5 h-16 w-full">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[#0066FF] dark:text-blue-400" data-icon="calendar_today">calendar_today</span>
+<h1 class="font-manrope font-bold text-lg tracking-tight text-[#0066FF]">Agendamentos</h1>
+</div>
+<div class="flex items-center gap-4">
+<button class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-[#ebeeef] dark:hover:bg-slate-800 transition-colors active:scale-95 duration-200 text-[#5a6061]">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+</button>
+<button class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-[#ebeeef] dark:hover:bg-slate-800 transition-colors active:scale-95 duration-200 text-[#5a6061]">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="pt-24 px-5 max-w-2xl mx-auto">
+<!-- Header Hero Card -->
+<section class="mb-8">
+<div class="signature-gradient rounded-xl p-8 text-on-primary shadow-[0_8px_32px_rgba(0,84,214,0.15)] relative overflow-hidden">
+<!-- Abstract Grain/Pattern Overlay -->
+<div class="absolute inset-0 opacity-10 pointer-events-none mix-blend-overlay">
+<img class="w-full h-full object-cover" data-alt="abstract flowing blue gradient with subtle grain texture and soft waves" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjdqBQ3M_xjInR5_Cdv_-9FuntCBxuWs4h8mviZVhc1XyDbdP9m2alWdWWTMhBQFgCUc-z9MLFfCFVBYqCepn4U1HlHCgAUo8dA6QoZSHEjMhTNeKN5p59wIjRSnDW9AOHXYda3e-ENYIlh4av-esnFRrKER8V2gRAeK9CVjYqjEvcqMuJ6lcBSDuSFRCMP-0muhVZL--Wa8J_lKeEINo-vXDs5CmFeZa7AL9QKf6fHYqKajtuK0eDMDF5vZwO856TjL1-AaEeQWs"/>
+</div>
+<div class="relative z-10">
+<p class="font-label text-sm uppercase tracking-[0.2em] mb-2 opacity-90">Janeiro 2024</p>
+<h2 class="font-headline text-5xl font-extrabold tracking-tighter mb-1">10</h2>
+<p class="font-headline text-2xl font-bold opacity-90">Quarta-feira</p>
+<div class="mt-8 flex items-center gap-3 bg-white/10 w-fit px-4 py-2 rounded-full glass-effect border border-white/10">
+<span class="material-symbols-outlined text-sm" data-icon="event_available">event_available</span>
+<span class="text-xs font-medium tracking-wide uppercase">3 Compromissos hoje</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Services Section Header -->
+<div class="flex items-center justify-between mb-6">
+<h3 class="font-headline text-xl font-bold text-on-surface">Serviços Disponíveis</h3>
+<span class="font-label text-xs font-semibold text-primary uppercase tracking-wider">Ver todos</span>
+</div>
+<!-- Services Grid/List -->
+<div class="space-y-4">
+<!-- Service Card 1 -->
+<div class="bg-surface-container-lowest p-5 rounded-xl flex gap-5 items-start transition-all hover:translate-y-[-2px] hover:shadow-sm">
+<div class="flex flex-col items-center justify-center min-w-[60px] py-2 bg-surface-container-low rounded-lg text-on-surface-variant">
+<span class="text-sm font-bold">09:00</span>
+<span class="text-[10px] font-medium uppercase opacity-60">AM</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-1">
+<h4 class="font-headline text-lg font-bold text-on-surface leading-tight">Consultoria de Estilo</h4>
+<span class="bg-primary-container text-on-primary-container text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-tighter">VIP</span>
+</div>
+<p class="text-on-surface-variant text-sm line-clamp-2 font-body leading-relaxed">Sessão personalizada de análise cromática e definição de biotipo para renovação de guarda-roupa.</p>
+</div>
+</div>
+<!-- Service Card 2 -->
+<div class="bg-surface-container-lowest p-5 rounded-xl flex gap-5 items-start transition-all hover:translate-y-[-2px] hover:shadow-sm">
+<div class="flex flex-col items-center justify-center min-w-[60px] py-2 bg-surface-container-low rounded-lg text-on-surface-variant">
+<span class="text-sm font-bold">14:30</span>
+<span class="text-[10px] font-medium uppercase opacity-60">PM</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-1">
+<h4 class="font-headline text-lg font-bold text-on-surface leading-tight">Massagem Terapêutica</h4>
+</div>
+<p class="text-on-surface-variant text-sm line-clamp-2 font-body leading-relaxed">Foco em alívio de tensões musculares e relaxamento profundo com óleos essenciais orgânicos.</p>
+</div>
+</div>
+<!-- Service Card 3 (Reserved/Occupied) -->
+<div class="bg-surface-container-high/40 p-5 rounded-xl flex gap-5 items-start opacity-70 grayscale">
+<div class="flex flex-col items-center justify-center min-w-[60px] py-2 bg-surface-container-highest rounded-lg text-on-surface-variant">
+<span class="text-sm font-bold">16:00</span>
+<span class="text-[10px] font-medium uppercase opacity-60">PM</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-1">
+<h4 class="font-headline text-lg font-bold text-on-surface leading-tight">Horário Reservado</h4>
+<span class="material-symbols-outlined text-outline text-sm" data-icon="lock">lock</span>
+</div>
+<p class="text-on-surface-variant text-sm font-body italic">Este horário já foi selecionado por outro cliente ou bloqueado manualmente.</p>
+</div>
+</div>
+</div>
+</main>
+<!-- FAB: Agendar Novo Serviço -->
+<div class="fixed bottom-24 right-5 z-50">
+<button class="signature-gradient h-14 px-6 rounded-full flex items-center gap-3 text-on-primary font-headline font-bold text-sm shadow-[0_12px_24px_rgba(0,84,214,0.3)] active:scale-90 duration-150 transition-transform">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+<span>Agendar Novo Serviço</span>
+</button>
+</div>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 rounded-t-2xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-[0_-8px_32px_rgba(0,0,0,0.04)] flex justify-around items-center h-20 pb-safe px-6 w-full">
+<div class="flex flex-col items-center justify-center text-[#5a6061] dark:text-slate-400 hover:text-[#0066FF] transition-all active:scale-90 duration-150">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-inter text-[10px] font-medium uppercase tracking-wider mt-1">Início</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#0066FF] dark:text-blue-400 font-bold active:scale-90 duration-150">
+<span class="material-symbols-outlined" data-icon="calendar_month" style="font-variation-settings: 'FILL' 1;">calendar_month</span>
+<span class="font-inter text-[10px] font-medium uppercase tracking-wider mt-1">Calendário</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#5a6061] dark:text-slate-400 hover:text-[#0066FF] transition-all active:scale-90 duration-150">
+<span class="material-symbols-outlined" data-icon="handyman">handyman</span>
+<span class="font-inter text-[10px] font-medium uppercase tracking-wider mt-1">Serviços</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#5a6061] dark:text-slate-400 hover:text-[#0066FF] transition-all active:scale-90 duration-150">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-inter text-[10px] font-medium uppercase tracking-wider mt-1">Perfil</span>
+</div>
+</nav>
+</body></html>

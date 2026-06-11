@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+
+<html class="light" lang="pt-br"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Detalhes do Agendamento - SevGen</title>
+<!-- Fonts & Icons -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error-container": "#752121",
+                        "surface-dim": "#d4dbdd",
+                        "outline": "#757c7d",
+                        "surface-container-low": "#f2f4f4",
+                        "error-container": "#fe8983",
+                        "secondary": "#5f5f62",
+                        "surface-container-high": "#e4e9ea",
+                        "on-secondary": "#faf8fc",
+                        "on-secondary-fixed": "#3f3f43",
+                        "inverse-on-surface": "#9c9d9d",
+                        "surface-container-highest": "#dde4e5",
+                        "primary-fixed-dim": "#c7d3ff",
+                        "primary": "#0054d6",
+                        "on-error": "#fff7f6",
+                        "error": "#9f403d",
+                        "on-surface-variant": "#5a6061",
+                        "background": "#f9f9f9",
+                        "surface": "#f9f9f9",
+                        "secondary-dim": "#535356",
+                        "tertiary-container": "#e1d8fa",
+                        "secondary-container": "#e4e2e6",
+                        "primary-dim": "#004abd",
+                        "on-tertiary-fixed": "#3d3852",
+                        "on-primary": "#f8f7ff",
+                        "on-tertiary-fixed-variant": "#5a5470",
+                        "on-tertiary": "#fcf7ff",
+                        "on-secondary-fixed-variant": "#5b5b5f",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed": "#dae1ff",
+                        "primary-container": "#dae1ff",
+                        "on-surface": "#2d3435",
+                        "surface-bright": "#f9f9f9",
+                        "secondary-fixed": "#e4e2e6",
+                        "tertiary-fixed": "#e1d8fa",
+                        "secondary-fixed-dim": "#d5d4d8",
+                        "inverse-surface": "#0c0f0f",
+                        "on-primary-fixed": "#003894",
+                        "tertiary-dim": "#554f6b",
+                        "outline-variant": "#adb3b4",
+                        "on-background": "#2d3435",
+                        "surface-tint": "#0054d6",
+                        "error-dim": "#4e0309",
+                        "on-primary-fixed-variant": "#0052d0",
+                        "surface-container": "#ebeeef",
+                        "surface-variant": "#dde4e5",
+                        "on-tertiary-container": "#504b66",
+                        "on-primary-container": "#0049bb",
+                        "tertiary-fixed-dim": "#d3caeb",
+                        "on-secondary-container": "#515155",
+                        "tertiary": "#615b77",
+                        "inverse-primary": "#5e8bff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.5rem",
+                        "lg": "0.75rem",
+                        "xl": "1rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "display": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; background-color: #f9f9f9; }
+        .font-headline { font-family: 'Manrope', sans-serif; }
+        .signature-gradient {
+            background: linear-gradient(135deg, #0054d6 0%, #004abd 100%);
+        }
+        .recessed-input {
+            background-color: #dde4e5; /* surface_container_highest */
+            border-radius: 9999px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="text-on-surface">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-surface h-16 flex items-center justify-between px-5 max-w-screen-xl mx-auto">
+<button class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-surface-container-low transition-colors active:scale-95 duration-150">
+<span class="material-symbols-outlined text-primary">arrow_back</span>
+</button>
+<h1 class="font-headline text-headline-sm font-bold tracking-tight text-primary">Appointment Details</h1>
+<button class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-surface-container-low transition-colors active:scale-95 duration-150">
+<span class="material-symbols-outlined text-primary">more_vert</span>
+</button>
+</header>
+<main class="pt-20 pb-32 px-5 max-w-md mx-auto space-y-8">
+<!-- Status Header -->
+<section class="flex flex-col items-center justify-center pt-4">
+<div class="bg-primary-container text-on-primary-container px-4 py-2 rounded-full flex items-center gap-2 animate-pulse">
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-label text-sm font-semibold tracking-wide uppercase">Confirmado</span>
+</div>
+<p class="mt-3 text-on-surface-variant text-xs text-center">Seu profissional já confirmou este serviço.</p>
+</section>
+<!-- Service Info Card (The "SevGen" Signature) -->
+<section class="bg-surface-container-lowest rounded-xl p-5 shadow-[0_8px_32px_rgba(45,52,53,0.04)] transition-all hover:translate-y-[-2px]">
+<div class="flex gap-4">
+<div class="w-24 h-24 rounded-lg overflow-hidden flex-shrink-0">
+<img alt="Instalação de Carregador EV" class="w-full h-full object-cover" data-alt="A professional close-up shot of a modern electric vehicle charging station being installed in a bright, clean garage setting. High-key lighting highlights the sleek metallic textures of the device and the technician's skilled hands. The color palette features cool blues and pristine whites, maintaining a professional and technologically advanced aesthetic that feels premium and reliable." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAcxvo5W1WNM_mDfhDJCwdl14eyMzdSMCIjlIUh84qMZvpUjeeKO8Eru3bmvwAm2DUtWwLg37ZR7d3EUZBIHD36684pl3NosENDwji-CwPeOucuBZNKZidt_MDHjnp-0iNjVNZracPNSWfVvYoY-iW3MQrEdrqeWcIo3Sc6R_NFD5xrvEVKPH05TLlwJWOqXTh5mw8OzFLzfilk-GUEn_pVXdbnZVdxvHq085pUjw9sDzY5YrEaq837K_8bqJzr7_pLq7SWsc-RGE8"/>
+</div>
+<div class="flex flex-col justify-center">
+<h2 class="font-headline text-lg font-extrabold text-on-surface leading-tight mb-1">Instalação de Carregador EV</h2>
+<div class="flex items-center gap-1.5 mb-2">
+<span class="material-symbols-outlined text-primary text-[18px]">verified</span>
+<p class="font-label text-sm font-medium text-on-surface-variant">Ricardo M.</p>
+</div>
+<p class="text-xs text-on-surface-variant leading-relaxed line-clamp-2">Instalação técnica completa seguindo as normas ABNT para carregadores residenciais de 7kW a 22kW.</p>
+</div>
+</div>
+</section>
+<!-- Appointment Details Section -->
+<section class="space-y-6">
+<div class="flex justify-between items-center">
+<h3 class="font-headline text-headline-sm font-bold text-on-surface">Dados da Agenda</h3>
+<span class="font-label text-[10px] text-on-surface-variant bg-surface-container rounded px-2 py-0.5 uppercase tracking-widest font-bold">Resumo</span>
+</div>
+<div class="grid grid-cols-1 gap-4">
+<!-- Date & Time Row -->
+<div class="flex gap-4">
+<div class="flex-1 bg-surface-container-low rounded-xl p-4 flex flex-col gap-2">
+<span class="material-symbols-outlined text-primary">calendar_today</span>
+<p class="text-[11px] text-on-surface-variant font-medium uppercase tracking-wider">Data</p>
+<p class="font-bold text-on-surface text-sm">12 de Novembro de 2024</p>
+</div>
+<div class="flex-1 bg-surface-container-low rounded-xl p-4 flex flex-col gap-2">
+<span class="material-symbols-outlined text-primary">schedule</span>
+<p class="text-[11px] text-on-surface-variant font-medium uppercase tracking-wider">Horário</p>
+<p class="font-bold text-on-surface text-sm">09:30 - 11:30</p>
+</div>
+</div>
+<!-- Duration -->
+<div class="bg-surface-container-low rounded-xl p-4 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">timer</span>
+<div>
+<p class="text-[11px] text-on-surface-variant font-medium uppercase tracking-wider leading-none">Duração Estimada</p>
+<p class="font-bold text-on-surface text-sm mt-1">Aprox. 2 horas</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Location Section -->
+<section class="space-y-4">
+<h3 class="font-headline text-headline-sm font-bold text-on-surface">Local do Serviço</h3>
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm">
+<div class="h-32 w-full bg-surface-container-highest relative">
+<!-- Map Placeholder with Location context -->
+<img class="w-full h-full object-cover opacity-80" data-alt="A clean, minimalist satellite map view of an upscale residential neighborhood in São Paulo, Brazil. The map uses a soft, light-mode palette with muted greys and subtle greens for parks. Clear typography labels streets and landmarks without clutter, emphasizing a sense of precision and modern urban planning that aligns with the app's professional and clean digital concierge identity." data-location="São Paulo, Brazil" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC818OeQnxeodyQYLMuyAL26bEvnmMWsKW-5Beby-S3FUGwSP20HhAHHWXh4dunxK_IUU4ME-hVg8UkgXUcKjElGrK_rfwXQ537F0J9Uv54fID5-06P7YOAAe1TIg_BVyBgH5jeXPqBTYjZUh64dfx_0Rw6S65zzME7j9gzo9dFJKtmOt65SClxS3JLM85cS4-FGythTG5YX7PYntwzfryiTEsVBDcvP-xTEsEBYRoMUyPJC0RA3nMaVKZChFAKltSTrESEEU3WY2Q"/>
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center shadow-lg animate-bounce">
+<span class="material-symbols-outlined text-on-primary">location_on</span>
+</div>
+</div>
+</div>
+<div class="p-4">
+<p class="font-medium text-on-surface text-sm">Rua das Amoreiras, 450 • Apto 12</p>
+<p class="text-xs text-on-surface-variant mt-0.5">Jardins, São Paulo - SP</p>
+</div>
+</div>
+</section>
+<!-- Price Summary -->
+<section class="bg-surface-container-highest/30 rounded-2xl p-6 border-l-4 border-primary">
+<h3 class="font-headline text-sm font-bold text-on-surface mb-4">Resumo de Pagamento</h3>
+<div class="space-y-3">
+<div class="flex justify-between items-center text-sm">
+<span class="text-on-surface-variant">Valor do Serviço</span>
+<span class="font-bold">R$ 450,00</span>
+</div>
+<div class="flex justify-between items-center text-sm">
+<span class="text-on-surface-variant">Taxa de Plataforma</span>
+<span class="text-primary font-medium">Incluída</span>
+</div>
+<div class="pt-3 border-t border-outline-variant/20 flex justify-between items-center">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-on-surface-variant text-lg">credit_card</span>
+<span class="text-xs text-on-surface-variant font-medium">Cartão de Crédito • • • • 1234</span>
+</div>
+<span class="font-headline text-lg font-extrabold text-primary">R$ 450,00</span>
+</div>
+</div>
+</section>
+<!-- Action Buttons -->
+<section class="flex flex-col gap-4 pb-8">
+<button class="signature-gradient text-on-primary font-headline font-bold py-4 rounded-xl shadow-[0_8px_24px_rgba(0,84,214,0.25)] active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[20px]">chat</span>
+                Enviar Mensagem
+            </button>
+<button class="text-error font-label text-sm font-bold py-2 hover:bg-error-container/10 rounded-lg transition-colors active:scale-95">
+                Cancelar Agendamento
+            </button>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-6 pb-6 pt-3 bg-surface/80 dark:bg-surface-dim/80 backdrop-blur-xl shadow-[0_-8px_32px_rgba(45,52,53,0.04)]">
+<div class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1.5 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">search</span>
+<span class="font-label text-xs font-medium mt-1">Explore</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-xl px-4 py-1.5 active:scale-90 duration-200">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">calendar_today</span>
+<span class="font-label text-xs font-medium mt-1">Bookings</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1.5 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">chat_bubble</span>
+<span class="font-label text-xs font-medium mt-1">Inbox</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1.5 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label text-xs font-medium mt-1">Profile</span>
+</div>
+</nav>
+<script>
+        // Subtle micro-interaction for the service card
+        const serviceCard = document.querySelector('main section:nth-of-type(2)');
+        serviceCard.addEventListener('touchstart', () => {
+            serviceCard.style.transform = 'scale(0.98)';
+        });
+        serviceCard.addEventListener('touchend', () => {
+            serviceCard.style.transform = 'scale(1)';
+        });
+    </script>
+</body></html>

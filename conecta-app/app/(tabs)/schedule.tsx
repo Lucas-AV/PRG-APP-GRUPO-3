@@ -297,7 +297,7 @@ const styles = StyleSheet.create({
   nextDay: { fontFamily: FontFamily.headlineExtraBold, fontSize: 28, color: Colors.onSurface, letterSpacing: -0.6 },
   nextCount: { fontFamily: FontFamily.bodyRegular, fontSize: 12, color: Colors.onSurfaceVariant },
 
-  fab: { position: 'absolute', bottom: 90, right: Spacing.xl, borderRadius: Radius.full, overflow: 'hidden', elevation: 8, shadowColor: Colors.primary, shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.3, shadowRadius: 16 },
+  fab: { position: 'absolute', bottom: 16, right: Spacing.xl, borderRadius: Radius.full, overflow: 'hidden', elevation: 8, shadowColor: Colors.primary, shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.3, shadowRadius: 16 },
   fabGradient: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm, paddingHorizontal: Spacing.xl, height: 52 },
   fabLabel: { fontFamily: FontFamily.headlineBold, fontSize: 14, color: Colors.onPrimary },
 });

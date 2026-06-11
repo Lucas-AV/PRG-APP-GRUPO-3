@@ -41,10 +41,16 @@ export default function AddressesScreen() {
       return;
     }
     setLoading(true);
+    let list: Address[] = [];
     try {
-      const list = await usersApi.listAddresses(user.id, token);
+      list = await usersApi.listAddresses(user.id, token);
       setAddresses(list);
-
+    } catch {
+      Alert.alert('Erro', 'Não foi possível carregar os endereços. Verifique sua conexão e tente novamente.');
+      setLoading(false);
+      return;
+    }
+    try {
       const stored = await AsyncStorage.getItem(`@default_address_id_${user.id}`);
       if (stored) {
         setDefaultId(Number(stored));
@@ -53,7 +59,7 @@ export default function AddressesScreen() {
         setDefaultId(list[0].id);
       }
     } catch {
-      Alert.alert('Erro', 'Não foi possível carregar os endereços.');
+      if (list.length > 0) setDefaultId(list[0].id);
     } finally {
       setLoading(false);
     }
@@ -63,11 +69,11 @@ export default function AddressesScreen() {
 
   const handleSetDefault = async (addressId: number) => {
     if (!user) return;
+    setDefaultId(addressId);
     try {
       await AsyncStorage.setItem(`@default_address_id_${user.id}`, String(addressId));
-      setDefaultId(addressId);
     } catch {
-      Alert.alert('Erro', 'Não foi possível definir o endereço padrão.');
+      // UI already updated; persistence failure is non-critical
     }
   };
 
