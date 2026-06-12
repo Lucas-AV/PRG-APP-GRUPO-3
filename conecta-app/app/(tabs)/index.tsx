@@ -175,7 +175,7 @@ export default function HomeScreen() {
               style={styles.notifBtn}
               onPress={() => router.push('/(account)/notifications' as any)}
             >
-              <MaterialIcons name="notifications-none" size={24} color={Colors.onSurfaceVariant} />
+              <MaterialIcons name="notifications-none" size={24} color={Colors.inkMuted} />
               {/* Badge de notificação */}
               <View style={styles.notifDot} />
             </Pressable>
@@ -285,7 +285,7 @@ export default function HomeScreen() {
 
         {/* ── Hero banner com headline ───────────────────────────────────── */}
         <LinearGradient
-          colors={['#f0f4ff', '#faf5ff', '#fff']}
+          colors={['#e8f0fe', '#f0f5ff', '#f8fafc']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.heroBanner}
@@ -497,12 +497,12 @@ const styles = StyleSheet.create({
 
   // ── HEADER FIXO ──────────────────────────────────────────────────────────
   header: {
-    backgroundColor: Colors.surface,
+    backgroundColor: Colors.card,
     paddingHorizontal: Spacing.xl,
     paddingTop: Spacing.md,
     paddingBottom: 0,
     gap: Spacing.md,
-    shadowColor: '#000',
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 8,
@@ -518,17 +518,17 @@ const styles = StyleSheet.create({
   greetingSmall: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 13,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
   greetingBold: {
     fontFamily: FontFamily.bodySemiBold,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   headerBrand: {
     fontFamily: FontFamily.headlineExtraBold,
-    fontSize: 24,
+    fontSize: 26,
     color: Colors.primary,
-    letterSpacing: -0.8,
+    letterSpacing: -1.0,
     marginTop: -2,
   },
   headerActions: {
@@ -540,7 +540,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: Radius.full,
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
@@ -567,11 +567,13 @@ const styles = StyleSheet.create({
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.surfaceContainerHighest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.full,
     paddingLeft: Spacing.base,
     paddingRight: Spacing.xs,
     paddingVertical: Spacing.xs,
+    borderWidth: 1.5,
+    borderColor: Colors.border,
   },
   searchFakeInput: {
     flex: 1,
@@ -584,22 +586,22 @@ const styles = StyleSheet.create({
     flex: 1,
     fontFamily: FontFamily.bodyRegular,
     fontSize: 14,
-    color: Colors.outline,
+    color: Colors.inkMuted,
   },
   searchInputText: {
     flex: 1,
     fontFamily: FontFamily.bodyRegular,
     fontSize: 14,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   filterBtn: {
     width: 38,
     height: 38,
     borderRadius: Radius.full,
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#000',
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.06,
     shadowRadius: 3,
@@ -616,12 +618,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.xs,
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     paddingHorizontal: 14,
     paddingVertical: 7,
     borderRadius: Radius.full,
     borderWidth: 1,
-    borderColor: Colors.outlineVariant + '44',
+    borderColor: Colors.border,
   },
   filterPillActive: {
     backgroundColor: Colors.primary,
@@ -630,13 +632,13 @@ const styles = StyleSheet.create({
   filterPillText: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 12,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
   filterPillTextActive: { color: Colors.onPrimary },
 
   headerDivider: {
     height: StyleSheet.hairlineWidth,
-    backgroundColor: Colors.outlineVariant + '33',
+    backgroundColor: Colors.border,
     marginHorizontal: -Spacing.xl,
   },
 
@@ -655,15 +657,15 @@ const styles = StyleSheet.create({
   heroTextBlock: { gap: Spacing.xs },
   heroHeadline: {
     fontFamily: FontFamily.headlineExtraBold,
-    fontSize: 26,
-    color: Colors.onSurface,
-    letterSpacing: -0.8,
-    lineHeight: 32,
+    fontSize: 32,
+    color: Colors.ink,
+    letterSpacing: -1.2,
+    lineHeight: 38,
   },
   heroSub: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 13,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     lineHeight: 18,
   },
   heroStatsRow: {
@@ -673,14 +675,14 @@ const styles = StyleSheet.create({
   heroStat: { gap: 2 },
   heroStatValue: {
     fontFamily: FontFamily.headlineBold,
-    fontSize: 18,
+    fontSize: 20,
     color: Colors.primary,
     letterSpacing: -0.4,
   },
   heroStatLabel: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 11,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
 
   // Sections
@@ -695,7 +697,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 18,
-    color: Colors.onSurface,
+    color: Colors.ink,
     letterSpacing: -0.4,
   },
   sectionLink: {
@@ -708,7 +710,7 @@ const styles = StyleSheet.create({
   sectionCount: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 12,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
 
   // Category grid
@@ -719,12 +721,12 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   categoryTile: {
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.lg,
     alignItems: 'center',
     justifyContent: 'center',
     gap: 6,
-    shadowColor: '#000',
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.03,
     shadowRadius: 4,
@@ -734,10 +736,10 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primaryContainer + '55',
   },
   categoryIconWrap: {
-    width: 44,
-    height: 44,
+    width: 48,
+    height: 48,
     borderRadius: Radius.md,
-    backgroundColor: Colors.surfaceContainerHigh,
+    backgroundColor: Colors.surfaceContainerHighest,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -746,8 +748,8 @@ const styles = StyleSheet.create({
   },
   categoryLabel: {
     fontFamily: FontFamily.bodySemiBold,
-    fontSize: 9,
-    color: Colors.onSurfaceVariant,
+    fontSize: 10,
+    color: Colors.inkMuted,
     textAlign: 'center',
     letterSpacing: 0.6,
   },
@@ -762,7 +764,7 @@ const styles = StyleSheet.create({
   loadingText: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 14,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
   emptyWrap: {
     paddingVertical: Spacing.xxxl * 2,
@@ -785,18 +787,18 @@ const styles = StyleSheet.create({
   emptySubtitle: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 13,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
 
   // Featured providers
   carouselContent: { paddingHorizontal: Spacing.xl, gap: Spacing.base },
   providerCard: {
-    width: 240,
-    backgroundColor: Colors.surfaceContainerLowest,
+    width: 220,
+    backgroundColor: Colors.card,
     borderRadius: 20,
     overflow: 'hidden',
     elevation: 3,
-    shadowColor: '#000',
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.08,
     shadowRadius: 12,
@@ -812,7 +814,7 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.headlineExtraBold,
     fontSize: 44,
     color: Colors.onSurface,
-    opacity: 0.35,
+    opacity: 0.25,
     letterSpacing: -1,
   },
   providerImageGradient: {
@@ -866,7 +868,7 @@ const styles = StyleSheet.create({
   providerService: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 12,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
   providerBtn: {
     backgroundColor: Colors.primary,
@@ -886,12 +888,12 @@ const styles = StyleSheet.create({
   serviceCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.surfaceContainerLowest,
-    borderRadius: 18,
+    backgroundColor: Colors.card,
+    borderRadius: Radius.lg,
     padding: Spacing.base,
     gap: Spacing.base,
     elevation: 1,
-    shadowColor: '#000',
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.04,
     shadowRadius: 4,
@@ -908,13 +910,13 @@ const styles = StyleSheet.create({
   serviceName: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 14,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   serviceMeta: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
   serviceProvider: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 12,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     flex: 1,
   },
   ratingPill: {
@@ -935,7 +937,7 @@ const styles = StyleSheet.create({
   servicePrice: {
     fontFamily: FontFamily.headlineExtraBold,
     fontSize: 13,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   bookBtn: {
     backgroundColor: Colors.primary,
