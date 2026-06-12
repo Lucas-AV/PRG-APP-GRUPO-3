@@ -2,6 +2,7 @@ import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
+import Animated, { useSharedValue, withSpring, useAnimatedStyle } from 'react-native-reanimated';
 import { Colors, FontFamily, Spacing } from '@/constants/theme';
 
 interface TopAppBarProps {
@@ -13,6 +14,7 @@ interface TopAppBarProps {
 
 export function TopAppBar({ title, badge, onBack, showBack = true }: TopAppBarProps) {
   const insets = useSafeAreaInsets();
+  const backBtnScale = useSharedValue(1);
 
   const handleBack = () => {
     if (onBack) {
@@ -22,6 +24,18 @@ export function TopAppBar({ title, badge, onBack, showBack = true }: TopAppBarPr
     }
   };
 
+  const handleBackPressIn = () => {
+    backBtnScale.value = withSpring(0.92, { damping: 15, stiffness: 300 });
+  };
+
+  const handleBackPressOut = () => {
+    backBtnScale.value = withSpring(1.0, { damping: 15, stiffness: 300 });
+  };
+
+  const animBackStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: backBtnScale.value }],
+  }));
+
   return (
     <View style={[styles.container, { paddingTop: insets.top + Spacing.sm }]}>
       <View style={styles.inner}>
@@ -29,9 +43,13 @@ export function TopAppBar({ title, badge, onBack, showBack = true }: TopAppBarPr
           {showBack && (
             <Pressable
               onPress={handleBack}
-              style={({ pressed }) => [styles.backBtn, pressed && { opacity: 0.6 }]}
+              onPressIn={handleBackPressIn}
+              onPressOut={handleBackPressOut}
+              style={styles.backBtn}
             >
-              <MaterialIcons name="arrow-back" size={24} color={Colors.primary} />
+              <Animated.View style={animBackStyle}>
+                <MaterialIcons name="arrow-back" size={24} color={Colors.primary} />
+              </Animated.View>
             </Pressable>
           )}
           <Text style={styles.title}>{title}</Text>
@@ -44,13 +62,15 @@ export function TopAppBar({ title, badge, onBack, showBack = true }: TopAppBarPr
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colors.surfaceBright,
-    shadowColor: '#000',
+    backgroundColor: Colors.card,
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.04,
     shadowRadius: 10,
     elevation: 2,
     zIndex: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
   },
   inner: {
     flexDirection: 'row',
@@ -71,9 +91,9 @@ const styles = StyleSheet.create({
   },
   title: {
     fontFamily: FontFamily.headlineSemiBold,
-    fontSize: 14,
+    fontSize: 17,
     color: Colors.onSurface,
-    letterSpacing: -0.2,
+    letterSpacing: -0.3,
   },
   badge: {
     fontFamily: FontFamily.headlineSemiBold,
