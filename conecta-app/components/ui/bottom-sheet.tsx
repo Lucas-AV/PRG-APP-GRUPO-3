@@ -33,7 +33,7 @@ export function BottomSheet({ visible, onClose, title, children, scrollable = fa
             onPress={onClose}
             hitSlop={8}
           >
-            <MaterialIcons name="close" size={22} color={Colors.onSurfaceVariant} />
+            <MaterialIcons name="close" size={22} color={Colors.inkMuted} />
           </Pressable>
         </View>
       )}
@@ -61,22 +61,27 @@ export function BottomSheet({ visible, onClose, title, children, scrollable = fa
 const styles = StyleSheet.create({
   backdrop: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.45)',
+    backgroundColor: 'rgba(15,23,42,0.55)',
     justifyContent: 'flex-end',
   },
   sheet: {
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderTopLeftRadius: Radius.xl,
     borderTopRightRadius: Radius.xl,
     paddingHorizontal: Spacing.xl,
     paddingTop: Spacing.md,
     gap: Spacing.base,
+    shadowColor: Colors.ink,
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.10,
+    shadowRadius: 16,
+    elevation: 6,
   },
   handle: {
     width: 40,
     height: 4,
     borderRadius: 2,
-    backgroundColor: Colors.outlineVariant,
+    backgroundColor: Colors.border,
     alignSelf: 'center',
     marginBottom: Spacing.xs,
   },
@@ -96,7 +101,7 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: Radius.full,
-    backgroundColor: Colors.surfaceContainerLow,
+    backgroundColor: Colors.border + '60',
     alignItems: 'center',
     justifyContent: 'center',
   },
