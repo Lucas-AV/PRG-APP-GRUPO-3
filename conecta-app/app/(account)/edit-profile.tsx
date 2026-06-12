@@ -7,7 +7,9 @@ import {
   StyleSheet,
   Alert,
   ActivityIndicator,
+  Image,
 } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -25,7 +27,25 @@ export default function EditProfileScreen() {
   const [email, setEmail] = useState(user?.email ?? '');
   const [phone, setPhone] = useState(user?.phone ?? '');
   const [birthdate, setBirthdate] = useState('');
+  const [photoUri, setPhotoUri] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const handlePickPhoto = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('Permissão necessária', 'Permita o acesso à galeria nas configurações do app.');
+      return;
+    }
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.85,
+    });
+    if (!result.canceled && result.assets[0]) {
+      setPhotoUri(result.assets[0].uri);
+    }
+  };
 
   const initials = name
     ? name.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase()
@@ -58,11 +78,13 @@ export default function EditProfileScreen() {
         <View style={styles.avatarSection}>
           <View style={styles.avatarWrap}>
             <View style={styles.avatar}>
-              <Text style={styles.avatarText}>{initials}</Text>
+              {photoUri
+                ? <Image source={{ uri: photoUri }} style={styles.avatarImage} />
+                : <Text style={styles.avatarText}>{initials}</Text>}
             </View>
             <Pressable
               style={({ pressed }) => [styles.cameraBtn, pressed && { opacity: 0.8 }]}
-              onPress={() => Alert.alert('Em breve', 'Alteração de foto estará disponível em breve.')}
+              onPress={handlePickPhoto}
             >
               <MaterialIcons name="photo-camera" size={18} color="#fff" />
             </Pressable>
@@ -164,6 +186,12 @@ const styles = StyleSheet.create({
     fontSize: 32,
     color: Colors.primary,
     letterSpacing: -1,
+  },
+  avatarImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 999,
+    resizeMode: 'cover',
   },
   cameraBtn: {
     position: 'absolute',

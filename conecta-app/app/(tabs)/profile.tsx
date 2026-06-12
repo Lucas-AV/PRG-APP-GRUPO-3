@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -12,6 +12,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
+import * as SecureStore from 'expo-secure-store';
 import { Colors, FontFamily, Spacing, Radius } from '@/constants/theme';
 import { useAuth } from '@/context/AuthContext';
 import { RoleBadge } from '@/components/ui/role-badge';
@@ -144,13 +145,26 @@ export default function ProfileScreen() {
   const { user, logout } = useAuth();
   const { t, i18n } = useTranslation();
   const [darkMode, setDarkMode] = useState(false);
-  const [biometrics, setBiometrics] = useState(true);
+  const [biometrics, setBiometrics] = useState(false);
+  const [notifications, setNotifications] = useState(false);
   const [langModalVisible, setLangModalVisible] = useState(false);
 
   const currentLang = i18n.language as SupportedLanguage;
 
-  const comingSoon = () =>
-    Alert.alert(t('profile.inDevelopment'), t('profile.inDevelopmentMsg'), [{ text: 'OK' }]);
+  useEffect(() => {
+    SecureStore.getItemAsync('biometrics_enabled').then(v => setBiometrics(v === 'true'));
+    SecureStore.getItemAsync('notifications_enabled').then(v => setNotifications(v === 'true'));
+  }, []);
+
+  const handleBiometrics = async (value: boolean) => {
+    setBiometrics(value);
+    await SecureStore.setItemAsync('biometrics_enabled', String(value));
+  };
+
+  const handleNotifications = async (value: boolean) => {
+    setNotifications(value);
+    await SecureStore.setItemAsync('notifications_enabled', String(value));
+  };
 
   const handleLogout = () =>
     Alert.alert(t('profile.logoutAlert.title'), t('profile.logoutAlert.message'), [
@@ -228,7 +242,7 @@ export default function ProfileScreen() {
 
         {/* Preferências */}
         <SettingsSection title={t('profile.sections.preferences')}>
-          <SettingsRow icon="notifications" label={t('profile.rows.notifications')} onPress={comingSoon} />
+          <SettingsRowToggle icon="notifications" label={t('profile.rows.notifications')} value={notifications} onValueChange={handleNotifications} />
           <SettingsRow
             icon="language"
             label={t('profile.rows.language')}
@@ -242,7 +256,7 @@ export default function ProfileScreen() {
         <SettingsSection title={t('profile.sections.security')}>
           <SettingsRow icon="lock-reset" label={t('profile.rows.changePassword')} onPress={() => router.push('/(account)/change-password' as any)} />
           <SettingsRow icon="verified-user" label={t('profile.rows.privacy')} onPress={() => router.push('/(account)/privacy-security' as any)} />
-          <SettingsRowToggle icon="fingerprint" label={t('profile.rows.biometrics')} value={biometrics} onValueChange={setBiometrics} isLast />
+          <SettingsRowToggle icon="fingerprint" label={t('profile.rows.biometrics')} value={biometrics} onValueChange={handleBiometrics} isLast />
         </SettingsSection>
 
         {/* Suporte & Legal */}

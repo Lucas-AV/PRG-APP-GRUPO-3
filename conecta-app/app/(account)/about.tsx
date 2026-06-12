@@ -5,13 +5,19 @@ import {
   ScrollView,
   Pressable,
   StyleSheet,
+  Linking,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
 import Constants from 'expo-constants';
 import { Colors, FontFamily, Spacing, Radius } from '@/constants/theme';
-import { useComingSoonAlert } from '@/hooks/useComingSoonAlert';
+
+const openURL = (url: string) =>
+  Linking.openURL(url).catch(() =>
+    Alert.alert('Erro', 'Não foi possível abrir o link.')
+  );
 
 // ── Componente de Cartão Expansível (Collapsible Card) ───────────────────────
 interface ExpandableCardProps {
@@ -71,7 +77,6 @@ function ExpandableCard({ icon, title, summary, linkText, onLinkPress }: Expanda
 
 // ── Tela Sobre ───────────────────────────────────────────────────────────────
 export default function AboutScreen() {
-  const comingSoon = useComingSoonAlert();
   const appVersion = Constants.expoConfig?.version ?? '1.0.0';
 
   return (
@@ -163,21 +168,21 @@ export default function AboutScreen() {
         <View style={styles.socialSection}>
           <Pressable
             style={({ pressed }) => [styles.socialCircle, pressed && styles.socialCirclePressed]}
-            onPress={comingSoon}
+            onPress={() => openURL('https://instagram.com/conectaapp')}
           >
             <MaterialIcons name="photo-camera" size={24} color={Colors.onSurfaceVariant} />
           </Pressable>
 
           <Pressable
             style={({ pressed }) => [styles.socialCircle, pressed && styles.socialCirclePressed]}
-            onPress={comingSoon}
+            onPress={() => openURL('https://linkedin.com/company/conectaapp')}
           >
             <MaterialIcons name="work-outline" size={24} color={Colors.onSurfaceVariant} />
           </Pressable>
 
           <Pressable
             style={({ pressed }) => [styles.socialCircle, pressed && styles.socialCirclePressed]}
-            onPress={comingSoon}
+            onPress={() => openURL('mailto:contato@conectaapp.com.br')}
           >
             <MaterialIcons name="alternate-email" size={24} color={Colors.onSurfaceVariant} />
           </Pressable>

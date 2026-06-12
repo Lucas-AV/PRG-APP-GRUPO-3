@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -6,19 +6,79 @@ import {
   Pressable,
   StyleSheet,
   Switch,
+  Alert,
+  Share,
+  Linking,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
+import * as SecureStore from 'expo-secure-store';
 import { TopAppBar } from '@/components/ui/top-app-bar';
 import { Colors, FontFamily, Spacing, Radius } from '@/constants/theme';
-import { useComingSoonAlert } from '@/hooks/useComingSoonAlert';
+import { useAuth } from '@/context/AuthContext';
+
+const BIOMETRICS_KEY = 'biometrics_enabled';
 
 export default function PrivacySecurityScreen() {
-  const [biometrics, setBiometrics] = useState(true);
+  const { user } = useAuth();
+  const [biometrics, setBiometrics] = useState(false);
   const [publicProfile, setPublicProfile] = useState(false);
 
-  const comingSoon = useComingSoonAlert();
+  useEffect(() => {
+    SecureStore.getItemAsync(BIOMETRICS_KEY).then(val => {
+      setBiometrics(val === 'true');
+    });
+  }, []);
+
+  const handleBiometricsToggle = async (value: boolean) => {
+    setBiometrics(value);
+    await SecureStore.setItemAsync(BIOMETRICS_KEY, String(value));
+  };
+
+  const handleOpenSettings = () => {
+    Linking.openSettings();
+  };
+
+  const handleDownloadData = async () => {
+    if (!user) return;
+    const date = new Date().toLocaleDateString('pt-BR', {
+      day: '2-digit', month: '2-digit', year: 'numeric',
+      hour: '2-digit', minute: '2-digit',
+    });
+    const lines = [
+      'CONECTA — CÓPIA DOS SEUS DADOS',
+      `Gerado em: ${date}`,
+      '',
+      '── INFORMAÇÕES DA CONTA ──────────────',
+      `Nome:     ${user.name}`,
+      `E-mail:   ${user.email}`,
+      `Telefone: ${user.phone ?? 'Não informado'}`,
+      `Perfil:   ${user.role === 'prestador' ? 'Prestador de serviços' : 'Cliente'}`,
+      '',
+      '── NOTA DE PRIVACIDADE ───────────────',
+      'Sua senha e tokens de sessão não são',
+      'armazenados em formato legível e não',
+      'aparecem nesta exportação por segurança.',
+      '',
+      'Para solicitar exclusão de todos os seus',
+      'dados, acesse Configurações › Excluir conta',
+      'ou envie e-mail para suporte@conectaapp.com.br',
+    ];
+    try {
+      await Share.share({ message: lines.join('\n'), title: 'Meus dados — Conecta' });
+    } catch {
+      // user cancelled
+    }
+  };
+
+  const handle2FA = () => {
+    Alert.alert(
+      'Autenticação de Dois Fatores',
+      'A verificação em duas etapas via SMS e aplicativo autenticador (TOTP) estará disponível em breve.\n\nSua conta já está protegida por senha segura e, opcionalmente, autenticação biométrica.',
+      [{ text: 'Entendi' }],
+    );
+  };
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -73,7 +133,7 @@ export default function PrivacySecurityScreen() {
               </View>
               <Switch
                 value={biometrics}
-                onValueChange={setBiometrics}
+                onValueChange={handleBiometricsToggle}
                 trackColor={{ false: Colors.surfaceContainerHighest, true: Colors.primary }}
                 thumbColor="#ffffff"
                 ios_backgroundColor={Colors.surfaceContainerHighest}
@@ -82,7 +142,7 @@ export default function PrivacySecurityScreen() {
 
             <Pressable
               style={({ pressed }) => [styles.secRow, pressed && { backgroundColor: Colors.surfaceContainerLow }]}
-              onPress={comingSoon}
+              onPress={handle2FA}
             >
               <View style={styles.secIconWrap}>
                 <MaterialIcons name="security" size={20} color={Colors.primary} />
@@ -100,7 +160,7 @@ export default function PrivacySecurityScreen() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Privacidade de Dados</Text>
           <View style={styles.bentoRow}>
-            <Pressable style={[styles.bentoCard, styles.bentoCardWhite]} onPress={comingSoon}>
+            <Pressable style={[styles.bentoCard, styles.bentoCardWhite]} onPress={handleOpenSettings}>
               <MaterialIcons name="settings-accessibility" size={32} color={Colors.primary} />
               <Text style={styles.bentoTitle}>Permissões do App</Text>
               <Text style={styles.bentoSub}>Localização, câmera e notificações em um só lugar.</Text>
@@ -130,7 +190,7 @@ export default function PrivacySecurityScreen() {
           <View style={styles.manageCard}>
             <Pressable
               style={({ pressed }) => [styles.manageRow, styles.rowBorder, pressed && { backgroundColor: Colors.surfaceContainerLow }]}
-              onPress={comingSoon}
+              onPress={handleDownloadData}
             >
               <MaterialIcons name="file-download" size={22} color={Colors.onSurfaceVariant} />
               <Text style={styles.manageLabel}>Baixar cópia dos meus dados</Text>

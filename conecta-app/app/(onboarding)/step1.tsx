@@ -5,7 +5,10 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
+  Alert,
+  Image,
 } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -24,7 +27,25 @@ export default function Step1Screen() {
   const { user, token, updateUser } = useAuth();
   const [name, setName] = useState(user?.name ?? '');
   const [specialty, setSpecialty] = useState('');
+  const [photoUri, setPhotoUri] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+
+  const handlePickPhoto = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('Permissão necessária', 'Permita o acesso à galeria nas configurações do app.');
+      return;
+    }
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.85,
+    });
+    if (!result.canceled && result.assets[0]) {
+      setPhotoUri(result.assets[0].uri);
+    }
+  };
 
   const isPrestador = role === 'prestador';
   const progress = isPrestador ? 1 / 5 : 1 / 3;
@@ -73,15 +94,19 @@ export default function Step1Screen() {
 
         {/* Profile photo */}
         <View style={styles.photoSection}>
-          <Pressable style={styles.photoWrapper}>
+          <Pressable style={styles.photoWrapper} onPress={handlePickPhoto}>
             <View style={styles.photoCircle}>
-              <MaterialIcons name="person" size={48} color={Colors.outlineVariant} />
+              {photoUri
+                ? <Image source={{ uri: photoUri }} style={styles.photoImage} />
+                : <MaterialIcons name="person" size={48} color={Colors.outlineVariant} />}
             </View>
             <View style={styles.cameraBtn}>
               <MaterialIcons name="camera-alt" size={18} color={Colors.onPrimary} />
             </View>
           </Pressable>
-          <Text style={styles.photoLabel}>CARREGAR FOTO DE PERFIL</Text>
+          <Text style={styles.photoLabel}>
+            {photoUri ? 'FOTO SELECIONADA' : 'CARREGAR FOTO DE PERFIL'}
+          </Text>
         </View>
 
         {/* Form fields */}
@@ -193,6 +218,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.05,
     shadowRadius: 8,
     elevation: 2,
+    overflow: 'hidden',
+  },
+  photoImage: {
+    width: 112,
+    height: 112,
+    resizeMode: 'cover',
   },
   cameraBtn: {
     position: 'absolute',

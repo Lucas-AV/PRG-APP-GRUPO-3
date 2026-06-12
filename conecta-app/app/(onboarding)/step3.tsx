@@ -11,6 +11,7 @@ import {
   ScrollView,
   TextInput,
   StyleSheet,
+  ActivityIndicator,
 } from 'react-native';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -20,6 +21,8 @@ import { TopAppBar } from '@/components/ui/top-app-bar';
 import { ProgressBar } from '@/components/ui/progress-bar';
 import { GradientButton } from '@/components/ui/gradient-button';
 import { Colors, FontFamily, Spacing, Radius } from '@/constants/theme';
+import { useAuth } from '@/context/AuthContext';
+import { servicesApi } from '@/services/api';
 
 const SERVICE_CHIPS = [
   { key: 'limpeza', label: 'Limpeza', icon: 'cleaning-services' as const },
@@ -33,9 +36,37 @@ const SERVICE_CHIPS = [
 export default function Step3Screen() {
   const { role } = useLocalSearchParams<{ role: string }>();
   const insets = useSafeAreaInsets();
+  const { token } = useAuth();
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [experiences, setExperiences] = useState([{ jobTitle: '', jobDesc: '' }]);
   const [bio, setBio] = useState('');
+  const [saving, setSaving] = useState(false);
+
+  const handleSave = async () => {
+    if (!token || selectedServices.length === 0) return;
+    setSaving(true);
+    try {
+      for (const key of selectedServices) {
+        const chip = SERVICE_CHIPS.find(c => c.key === key)!;
+        await servicesApi.create({
+          name: chip.label,
+          category: key,
+          price_type: 'fixo',
+          ...(bio ? { description: bio } : {}),
+          status: 'rascunho',
+        }, token);
+      }
+    } catch {
+      // silently ignore — draft save is best-effort during onboarding
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleContinue = async () => {
+    await handleSave();
+    router.push({ pathname: '/(onboarding)/step3b' as any, params: { role } });
+  };
 
   const toggleService = (key: string) => {
     setSelectedServices((prev) =>
@@ -196,15 +227,20 @@ export default function Step3Screen() {
       <View style={[styles.bottomNav, { paddingBottom: Math.max(insets.bottom + 8, Spacing.xl) }]}>
         <Pressable
           style={({ pressed }) => [styles.draftBtn, pressed && { opacity: 0.6 }]}
+          onPress={handleSave}
+          disabled={saving}
         >
-          <MaterialIcons name="save" size={18} color={Colors.onSurfaceVariant} />
+          {saving ? (
+            <ActivityIndicator size="small" color={Colors.onSurfaceVariant} />
+          ) : (
+            <MaterialIcons name="save" size={18} color={Colors.onSurfaceVariant} />
+          )}
           <Text style={styles.draftLabel}>Salvar</Text>
         </Pressable>
         <GradientButton
           label="Continuar →"
-          onPress={() =>
-            router.push({ pathname: '/(onboarding)/step3b' as any, params: { role } })
-          }
+          onPress={handleContinue}
+          disabled={saving}
           style={styles.continueBtn}
         />
       </View>

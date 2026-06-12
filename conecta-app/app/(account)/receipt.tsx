@@ -1,15 +1,20 @@
+import { useState } from 'react';
 import {
   View,
   Text,
   ScrollView,
   Pressable,
   StyleSheet,
+  Alert,
+  Linking,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
-import { useComingSoonAlert } from '@/hooks/useComingSoonAlert';
 import { MaterialIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import * as Print from 'expo-print';
+import * as Sharing from 'expo-sharing';
 import { TopAppBar } from '@/components/ui/top-app-bar';
 import { Colors, FontFamily, GradientColors, Spacing, Radius } from '@/constants/theme';
 
@@ -34,10 +39,75 @@ export default function ReceiptScreen() {
     description?: string;
   }>();
 
-  const comingSoon = useComingSoonAlert();
+  const [downloading, setDownloading] = useState(false);
 
   const copyCode = () =>
     Alert.alert('Copiado!', `${transactionCode} copiado para a área de transferência.`, [{ text: 'OK' }]);
+
+  const handleDownload = async () => {
+    setDownloading(true);
+    try {
+      const html = `
+        <!DOCTYPE html>
+        <html lang="pt-BR">
+        <head>
+          <meta charset="UTF-8"/>
+          <style>
+            body { font-family: Arial, sans-serif; padding: 32px; color: #111; }
+            h1 { color: #0054d6; font-size: 22px; margin-bottom: 4px; }
+            .subtitle { color: #666; font-size: 13px; margin-bottom: 24px; }
+            .section { margin-bottom: 20px; }
+            .label { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+            .value { font-size: 15px; font-weight: bold; margin-top: 2px; }
+            .value.price { color: #0054d6; }
+            hr { border: none; border-top: 1px solid #eee; margin: 20px 0; }
+            .footer { font-size: 11px; color: #aaa; text-align: center; margin-top: 32px; }
+          </style>
+        </head>
+        <body>
+          <h1>Conecta</h1>
+          <p class="subtitle">Comprovante de Pagamento</p>
+          <hr/>
+          <div class="section">
+            <div class="label">Serviço</div>
+            <div class="value">${serviceName || '—'}</div>
+          </div>
+          <div class="section">
+            <div class="label">Prestador</div>
+            <div class="value">${providerName || '—'}</div>
+          </div>
+          <div class="section">
+            <div class="label">Data e Hora</div>
+            <div class="value">${date || '—'}</div>
+          </div>
+          <div class="section">
+            <div class="label">Valor Total</div>
+            <div class="value price">${amount || '—'}</div>
+          </div>
+          ${paymentMethod ? `<div class="section"><div class="label">Método de Pagamento</div><div class="value">${paymentMethod}</div></div>` : ''}
+          ${transactionCode ? `<div class="section"><div class="label">Código da Transação</div><div class="value">${transactionCode}</div></div>` : ''}
+          <hr/>
+          <p class="footer">Gerado pelo Conecta · suporte@conectaapp.com.br</p>
+        </body>
+        </html>
+      `;
+      const { uri } = await Print.printToFileAsync({ html, base64: false });
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(uri, { mimeType: 'application/pdf', dialogTitle: 'Salvar Comprovante' });
+      } else {
+        Alert.alert('Compartilhamento não disponível', 'Não foi possível compartilhar o arquivo neste dispositivo.');
+      }
+    } catch {
+      Alert.alert('Erro', 'Não foi possível gerar o comprovante. Tente novamente.');
+    } finally {
+      setDownloading(false);
+    }
+  };
+
+  const handleHelp = () =>
+    Linking.openURL('https://wa.me/5511999999999?text=Preciso+de+ajuda+com+um+pagamento').catch(() =>
+      Linking.openURL('mailto:suporte@conectaapp.com.br')
+    );
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -130,8 +200,10 @@ export default function ReceiptScreen() {
             style={({ pressed }) => [
               styles.downloadWrap,
               pressed && { opacity: 0.9, transform: [{ scale: 0.98 }] },
+              downloading && { opacity: 0.7 },
             ]}
-            onPress={comingSoon}
+            onPress={handleDownload}
+            disabled={downloading}
           >
             <LinearGradient
               colors={GradientColors}
@@ -139,14 +211,18 @@ export default function ReceiptScreen() {
               end={{ x: 1, y: 1 }}
               style={styles.downloadBtn}
             >
-              <MaterialIcons name="file-download" size={20} color="#ffffff" />
-              <Text style={styles.downloadBtnLabel}>Baixar Comprovante</Text>
+              {downloading
+                ? <ActivityIndicator size="small" color="#fff" />
+                : <MaterialIcons name="file-download" size={20} color="#ffffff" />}
+              <Text style={styles.downloadBtnLabel}>
+                {downloading ? 'Gerando PDF…' : 'Baixar Comprovante'}
+              </Text>
             </LinearGradient>
           </Pressable>
 
           <Pressable
             style={({ pressed }) => [styles.helpBtn, pressed && { opacity: 0.85 }]}
-            onPress={comingSoon}
+            onPress={handleHelp}
           >
             <MaterialIcons name="help-outline" size={20} color={Colors.onSecondaryContainer} />
             <Text style={styles.helpBtnLabel}>Preciso de Ajuda</Text>
