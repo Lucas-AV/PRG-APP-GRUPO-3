@@ -40,14 +40,21 @@ const section = StyleSheet.create({
   title: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 10,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     letterSpacing: 1.6,
     paddingLeft: 2,
   },
   card: {
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.md,
     overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: Colors.border,
+    shadowColor: Colors.ink,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.04,
+    shadowRadius: 4,
+    elevation: 1,
   },
 });
 
@@ -73,7 +80,7 @@ function SettingsRow({ icon, label, subtitle, onPress, accent, isLast }: RowProp
         <Text style={row.label}>{label}</Text>
         {subtitle && <Text style={row.subtitle}>{subtitle}</Text>}
       </View>
-      <MaterialIcons name="chevron-right" size={20} color={Colors.outlineVariant} />
+      <MaterialIcons name="chevron-right" size={20} color={Colors.inkMuted} />
     </Pressable>
   );
 }
@@ -114,13 +121,13 @@ const row = StyleSheet.create({
   },
   border: {
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: Colors.surfaceContainerLow,
+    borderBottomColor: Colors.border,
   },
   iconWrap: {
     width: 40,
     height: 40,
     borderRadius: Radius.sm,
-    backgroundColor: Colors.surfaceContainer,
+    backgroundColor: Colors.border + '60',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -131,12 +138,12 @@ const row = StyleSheet.create({
   label: {
     fontFamily: FontFamily.bodyMedium,
     fontSize: 15,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   subtitle: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 12,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     marginTop: 1,
   },
 });
@@ -336,11 +343,11 @@ export default function ProfileScreen() {
 const modal = StyleSheet.create({
   backdrop: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.45)',
+    backgroundColor: 'rgba(15,23,42,0.55)',
     justifyContent: 'flex-end',
   },
   sheet: {
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderTopLeftRadius: Radius.xl,
     borderTopRightRadius: Radius.xl,
     paddingHorizontal: Spacing.xl,
@@ -352,20 +359,20 @@ const modal = StyleSheet.create({
     width: 40,
     height: 4,
     borderRadius: 2,
-    backgroundColor: Colors.outlineVariant,
+    backgroundColor: Colors.border,
     alignSelf: 'center',
     marginBottom: Spacing.md,
   },
   title: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 18,
-    color: Colors.onSurface,
+    color: Colors.ink,
     letterSpacing: -0.3,
   },
   subtitle: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 13,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     marginBottom: Spacing.sm,
   },
   langRow: {
@@ -376,7 +383,7 @@ const modal = StyleSheet.create({
   },
   langBorder: {
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: Colors.surfaceContainerLow,
+    borderBottomColor: Colors.border,
   },
   langRowActive: {
     // no background — checkmark is enough
@@ -384,7 +391,7 @@ const modal = StyleSheet.create({
   langLabel: {
     fontFamily: FontFamily.bodyMedium,
     fontSize: 16,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   langLabelActive: {
     fontFamily: FontFamily.bodySemiBold,
@@ -396,12 +403,12 @@ const modal = StyleSheet.create({
     paddingVertical: Spacing.md,
     borderRadius: Radius.md,
     borderWidth: 1,
-    borderColor: Colors.outlineVariant,
+    borderColor: Colors.border,
   },
   cancelLabel: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 15,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
 });
 
@@ -421,7 +428,7 @@ const styles = StyleSheet.create({
   topTitle: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 18,
-    color: Colors.onSurface,
+    color: Colors.ink,
     letterSpacing: -0.4,
   },
   topBrand: {
@@ -439,10 +446,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.lg,
     padding: Spacing.xl,
-    shadowColor: '#000',
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.04,
     shadowRadius: 20,
@@ -471,13 +478,13 @@ const styles = StyleSheet.create({
   profileName: {
     fontFamily: FontFamily.headlineExtraBold,
     fontSize: 18,
-    color: Colors.onSurface,
+    color: Colors.ink,
     letterSpacing: -0.3,
   },
   profileEmail: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 12,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
   editLink: {
     fontFamily: FontFamily.bodySemiBold,
