@@ -25,6 +25,7 @@ export interface User {
   email: string;
   phone?: string;
   role: 'cliente' | 'prestador';
+  avatar?: string;
 }
 
 export interface AuthResponse {

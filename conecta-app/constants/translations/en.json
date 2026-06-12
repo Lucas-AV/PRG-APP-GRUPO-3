@@ -16,7 +16,10 @@
     "nearYou": "NEAR YOU",
     "book": "HIRE",
     "loading": "Searching...",
-    "empty": "No services found."
+    "empty": "No services found.",
+    "statServices": "Services",
+    "statRating": "Avg. rating",
+    "statCategories": "Categories"
   },
   "profile": {
     "title": "Settings",

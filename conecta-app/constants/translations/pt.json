@@ -16,7 +16,10 @@
     "nearYou": "PRÓXIMO A VOCÊ",
     "book": "CONTRATAR",
     "loading": "Pesquisando...",
-    "empty": "Nenhum serviço encontrado."
+    "empty": "Nenhum serviço encontrado.",
+    "statServices": "Serviços",
+    "statRating": "Avaliação média",
+    "statCategories": "Categorias"
   },
   "profile": {
     "title": "Configurações",

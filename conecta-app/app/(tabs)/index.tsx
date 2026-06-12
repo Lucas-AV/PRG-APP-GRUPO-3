@@ -8,22 +8,18 @@ import {
   StyleSheet,
   ActivityIndicator,
   useWindowDimensions,
-  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Colors, FontFamily, Spacing, Radius, GradientColors } from '@/constants/theme';
+import { Colors, FontFamily, Spacing, Radius } from '@/constants/theme';
 import { CATEGORIES } from '@/constants/categories';
 import { useAuth } from '@/context/AuthContext';
-import {
-  publicServicesApi, PublicService,
-  appointmentsApi, Appointment,
-  servicesApi, Service,
-} from '@/services/api';
+import { publicServicesApi, PublicService } from '@/services/api';
 import { useTranslation } from 'react-i18next';
 import { AvatarInitials } from '@/components/ui/avatar-initials';
+import { ProviderHomeScreen } from './home-provider';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -33,10 +29,8 @@ function formatPrice(service: PublicService): string {
   return `${prefix}R$ ${service.price.toFixed(2).replace('.', ',')}`;
 }
 
-const PROVIDER_IMAGES: string[] = [
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuDDYvz5DNWYKumUPqcHbsPW4oXDpyN1aawLRcHRWXFnuOg5IbdH_QwkwLBxdOAhh0GFR_iPArXrcN8FuD4YOTgAeTGDs-nA5PqLbrAnlI2WyVgvMTPkxWGMdA8AH1fkRh_5LJGI1T7jMSYhSaL8iHhLp2Ok5C5FToGPJZhYiHzgrL22wHUQJGUqTK8Z9Hx-xUHZJld_BFkBnM7Sf5tNlW-6AiozFaA7sCEv5QC5HI0dH82oVk2SVxf8NeMJjtrq1UNEqLqWaZlevTQ',
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuBdsI7AlRE5Y8UVf7NA4Y7MfRVlL6yrakbEXSHbtAe2NABe8NHpHos6BpYPvQmw68PequalsJ4b-c4v13-3Esc9awoEK4qFLhzidjdiqUUjUWFJThaDKPlunxSFFlW8PKwP0BnFuuxd8Le8HZDBPePA-ldtlc0bZm61cMj6k40b8N1LeHfi3ZAp02k3bxKTvU3mteNZHseJmnRkwrTcnDYiAldeI4yzR33uLMVW6_iSoUFqIj-V8PsHdsENtwG4HeePPKseNMbUqsM',
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuDl6nnS_1yci62TCyJKWdDJpTGso1WVbB7SWS1dFycbQNVK5VKGbo0KBHPdjVNy5WW_hAwlevHZC2Jt65vNkzznm4XRfsrzC4tN34SaMywsGDXjI89hizixuHhSRavg0MLl0kc0eDEMSFwlhXwrbiL_bgS_jeXETbmplm2OaP6v_-8AN-T7N9zl81nantEZUNLGjh-mW9Os3nlPAqyMjkJKmr0OVdGPoq1uIH-bGAriAi8INsKdO4sZkyfQFOArpBJqh04oPU6xaK4',
+const CARD_BG_COLORS = [
+  '#dbeafe', '#fce7f3', '#dcfce7', '#fef9c3', '#ede9fe',
 ];
 
 const QUICK_FILTERS = [
@@ -45,472 +39,6 @@ const QUICK_FILTERS = [
   { key: 'preco',   label: 'Menor Preço',      icon: 'attach-money' as const },
   { key: 'proximos',label: 'Mais Próximos',    icon: 'near-me'      as const },
 ];
-
-// ── Provider Dashboard ────────────────────────────────────────────────────────
-
-function ProviderHomeScreen() {
-  const { user, token } = useAuth();
-  const firstName = user?.name?.split(' ')[0] ?? 'prestador';
-  const initials = user?.name
-    ? user.name.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase()
-    : 'P';
-
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
-  const [services, setServices] = useState<Service[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (!token) return;
-    Promise.all([appointmentsApi.list(token), servicesApi.list(token)])
-      .then(([appts, svcs]) => { setAppointments(appts); setServices(svcs); })
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, [token]);
-
-  const today = new Date().toISOString().split('T')[0];
-
-  const todayCount = appointments.filter(
-    a => a.scheduled_date === today && a.status === 'confirmado'
-  ).length;
-
-  const activeServices = services.filter(s => s.status === 'ativo');
-
-  const totalRevenue = appointments
-    .filter(a => a.status === 'concluido')
-    .reduce((sum, a) => sum + a.total_price, 0);
-
-  const upcomingAppts = appointments
-    .filter(a => a.status === 'confirmado')
-    .sort((a, b) => {
-      const da = new Date(`${a.scheduled_date}T${a.scheduled_time}`).getTime();
-      const db = new Date(`${b.scheduled_date}T${b.scheduled_time}`).getTime();
-      return da - db;
-    })
-    .slice(0, 5);
-
-  const formatApptDate = (date: string, time: string) => {
-    const d = new Date(`${date}T${time}`);
-    const isToday = date === today;
-    const timeStr = d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-    if (isToday) return `Hoje, ${timeStr}`;
-    return `${d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}, ${timeStr}`;
-  };
-
-  return (
-    <SafeAreaView style={pStyles.container} edges={['top']}>
-      {/* Header */}
-      <View style={pStyles.header}>
-        <View style={pStyles.headerTop}>
-          <View>
-            <Text style={pStyles.greetingSmall}>Olá, <Text style={pStyles.greetingBold}>{firstName} 👋</Text></Text>
-            <Text style={pStyles.headerBrand}>Conecta</Text>
-          </View>
-          <View style={pStyles.headerActions}>
-            <Pressable
-              style={pStyles.notifBtn}
-              onPress={() => router.push('/(account)/notifications' as any)}
-            >
-              <MaterialIcons name="notifications-none" size={24} color={Colors.onSurfaceVariant} />
-              {appointments.some(a => a.scheduled_date === today && a.status === 'confirmado') && (
-                <View style={pStyles.notifDot} />
-              )}
-            </Pressable>
-            <Pressable
-              style={pStyles.avatarCircle}
-              onPress={() => router.push('/(account)/edit-profile' as any)}
-            >
-              <Text style={pStyles.avatarInitials}>{initials}</Text>
-            </Pressable>
-          </View>
-        </View>
-      </View>
-
-      {loading ? (
-        <View style={pStyles.loadingWrap}>
-          <ActivityIndicator color={Colors.primary} size="large" />
-        </View>
-      ) : (
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={pStyles.scroll}>
-
-          {/* Stats row */}
-          <View style={pStyles.statsRow}>
-            <View style={[pStyles.statCard, { backgroundColor: Colors.primaryContainer }]}>
-              <MaterialIcons name="today" size={22} color={Colors.primary} />
-              <Text style={pStyles.statValue}>{todayCount}</Text>
-              <Text style={pStyles.statLabel}>Hoje</Text>
-            </View>
-            <View style={[pStyles.statCard, { backgroundColor: Colors.secondaryContainer }]}>
-              <MaterialIcons name="home-repair-service" size={22} color={Colors.secondary} />
-              <Text style={pStyles.statValue}>{activeServices.length}</Text>
-              <Text style={pStyles.statLabel}>Serviços ativos</Text>
-            </View>
-            <View style={[pStyles.statCard, { backgroundColor: Colors.tertiaryContainer }]}>
-              <MaterialIcons name="attach-money" size={22} color={Colors.tertiary} />
-              <Text style={pStyles.statValue}>
-                {totalRevenue > 0 ? `R$ ${totalRevenue.toFixed(0)}` : '—'}
-              </Text>
-              <Text style={pStyles.statLabel}>Receita total</Text>
-            </View>
-          </View>
-
-          {/* Quick actions */}
-          <View style={pStyles.section}>
-            <Text style={pStyles.sectionTitle}>Ações rápidas</Text>
-            <View style={pStyles.quickActions}>
-              {[
-                { icon: 'build' as const, label: 'Meus Serviços', path: '/(services)/create' as any },
-                { icon: 'event-available' as const, label: 'Disponibilidade', path: '/(account)/edit-profile' as any },
-                { icon: 'bar-chart' as const, label: 'Desempenho', path: '/(services)/view' as any },
-                { icon: 'star-border' as const, label: 'Avaliações', path: '/(account)/payments' as any },
-              ].map(action => (
-                <Pressable
-                  key={action.label}
-                  style={({ pressed }) => [pStyles.quickAction, pressed && { opacity: 0.7 }]}
-                  onPress={() => router.push(action.path)}
-                >
-                  <View style={pStyles.quickActionIcon}>
-                    <MaterialIcons name={action.icon} size={22} color={Colors.primary} />
-                  </View>
-                  <Text style={pStyles.quickActionLabel}>{action.label}</Text>
-                </Pressable>
-              ))}
-            </View>
-          </View>
-
-          {/* Upcoming appointments */}
-          <View style={pStyles.section}>
-            <View style={pStyles.sectionHeader}>
-              <Text style={pStyles.sectionTitle}>Próximos agendamentos</Text>
-              <Pressable onPress={() => router.push('/(tabs)/schedule' as any)}>
-                <Text style={pStyles.sectionLink}>VER TODOS</Text>
-              </Pressable>
-            </View>
-            {upcomingAppts.length === 0 ? (
-              <View style={pStyles.emptyBox}>
-                <MaterialIcons name="event-busy" size={32} color={Colors.outlineVariant} />
-                <Text style={pStyles.emptyText}>Nenhum agendamento pendente</Text>
-              </View>
-            ) : (
-              <View style={pStyles.apptList}>
-                {upcomingAppts.map(appt => (
-                  <Pressable
-                    key={appt.id}
-                    style={({ pressed }) => [pStyles.apptCard, pressed && { opacity: 0.85 }]}
-                    onPress={() =>
-                      router.push({
-                        pathname: '/(scheduling)/appointment-detail' as any,
-                        params: { id: String(appt.id) },
-                      })
-                    }
-                  >
-                    <View style={pStyles.apptIconBox}>
-                      <MaterialIcons name="person" size={20} color={Colors.primary} />
-                    </View>
-                    <View style={pStyles.apptBody}>
-                      <Text style={pStyles.apptClient} numberOfLines={1}>{appt.client_name}</Text>
-                      <Text style={pStyles.apptService} numberOfLines={1}>{appt.service_name}</Text>
-                    </View>
-                    <View style={pStyles.apptRight}>
-                      <Text style={pStyles.apptTime}>{formatApptDate(appt.scheduled_date, appt.scheduled_time)}</Text>
-                      <Text style={pStyles.apptPrice}>R$ {appt.total_price.toFixed(2).replace('.', ',')}</Text>
-                    </View>
-                  </Pressable>
-                ))}
-              </View>
-            )}
-          </View>
-
-          {/* Active services */}
-          <View style={pStyles.section}>
-            <View style={pStyles.sectionHeader}>
-              <Text style={pStyles.sectionTitle}>Meus serviços</Text>
-              <Pressable onPress={() => router.push('/(services)/create' as any)}>
-                <Text style={pStyles.sectionLink}>ADICIONAR</Text>
-              </Pressable>
-            </View>
-            {activeServices.length === 0 ? (
-              <View style={pStyles.emptyBox}>
-                <MaterialIcons name="add-business" size={32} color={Colors.outlineVariant} />
-                <Text style={pStyles.emptyText}>Nenhum serviço ativo. Crie o primeiro!</Text>
-              </View>
-            ) : (
-              <View style={pStyles.serviceGrid}>
-                {activeServices.slice(0, 4).map(svc => (
-                  <Pressable
-                    key={svc.id}
-                    style={({ pressed }) => [pStyles.serviceChip, pressed && { opacity: 0.75 }]}
-                    onPress={() =>
-                      router.push({
-                        pathname: '/(services)/view' as any,
-                        params: { id: String(svc.id) },
-                      })
-                    }
-                  >
-                    <MaterialIcons name="home-repair-service" size={16} color={Colors.primary} />
-                    <Text style={pStyles.serviceChipLabel} numberOfLines={1}>{svc.name}</Text>
-                    {svc.price != null && (
-                      <Text style={pStyles.serviceChipPrice}>
-                        R$ {svc.price.toFixed(0)}
-                      </Text>
-                    )}
-                  </Pressable>
-                ))}
-              </View>
-            )}
-          </View>
-
-        </ScrollView>
-      )}
-    </SafeAreaView>
-  );
-}
-
-const pStyles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background },
-  loadingWrap: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  scroll: { paddingBottom: Spacing.xxxl * 2 },
-
-  header: {
-    backgroundColor: Colors.surface,
-    paddingHorizontal: Spacing.xl,
-    paddingTop: Spacing.md,
-    paddingBottom: Spacing.base,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  headerTop: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  greetingSmall: {
-    fontFamily: FontFamily.bodyRegular,
-    fontSize: 13,
-    color: Colors.onSurfaceVariant,
-  },
-  greetingBold: {
-    fontFamily: FontFamily.bodySemiBold,
-    color: Colors.onSurface,
-  },
-  headerBrand: {
-    fontFamily: FontFamily.headlineExtraBold,
-    fontSize: 24,
-    color: Colors.primary,
-    letterSpacing: -0.8,
-    marginTop: -2,
-  },
-  headerActions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.sm,
-  },
-  notifBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: Radius.full,
-    backgroundColor: Colors.surfaceContainerLowest,
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'relative',
-  },
-  notifDot: {
-    position: 'absolute',
-    top: 8,
-    right: 8,
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: Colors.error,
-    borderWidth: 1.5,
-    borderColor: Colors.surface,
-  },
-  avatarCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: Radius.full,
-    backgroundColor: Colors.primaryContainer,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 2,
-    borderColor: Colors.primary + '33',
-  },
-  avatarInitials: {
-    fontFamily: FontFamily.headlineExtraBold,
-    fontSize: 15,
-    color: Colors.primary,
-    letterSpacing: -0.5,
-  },
-
-  statsRow: {
-    flexDirection: 'row',
-    gap: Spacing.sm,
-    paddingHorizontal: Spacing.xl,
-    paddingTop: Spacing.xxl,
-  },
-  statCard: {
-    flex: 1,
-    borderRadius: Radius.md,
-    padding: Spacing.base,
-    gap: Spacing.xs,
-    alignItems: 'center',
-  },
-  statValue: {
-    fontFamily: FontFamily.headlineExtraBold,
-    fontSize: 20,
-    color: Colors.onSurface,
-    letterSpacing: -0.5,
-  },
-  statLabel: {
-    fontFamily: FontFamily.bodyRegular,
-    fontSize: 10,
-    color: Colors.onSurfaceVariant,
-    textAlign: 'center',
-  },
-
-  section: { paddingHorizontal: Spacing.xl, marginTop: Spacing.xxl, gap: Spacing.base },
-  sectionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  sectionTitle: {
-    fontFamily: FontFamily.headlineBold,
-    fontSize: 17,
-    color: Colors.onSurface,
-    letterSpacing: -0.3,
-  },
-  sectionLink: {
-    fontFamily: FontFamily.bodySemiBold,
-    fontSize: 10,
-    color: Colors.primary,
-    letterSpacing: 1.5,
-  },
-
-  quickActions: {
-    flexDirection: 'row',
-    gap: Spacing.sm,
-  },
-  quickAction: {
-    flex: 1,
-    backgroundColor: Colors.surfaceContainerLowest,
-    borderRadius: Radius.md,
-    paddingVertical: Spacing.base,
-    alignItems: 'center',
-    gap: Spacing.xs,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.04,
-    shadowRadius: 4,
-    elevation: 1,
-  },
-  quickActionIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: Radius.md,
-    backgroundColor: Colors.primaryContainer,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  quickActionLabel: {
-    fontFamily: FontFamily.bodySemiBold,
-    fontSize: 10,
-    color: Colors.onSurfaceVariant,
-    textAlign: 'center',
-    letterSpacing: 0.2,
-  },
-
-  emptyBox: {
-    backgroundColor: Colors.surfaceContainerLowest,
-    borderRadius: Radius.md,
-    paddingVertical: Spacing.xxxl,
-    alignItems: 'center',
-    gap: Spacing.base,
-  },
-  emptyText: {
-    fontFamily: FontFamily.bodyRegular,
-    fontSize: 13,
-    color: Colors.onSurfaceVariant,
-    textAlign: 'center',
-  },
-
-  apptList: { gap: Spacing.sm },
-  apptCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.base,
-    backgroundColor: Colors.surfaceContainerLowest,
-    borderRadius: Radius.md,
-    padding: Spacing.base,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.04,
-    shadowRadius: 4,
-    elevation: 1,
-  },
-  apptIconBox: {
-    width: 44,
-    height: 44,
-    borderRadius: Radius.full,
-    backgroundColor: Colors.primaryContainer,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexShrink: 0,
-  },
-  apptBody: { flex: 1, gap: 2 },
-  apptClient: {
-    fontFamily: FontFamily.headlineBold,
-    fontSize: 14,
-    color: Colors.onSurface,
-  },
-  apptService: {
-    fontFamily: FontFamily.bodyRegular,
-    fontSize: 12,
-    color: Colors.onSurfaceVariant,
-  },
-  apptRight: { alignItems: 'flex-end', gap: 2 },
-  apptTime: {
-    fontFamily: FontFamily.bodySemiBold,
-    fontSize: 11,
-    color: Colors.primary,
-  },
-  apptPrice: {
-    fontFamily: FontFamily.headlineBold,
-    fontSize: 13,
-    color: Colors.onSurface,
-  },
-
-  serviceGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: Spacing.sm,
-  },
-  serviceChip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.xs,
-    backgroundColor: Colors.surfaceContainerLowest,
-    borderRadius: Radius.full,
-    paddingHorizontal: Spacing.base,
-    paddingVertical: Spacing.sm + 2,
-    borderWidth: 1,
-    borderColor: Colors.outlineVariant + '44',
-    maxWidth: '48%',
-  },
-  serviceChipLabel: {
-    fontFamily: FontFamily.bodySemiBold,
-    fontSize: 13,
-    color: Colors.onSurface,
-    flex: 1,
-  },
-  serviceChipPrice: {
-    fontFamily: FontFamily.headlineBold,
-    fontSize: 12,
-    color: Colors.primary,
-  },
-});
 
 // ── Componente ────────────────────────────────────────────────────────────────
 
@@ -782,7 +310,10 @@ export default function HomeScreen() {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>{t('feed.popularCategories')}</Text>
-            <Pressable onPress={() => router.push({ pathname: '/(client)/search' })}>
+            <Pressable onPress={() => router.push({
+              pathname: '/(client)/search',
+              params: { category: selectedCategory ?? '' },
+            })}>
               <Text style={styles.sectionLink}>{t('feed.viewAll')}</Text>
             </Pressable>
           </View>
@@ -851,10 +382,14 @@ export default function HomeScreen() {
                       }
                     >
                       <View style={styles.providerImageWrap}>
-                        <Image
-                          source={{ uri: PROVIDER_IMAGES[index % PROVIDER_IMAGES.length] }}
-                          style={styles.providerCardImage}
-                        />
+                        <View style={[
+                          styles.providerCardImagePlaceholder,
+                          { backgroundColor: CARD_BG_COLORS[index % CARD_BG_COLORS.length] },
+                        ]}>
+                          <Text style={styles.providerCardInitials}>
+                            {item.provider_name.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase()}
+                          </Text>
+                        </View>
                         <LinearGradient
                           colors={['transparent', 'rgba(0,0,0,0.55)']}
                           style={styles.providerImageGradient}
@@ -1267,7 +802,19 @@ const styles = StyleSheet.create({
     shadowRadius: 12,
   },
   providerImageWrap: { height: 150, position: 'relative' },
-  providerCardImage: { width: '100%', height: '100%', resizeMode: 'cover' },
+  providerCardImagePlaceholder: {
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  providerCardInitials: {
+    fontFamily: FontFamily.headlineExtraBold,
+    fontSize: 44,
+    color: Colors.onSurface,
+    opacity: 0.35,
+    letterSpacing: -1,
+  },
   providerImageGradient: {
     position: 'absolute',
     bottom: 0,
