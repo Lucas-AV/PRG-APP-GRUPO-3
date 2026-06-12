@@ -279,12 +279,12 @@ const styles = StyleSheet.create({
     gap: Spacing.xxxl,
   },
   checkoutCard: {
-    backgroundColor: Colors.primaryContainer + '33',
+    backgroundColor: Colors.brand + '15',
     borderRadius: Radius.lg,
     padding: Spacing.xxl,
     gap: Spacing.base,
     borderWidth: 1,
-    borderColor: Colors.primary + '33',
+    borderColor: Colors.border,
   },
   checkoutHeader: {
     flexDirection: 'row',
@@ -454,14 +454,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.base,
-    backgroundColor: Colors.primaryContainer + '4D',
+    backgroundColor: Colors.brand + '10',
     borderWidth: 1,
-    borderColor: Colors.primary + '1A',
+    borderColor: Colors.border,
     borderRadius: Radius.md,
     padding: Spacing.base,
   },
   activeCouponIconWrap: {
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.brand,
     borderRadius: Radius.sm,
     padding: Spacing.sm,
   },
@@ -469,7 +469,7 @@ const styles = StyleSheet.create({
   activeCouponCode: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 14,
-    color: Colors.onPrimaryContainer,
+    color: Colors.ink,
   },
   activeCouponDesc: {
     fontFamily: FontFamily.bodyRegular,
