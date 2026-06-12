@@ -119,7 +119,7 @@ export default function ReceiptScreen() {
         {/* Success header */}
         <View style={styles.successHeader}>
           <View style={styles.successIconWrap}>
-            <MaterialIcons name="check-circle" size={56} color={Colors.primary} />
+            <MaterialIcons name="check-circle" size={56} color={Colors.brand} />
           </View>
           <Text style={styles.successTitle}>Pagamento Realizado{'\n'}com Sucesso!</Text>
           <Text style={styles.successSub}>Sua transação foi processada com segurança.</Text>
@@ -128,7 +128,7 @@ export default function ReceiptScreen() {
         {/* Service card */}
         <View style={styles.serviceCard}>
           <View style={styles.serviceIconBox}>
-            <MaterialIcons name="receipt-long" size={28} color={Colors.primary} />
+            <MaterialIcons name="receipt-long" size={28} color={Colors.brand} />
           </View>
           <View style={styles.serviceInfo}>
             <Text style={styles.serviceName}>{serviceName}</Text>
@@ -151,7 +151,7 @@ export default function ReceiptScreen() {
             </View>
             <View style={[styles.detailCard, styles.flex1]}>
               <Text style={styles.detailLabel}>Valor Total</Text>
-              <Text style={[styles.detailValue, { color: Colors.primary }]}>{amount}</Text>
+              <Text style={[styles.detailValue, { color: Colors.brand }]}>{amount}</Text>
             </View>
           </View>
 
@@ -161,11 +161,11 @@ export default function ReceiptScreen() {
               <View>
                 <Text style={styles.detailLabel}>Método de Pagamento</Text>
                 <View style={styles.paymentMethodRow}>
-                  <MaterialIcons name="credit-card" size={16} color={Colors.onSurfaceVariant} />
+                  <MaterialIcons name="credit-card" size={16} color={Colors.inkMuted} />
                   <Text style={styles.detailValue}>{paymentMethod}</Text>
                 </View>
               </View>
-              <MaterialIcons name="verified" size={24} color={Colors.outlineVariant} />
+              <MaterialIcons name="verified" size={24} color={Colors.inkMuted} />
             </View>
           )}
 
@@ -180,7 +180,7 @@ export default function ReceiptScreen() {
                 style={({ pressed }) => [styles.copyBtn, pressed && { opacity: 0.6 }]}
                 onPress={copyCode}
               >
-                <MaterialIcons name="content-copy" size={20} color={Colors.primary} />
+                <MaterialIcons name="content-copy" size={20} color={Colors.brand} />
               </Pressable>
             </View>
           )}
@@ -224,7 +224,7 @@ export default function ReceiptScreen() {
             style={({ pressed }) => [styles.helpBtn, pressed && { opacity: 0.85 }]}
             onPress={handleHelp}
           >
-            <MaterialIcons name="help-outline" size={20} color={Colors.onSecondaryContainer} />
+            <MaterialIcons name="help-outline" size={20} color={Colors.brand} />
             <Text style={styles.helpBtnLabel}>Preciso de Ajuda</Text>
           </Pressable>
 
@@ -258,11 +258,11 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: Colors.primaryContainer,
+    backgroundColor: Colors.brand + '15',
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: Spacing.sm,
-    shadowColor: Colors.primary,
+    shadowColor: Colors.brand,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 12,
@@ -271,7 +271,7 @@ const styles = StyleSheet.create({
   successTitle: {
     fontFamily: FontFamily.headlineExtraBold,
     fontSize: 24,
-    color: Colors.onSurface,
+    color: Colors.ink,
     textAlign: 'center',
     letterSpacing: -0.6,
     lineHeight: 30,
@@ -279,19 +279,21 @@ const styles = StyleSheet.create({
   successSub: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 14,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     textAlign: 'center',
   },
 
   // Service card
   serviceCard: {
-    backgroundColor: Colors.surfaceContainerLowest,
-    borderRadius: Radius.lg,
+    backgroundColor: Colors.card,
+    borderRadius: Radius.xl,
     padding: Spacing.base,
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.base,
-    shadowColor: '#000',
+    borderWidth: 1,
+    borderColor: Colors.border,
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.04,
     shadowRadius: 24,
@@ -301,7 +303,7 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: Radius.md,
-    backgroundColor: Colors.primaryContainer,
+    backgroundColor: Colors.brand + '12',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -309,7 +311,7 @@ const styles = StyleSheet.create({
   serviceName: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 15,
-    color: Colors.onSurface,
+    color: Colors.ink,
     letterSpacing: -0.2,
   },
   providerRow: {
@@ -321,19 +323,19 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 10,
-    backgroundColor: Colors.primaryContainer,
+    backgroundColor: Colors.brand + '12',
     alignItems: 'center',
     justifyContent: 'center',
   },
   providerInitials: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 8,
-    color: Colors.primary,
+    color: Colors.brand,
   },
   providerName: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 12,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
 
   // Details bento
@@ -341,9 +343,11 @@ const styles = StyleSheet.create({
   detailRow2: { flexDirection: 'row', gap: Spacing.base },
   flex1: { flex: 1 },
   detailCard: {
-    backgroundColor: Colors.surfaceContainerLow,
-    borderRadius: Radius.lg,
+    backgroundColor: Colors.card,
+    borderRadius: Radius.xl,
     padding: Spacing.base,
+    borderWidth: 1,
+    borderColor: Colors.border,
   },
   detailRowBetween: {
     flexDirection: 'row',
@@ -353,7 +357,7 @@ const styles = StyleSheet.create({
   detailLabel: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 10,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     letterSpacing: 1,
     textTransform: 'uppercase',
     marginBottom: Spacing.xs,
@@ -361,7 +365,7 @@ const styles = StyleSheet.create({
   detailValue: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 14,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   paymentMethodRow: {
     flexDirection: 'row',
@@ -381,14 +385,14 @@ const styles = StyleSheet.create({
   descTitle: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 11,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     letterSpacing: 1.5,
     textTransform: 'uppercase',
   },
   descText: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 14,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     lineHeight: 22,
   },
 
@@ -397,7 +401,7 @@ const styles = StyleSheet.create({
   downloadWrap: {
     borderRadius: Radius.sm,
     overflow: 'hidden',
-    shadowColor: Colors.primary,
+    shadowColor: Colors.brand,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 8,
@@ -421,14 +425,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: Spacing.sm,
-    backgroundColor: Colors.secondaryContainer,
+    backgroundColor: Colors.brand + '12',
     borderRadius: Radius.sm,
     paddingVertical: Spacing.base,
   },
   helpBtnLabel: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 15,
-    color: Colors.onSecondaryContainer,
+    color: Colors.brand,
   },
   backBtn: {
     alignItems: 'center',
@@ -437,6 +441,6 @@ const styles = StyleSheet.create({
   backBtnLabel: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 15,
-    color: Colors.primary,
+    color: Colors.brand,
   },
 });

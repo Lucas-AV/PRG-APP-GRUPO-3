@@ -34,9 +34,9 @@ interface NotificationItem {
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 const STATUS_META: Record<string, { icon: keyof typeof MaterialIcons.glyphMap; color: string; bg: string; verb: string }> = {
-  confirmado: { icon: 'event-available', color: Colors.primary,   bg: Colors.primaryContainer,   verb: 'confirmado' },
-  cancelado:  { icon: 'event-busy',      color: '#dc2626',        bg: '#fee2e2',                 verb: 'cancelado'  },
-  concluido:  { icon: 'check-circle',    color: '#16a34a',        bg: '#dcfce7',                 verb: 'concluído'  },
+  confirmado: { icon: 'event-available', color: Colors.brand,   bg: Colors.brand + '15',   verb: 'confirmado' },
+  cancelado:  { icon: 'event-busy',      color: '#dc2626',      bg: '#fee2e2',              verb: 'cancelado'  },
+  concluido:  { icon: 'check-circle',    color: '#16a34a',      bg: '#dcfce7',              verb: 'concluído'  },
 };
 
 function buildNotification(appt: Appointment, isProvider: boolean, today: string, weekAgo: string): NotificationItem {
@@ -118,7 +118,7 @@ export default function NotificationsScreen() {
   const renderItem = (item: NotificationItem) => (
     <Pressable
       key={item.id}
-      style={({ pressed }) => [styles.item, pressed && { backgroundColor: Colors.surfaceContainerLow }]}
+      style={({ pressed }) => [styles.item, pressed && { backgroundColor: Colors.brand + '08' }]}
       onPress={() =>
         router.push({
           pathname: '/(scheduling)/appointment-detail' as any,
@@ -155,12 +155,12 @@ export default function NotificationsScreen() {
 
       {loading ? (
         <View style={styles.loadingWrap}>
-          <ActivityIndicator color={Colors.primary} size="large" />
+          <ActivityIndicator color={Colors.brand} size="large" />
         </View>
       ) : notifications.length === 0 ? (
         <View style={styles.emptyWrap}>
           <View style={styles.emptyIcon}>
-            <MaterialIcons name="notifications-none" size={40} color={Colors.outlineVariant} />
+            <MaterialIcons name="notifications-none" size={40} color={Colors.inkMuted} />
           </View>
           <Text style={styles.emptyTitle}>Sem notificações</Text>
           <Text style={styles.emptySubtitle}>
@@ -187,18 +187,18 @@ const styles = StyleSheet.create({
   groupLabel: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 11,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     letterSpacing: 1.5,
     textTransform: 'uppercase',
     paddingHorizontal: Spacing.xl,
     marginBottom: Spacing.xs,
   },
   groupItems: {
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     marginHorizontal: Spacing.xl,
     borderRadius: Radius.md,
     overflow: 'hidden',
-    shadowColor: '#000',
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.04,
     shadowRadius: 4,
@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.base,
     paddingHorizontal: Spacing.base,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: Colors.outlineVariant + '44',
+    borderBottomColor: Colors.border,
   },
   iconBox: {
     width: 46,
@@ -226,18 +226,18 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 13,
-    color: Colors.onSurface,
+    color: Colors.ink,
     lineHeight: 18,
   },
   subtitle: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 11,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
   time: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 10,
-    color: Colors.outline,
+    color: Colors.inkMuted,
     flexShrink: 0,
   },
 
@@ -252,20 +252,20 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: Radius.full,
-    backgroundColor: Colors.surfaceContainerHighest,
+    backgroundColor: Colors.brand + '10',
     alignItems: 'center',
     justifyContent: 'center',
   },
   emptyTitle: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 18,
-    color: Colors.onSurface,
+    color: Colors.ink,
     letterSpacing: -0.3,
   },
   emptySubtitle: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 13,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     textAlign: 'center',
     lineHeight: 19,
   },
