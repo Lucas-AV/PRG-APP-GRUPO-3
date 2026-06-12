@@ -2,8 +2,8 @@ import { View, Text, Image, Pressable, StyleSheet } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Colors, FontFamily, Radius } from '@/constants/theme';
 
-const SIZE_MAP = { sm: 36, md: 56, lg: 88 };
-const FONT_MAP = { sm: 13, md: 20, lg: 32 };
+const SIZE_MAP = { sm: 36, md: 48, lg: 72 };
+const FONT_MAP = { sm: 13, md: 18, lg: 28 };
 
 interface AvatarInitialsProps {
   initials: string;

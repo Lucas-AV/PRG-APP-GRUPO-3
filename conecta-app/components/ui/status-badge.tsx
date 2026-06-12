@@ -23,8 +23,8 @@ const styles = StyleSheet.create({
     borderRadius: Radius.full,
   },
   label: {
-    fontFamily: FontFamily.headlineBold,
-    fontSize: 11,
-    letterSpacing: 0.3,
+    fontFamily: FontFamily.bodySemiBold,
+    fontSize: 12,
+    letterSpacing: 0.1,
   },
 });

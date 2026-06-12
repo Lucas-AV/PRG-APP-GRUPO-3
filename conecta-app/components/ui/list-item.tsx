@@ -18,7 +18,7 @@ interface ListItemProps {
 export function ListItem({
   icon,
   iconColor = Colors.primary,
-  iconBg = Colors.primaryContainer,
+  iconBg = Colors.surfaceContainerLow,
   title,
   subtitle,
   onPress,
@@ -42,7 +42,7 @@ export function ListItem({
         {!!subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
       </View>
       {rightElement ?? (showChevron && (
-        <MaterialIcons name="chevron-right" size={20} color={Colors.outlineVariant} />
+        <MaterialIcons name="chevron-right" size={20} color={Colors.inkMuted} />
       ))}
     </Pressable>
   );
@@ -60,9 +60,9 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.surfaceContainerLow,
   },
   iconWrap: {
-    width: 40,
-    height: 40,
-    borderRadius: Radius.full,
+    width: 36,
+    height: 36,
+    borderRadius: Radius.sm,
     alignItems: 'center',
     justifyContent: 'center',
     flexShrink: 0,
@@ -76,6 +76,6 @@ const styles = StyleSheet.create({
   subtitle: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 12,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
 });
