@@ -11,6 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Colors, FontFamily, Spacing, Radius } from '@/constants/theme';
+// Colors imported: ink, inkMuted, card, border, brand
 import { useAuth } from '@/context/AuthContext';
 import { appointmentsApi, Appointment, servicesApi, Service } from '@/services/api';
 import { AvatarInitials } from '@/components/ui/avatar-initials';
@@ -103,17 +104,17 @@ export function ProviderHomeScreen() {
 
           {/* Stats row */}
           <View style={styles.statsRow}>
-            <View style={[styles.statCard, { backgroundColor: Colors.primaryContainer }]}>
+            <View style={[styles.statCard, { borderLeftColor: Colors.primary }]}>
               <MaterialIcons name="today" size={22} color={Colors.primary} />
               <Text style={styles.statValue}>{todayCount}</Text>
               <Text style={styles.statLabel}>Hoje</Text>
             </View>
-            <View style={[styles.statCard, { backgroundColor: Colors.secondaryContainer }]}>
+            <View style={[styles.statCard, { borderLeftColor: Colors.secondary }]}>
               <MaterialIcons name="home-repair-service" size={22} color={Colors.secondary} />
               <Text style={styles.statValue}>{activeServices.length}</Text>
               <Text style={styles.statLabel}>Serviços ativos</Text>
             </View>
-            <View style={[styles.statCard, { backgroundColor: Colors.tertiaryContainer }]}>
+            <View style={[styles.statCard, { borderLeftColor: Colors.tertiary }]}>
               <MaterialIcons name="attach-money" size={22} color={Colors.tertiary} />
               <Text style={styles.statValue}>
                 {totalRevenue > 0 ? `R$ ${totalRevenue.toFixed(0)}` : '—'}
@@ -238,11 +239,11 @@ const styles = StyleSheet.create({
   scroll: { paddingBottom: Spacing.xxxl * 2 },
 
   header: {
-    backgroundColor: Colors.surface,
+    backgroundColor: Colors.card,
     paddingHorizontal: Spacing.xl,
     paddingTop: Spacing.md,
     paddingBottom: Spacing.base,
-    shadowColor: '#000',
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 8,
@@ -256,11 +257,11 @@ const styles = StyleSheet.create({
   greetingSmall: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 13,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
   greetingBold: {
     fontFamily: FontFamily.bodySemiBold,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   headerBrand: {
     fontFamily: FontFamily.headlineExtraBold,
@@ -278,7 +279,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: Radius.full,
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
@@ -313,17 +314,24 @@ const styles = StyleSheet.create({
     padding: Spacing.base,
     gap: Spacing.xs,
     alignItems: 'center',
+    backgroundColor: Colors.card,
+    borderLeftWidth: 3,
+    shadowColor: Colors.ink,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.04,
+    shadowRadius: 4,
+    elevation: 1,
   },
   statValue: {
-    fontFamily: FontFamily.headlineExtraBold,
-    fontSize: 20,
+    fontFamily: FontFamily.headlineBold,
+    fontSize: 22,
     color: Colors.onSurface,
     letterSpacing: -0.5,
   },
   statLabel: {
     fontFamily: FontFamily.bodyRegular,
-    fontSize: 10,
-    color: Colors.onSurfaceVariant,
+    fontSize: 11,
+    color: Colors.inkMuted,
     textAlign: 'center',
   },
 
@@ -336,7 +344,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 17,
-    color: Colors.onSurface,
+    color: Colors.ink,
     letterSpacing: -0.3,
   },
   sectionLink: {
@@ -349,12 +357,12 @@ const styles = StyleSheet.create({
   quickActions: { flexDirection: 'row', gap: Spacing.sm },
   quickAction: {
     flex: 1,
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.md,
     paddingVertical: Spacing.base,
     alignItems: 'center',
     gap: Spacing.xs,
-    shadowColor: '#000',
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.04,
     shadowRadius: 4,
@@ -364,20 +372,20 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: Radius.md,
-    backgroundColor: Colors.primaryContainer,
+    backgroundColor: Colors.brand + '12',
     alignItems: 'center',
     justifyContent: 'center',
   },
   quickActionLabel: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 10,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     textAlign: 'center',
     letterSpacing: 0.2,
   },
 
   emptyBox: {
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.md,
     paddingVertical: Spacing.xxxl,
     alignItems: 'center',
@@ -386,7 +394,7 @@ const styles = StyleSheet.create({
   emptyText: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 13,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     textAlign: 'center',
   },
 
@@ -395,10 +403,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.base,
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.md,
     padding: Spacing.base,
-    shadowColor: '#000',
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.04,
     shadowRadius: 4,
@@ -407,7 +415,7 @@ const styles = StyleSheet.create({
   apptIconBox: {
     width: 44,
     height: 44,
-    borderRadius: Radius.full,
+    borderRadius: Radius.md,
     backgroundColor: Colors.primaryContainer,
     alignItems: 'center',
     justifyContent: 'center',
@@ -417,12 +425,12 @@ const styles = StyleSheet.create({
   apptClient: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 14,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   apptService: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 12,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
   apptRight: { alignItems: 'flex-end', gap: 2 },
   apptTime: {
@@ -441,18 +449,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.xs,
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.full,
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm + 2,
     borderWidth: 1,
-    borderColor: Colors.outlineVariant + '44',
+    borderColor: Colors.border,
     maxWidth: '48%',
   },
   serviceChipLabel: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 13,
-    color: Colors.onSurface,
+    color: Colors.ink,
     flex: 1,
   },
   serviceChipPrice: {
