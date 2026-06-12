@@ -130,10 +130,6 @@ export default function LoginScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Decorative blobs */}
-      <View style={styles.blobTR} pointerEvents="none" />
-      <View style={styles.blobBL} pointerEvents="none" />
-
       <KeyboardAvoidingView
         style={styles.flex1}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -291,29 +287,9 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.surface,
+    backgroundColor: '#f0f5ff',
   },
   flex1: { flex: 1 },
-
-  // Decorative background
-  blobTR: {
-    position: 'absolute',
-    top: -60,
-    right: -40,
-    width: 220,
-    height: 220,
-    borderRadius: 110,
-    backgroundColor: 'rgba(0,84,214,0.05)',
-  },
-  blobBL: {
-    position: 'absolute',
-    bottom: -60,
-    left: -40,
-    width: 180,
-    height: 180,
-    borderRadius: 90,
-    backgroundColor: 'rgba(97,91,119,0.05)',
-  },
 
   scrollContent: {
     flexGrow: 1,
@@ -330,8 +306,8 @@ const styles = StyleSheet.create({
   },
   logo: {
     fontFamily: FontFamily.headlineExtraBold,
-    fontSize: 38,
-    letterSpacing: -1.5,
+    fontSize: 42,
+    letterSpacing: -2.0,
     color: Colors.primary,
   },
   headerText: {
@@ -340,15 +316,15 @@ const styles = StyleSheet.create({
   },
   title: {
     fontFamily: FontFamily.headlineExtraBold,
-    fontSize: 28,
-    letterSpacing: -0.5,
-    color: Colors.onSurface,
+    fontSize: 32,
+    letterSpacing: -1.0,
+    color: Colors.ink,
     textAlign: 'center',
   },
   subtitle: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 14,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     textAlign: 'center',
     maxWidth: 280,
     lineHeight: 20,
@@ -356,13 +332,13 @@ const styles = StyleSheet.create({
 
   // Card
   card: {
-    backgroundColor: Colors.surfaceContainerLowest,
-    borderRadius: Radius.sm,
+    backgroundColor: Colors.card,
+    borderRadius: Radius.xl,
     padding: Spacing.xxxl,
     gap: Spacing.xxl,
-    shadowColor: '#000',
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.04,
+    shadowOpacity: 0.07,
     shadowRadius: 32,
     elevation: 3,
   },
@@ -380,7 +356,7 @@ const styles = StyleSheet.create({
   passwordLabel: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 10,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     letterSpacing: 1.2,
   },
   forgotLink: {
@@ -400,7 +376,7 @@ const styles = StyleSheet.create({
   dividerLine: {
     flex: 1,
     height: 1,
-    backgroundColor: Colors.outlineVariant + '33',
+    backgroundColor: Colors.border,
   },
   dividerText: {
     fontFamily: FontFamily.bodySemiBold,
@@ -417,32 +393,32 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: Spacing.md,
     paddingVertical: Spacing.md + 2,
-    backgroundColor: Colors.surfaceContainerLow,
-    borderRadius: Radius.sm,
+    backgroundColor: Colors.card,
+    borderRadius: Radius.lg,
     borderWidth: 1,
-    borderColor: Colors.outlineVariant + '1A',
+    borderColor: Colors.border,
   },
   googleLabel: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 14,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
 
   // Reset modal
   backdrop: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.45)',
+    backgroundColor: 'rgba(15,23,42,0.55)',
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: Spacing.xl,
   },
   resetCard: {
     width: '100%',
-    backgroundColor: Colors.surfaceContainerLowest,
-    borderRadius: Radius.lg,
+    backgroundColor: Colors.card,
+    borderRadius: Radius.xl,
     padding: Spacing.xxxl,
     gap: Spacing.xxl,
-    shadowColor: '#000',
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 12 },
     shadowOpacity: 0.12,
     shadowRadius: 32,
@@ -453,21 +429,21 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: Colors.primaryContainer,
+    backgroundColor: Colors.brand + '15',
     alignItems: 'center',
     justifyContent: 'center',
   },
   resetTitle: {
     fontFamily: FontFamily.headlineExtraBold,
     fontSize: 22,
-    color: Colors.onSurface,
+    color: Colors.ink,
     textAlign: 'center',
     letterSpacing: -0.4,
   },
   resetSubtitle: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 14,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     textAlign: 'center',
     lineHeight: 20,
   },
@@ -487,7 +463,7 @@ const styles = StyleSheet.create({
   footerText: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 14,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
   footerLink: {
     fontFamily: FontFamily.headlineBold,
