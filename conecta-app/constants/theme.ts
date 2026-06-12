@@ -58,7 +58,7 @@ export const Colors = {
 
   background: '#f8fafc',
   onBackground: '#0f172a',
-};
+} as const;
 
 export const FontFamily = {
   headlineExtraBold: 'Manrope-ExtraBold',
@@ -67,53 +67,53 @@ export const FontFamily = {
   bodyRegular: 'Inter-Regular',
   bodyMedium: 'Inter-Medium',
   bodySemiBold: 'Inter-SemiBold',
-};
+} as const;
 
 export const Typography = {
   display: {
-    fontFamily: 'Manrope-ExtraBold',
+    fontFamily: FontFamily.headlineExtraBold,
     fontSize: 32,
     letterSpacing: -1.2,
     lineHeight: 38,
   },
   headline: {
-    fontFamily: 'Manrope-Bold',
+    fontFamily: FontFamily.headlineBold,
     fontSize: 22,
     letterSpacing: -0.6,
     lineHeight: 28,
   },
   title: {
-    fontFamily: 'Manrope-SemiBold',
+    fontFamily: FontFamily.headlineSemiBold,
     fontSize: 17,
     letterSpacing: -0.3,
     lineHeight: 24,
   },
   body: {
-    fontFamily: 'Inter-Regular',
+    fontFamily: FontFamily.bodyRegular,
     fontSize: 14,
     letterSpacing: 0,
     lineHeight: 20,
   },
   bodyMedium: {
-    fontFamily: 'Inter-Medium',
+    fontFamily: FontFamily.bodyMedium,
     fontSize: 14,
     letterSpacing: 0,
     lineHeight: 20,
   },
   label: {
-    fontFamily: 'Inter-SemiBold',
+    fontFamily: FontFamily.bodySemiBold,
     fontSize: 12,
     letterSpacing: 0.1,
     lineHeight: 16,
   },
   caption: {
-    fontFamily: 'Inter-Regular',
+    fontFamily: FontFamily.bodyRegular,
     fontSize: 11,
     letterSpacing: 0.2,
     lineHeight: 15,
   },
   overline: {
-    fontFamily: 'Inter-SemiBold',
+    fontFamily: FontFamily.bodySemiBold,
     fontSize: 10,
     letterSpacing: 1.4,
     lineHeight: 14,
@@ -129,7 +129,7 @@ export const Spacing = {
   xxl: 24,
   xxxl: 32,
   screen: 20,
-};
+} as const;
 
 export const Radius = {
   sm: 8,
@@ -137,6 +137,6 @@ export const Radius = {
   lg: 16,
   xl: 24,
   full: 9999,
-};
+} as const;
 
 export const GradientColors: [string, string] = ['#0054d6', '#003fa3'];
