@@ -322,7 +322,7 @@ export default function ProviderProfileScreen() {
                 {CERTS.map(cert => (
                   <View key={cert.title} style={styles.certRow}>
                     <View style={styles.certIconBox}>
-                      <MaterialIcons name={cert.icon} size={22} color={Colors.onSurfaceVariant} />
+                      <MaterialIcons name={cert.icon} size={22} color={Colors.inkMuted} />
                     </View>
                     <View style={styles.certText}>
                       <Text style={styles.certTitle}>{cert.title}</Text>
@@ -416,7 +416,7 @@ export default function ProviderProfileScreen() {
                            <MaterialIcons key={i} name="star" size={13} color="#f59e0b" />
                          ))}
                          {Array.from({ length: 5 - review.rating }).map((_, i) => (
-                           <MaterialIcons key={`e${i}`} name="star-border" size={13} color={Colors.outlineVariant} />
+                           <MaterialIcons key={`e${i}`} name="star-border" size={13} color={Colors.border} />
                          ))}
                        </View>
                      </View>
@@ -488,7 +488,7 @@ export default function ProviderProfileScreen() {
                 });
               }}
             >
-              <MaterialIcons name="share" size={22} color={Colors.onSurfaceVariant} />
+              <MaterialIcons name="share" size={22} color={Colors.inkMuted} />
               <Text style={styles.modalOptionText}>Compartilhar perfil</Text>
             </Pressable>
 
@@ -501,7 +501,7 @@ export default function ProviderProfileScreen() {
                 Alert.alert('Salvo!', `${providerName} foi adicionado aos seus favoritos.`);
               }}
             >
-              <MaterialIcons name="bookmark-border" size={22} color={Colors.onSurfaceVariant} />
+              <MaterialIcons name="bookmark-border" size={22} color={Colors.inkMuted} />
               <Text style={styles.modalOptionText}>Salvar prestador</Text>
             </Pressable>
 
@@ -546,7 +546,7 @@ const styles = StyleSheet.create({
   },
   topBarTitle: {
     fontFamily: FontFamily.headlineBold, fontSize: 17,
-    color: Colors.onSurface, letterSpacing: -0.3,
+    color: Colors.ink, letterSpacing: -0.3,
   },
   iconBtn: {
     width: 40, height: 40, borderRadius: Radius.full,
@@ -570,7 +570,7 @@ const styles = StyleSheet.create({
   avatarGradient: {
     width: 112, height: 112, borderRadius: 56,
     alignItems: 'center', justifyContent: 'center',
-    borderWidth: 4, borderColor: Colors.surfaceContainerLowest,
+    borderWidth: 4, borderColor: Colors.card,
     overflow: 'hidden',
     // shadow
     shadowColor: '#000', shadowOffset: { width: 0, height: 6 },
@@ -593,7 +593,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.xs,
-    backgroundColor: Colors.surfaceContainerLow,
+    backgroundColor: Colors.card,
     paddingHorizontal: Spacing.xs,
     paddingVertical: Spacing.md,
     borderRadius: Radius.lg,
@@ -605,14 +605,14 @@ const styles = StyleSheet.create({
   statsLabel: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 9,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
   statsValue: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 11,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   avatarInitials: {
     fontFamily: FontFamily.headlineExtraBold,
@@ -623,33 +623,33 @@ const styles = StyleSheet.create({
     width: 26, height: 26, borderRadius: 13,
     backgroundColor: Colors.primary,
     alignItems: 'center', justifyContent: 'center',
-    borderWidth: 2, borderColor: Colors.surfaceContainerLowest,
+    borderWidth: 2, borderColor: Colors.card,
   },
   heroName: {
     fontFamily: FontFamily.headlineExtraBold,
-    fontSize: 28, color: Colors.onSurface, letterSpacing: -1,
+    fontSize: 28, color: Colors.ink, letterSpacing: -1,
     textAlign: 'center',
   },
   heroSpecialty: {
     fontFamily: FontFamily.bodyMedium,
-    fontSize: 15, color: Colors.onSurfaceVariant,
+    fontSize: 15, color: Colors.inkMuted,
     textAlign: 'center',
   },
   ratingPill: {
     flexDirection: 'row', alignItems: 'center', gap: 4,
-    backgroundColor: Colors.surfaceContainerHigh,
+    backgroundColor: Colors.card,
     paddingHorizontal: Spacing.md, paddingVertical: 5,
     borderRadius: Radius.full, marginTop: 4,
   },
-  ratingNum: { fontFamily: FontFamily.headlineBold, fontSize: 13, color: Colors.onSurface },
-  ratingCount: { fontFamily: FontFamily.bodyRegular, fontSize: 12, color: Colors.onSurfaceVariant },
+  ratingNum: { fontFamily: FontFamily.headlineBold, fontSize: 13, color: Colors.ink },
+  ratingCount: { fontFamily: FontFamily.bodyRegular, fontSize: 12, color: Colors.inkMuted },
 
   // Tab navigation — rounded-xl (não rounded-full)
   tabNav: {
     flexDirection: 'row',
     marginHorizontal: Spacing.xl,
     marginBottom: Spacing.xl,
-    backgroundColor: Colors.surfaceContainerLow,
+    backgroundColor: Colors.card,
     borderRadius: Radius.lg,
     padding: 4,
     gap: 2,
@@ -659,13 +659,13 @@ const styles = StyleSheet.create({
     borderRadius: Radius.md, alignItems: 'center',
   },
   tabItemActive: {
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     shadowColor: '#000', shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.07, shadowRadius: 4, elevation: 2,
   },
   tabLabel: {
     fontFamily: FontFamily.bodySemiBold,
-    fontSize: 12, color: Colors.onSurfaceVariant,
+    fontSize: 12, color: Colors.inkMuted,
     textAlign: 'center',
   },
   tabLabelActive: {
@@ -678,12 +678,12 @@ const styles = StyleSheet.create({
   loader: { marginTop: Spacing.xxxl },
   emptyText: {
     fontFamily: FontFamily.bodyRegular, fontSize: 14,
-    color: Colors.onSurfaceVariant, textAlign: 'center', marginTop: Spacing.xxxl,
+    color: Colors.inkMuted, textAlign: 'center', marginTop: Spacing.xxxl,
   },
 
   // Serviços tab
   serviceCard: {
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.lg, padding: Spacing.xl,
     flexDirection: 'row', alignItems: 'center', gap: Spacing.base,
     elevation: 1, shadowColor: '#000',
@@ -696,7 +696,7 @@ const styles = StyleSheet.create({
   },
   serviceName: {
     fontFamily: FontFamily.headlineBold, fontSize: 16,
-    color: Colors.onSurface, flex: 1, letterSpacing: -0.2,
+    color: Colors.ink, flex: 1, letterSpacing: -0.2,
   },
   servicePrice: {
     fontFamily: FontFamily.headlineExtraBold,
@@ -704,11 +704,11 @@ const styles = StyleSheet.create({
   },
   serviceDesc: {
     fontFamily: FontFamily.bodyRegular, fontSize: 13,
-    color: Colors.onSurfaceVariant, lineHeight: 19,
+    color: Colors.inkMuted, lineHeight: 19,
   },
   addBtn: {
     width: 48, height: 48, borderRadius: Radius.full,
-    backgroundColor: Colors.primaryContainer,
+    backgroundColor: Colors.brand + '15',
     alignItems: 'center', justifyContent: 'center', flexShrink: 0,
   },
 
@@ -720,10 +720,10 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontFamily: FontFamily.headlineBold,
-    fontSize: 20, color: Colors.onSurface, letterSpacing: -0.5,
+    fontSize: 20, color: Colors.ink, letterSpacing: -0.5,
   },
   expBadge: {
-    backgroundColor: Colors.primaryContainer,
+    backgroundColor: Colors.brand + '15',
     paddingHorizontal: Spacing.sm, paddingVertical: 3,
     borderRadius: Radius.sm,
   },
@@ -733,7 +733,7 @@ const styles = StyleSheet.create({
   },
   bioText: {
     fontFamily: FontFamily.bodyRegular, fontSize: 16,
-    color: Colors.onSurfaceVariant, lineHeight: 26,
+    color: Colors.inkMuted, lineHeight: 26,
   },
 
   // Sobre tab — Especialidades (Bento)
@@ -742,14 +742,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.md,
   },
   bentoCard: {
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.lg, padding: Spacing.xl,
     gap: Spacing.md,
     elevation: 1, shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.04, shadowRadius: 4,
   },
   bentoLabel: {
-    fontFamily: FontFamily.bodySemiBold, fontSize: 13, color: Colors.onSurface,
+    fontFamily: FontFamily.bodySemiBold, fontSize: 13, color: Colors.ink,
   },
 
   // Sobre tab — Certificações
@@ -757,21 +757,21 @@ const styles = StyleSheet.create({
   certList: { gap: Spacing.md },
   certRow: {
     flexDirection: 'row', alignItems: 'center', gap: Spacing.base,
-    backgroundColor: Colors.surfaceContainerLow,
+    backgroundColor: Colors.card,
     borderRadius: Radius.lg, padding: Spacing.base,
   },
   certIconBox: {
     width: 48, height: 48, borderRadius: Radius.md,
-    backgroundColor: Colors.surfaceContainerHighest,
+    backgroundColor: Colors.border,
     alignItems: 'center', justifyContent: 'center', flexShrink: 0,
   },
   certText: { flex: 1, gap: 2 },
   certTitle: {
-    fontFamily: FontFamily.headlineBold, fontSize: 14, color: Colors.onSurface,
+    fontFamily: FontFamily.headlineBold, fontSize: 14, color: Colors.ink,
   },
   certSubtitle: {
     fontFamily: FontFamily.bodyRegular, fontSize: 12,
-    color: Colors.onSurfaceVariant, lineHeight: 17,
+    color: Colors.inkMuted, lineHeight: 17,
   },
 
   // Sobre tab — Projetos Recentes
@@ -799,7 +799,7 @@ const styles = StyleSheet.create({
   // Avaliações tab
   ratingCardContainer: {
     flexDirection: 'row',
-    backgroundColor: Colors.surfaceContainerLow,
+    backgroundColor: Colors.card,
     borderRadius: Radius.lg,
     padding: Spacing.xl,
     alignItems: 'center',
@@ -822,13 +822,13 @@ const styles = StyleSheet.create({
   barNum: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 12,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     width: 10,
   },
   barTrack: {
     flex: 1,
     height: 8,
-    backgroundColor: Colors.surfaceContainer,
+    backgroundColor: Colors.border,
     borderRadius: Radius.full,
     overflow: 'hidden',
   },
@@ -839,14 +839,14 @@ const styles = StyleSheet.create({
   },
   ratingBigNum: {
     fontFamily: FontFamily.headlineExtraBold,
-    fontSize: 56, color: Colors.onSurface, letterSpacing: -3,
+    fontSize: 56, color: Colors.ink, letterSpacing: -3,
   },
   starsRow: { flexDirection: 'row', gap: 2 },
   ratingCardCount: {
-    fontFamily: FontFamily.bodyRegular, fontSize: 13, color: Colors.onSurfaceVariant,
+    fontFamily: FontFamily.bodyRegular, fontSize: 13, color: Colors.inkMuted,
   },
   reviewCard: {
-    backgroundColor: Colors.surfaceContainerLowest, borderRadius: Radius.md,
+    backgroundColor: Colors.card, borderRadius: Radius.md,
     padding: Spacing.base, gap: Spacing.xs,
   },
   reviewCardHeader: {
@@ -870,19 +870,19 @@ const styles = StyleSheet.create({
     gap: 1,
   },
   reviewerName: {
-    fontFamily: FontFamily.bodySemiBold, fontSize: 13, color: Colors.onSurface,
+    fontFamily: FontFamily.bodySemiBold, fontSize: 13, color: Colors.ink,
   },
   reviewDate: {
-    fontFamily: FontFamily.bodyRegular, fontSize: 11, color: Colors.outlineVariant,
+    fontFamily: FontFamily.bodyRegular, fontSize: 11, color: Colors.border,
   },
   reviewComment: {
     fontFamily: FontFamily.bodyRegular, fontSize: 13,
-    color: Colors.onSurfaceVariant, fontStyle: 'italic', lineHeight: 19,
+    color: Colors.inkMuted, fontStyle: 'italic', lineHeight: 19,
   },
   seeAllBtn: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
     gap: Spacing.xs, paddingVertical: Spacing.md,
-    backgroundColor: Colors.surfaceContainerHighest, borderRadius: Radius.md,
+    backgroundColor: Colors.border, borderRadius: Radius.md,
   },
   seeAllBtnLabel: {
     fontFamily: FontFamily.bodySemiBold, fontSize: 13, color: Colors.primary,
@@ -926,13 +926,13 @@ const styles = StyleSheet.create({
     width: 38,
     height: 4,
     borderRadius: 2,
-    backgroundColor: Colors.outlineVariant,
+    backgroundColor: Colors.border,
     marginBottom: Spacing.md,
   },
   modalTitle: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 16,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   modalOption: {
     flexDirection: 'row',
@@ -946,18 +946,18 @@ const styles = StyleSheet.create({
   modalOptionText: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 15,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   modalOptionDestructive: {
     color: '#dc2626',
   },
   modalDivider: {
     height: 1,
-    backgroundColor: Colors.outlineVariant,
+    backgroundColor: Colors.border,
     opacity: 0.4,
   },
   modalCancelBtn: {
-    backgroundColor: Colors.surfaceContainerHigh,
+    backgroundColor: Colors.card,
     borderRadius: Radius.lg,
     height: 52,
     alignItems: 'center',
@@ -967,6 +967,6 @@ const styles = StyleSheet.create({
   modalCancelLabel: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 15,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
 });

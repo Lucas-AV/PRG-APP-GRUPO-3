@@ -81,7 +81,7 @@ export default function GoogleRoleScreen() {
                   <MaterialIcons
                     name={r.icon}
                     size={28}
-                    color={active ? Colors.primary : Colors.outline}
+                    color={active ? Colors.primary : Colors.inkMuted}
                   />
                 </View>
                 <View style={styles.roleText}>
@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#000',
@@ -146,25 +146,25 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: FontFamily.headlineExtraBold,
     fontSize: 28,
-    color: Colors.onSurface,
+    color: Colors.ink,
     letterSpacing: -0.5,
   },
   subtitle: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 14,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     textAlign: 'center',
     lineHeight: 20,
     maxWidth: 300,
   },
   nameHighlight: {
     fontFamily: FontFamily.bodySemiBold,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   emailHint: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 12,
-    color: Colors.outline,
+    color: Colors.inkMuted,
   },
   roles: { gap: Spacing.base },
   roleCard: {
@@ -172,38 +172,38 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: Spacing.base,
     padding: Spacing.xl,
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.md,
     borderWidth: 1.5,
-    borderColor: Colors.outlineVariant + '33',
+    borderColor: Colors.border,
   },
   roleCardActive: {
     borderColor: Colors.primary + '66',
-    backgroundColor: Colors.primaryContainer + '33',
+    backgroundColor: Colors.brand + '15',
   },
   roleIcon: {
     width: 52,
     height: 52,
     borderRadius: 26,
-    backgroundColor: Colors.surfaceContainer,
+    backgroundColor: Colors.card,
     alignItems: 'center',
     justifyContent: 'center',
   },
   roleIconActive: {
-    backgroundColor: Colors.primaryContainer,
+    backgroundColor: Colors.brand + '15',
   },
   roleText: { flex: 1 },
   roleLabel: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 16,
-    color: Colors.onSurface,
+    color: Colors.ink,
     letterSpacing: -0.2,
   },
   roleLabelActive: { color: Colors.primary },
   roleDesc: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 13,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     marginTop: 2,
   },
   confirmBtn: {
@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
   confirmBtnDisabled: {
-    backgroundColor: Colors.outline,
+    backgroundColor: Colors.inkMuted,
     shadowOpacity: 0,
     elevation: 0,
   },

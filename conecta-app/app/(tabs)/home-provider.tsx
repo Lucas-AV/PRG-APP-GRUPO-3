@@ -78,7 +78,7 @@ export function ProviderHomeScreen() {
               style={styles.notifBtn}
               onPress={() => router.push('/(account)/notifications' as any)}
             >
-              <MaterialIcons name="notifications-none" size={24} color={Colors.onSurfaceVariant} />
+              <MaterialIcons name="notifications-none" size={24} color={Colors.inkMuted} />
               {appointments.some(a => a.scheduled_date === today && a.status === 'confirmado') && (
                 <View style={styles.notifDot} />
               )}
@@ -325,7 +325,7 @@ const styles = StyleSheet.create({
   statValue: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 22,
-    color: Colors.onSurface,
+    color: Colors.ink,
     letterSpacing: -0.5,
   },
   statLabel: {
@@ -416,7 +416,7 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: Radius.md,
-    backgroundColor: Colors.primaryContainer,
+    backgroundColor: Colors.brand + '15',
     alignItems: 'center',
     justifyContent: 'center',
     flexShrink: 0,
@@ -441,7 +441,7 @@ const styles = StyleSheet.create({
   apptPrice: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 13,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
 
   serviceGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm },

@@ -231,7 +231,7 @@ export default function ServiceDetailScreen() {
                             <MaterialIcons key={i} name="star" size={12} color="#eab308" />
                           ))}
                           {Array.from({ length: 5 - review.rating }).map((_, i) => (
-                            <MaterialIcons key={`e${i}`} name="star-border" size={12} color={Colors.outlineVariant} />
+                            <MaterialIcons key={`e${i}`} name="star-border" size={12} color={Colors.border} />
                           ))}
                         </View>
                       </View>
@@ -309,7 +309,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.surface },
   centerWrap: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   errorText: {
-    fontFamily: FontFamily.bodyRegular, fontSize: 14, color: Colors.onSurfaceVariant,
+    fontFamily: FontFamily.bodyRegular, fontSize: 14, color: Colors.inkMuted,
   },
 
   // TopNav
@@ -350,7 +350,7 @@ const styles = StyleSheet.create({
   headerCard: {
     marginHorizontal: Spacing.xl,
     marginTop: -Spacing.xxxl,
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.lg,
     padding: Spacing.xl,
     gap: Spacing.sm,
@@ -361,7 +361,7 @@ const styles = StyleSheet.create({
   },
   premiumBadge: {
     alignSelf: 'flex-start',
-    backgroundColor: Colors.primaryContainer,
+    backgroundColor: Colors.brand + '15',
     paddingHorizontal: 10, paddingVertical: 3,
     borderRadius: Radius.full,
   },
@@ -371,17 +371,17 @@ const styles = StyleSheet.create({
   },
   serviceName: {
     fontFamily: FontFamily.headlineExtraBold, fontSize: 22,
-    color: Colors.onSurface, letterSpacing: -0.6, lineHeight: 28,
+    color: Colors.ink, letterSpacing: -0.6, lineHeight: 28,
   },
   ratingRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   ratingNum: {
-    fontFamily: FontFamily.headlineBold, fontSize: 13, color: Colors.onSurface,
+    fontFamily: FontFamily.headlineBold, fontSize: 13, color: Colors.ink,
   },
   ratingCount: {
-    fontFamily: FontFamily.bodyRegular, fontSize: 13, color: Colors.onSurfaceVariant,
+    fontFamily: FontFamily.bodyRegular, fontSize: 13, color: Colors.inkMuted,
   },
   divider: {
-    height: 1, backgroundColor: Colors.surfaceContainer, marginVertical: Spacing.sm,
+    height: 1, backgroundColor: Colors.border, marginVertical: Spacing.sm,
   },
   priceRow: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
@@ -389,7 +389,7 @@ const styles = StyleSheet.create({
   priceBlock: { gap: 2 },
   priceLabel: {
     fontFamily: FontFamily.bodyMedium, fontSize: 10,
-    color: Colors.onSurfaceVariant, letterSpacing: 1,
+    color: Colors.inkMuted, letterSpacing: 1,
   },
   priceValue: {
     fontFamily: FontFamily.headlineExtraBold, fontSize: 24,
@@ -397,12 +397,12 @@ const styles = StyleSheet.create({
   },
   durationChip: {
     flexDirection: 'row', alignItems: 'center', gap: Spacing.xs,
-    backgroundColor: Colors.surfaceContainerLow,
+    backgroundColor: Colors.card,
     paddingHorizontal: Spacing.md, paddingVertical: Spacing.sm,
     borderRadius: Radius.md,
   },
   durationText: {
-    fontFamily: FontFamily.bodyMedium, fontSize: 13, color: Colors.onSurfaceVariant,
+    fontFamily: FontFamily.bodyMedium, fontSize: 13, color: Colors.inkMuted,
   },
 
   // Content
@@ -414,23 +414,23 @@ const styles = StyleSheet.create({
   section: { gap: Spacing.md },
   sectionTitle: {
     fontFamily: FontFamily.headlineBold, fontSize: 17,
-    color: Colors.onSurface, letterSpacing: -0.3,
+    color: Colors.ink, letterSpacing: -0.3,
   },
   descText: {
     fontFamily: FontFamily.bodyRegular, fontSize: 14,
-    color: Colors.onSurfaceVariant, lineHeight: 22,
+    color: Colors.inkMuted, lineHeight: 22,
   },
 
   // Included card
   includedCard: {
-    backgroundColor: Colors.surfaceContainerLow,
+    backgroundColor: Colors.card,
     borderRadius: Radius.lg, padding: Spacing.xl, gap: Spacing.base,
   },
   checkList: { gap: Spacing.base },
   checkRow: { flexDirection: 'row', alignItems: 'flex-start', gap: Spacing.md },
   checkText: {
     fontFamily: FontFamily.bodyMedium, fontSize: 14,
-    color: Colors.onSurface, flex: 1, lineHeight: 21,
+    color: Colors.ink, flex: 1, lineHeight: 21,
   },
 
   // Reviews preview
@@ -443,17 +443,17 @@ const styles = StyleSheet.create({
   },
   reviewsList: { gap: Spacing.md },
   reviewCard: {
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.lg, padding: Spacing.xl,
     gap: Spacing.md, borderWidth: 1,
-    borderColor: Colors.outlineVariant + '1A',
+    borderColor: Colors.border + '1A',
     elevation: 1, shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.04, shadowRadius: 4,
   },
   reviewCardHeader: { flexDirection: 'row', alignItems: 'center', gap: Spacing.md },
   reviewAvatar: {
     width: 40, height: 40, borderRadius: 20,
-    backgroundColor: Colors.surfaceContainerHighest,
+    backgroundColor: Colors.border,
     alignItems: 'center', justifyContent: 'center',
   },
   reviewAvatarText: {
@@ -461,12 +461,12 @@ const styles = StyleSheet.create({
   },
   reviewMeta: { gap: 3 },
   reviewerName: {
-    fontFamily: FontFamily.headlineBold, fontSize: 13, color: Colors.onSurface,
+    fontFamily: FontFamily.headlineBold, fontSize: 13, color: Colors.ink,
   },
   starsRow: { flexDirection: 'row', gap: 1 },
   reviewComment: {
     fontFamily: FontFamily.bodyRegular, fontSize: 13,
-    color: Colors.onSurfaceVariant, fontStyle: 'italic', lineHeight: 20,
+    color: Colors.inkMuted, fontStyle: 'italic', lineHeight: 20,
   },
 
   // CTA

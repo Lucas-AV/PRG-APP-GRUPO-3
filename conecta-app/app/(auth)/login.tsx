@@ -381,7 +381,7 @@ const styles = StyleSheet.create({
   dividerText: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 10,
-    color: Colors.outline,
+    color: Colors.inkMuted,
     letterSpacing: 2,
     textTransform: 'uppercase',
   },
@@ -455,7 +455,7 @@ const styles = StyleSheet.create({
   resetCancelLabel: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 14,
-    color: Colors.outline,
+    color: Colors.inkMuted,
   },
 
   // Footer

@@ -70,7 +70,7 @@ interface RowProps {
 function SettingsRow({ icon, label, subtitle, onPress, accent, isLast }: RowProps) {
   return (
     <Pressable
-      style={({ pressed }) => [row.wrap, !isLast && row.border, pressed && { backgroundColor: Colors.surfaceContainerLow }]}
+      style={({ pressed }) => [row.wrap, !isLast && row.border, pressed && { backgroundColor: Colors.card }]}
       onPress={onPress}
     >
       <View style={[row.iconWrap, accent && row.iconAccent]}>
@@ -103,9 +103,9 @@ function SettingsRowToggle({ icon, label, value, onValueChange, isLast }: Toggle
       <Switch
         value={value}
         onValueChange={onValueChange}
-        trackColor={{ false: Colors.surfaceContainerHighest, true: Colors.primary }}
+        trackColor={{ false: Colors.border, true: Colors.primary }}
         thumbColor="#ffffff"
-        ios_backgroundColor={Colors.surfaceContainerHighest}
+        ios_backgroundColor={Colors.border}
       />
     </View>
   );
@@ -132,7 +132,7 @@ const row = StyleSheet.create({
     justifyContent: 'center',
   },
   iconAccent: {
-    backgroundColor: Colors.primaryContainer + '4D',
+    backgroundColor: Colors.brand + '15',
   },
   labelWrap: { flex: 1 },
   label: {
@@ -464,7 +464,7 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: Colors.primaryContainer,
+    backgroundColor: Colors.brand + '15',
     alignItems: 'center',
     justifyContent: 'center',
   },

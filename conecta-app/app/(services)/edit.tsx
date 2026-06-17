@@ -113,7 +113,7 @@ export default function EditServiceScreen() {
       {/* Header */}
       <View style={[styles.header, { paddingTop: insets.top }]}>
         <Pressable style={styles.backBtn} onPress={() => router.back()}>
-          <MaterialIcons name="arrow-back" size={24} color={Colors.onSurface} />
+          <MaterialIcons name="arrow-back" size={24} color={Colors.ink} />
         </Pressable>
         <Text style={styles.headerTitle}>Editar Serviço</Text>
         <Pressable style={styles.saveTextBtn} onPress={handleSave} disabled={saving}>
@@ -138,7 +138,7 @@ export default function EditServiceScreen() {
             value={name}
             onChangeText={setName}
             placeholder="Nome do serviço"
-            placeholderTextColor={Colors.outlineVariant}
+            placeholderTextColor={Colors.border}
           />
         </View>
 
@@ -155,7 +155,7 @@ export default function EditServiceScreen() {
             <MaterialIcons
               name={showCategory ? 'keyboard-arrow-up' : 'keyboard-arrow-down'}
               size={20}
-              color={Colors.outline}
+              color={Colors.inkMuted}
             />
           </Pressable>
           {showCategory && (
@@ -213,7 +213,7 @@ export default function EditServiceScreen() {
                   value={price}
                   onChangeText={setPrice}
                   placeholder="0,00"
-                  placeholderTextColor={Colors.outline}
+                  placeholderTextColor={Colors.inkMuted}
                   keyboardType="numeric"
                   textAlign="right"
                 />
@@ -235,7 +235,7 @@ export default function EditServiceScreen() {
                   defaultValue="60"
                   keyboardType="numeric"
                   textAlign="right"
-                  placeholderTextColor={Colors.outline}
+                  placeholderTextColor={Colors.inkMuted}
                 />
               </View>
             </View>
@@ -254,7 +254,7 @@ export default function EditServiceScreen() {
               value={description}
               onChangeText={setDescription}
               placeholder="Explique os benefícios, o processo e os materiais utilizados neste serviço..."
-              placeholderTextColor={Colors.outline + '88'}
+              placeholderTextColor={Colors.inkMuted + '88'}
               multiline
               numberOfLines={6}
               textAlignVertical="top"
@@ -267,16 +267,16 @@ export default function EditServiceScreen() {
           <View style={styles.sectionHeadRow}>
             <Text style={styles.sectionTitle}>Galeria de Fotos</Text>
             <Pressable style={styles.addPhotoBtn}>
-              <MaterialIcons name="add-a-photo" size={14} color={Colors.onPrimaryContainer} />
+              <MaterialIcons name="add-a-photo" size={14} color={Colors.brand} />
               <Text style={styles.addPhotoBtnText}>Adicionar</Text>
             </Pressable>
           </View>
 
           <View style={styles.photoGrid}>
-            {[Colors.surfaceContainerHigh, Colors.surfaceContainerHighest, Colors.surfaceContainerHigh].map(
+            {[Colors.card, Colors.border, Colors.card].map(
               (bg, i) => (
                 <View key={i} style={[styles.photoSlot, { backgroundColor: bg }]}>
-                  <MaterialIcons name="image" size={24} color={Colors.outlineVariant} />
+                  <MaterialIcons name="image" size={24} color={Colors.border} />
                   <Pressable style={styles.photoDeleteBtn}>
                     <MaterialIcons name="close" size={14} color="#fff" />
                   </Pressable>
@@ -284,7 +284,7 @@ export default function EditServiceScreen() {
               )
             )}
             <Pressable style={styles.photoUpload}>
-              <MaterialIcons name="cloud-upload" size={22} color={Colors.outline} />
+              <MaterialIcons name="cloud-upload" size={22} color={Colors.inkMuted} />
               <Text style={styles.photoUploadLabel}>UPLOAD</Text>
             </Pressable>
           </View>
@@ -306,7 +306,7 @@ export default function EditServiceScreen() {
             style={({ pressed }) => [styles.discardBtn, pressed && { opacity: 0.6 }]}
             onPress={() => router.back()}
           >
-            <MaterialIcons name="close" size={18} color={Colors.onSurfaceVariant} />
+            <MaterialIcons name="close" size={18} color={Colors.inkMuted} />
             <Text style={styles.discardBtnText}>Descartar</Text>
           </Pressable>
           <GradientButton
@@ -330,7 +330,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.xl,
     paddingBottom: Spacing.base,
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.04,
@@ -348,7 +348,7 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.headlineBold,
     fontSize: 18,
     letterSpacing: -0.4,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   saveTextBtn: {
     paddingHorizontal: Spacing.base,
@@ -369,7 +369,7 @@ const styles = StyleSheet.create({
 
   // Identity card
   identityCard: {
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.xl,
     padding: Spacing.xxl,
     gap: Spacing.sm,
@@ -384,7 +384,7 @@ const styles = StyleSheet.create({
   sectionLabel: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 10,
-    color: Colors.outline,
+    color: Colors.inkMuted,
     letterSpacing: 1.5,
     textTransform: 'uppercase',
   },
@@ -392,7 +392,7 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.headlineExtraBold,
     fontSize: 26,
     letterSpacing: -0.8,
-    color: Colors.onSurface,
+    color: Colors.ink,
     padding: 0,
   },
 
@@ -401,7 +401,7 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.headlineBold,
     fontSize: 18,
     letterSpacing: -0.4,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   sectionHeadRow: {
     flexDirection: 'row',
@@ -411,7 +411,7 @@ const styles = StyleSheet.create({
   richTextHint: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 10,
-    color: Colors.outline,
+    color: Colors.inkMuted,
     letterSpacing: 1,
     textTransform: 'uppercase',
   },
@@ -419,7 +419,7 @@ const styles = StyleSheet.create({
   fieldLabel: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 10,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     letterSpacing: 1.5,
     textTransform: 'uppercase',
     marginBottom: Spacing.sm,
@@ -428,7 +428,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: Colors.surfaceContainerHighest,
+    backgroundColor: Colors.border,
     borderRadius: Radius.md,
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.base,
@@ -436,11 +436,11 @@ const styles = StyleSheet.create({
   selectorText: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 14,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
-  selectorPlaceholder: { color: Colors.outline },
+  selectorPlaceholder: { color: Colors.inkMuted },
   dropdown: {
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.md,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
@@ -457,7 +457,7 @@ const styles = StyleSheet.create({
   dropdownItemText: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 14,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
 
   // Pricing
@@ -466,7 +466,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.md,
     padding: Spacing.xxl,
     shadowColor: '#000',
@@ -480,12 +480,12 @@ const styles = StyleSheet.create({
   pricingCardSubtitle: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 12,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     marginTop: 4,
   },
   priceToggle: {
     flexDirection: 'row',
-    backgroundColor: Colors.surfaceContainerHighest,
+    backgroundColor: Colors.border,
     borderRadius: Radius.sm,
     padding: 3,
     marginTop: Spacing.sm,
@@ -497,30 +497,30 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   priceBtnActive: {
-    backgroundColor: Colors.primaryContainer,
+    backgroundColor: Colors.brand + '15',
   },
   priceBtnText: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 11,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
-  priceBtnTextActive: { color: Colors.onPrimaryContainer },
+  priceBtnTextActive: { color: Colors.brand },
   priceInputWrap: { alignItems: 'flex-end' },
   priceInput: {
-    backgroundColor: Colors.surfaceContainerHighest,
+    backgroundColor: Colors.border,
     borderRadius: Radius.sm,
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
     fontFamily: FontFamily.headlineBold,
     fontSize: 18,
-    color: Colors.onSurface,
+    color: Colors.ink,
     width: 96,
     textAlign: 'right',
   },
 
   // Description
   descriptionCard: {
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.xl,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -532,7 +532,7 @@ const styles = StyleSheet.create({
     padding: Spacing.xxl,
     fontFamily: FontFamily.bodyRegular,
     fontSize: 14,
-    color: Colors.onSurface,
+    color: Colors.ink,
     lineHeight: 22,
     minHeight: 130,
     textAlignVertical: 'top',
@@ -543,7 +543,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.xs,
-    backgroundColor: Colors.primaryContainer,
+    backgroundColor: Colors.brand + '15',
     borderRadius: Radius.full,
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm,
@@ -551,7 +551,7 @@ const styles = StyleSheet.create({
   addPhotoBtnText: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 12,
-    color: Colors.onPrimaryContainer,
+    color: Colors.brand,
   },
   photoGrid: {
     flexDirection: 'row',
@@ -583,8 +583,8 @@ const styles = StyleSheet.create({
     borderRadius: Radius.md,
     borderWidth: 1.5,
     borderStyle: 'dashed',
-    borderColor: Colors.outlineVariant,
-    backgroundColor: Colors.surfaceContainerLow,
+    borderColor: Colors.border,
+    backgroundColor: Colors.card,
     alignItems: 'center',
     justifyContent: 'center',
     gap: 4,
@@ -592,7 +592,7 @@ const styles = StyleSheet.create({
   photoUploadLabel: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 9,
-    color: Colors.outline,
+    color: Colors.inkMuted,
     letterSpacing: 1,
   },
 
@@ -601,7 +601,7 @@ const styles = StyleSheet.create({
     marginTop: Spacing.xl,
     paddingTop: Spacing.xl,
     borderTopWidth: 2,
-    borderTopColor: Colors.surfaceContainerHighest,
+    borderTopColor: Colors.border,
     alignItems: 'center',
   },
   deleteBtn: {
@@ -621,8 +621,8 @@ const styles = StyleSheet.create({
   bottomBar: {
     paddingHorizontal: Spacing.xl,
     paddingTop: Spacing.xl + 4,
-    backgroundColor: Colors.surfaceContainerLowest,
-    shadowColor: Colors.onSurface,
+    backgroundColor: Colors.card,
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.06,
     shadowRadius: 16,
@@ -644,7 +644,7 @@ const styles = StyleSheet.create({
   discardBtnText: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 13,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
   saveBtn: { flex: 1 },
 });

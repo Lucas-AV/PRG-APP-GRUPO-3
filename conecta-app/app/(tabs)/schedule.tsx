@@ -118,10 +118,10 @@ export default function ScheduleScreen() {
           </View>
           <View style={styles.monthNav}>
             <Pressable style={styles.monthNavBtn} onPress={() => setViewDate(new Date(year, month - 1, 1))}>
-              <MaterialIcons name="chevron-left" size={22} color={Colors.onSurfaceVariant} />
+              <MaterialIcons name="chevron-left" size={22} color={Colors.inkMuted} />
             </Pressable>
             <Pressable style={styles.monthNavBtn} onPress={() => setViewDate(new Date(year, month + 1, 1))}>
-              <MaterialIcons name="chevron-right" size={22} color={Colors.onSurfaceVariant} />
+              <MaterialIcons name="chevron-right" size={22} color={Colors.inkMuted} />
             </Pressable>
           </View>
         </View>
@@ -158,7 +158,7 @@ export default function ScheduleScreen() {
           </View>
 
           <View style={styles.legend}>
-            {[{ color: Colors.primary, label: 'Agendado' }, { color: Colors.error, label: 'Ocupado' }, { color: Colors.surfaceContainerHighest, label: 'Livre' }].map(l => (
+            {[{ color: Colors.primary, label: 'Agendado' }, { color: Colors.error, label: 'Ocupado' }, { color: Colors.border, label: 'Livre' }].map(l => (
               <View key={l.label} style={styles.legendItem}>
                 <View style={[styles.legendDot, { backgroundColor: l.color }]} />
                 <Text style={styles.legendLabel}>{l.label}</Text>

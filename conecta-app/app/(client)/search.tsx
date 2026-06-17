@@ -222,7 +222,7 @@ export default function SearchScreen() {
             style={({ pressed }) => [styles.iconBtn, pressed && styles.iconBtnPressed]}
             onPress={() => router.back()}
           >
-            <MaterialIcons name="arrow-back" size={24} color={Colors.onSurface} />
+            <MaterialIcons name="arrow-back" size={24} color={Colors.ink} />
           </Pressable>
           <Text style={styles.topBarLogo}>SevGen</Text>
         </View>
@@ -239,12 +239,12 @@ export default function SearchScreen() {
         {/* ── Barra de Busca com Botão de Filtro ───────────────────────────── */}
         <View style={styles.searchSection}>
           <View style={styles.searchBar}>
-            <MaterialIcons name="search" size={22} color={Colors.outline} style={styles.searchIcon} />
+            <MaterialIcons name="search" size={22} color={Colors.inkMuted} style={styles.searchIcon} />
             <TextInput
               ref={searchInputRef}
               style={styles.searchInput}
               placeholder="Busque serviços, profissionais ou setores"
-              placeholderTextColor={Colors.onSurfaceVariant}
+              placeholderTextColor={Colors.inkMuted}
               value={searchText}
               onChangeText={setSearchText}
               onSubmitEditing={handleSearchSubmit}
@@ -252,7 +252,7 @@ export default function SearchScreen() {
             />
             {searchText.length > 0 && (
               <Pressable onPress={() => setSearchText('')} style={{ marginRight: 8 }}>
-                <MaterialIcons name="clear" size={18} color={Colors.outline} />
+                <MaterialIcons name="clear" size={18} color={Colors.inkMuted} />
               </Pressable>
             )}
             <Pressable
@@ -392,11 +392,11 @@ export default function SearchScreen() {
                         style={styles.historyItemPress}
                         onPress={() => handleHistoryPress(term)}
                       >
-                        <MaterialIcons name="history" size={20} color={Colors.outlineVariant} style={{ marginRight: Spacing.md }} />
+                        <MaterialIcons name="history" size={20} color={Colors.border} style={{ marginRight: Spacing.md }} />
                         <Text style={styles.historyItemText}>{term}</Text>
                       </Pressable>
                       <Pressable onPress={() => removeHistoryItem(index)} style={styles.historyCloseBtn}>
-                        <MaterialIcons name="close" size={16} color={Colors.outline} />
+                        <MaterialIcons name="close" size={16} color={Colors.inkMuted} />
                       </Pressable>
                     </View>
                   ))}
@@ -418,7 +418,7 @@ export default function SearchScreen() {
                   ]}
                   onPress={() => handleCategoryPress('Reformas')}
                 >
-                  <View style={[styles.categoryIconBox, { backgroundColor: Colors.primaryContainer }]}>
+                  <View style={[styles.categoryIconBox, { backgroundColor: Colors.brand + '15' }]}>
                     <MaterialIcons name="construction" size={24} color={Colors.primary} />
                   </View>
                   <Text style={styles.categoryLabel}>REFORMAS</Text>
@@ -450,7 +450,7 @@ export default function SearchScreen() {
                   ]}
                   onPress={() => handleCategoryPress('Aulas')}
                 >
-                  <View style={[styles.categoryIconBox, { backgroundColor: Colors.secondaryContainer }]}>
+                  <View style={[styles.categoryIconBox, { backgroundColor: Colors.brand + '15' }]}>
                     <MaterialIcons name="school" size={24} color={Colors.onSecondaryContainer} />
                   </View>
                   <Text style={styles.categoryLabel}>AULAS</Text>
@@ -466,7 +466,7 @@ export default function SearchScreen() {
                   ]}
                   onPress={() => handleCategoryPress('Climatização')}
                 >
-                  <View style={[styles.categoryIconBox, { backgroundColor: Colors.primaryContainer, opacity: 0.8 }]}>
+                  <View style={[styles.categoryIconBox, { backgroundColor: Colors.brand + '15', opacity: 0.8 }]}>
                     <MaterialIcons name="memory" size={24} color={Colors.primary} />
                   </View>
                   <Text style={styles.categoryLabel}>TECNOLOGIA</Text>
@@ -534,7 +534,7 @@ export default function SearchScreen() {
               </View>
             ) : filteredServices.length === 0 ? (
               <View style={styles.emptyWrap}>
-                <MaterialIcons name="search-off" size={48} color={Colors.outlineVariant} />
+                <MaterialIcons name="search-off" size={48} color={Colors.border} />
                 <Text style={styles.emptyText}>Nenhum serviço ou prestador encontrado.</Text>
                 <Text style={styles.emptySubtitle}>
                   Tente ajustar os termos da busca ou limpar os filtros ativos.
@@ -561,13 +561,13 @@ export default function SearchScreen() {
                       <View
                         style={[
                           styles.serviceIconBox,
-                          { backgroundColor: cat?.color ?? Colors.surfaceContainerHighest },
+                          { backgroundColor: cat?.color ?? Colors.border },
                         ]}
                       >
                         <MaterialIcons
                           name={cat?.icon ?? 'home-repair-service'}
                           size={26}
-                          color={Colors.onSurfaceVariant}
+                          color={Colors.inkMuted}
                         />
                       </View>
 
@@ -620,9 +620,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.xl,
     paddingVertical: Spacing.md,
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: Colors.outlineVariant + '33',
+    borderBottomColor: Colors.border,
   },
   topBarLeft: {
     flexDirection: 'row',
@@ -643,7 +643,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   iconBtnPressed: {
-    backgroundColor: Colors.surfaceContainerLow,
+    backgroundColor: Colors.card,
   },
   scrollContent: {
     paddingBottom: Spacing.xxxl,
@@ -656,7 +656,7 @@ const styles = StyleSheet.create({
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.surfaceContainerHighest,
+    backgroundColor: Colors.border,
     borderRadius: Radius.full,
     paddingLeft: Spacing.base,
     paddingRight: Spacing.xs,
@@ -669,14 +669,14 @@ const styles = StyleSheet.create({
     flex: 1,
     fontFamily: FontFamily.bodyRegular,
     fontSize: 14,
-    color: Colors.onSurface,
+    color: Colors.ink,
     paddingVertical: 4,
   },
   filterBtn: {
     width: 38,
     height: 38,
     borderRadius: Radius.full,
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#000',
@@ -698,13 +698,13 @@ const styles = StyleSheet.create({
   activeFiltersTitle: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 11,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
   activeFilterChip: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    backgroundColor: Colors.primaryContainer + '40',
+    backgroundColor: Colors.brand + '15',
     paddingHorizontal: Spacing.sm,
     paddingVertical: 4,
     borderRadius: Radius.sm,
@@ -738,13 +738,13 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 18,
-    color: Colors.onSurface,
+    color: Colors.ink,
     letterSpacing: -0.4,
   },
   sectionTitleWithoutLink: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 18,
-    color: Colors.onSurface,
+    color: Colors.ink,
     letterSpacing: -0.4,
     paddingHorizontal: Spacing.xl,
     marginBottom: Spacing.md,
@@ -763,7 +763,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: Spacing.md,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: Colors.surfaceContainer,
+    borderBottomColor: Colors.border,
   },
   historyItemPress: {
     flex: 1,
@@ -773,7 +773,7 @@ const styles = StyleSheet.create({
   historyItemText: {
     fontFamily: FontFamily.bodyMedium,
     fontSize: 14,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   historyCloseBtn: {
     padding: Spacing.xs,
@@ -785,7 +785,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   categoryTile: {
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.lg,
     alignItems: 'center',
     justifyContent: 'center',
@@ -797,7 +797,7 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   categoryTileActive: {
-    backgroundColor: Colors.primaryContainer + '4D',
+    backgroundColor: Colors.brand + '15',
     borderWidth: 1.5,
     borderColor: Colors.primary,
   },
@@ -811,7 +811,7 @@ const styles = StyleSheet.create({
   categoryLabel: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 10,
-    color: Colors.onSurface,
+    color: Colors.ink,
     letterSpacing: 0.8,
   },
   suggestionsScroll: {
@@ -820,7 +820,7 @@ const styles = StyleSheet.create({
   },
   suggestionCard: {
     width: 256,
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.lg,
     overflow: 'hidden',
     shadowColor: 'rgba(0,0,0,0.02)',
@@ -854,7 +854,7 @@ const styles = StyleSheet.create({
   suggestionRatingText: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 12,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   suggestionBody: {
     padding: Spacing.base,
@@ -862,12 +862,12 @@ const styles = StyleSheet.create({
   suggestionName: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 16,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   suggestionSpecialty: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 12,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     marginBottom: Spacing.base,
   },
   suggestionBtn: {
@@ -900,14 +900,14 @@ const styles = StyleSheet.create({
   emptyText: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 16,
-    color: Colors.onSurface,
+    color: Colors.ink,
     textAlign: 'center',
     marginTop: Spacing.sm,
   },
   emptySubtitle: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 13,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     textAlign: 'center',
   },
   resultsList: {
@@ -917,7 +917,7 @@ const styles = StyleSheet.create({
   serviceCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: 20,
     padding: Spacing.base,
     gap: Spacing.base,
@@ -942,7 +942,7 @@ const styles = StyleSheet.create({
   serviceName: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 14,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   serviceMeta: {
     flexDirection: 'row',
@@ -952,7 +952,7 @@ const styles = StyleSheet.create({
   serviceProvider: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 12,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
   ratingPill: {
     flexDirection: 'row',
@@ -976,7 +976,7 @@ const styles = StyleSheet.create({
   servicePrice: {
     fontFamily: FontFamily.headlineExtraBold,
     fontSize: 13,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   bookBtn: {
     backgroundColor: Colors.primary,

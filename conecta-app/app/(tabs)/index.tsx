@@ -332,7 +332,7 @@ export default function HomeScreen() {
                   onPress={() => handleCategoryPress(cat.key)}
                 >
                   <View style={[styles.categoryIconWrap, active && styles.categoryIconWrapActive]}>
-                    <MaterialIcons name={cat.icon} size={26} color={active ? Colors.primary : Colors.onSurfaceVariant} />
+                    <MaterialIcons name={cat.icon} size={26} color={active ? Colors.primary : Colors.inkMuted} />
                   </View>
                   <Text style={[styles.categoryLabel, active && styles.categoryLabelActive]}>
                     {cat.label.toUpperCase()}
@@ -449,13 +449,13 @@ export default function HomeScreen() {
                       <View
                         style={[
                           styles.serviceIconBox,
-                          { backgroundColor: cat?.color ?? Colors.surfaceContainerHighest },
+                          { backgroundColor: cat?.color ?? Colors.border },
                         ]}
                       >
                         <MaterialIcons
                           name={cat?.icon ?? 'home-repair-service'}
                           size={26}
-                          color={Colors.onSurfaceVariant}
+                          color={Colors.inkMuted}
                         />
                       </View>
                       <View style={styles.serviceBody}>
@@ -733,18 +733,18 @@ const styles = StyleSheet.create({
     elevation: 1,
   },
   categoryTileActive: {
-    backgroundColor: Colors.primaryContainer + '55',
+    backgroundColor: Colors.brand + '15',
   },
   categoryIconWrap: {
     width: 48,
     height: 48,
     borderRadius: Radius.md,
-    backgroundColor: Colors.surfaceContainerHighest,
+    backgroundColor: Colors.border,
     alignItems: 'center',
     justifyContent: 'center',
   },
   categoryIconWrapActive: {
-    backgroundColor: Colors.primaryContainer,
+    backgroundColor: Colors.brand + '15',
   },
   categoryLabel: {
     fontFamily: FontFamily.bodySemiBold,
@@ -775,14 +775,14 @@ const styles = StyleSheet.create({
     width: 72,
     height: 72,
     borderRadius: Radius.full,
-    backgroundColor: Colors.surfaceContainerHighest,
+    backgroundColor: Colors.border,
     alignItems: 'center',
     justifyContent: 'center',
   },
   emptyTitle: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 16,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   emptySubtitle: {
     fontFamily: FontFamily.bodyRegular,
@@ -813,7 +813,7 @@ const styles = StyleSheet.create({
   providerCardInitials: {
     fontFamily: FontFamily.headlineExtraBold,
     fontSize: 44,
-    color: Colors.onSurface,
+    color: Colors.ink,
     opacity: 0.25,
     letterSpacing: -1,
   },
@@ -839,7 +839,7 @@ const styles = StyleSheet.create({
   ratingBadgeText: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 12,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   providerNearTag: {
     position: 'absolute',
@@ -863,7 +863,7 @@ const styles = StyleSheet.create({
   providerName: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 15,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   providerService: {
     fontFamily: FontFamily.bodyRegular,

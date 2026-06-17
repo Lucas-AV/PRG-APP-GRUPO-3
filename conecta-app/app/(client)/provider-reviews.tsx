@@ -94,7 +94,7 @@ export default function ProviderReviewsScreen() {
         </Pressable>
         <Text style={styles.topBarTitle}>Avaliações e Notas</Text>
         <Pressable style={({ pressed }) => [styles.iconBtn, pressed && { opacity: 0.6 }]}>
-          <MaterialIcons name="more-vert" size={24} color={Colors.onSurfaceVariant} />
+          <MaterialIcons name="more-vert" size={24} color={Colors.inkMuted} />
         </Pressable>
       </View>
 
@@ -152,7 +152,7 @@ export default function ProviderReviewsScreen() {
             <Text style={styles.listTitle}>Avaliações Recentes</Text>
             <Pressable style={({ pressed }) => [styles.sortPill, pressed && { opacity: 0.8 }]}>
               <Text style={styles.sortLabel}>Mais Recentes</Text>
-              <MaterialIcons name="expand-more" size={18} color={Colors.onSurface} />
+              <MaterialIcons name="expand-more" size={18} color={Colors.ink} />
             </Pressable>
           </View>
 
@@ -213,7 +213,7 @@ function ReviewCard({ review, index }: { review: ProviderReview; index: number }
       {/* Service chip */}
       {review.service_name ? (
         <View style={styles.serviceChip}>
-          <MaterialIcons name="home-repair-service" size={11} color={Colors.onSurfaceVariant} />
+          <MaterialIcons name="home-repair-service" size={11} color={Colors.inkMuted} />
           <Text style={styles.serviceChipText} numberOfLines={1}>
             {review.service_name}
           </Text>
@@ -250,7 +250,7 @@ const styles = StyleSheet.create({
   },
   topBarTitle: {
     fontFamily: FontFamily.headlineBold, fontSize: 17,
-    color: Colors.onSurface, letterSpacing: -0.3,
+    color: Colors.ink, letterSpacing: -0.3,
   },
   iconBtn: {
     width: 40, height: 40, borderRadius: Radius.full,
@@ -261,7 +261,7 @@ const styles = StyleSheet.create({
     flex: 1, alignItems: 'center', justifyContent: 'center', gap: Spacing.md,
   },
   emptyText: {
-    fontFamily: FontFamily.bodyRegular, fontSize: 14, color: Colors.onSurfaceVariant,
+    fontFamily: FontFamily.bodyRegular, fontSize: 14, color: Colors.inkMuted,
   },
 
   scroll: {
@@ -273,7 +273,7 @@ const styles = StyleSheet.create({
 
   // Summary card — 2 colunas
   summaryCard: {
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: 20, padding: Spacing.xl,
     flexDirection: 'row', alignItems: 'center',
     gap: Spacing.xxl,
@@ -285,23 +285,23 @@ const styles = StyleSheet.create({
   },
   ratingBig: {
     fontFamily: FontFamily.headlineExtraBold,
-    fontSize: 56, color: Colors.onSurface, letterSpacing: -3,
+    fontSize: 56, color: Colors.ink, letterSpacing: -3,
   },
   starsRow: { flexDirection: 'row', gap: 2 },
   totalCount: {
     fontFamily: FontFamily.bodyMedium,
-    fontSize: 9, color: Colors.onSurfaceVariant,
+    fontSize: 9, color: Colors.inkMuted,
     letterSpacing: 1, textAlign: 'center',
   },
   summaryRight: { gap: Spacing.sm },
   barRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
   barNum: {
     fontFamily: FontFamily.bodySemiBold,
-    fontSize: 12, color: Colors.onSurfaceVariant, width: 10,
+    fontSize: 12, color: Colors.inkMuted, width: 10,
   },
   barTrack: {
     flex: 1, height: 8,
-    backgroundColor: Colors.surfaceContainer,
+    backgroundColor: Colors.border,
     borderRadius: Radius.full, overflow: 'hidden',
   },
   barFill: {
@@ -314,22 +314,22 @@ const styles = StyleSheet.create({
   },
   listTitle: {
     fontFamily: FontFamily.headlineBold, fontSize: 20,
-    color: Colors.onSurface, letterSpacing: -0.5,
+    color: Colors.ink, letterSpacing: -0.5,
   },
   sortPill: {
     flexDirection: 'row', alignItems: 'center', gap: 4,
-    backgroundColor: Colors.surfaceContainerHigh,
+    backgroundColor: Colors.card,
     paddingHorizontal: Spacing.base, paddingVertical: Spacing.sm,
     borderRadius: Radius.full,
   },
   sortLabel: {
-    fontFamily: FontFamily.bodyMedium, fontSize: 13, color: Colors.onSurface,
+    fontFamily: FontFamily.bodyMedium, fontSize: 13, color: Colors.ink,
   },
 
   // Reviews list
   reviewsList: { gap: Spacing.xl },
   reviewCard: {
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: 20, padding: Spacing.xl,
     gap: Spacing.md,
     elevation: 1, shadowColor: '#000',
@@ -352,27 +352,27 @@ const styles = StyleSheet.create({
   },
   reviewerMeta: { gap: 2 },
   reviewerName: {
-    fontFamily: FontFamily.headlineBold, fontSize: 14, color: Colors.onSurface,
+    fontFamily: FontFamily.headlineBold, fontSize: 14, color: Colors.ink,
   },
   reviewDate: {
-    fontFamily: FontFamily.bodyMedium, fontSize: 11, color: Colors.onSurfaceVariant,
+    fontFamily: FontFamily.bodyMedium, fontSize: 11, color: Colors.inkMuted,
   },
   reviewStars: { flexDirection: 'row', gap: 1, paddingTop: 2 },
 
   reviewComment: {
     fontFamily: FontFamily.bodyRegular, fontSize: 14,
-    color: Colors.onSurfaceVariant, lineHeight: 22,
+    color: Colors.inkMuted, lineHeight: 22,
   },
 
   serviceChip: {
     flexDirection: 'row', alignItems: 'center', gap: 4,
     alignSelf: 'flex-start',
-    backgroundColor: Colors.surfaceContainerHighest,
+    backgroundColor: Colors.border,
     paddingHorizontal: Spacing.sm, paddingVertical: 3,
     borderRadius: Radius.full,
   },
   serviceChipText: {
-    fontFamily: FontFamily.bodyMedium, fontSize: 10, color: Colors.onSurfaceVariant,
+    fontFamily: FontFamily.bodyMedium, fontSize: 10, color: Colors.inkMuted,
   },
 
   // Photo thumbnails

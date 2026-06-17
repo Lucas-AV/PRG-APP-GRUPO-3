@@ -125,7 +125,7 @@ export default function ServicesScreen() {
               <View key={service.id} style={styles.serviceCard}>
                 <View style={styles.cardTopRow}>
                   <LinearGradient
-                    colors={[Colors.primaryContainer, Colors.surfaceContainerHigh]}
+                    colors={[Colors.brand + '15', Colors.card]}
                     style={styles.serviceThumb}
                   >
                     <MaterialIcons name={getCategoryIcon(service.category)} size={26} color={Colors.primary} />
@@ -151,7 +151,7 @@ export default function ServicesScreen() {
 
                 <View style={styles.statsRow}>
                   <View style={styles.statItem}>
-                    <MaterialIcons name="calendar-today" size={16} color={Colors.onSurfaceVariant} />
+                    <MaterialIcons name="calendar-today" size={16} color={Colors.inkMuted} />
                     <View>
                       <Text style={styles.statLabel}>Criado em</Text>
                       <Text style={styles.statValue}>
@@ -160,7 +160,7 @@ export default function ServicesScreen() {
                     </View>
                   </View>
                   <View style={styles.statItem}>
-                    <MaterialIcons name="category" size={16} color={Colors.onSurfaceVariant} />
+                    <MaterialIcons name="category" size={16} color={Colors.inkMuted} />
                     <View>
                       <Text style={styles.statLabel}>Categoria</Text>
                       <Text style={styles.statValue} numberOfLines={1}>{service.category ?? '—'}</Text>
@@ -189,7 +189,7 @@ export default function ServicesScreen() {
                       })
                     }
                   >
-                    <MaterialIcons name="edit" size={14} color={Colors.onPrimaryContainer} />
+                    <MaterialIcons name="edit" size={14} color={Colors.brand} />
                     <Text style={styles.editBtnText}>Editar</Text>
                   </Pressable>
                 </View>
@@ -366,7 +366,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   badge: {
-    backgroundColor: Colors.primaryContainer,
+    backgroundColor: Colors.brand + '15',
     borderRadius: Radius.full,
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.xs,
@@ -374,12 +374,12 @@ const styles = StyleSheet.create({
   badgeText: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 10,
-    color: Colors.onPrimaryContainer,
+    color: Colors.brand,
     letterSpacing: 1,
     textTransform: 'uppercase',
   },
   draftBadge: {
-    backgroundColor: Colors.surfaceContainerHighest,
+    backgroundColor: Colors.border,
     borderRadius: Radius.full,
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.xs,
@@ -387,7 +387,7 @@ const styles = StyleSheet.create({
   draftBadgeText: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 10,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     letterSpacing: 1,
     textTransform: 'uppercase',
   },
@@ -493,7 +493,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: Spacing.md,
     borderRadius: Radius.md,
-    backgroundColor: Colors.surfaceContainerHigh,
+    backgroundColor: Colors.card,
     alignItems: 'center',
   },
   viewBtnText: {
@@ -509,12 +509,12 @@ const styles = StyleSheet.create({
     gap: Spacing.xs,
     paddingVertical: Spacing.md,
     borderRadius: Radius.md,
-    backgroundColor: Colors.primaryContainer,
+    backgroundColor: Colors.brand + '15',
   },
   editBtnText: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 13,
-    color: Colors.onPrimaryContainer,
+    color: Colors.brand,
   },
 
   // Draft card
@@ -534,7 +534,7 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: Radius.md,
-    backgroundColor: Colors.surfaceContainerHigh,
+    backgroundColor: Colors.card,
     alignItems: 'center',
     justifyContent: 'center',
     flexShrink: 0,
@@ -552,7 +552,7 @@ const styles = StyleSheet.create({
     letterSpacing: -0.2,
   },
   draftStatusBadge: {
-    backgroundColor: Colors.surfaceContainerHighest,
+    backgroundColor: Colors.border,
     borderRadius: Radius.sm,
     paddingHorizontal: Spacing.xs,
     paddingVertical: 2,
