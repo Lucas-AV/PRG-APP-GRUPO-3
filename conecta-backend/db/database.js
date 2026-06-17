@@ -154,4 +154,20 @@ if (plansCount.n === 0) {
   seedPlans();
 }
 
+// ── Schema Migrations ─────────────────────────────────────────────────────────
+// Idempotentes: SQLite lança erro se a coluna já existe; ignoramos silenciosamente.
+const schemaMigrations = [
+  'ALTER TABLE users ADD COLUMN avatar TEXT',
+  'ALTER TABLE users ADD COLUMN bio TEXT',
+  'ALTER TABLE users ADD COLUMN years_experience INTEGER',
+  'ALTER TABLE users ADD COLUMN response_time TEXT',
+  'ALTER TABLE users ADD COLUMN specialties TEXT',
+  'ALTER TABLE users ADD COLUMN certifications TEXT',
+  'ALTER TABLE services ADD COLUMN included_items TEXT',
+];
+
+for (const sql of schemaMigrations) {
+  try { db.exec(sql); } catch (_) { /* coluna já existe */ }
+}
+
 module.exports = db;
