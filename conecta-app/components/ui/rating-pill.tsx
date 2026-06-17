@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 3,
-    backgroundColor: Colors.surfaceContainerLow,
+    backgroundColor: Colors.card,
     paddingHorizontal: Spacing.sm,
     paddingVertical: 4,
     borderRadius: Radius.full,
@@ -41,13 +41,13 @@ const styles = StyleSheet.create({
   rating: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 13,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   ratingSm: { fontSize: 11 },
   count: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 12,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
   countSm: { fontSize: 10 },
 });

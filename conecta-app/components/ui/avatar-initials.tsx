@@ -47,13 +47,13 @@ export function AvatarInitials({
 const styles = StyleSheet.create({
   wrapper: { position: 'relative', alignSelf: 'flex-start' },
   circle: {
-    backgroundColor: Colors.primaryContainer,
+    backgroundColor: Colors.brand + '15',
     alignItems: 'center',
     justifyContent: 'center',
   },
   initials: {
     fontFamily: FontFamily.headlineExtraBold,
-    color: Colors.primary,
+    color: Colors.brand,
     letterSpacing: -0.5,
   },
   image: {
@@ -63,10 +63,10 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     right: 0,
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.brand,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
-    borderColor: Colors.surfaceContainerLowest,
+    borderColor: Colors.card,
   },
 });

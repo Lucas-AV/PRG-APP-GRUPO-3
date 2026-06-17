@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 17,
-    color: Colors.onSurface,
+    color: Colors.ink,
     letterSpacing: -0.3,
   },
   closeBtn: {

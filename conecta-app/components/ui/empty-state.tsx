@@ -14,7 +14,7 @@ export function EmptyState({ icon, title, subtitle, actionLabel, onAction }: Emp
   return (
     <View style={styles.container}>
       <View style={styles.iconWrap}>
-        <MaterialIcons name={icon} size={36} color={Colors.outlineVariant} />
+        <MaterialIcons name={icon} size={36} color={Colors.border} />
       </View>
       <Text style={styles.title}>{title}</Text>
       {!!subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
     width: 72,
     height: 72,
     borderRadius: 36,
-    backgroundColor: Colors.surfaceContainerLow,
+    backgroundColor: Colors.card,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: Spacing.sm,
@@ -49,14 +49,14 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 16,
-    color: Colors.onSurface,
+    color: Colors.ink,
     letterSpacing: -0.2,
     textAlign: 'center',
   },
   subtitle: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 13,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     textAlign: 'center',
     lineHeight: 19,
     maxWidth: 260,
@@ -65,12 +65,12 @@ const styles = StyleSheet.create({
     marginTop: Spacing.sm,
     paddingHorizontal: Spacing.xxl,
     paddingVertical: Spacing.md,
-    backgroundColor: Colors.primaryContainer,
+    backgroundColor: Colors.brand + '15',
     borderRadius: Radius.full,
   },
   actionLabel: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 13,
-    color: Colors.primary,
+    color: Colors.brand,
   },
 });

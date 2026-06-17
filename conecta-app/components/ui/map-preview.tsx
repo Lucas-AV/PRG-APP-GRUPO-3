@@ -98,12 +98,12 @@ export function MapPreview({
           <View style={[styles.street, { top: 82, transform: [{ rotate: '5deg' }] }]} />
           <View style={styles.fallbackCenter}>
             {geocoding ? (
-              <ActivityIndicator color={Colors.primary} size="small" />
+              <ActivityIndicator color={Colors.brand} size="small" />
             ) : (
               <MaterialIcons
                 name={hasAddress ? 'location-searching' : 'location-on'}
                 size={32}
-                color={hasAddress ? Colors.primary : Colors.outline}
+                color={hasAddress ? Colors.brand : Colors.inkMuted}
               />
             )}
           </View>
@@ -134,7 +134,7 @@ export function MapPreview({
           {/* Overlay de carregamento do mapa */}
           {!mapReady && (
             <View style={styles.mapLoadingOverlay}>
-              <ActivityIndicator color={Colors.primary} size="small" />
+              <ActivityIndicator color={Colors.brand} size="small" />
             </View>
           )}
         </View>
@@ -145,7 +145,7 @@ export function MapPreview({
         <MaterialIcons
           name={mapReady ? 'my-location' : isLoading ? 'autorenew' : 'location-on'}
           size={13}
-          color={Colors.primary}
+          color={Colors.brand}
         />
         <Text style={styles.noteText}>
           {mapReady
@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     backgroundColor: '#e8f4f8',
     borderWidth: 1,
-    borderColor: Colors.outlineVariant + '33',
+    borderColor: Colors.border + '33',
     position: 'relative',
   },
   webview: {
@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
   fallback: { backgroundColor: '#e8f4f8' },
   gridLine: {
     position: 'absolute',
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     opacity: 0.6,
   },
   hLine: { left: 0, right: 0, height: 1 },
@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
     left: -20,
     right: -20,
     height: 3,
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     opacity: 0.9,
   },
   fallbackCenter: {
@@ -216,7 +216,7 @@ const styles = StyleSheet.create({
   noteText: {
     fontFamily: FontFamily.bodyMedium,
     fontSize: 11,
-    color: Colors.primary,
+    color: Colors.brand,
     flex: 1,
   },
 });

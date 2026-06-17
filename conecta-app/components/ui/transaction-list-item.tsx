@@ -16,8 +16,8 @@ interface TransactionListItemProps {
 
 export function TransactionListItem({
   icon = 'receipt-long',
-  iconColor = Colors.primary,
-  iconBg = Colors.primaryContainer,
+  iconColor = Colors.brand,
+  iconBg = Colors.brand + '15',
   title,
   subtitle,
   amount,
@@ -27,7 +27,7 @@ export function TransactionListItem({
 }: TransactionListItemProps) {
   return (
     <Pressable
-      style={({ pressed }) => [styles.row, pressed && onPress && { backgroundColor: Colors.surfaceContainerLow }]}
+      style={({ pressed }) => [styles.row, pressed && onPress && { backgroundColor: Colors.brand + '08' }]}
       onPress={onPress}
       disabled={!onPress}
     >
@@ -67,18 +67,18 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 14,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   subtitle: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 11,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
   right: { alignItems: 'flex-end', gap: 2 },
   amount: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 14,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   status: {
     fontFamily: FontFamily.headlineBold,

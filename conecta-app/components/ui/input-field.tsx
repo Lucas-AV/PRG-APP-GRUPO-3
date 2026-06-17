@@ -87,9 +87,9 @@ export const InputField = React.forwardRef<TextInput, InputFieldProps>(({
     ? Colors.error
     : focused
     ? Colors.brand
-    : Colors.outline;
+    : Colors.inkMuted;
 
-  const labelColor = focused ? Colors.brand : Colors.onSurfaceVariant;
+  const labelColor = focused ? Colors.brand : Colors.inkMuted;
 
   const handleFocus = () => {
     setFocused(true);
@@ -130,7 +130,7 @@ export const InputField = React.forwardRef<TextInput, InputFieldProps>(({
             multiline && styles.multiline,
           ]}
           placeholder={placeholder}
-          placeholderTextColor={Colors.outline}
+          placeholderTextColor={Colors.inkMuted}
           value={value}
           onChangeText={onChangeText}
           keyboardType={keyboardType}
@@ -151,7 +151,7 @@ export const InputField = React.forwardRef<TextInput, InputFieldProps>(({
             <MaterialIcons
               name={showPassword ? 'visibility-off' : 'visibility'}
               size={20}
-              color={Colors.outline}
+              color={Colors.inkMuted}
             />
           </Pressable>
         )}
@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontFamily: FontFamily.bodyRegular,
     fontSize: 14,
-    color: Colors.onSurface,
+    color: Colors.ink,
     paddingVertical: Spacing.base,
     paddingHorizontal: Spacing.base,
   },

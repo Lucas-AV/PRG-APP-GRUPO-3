@@ -17,8 +17,8 @@ interface ListItemProps {
 
 export function ListItem({
   icon,
-  iconColor = Colors.primary,
-  iconBg = Colors.surfaceContainerLow,
+  iconColor = Colors.brand,
+  iconBg = Colors.card,
   title,
   subtitle,
   onPress,
@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
   },
   pressed: {
-    backgroundColor: Colors.surfaceContainerLow,
+    backgroundColor: Colors.brand + '08',
   },
   iconWrap: {
     width: 36,
@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 14,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   subtitle: {
     fontFamily: FontFamily.bodyRegular,

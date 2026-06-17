@@ -29,13 +29,13 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: FontFamily.headlineExtraBold,
     fontSize: 20,
-    color: Colors.onSurface,
+    color: Colors.ink,
     letterSpacing: -0.4,
   },
   action: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 12,
-    color: Colors.primary,
+    color: Colors.brand,
     letterSpacing: 0.2,
   },
 });

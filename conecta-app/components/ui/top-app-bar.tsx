@@ -92,13 +92,13 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: FontFamily.headlineSemiBold,
     fontSize: 17,
-    color: Colors.onSurface,
+    color: Colors.ink,
     letterSpacing: -0.3,
   },
   badge: {
     fontFamily: FontFamily.headlineSemiBold,
     fontSize: 13,
-    color: Colors.primary,
+    color: Colors.brand,
     letterSpacing: -0.2,
   },
 });

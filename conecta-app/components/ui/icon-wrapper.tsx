@@ -15,8 +15,8 @@ export function IconWrapper({
   icon,
   size = 40,
   iconSize,
-  color = Colors.primary,
-  backgroundColor = Colors.primaryContainer,
+  color = Colors.brand,
+  backgroundColor = Colors.brand + '15',
   shape = 'circle',
 }: IconWrapperProps) {
   const borderRadius =
