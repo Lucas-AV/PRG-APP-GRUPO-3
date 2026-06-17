@@ -118,6 +118,13 @@ db.exec(`
     total_price REAL NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   );
+
+  CREATE TABLE IF NOT EXISTS service_images (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    service_id INTEGER NOT NULL REFERENCES services(id) ON DELETE CASCADE,
+    url TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
 `);
 
 const plansCount = db.prepare('SELECT COUNT(*) as n FROM plans').get();
@@ -154,10 +161,21 @@ if (plansCount.n === 0) {
   seedPlans();
 }
 
-// Migration: adiciona google_id se ainda não existir
-const userCols = db.pragma('table_info(users)').map(c => c.name);
-if (!userCols.includes('google_id')) {
-  db.exec('ALTER TABLE users ADD COLUMN google_id TEXT');
+// Migrations idempotentes para colunas adicionadas em entregas posteriores
+function addColumnIfMissing(table, column, definition) {
+  const cols = db.pragma(`table_info(${table})`).map((c) => c.name);
+  if (!cols.includes(column)) {
+    db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${definition}`);
+  }
 }
+
+// users.google_id (login com Google)
+addColumnIfMissing('users', 'google_id', 'TEXT');
+// users.avatar_url (upload de foto de perfil)
+addColumnIfMissing('users', 'avatar_url', 'TEXT');
+// transactions.* (integração com MercadoPago)
+addColumnIfMissing('transactions', 'mercadopago_payment_id', 'TEXT');
+addColumnIfMissing('transactions', 'external_reference', 'TEXT');
+addColumnIfMissing('transactions', 'payment_method', 'TEXT');
 
 module.exports = db;
