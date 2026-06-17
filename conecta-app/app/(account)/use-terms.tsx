@@ -122,7 +122,7 @@ function Article({ article }: { article: typeof ARTICLES[0] }) {
           <View style={article_s.bullets}>
             {article.bullets.map((b, i) => (
               <View key={i} style={article_s.bulletRow}>
-                <MaterialIcons name="check-circle" size={14} color={Colors.primary} style={{ marginTop: 2 }} />
+                <MaterialIcons name="check-circle" size={14} color={Colors.brand} style={{ marginTop: 2 }} />
                 <Text style={article_s.bulletText}>{b}</Text>
               </View>
             ))}
@@ -136,31 +136,31 @@ function Article({ article }: { article: typeof ARTICLES[0] }) {
 const article_s = StyleSheet.create({
   wrap: { gap: Spacing.base },
   titleRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.md },
-  accentBar: { width: 5, height: 22, borderRadius: 3, backgroundColor: Colors.primary },
+  accentBar: { width: 5, height: 22, borderRadius: 3, backgroundColor: Colors.brand },
   title: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 18,
-    color: Colors.primary,
+    color: Colors.brand,
     letterSpacing: -0.3,
   },
   body: { gap: Spacing.md },
   paragraph: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 14,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     lineHeight: 22,
   },
   callout: {
     padding: Spacing.base,
-    backgroundColor: Colors.surfaceContainerLow,
+    backgroundColor: Colors.brand + '08',
     borderRadius: Radius.sm,
     borderLeftWidth: 3,
-    borderLeftColor: Colors.primary + '4D',
+    borderLeftColor: Colors.brand + '4D',
   },
   calloutText: {
     fontFamily: FontFamily.bodyMedium,
     fontSize: 13,
-    color: Colors.onSurface,
+    color: Colors.ink,
     lineHeight: 20,
   },
   bullets: { gap: Spacing.sm, marginLeft: Spacing.xs },
@@ -169,7 +169,7 @@ const article_s = StyleSheet.create({
     flex: 1,
     fontFamily: FontFamily.bodyRegular,
     fontSize: 14,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     lineHeight: 22,
   },
 });
@@ -212,11 +212,11 @@ const cta = StyleSheet.create({
   sub: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 13,
-    color: Colors.outlineVariant + 'CC',
+    color: 'rgba(255,255,255,0.65)',
     lineHeight: 20,
   },
   btn: {
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.brand,
     paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.xl,
     borderRadius: Radius.md,
@@ -243,36 +243,36 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.xs,
     borderRadius: Radius.full,
-    backgroundColor: Colors.primaryContainer,
+    backgroundColor: Colors.brand + '12',
   },
   legalBadgeText: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 10,
-    color: Colors.primary,
+    color: Colors.brand,
     letterSpacing: 1.5,
   },
   docTitle: {
     fontFamily: FontFamily.headlineExtraBold,
     fontSize: 32,
-    color: Colors.onSurface,
+    color: Colors.ink,
     letterSpacing: -1,
     lineHeight: 38,
   },
   docDate: {
     fontFamily: FontFamily.bodyMedium,
     fontSize: 13,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
   articles: { gap: Spacing.xxxl },
   footerNote: {
     borderTopWidth: 1,
-    borderTopColor: Colors.surfaceContainerHigh,
+    borderTopColor: Colors.border,
     paddingTop: Spacing.xxl,
   },
   footerNoteText: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 12,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     fontStyle: 'italic',
     textAlign: 'center',
     lineHeight: 18,

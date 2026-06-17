@@ -137,17 +137,17 @@ export default function EditProfileScreen() {
           <View>
             <Text style={styles.fieldLabel}>ENDEREÇO PRINCIPAL</Text>
             <Pressable
-              style={({ pressed }) => [styles.addressCard, pressed && { backgroundColor: Colors.surfaceContainer }]}
+              style={({ pressed }) => [styles.addressCard, pressed && { backgroundColor: Colors.brand+'08' }]}
               onPress={() => router.push('/(account)/addresses' as any)}
             >
               <View style={styles.addressIconWrap}>
-                <MaterialIcons name="home" size={22} color={Colors.primary} />
+                <MaterialIcons name="home" size={22} color={Colors.brand} />
               </View>
               <View style={styles.addressInfo}>
                 <Text style={styles.addressStreet}>Adicionar endereço</Text>
                 <Text style={styles.addressDetail}>Toque para cadastrar</Text>
               </View>
-              <MaterialIcons name="chevron-right" size={20} color={Colors.outlineVariant} />
+              <MaterialIcons name="chevron-right" size={20} color={Colors.border} />
             </Pressable>
           </View>
         </View>
@@ -177,14 +177,14 @@ const styles = StyleSheet.create({
     width: 96,
     height: 96,
     borderRadius: 48,
-    backgroundColor: Colors.primaryContainer,
+    backgroundColor: Colors.brand+'15',
     alignItems: 'center',
     justifyContent: 'center',
   },
   avatarText: {
     fontFamily: FontFamily.headlineExtraBold,
     fontSize: 32,
-    color: Colors.primary,
+    color: Colors.brand,
     letterSpacing: -1,
   },
   avatarImage: {
@@ -200,10 +200,10 @@ const styles = StyleSheet.create({
     width: 34,
     height: 34,
     borderRadius: 17,
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.brand,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: Colors.primary,
+    shadowColor: Colors.brand,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -213,7 +213,7 @@ const styles = StyleSheet.create({
     marginTop: Spacing.md,
     fontFamily: FontFamily.bodyRegular,
     fontSize: 13,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
   form: { gap: Spacing.xxl },
   row2col: { flexDirection: 'row', gap: Spacing.md },
@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
   fieldLabel: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 10,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     letterSpacing: 1.2,
     marginLeft: 2,
     marginBottom: Spacing.sm,
@@ -231,9 +231,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: Spacing.base,
     padding: Spacing.base,
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.md,
-    shadowColor: '#000',
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.04,
     shadowRadius: 12,
@@ -243,7 +243,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: Colors.primaryContainer,
+    backgroundColor: Colors.brand+'15',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -251,19 +251,19 @@ const styles = StyleSheet.create({
   addressStreet: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 14,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   addressDetail: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 12,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     marginTop: 1,
   },
   footer: { gap: Spacing.base },
   privacyNote: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 12,
-    color: Colors.outline,
+    color: Colors.inkMuted,
     textAlign: 'center',
     paddingHorizontal: Spacing.xxl,
     lineHeight: 18,

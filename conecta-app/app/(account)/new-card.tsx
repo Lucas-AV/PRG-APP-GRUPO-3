@@ -138,13 +138,13 @@ export default function NewCardScreen() {
               <TextInput
                 style={styles.input}
                 placeholder="0000 0000 0000 0000"
-                placeholderTextColor={Colors.outline}
+                placeholderTextColor={Colors.inkMuted}
                 value={cardNumber}
                 onChangeText={t => setCardNumber(formatCardNumber(t))}
                 keyboardType="number-pad"
                 maxLength={19}
               />
-              <MaterialIcons name="credit-card" size={20} color={Colors.outline} style={styles.inputIcon} />
+              <MaterialIcons name="credit-card" size={20} color={Colors.inkMuted} style={styles.inputIcon} />
             </View>
             <Text style={styles.fieldHint}>Insira os 16 dígitos na frente do seu cartão.</Text>
           </View>
@@ -155,7 +155,7 @@ export default function NewCardScreen() {
             <TextInput
               style={styles.inputSolo}
               placeholder="Como aparece no cartão"
-              placeholderTextColor={Colors.outline}
+              placeholderTextColor={Colors.inkMuted}
               value={cardName}
               onChangeText={setCardName}
               autoCapitalize="characters"
@@ -169,7 +169,7 @@ export default function NewCardScreen() {
               <TextInput
                 style={[styles.inputSolo, styles.centered]}
                 placeholder="MM/AA"
-                placeholderTextColor={Colors.outline}
+                placeholderTextColor={Colors.inkMuted}
                 value={expiry}
                 onChangeText={t => setExpiry(formatExpiry(t))}
                 keyboardType="number-pad"
@@ -182,14 +182,14 @@ export default function NewCardScreen() {
                 <TextInput
                   style={[styles.input, styles.centered]}
                   placeholder="•••"
-                  placeholderTextColor={Colors.outline}
+                  placeholderTextColor={Colors.inkMuted}
                   value={cvv}
                   onChangeText={setCvv}
                   secureTextEntry
                   keyboardType="number-pad"
                   maxLength={3}
                 />
-                <MaterialIcons name="help-outline" size={18} color={Colors.outline} style={styles.inputIcon} />
+                <MaterialIcons name="help-outline" size={18} color={Colors.inkMuted} style={styles.inputIcon} />
               </View>
             </View>
           </View>
@@ -197,7 +197,7 @@ export default function NewCardScreen() {
           {/* Save toggle */}
           <View style={styles.saveRow}>
             <View style={styles.saveIconWrap}>
-              <MaterialIcons name="shield" size={22} color={Colors.primary} />
+              <MaterialIcons name="shield" size={22} color={Colors.brand} />
             </View>
             <View style={styles.saveInfo}>
               <Text style={styles.saveLabel}>Salvar cartão com segurança</Text>
@@ -206,9 +206,9 @@ export default function NewCardScreen() {
             <Switch
               value={saveCard}
               onValueChange={setSaveCard}
-              trackColor={{ false: Colors.surfaceContainerHighest, true: Colors.primary }}
+              trackColor={{ false: Colors.border, true: Colors.brand }}
               thumbColor="#ffffff"
-              ios_backgroundColor={Colors.surfaceContainerHighest}
+              ios_backgroundColor={Colors.border}
             />
           </View>
 
@@ -306,20 +306,22 @@ const styles = StyleSheet.create({
   fieldLabel: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 14,
-    color: Colors.onSurface,
+    color: Colors.ink,
     marginLeft: Spacing.xs,
   },
   fieldHint: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 11,
-    color: Colors.outline,
+    color: Colors.inkMuted,
     marginLeft: Spacing.xs,
   },
   inputWrap: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.surfaceContainerHighest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.md,
+    borderWidth: 1,
+    borderColor: Colors.border,
   },
   input: {
     flex: 1,
@@ -327,16 +329,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     fontFamily: FontFamily.bodyRegular,
     fontSize: 15,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   inputSolo: {
     height: 52,
     paddingHorizontal: Spacing.base,
     fontFamily: FontFamily.bodyRegular,
     fontSize: 15,
-    color: Colors.onSurface,
-    backgroundColor: Colors.surfaceContainerHighest,
+    color: Colors.ink,
+    backgroundColor: Colors.card,
     borderRadius: Radius.md,
+    borderWidth: 1,
+    borderColor: Colors.border,
   },
   inputIcon: { marginRight: Spacing.base },
   centered: { textAlign: 'center' },
@@ -348,15 +352,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.base,
-    backgroundColor: Colors.surfaceContainerLow,
+    backgroundColor: Colors.card,
     borderRadius: Radius.md,
     padding: Spacing.base,
+    borderWidth: 1,
+    borderColor: Colors.border,
   },
   saveIconWrap: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: Colors.primaryContainer,
+    backgroundColor: Colors.brand + '12',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -364,11 +370,11 @@ const styles = StyleSheet.create({
   saveLabel: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 14,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   saveSub: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 11,
-    color: Colors.outline,
+    color: Colors.inkMuted,
   },
 });

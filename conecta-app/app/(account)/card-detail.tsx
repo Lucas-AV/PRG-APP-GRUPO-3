@@ -128,7 +128,7 @@ export default function CardDetailScreen() {
               style={[styles.infoRow, idx < INFO_ROWS.length - 1 && styles.infoRowBorder]}
             >
               <View style={styles.infoIconWrap}>
-                <MaterialIcons name={row.icon} size={18} color={Colors.onSurfaceVariant} />
+                <MaterialIcons name={row.icon} size={18} color={Colors.inkMuted} />
               </View>
               <View style={styles.infoContent}>
                 <Text style={styles.infoLabel}>{row.label}</Text>
@@ -141,7 +141,7 @@ export default function CardDetailScreen() {
         {/* Default card toggle */}
         <View style={styles.preferenceCard}>
           <View style={styles.preferenceIconWrap}>
-            <MaterialIcons name="star" size={20} color={Colors.primary} />
+            <MaterialIcons name="star" size={20} color={Colors.brand} />
           </View>
           <View style={styles.preferenceInfo}>
             <Text style={styles.preferenceLabel}>Cartão padrão</Text>
@@ -150,9 +150,9 @@ export default function CardDetailScreen() {
           <Switch
             value={isDefault}
             onValueChange={setIsDefault}
-            trackColor={{ false: Colors.surfaceContainerHighest, true: Colors.primary }}
+            trackColor={{ false: Colors.border, true: Colors.brand }}
             thumbColor="#ffffff"
-            ios_backgroundColor={Colors.surfaceContainerHighest}
+            ios_backgroundColor={Colors.border}
           />
         </View>
 
@@ -161,7 +161,7 @@ export default function CardDetailScreen() {
           <Text style={styles.sectionTitle}>Transações Recentes</Text>
           <View style={styles.transactionsCard}>
             {loadingTx ? (
-              <ActivityIndicator color={Colors.primary} style={{ paddingVertical: Spacing.xxl }} />
+              <ActivityIndicator color={Colors.brand} style={{ paddingVertical: Spacing.xxl }} />
             ) : transactions.length === 0 ? (
               <Text style={styles.txEmpty}>Nenhuma transação encontrada.</Text>
             ) : (
@@ -170,7 +170,7 @@ export default function CardDetailScreen() {
                   <Pressable
                     style={({ pressed }) => [
                       styles.txRow,
-                      pressed && { backgroundColor: Colors.surfaceContainerLow },
+                      pressed && { backgroundColor: Colors.brand+'08' },
                     ]}
                     onPress={() =>
                       router.push({
@@ -191,7 +191,7 @@ export default function CardDetailScreen() {
                     }
                   >
                     <View style={styles.txIconWrap}>
-                      <MaterialIcons name="receipt-long" size={18} color={Colors.primary} />
+                      <MaterialIcons name="receipt-long" size={18} color={Colors.brand} />
                     </View>
                     <View style={styles.txInfo}>
                       <Text style={styles.txTitle}>{tx.service_name}</Text>
@@ -320,10 +320,10 @@ const styles = StyleSheet.create({
 
   // Info card
   infoCard: {
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.lg,
     overflow: 'hidden',
-    shadowColor: '#000',
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.03,
     shadowRadius: 8,
@@ -338,13 +338,13 @@ const styles = StyleSheet.create({
   },
   infoRowBorder: {
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: Colors.surfaceContainerLow,
+    borderBottomColor: Colors.border,
   },
   infoIconWrap: {
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: Colors.surfaceContainer,
+    backgroundColor: Colors.border,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -352,13 +352,13 @@ const styles = StyleSheet.create({
   infoLabel: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 11,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     marginBottom: 2,
   },
   infoValue: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 14,
-    color: Colors.onSurface,
+    color: Colors.ink,
     letterSpacing: 0.2,
   },
 
@@ -367,10 +367,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.base,
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.lg,
     padding: Spacing.base,
-    shadowColor: '#000',
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.02,
     shadowRadius: 8,
@@ -380,7 +380,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: Colors.primaryContainer,
+    backgroundColor: Colors.brand+'15',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -388,12 +388,12 @@ const styles = StyleSheet.create({
   preferenceLabel: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 14,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   preferenceSub: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 11,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
 
   // Recent usage
@@ -401,14 +401,14 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontFamily: FontFamily.headlineExtraBold,
     fontSize: 20,
-    color: Colors.onSurface,
+    color: Colors.ink,
     letterSpacing: -0.4,
   },
   transactionsCard: {
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.lg,
     overflow: 'hidden',
-    shadowColor: '#000',
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.02,
     shadowRadius: 8,
@@ -424,14 +424,14 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: Colors.primaryContainer,
+    backgroundColor: Colors.brand+'15',
     alignItems: 'center',
     justifyContent: 'center',
   },
   txEmpty: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 13,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     textAlign: 'center',
     paddingVertical: Spacing.xxl,
   },
@@ -439,28 +439,28 @@ const styles = StyleSheet.create({
   txTitle: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 13,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   txDate: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 11,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
   txAmount: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 13,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   txDivider: {
     height: StyleSheet.hairlineWidth,
-    backgroundColor: Colors.surfaceContainerLow,
+    backgroundColor: Colors.border,
     marginHorizontal: Spacing.base,
   },
 
   // Danger zone
   dangerZone: {
     borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: Colors.surfaceContainerHigh,
+    borderTopColor: Colors.border,
     paddingTop: Spacing.xl,
   },
   removeBtn: {

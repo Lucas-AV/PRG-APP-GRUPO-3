@@ -117,7 +117,7 @@ function RequirementItem({ met, label }: { met: boolean; label: string }) {
       <MaterialIcons
         name={met ? 'check-circle' : 'radio-button-unchecked'}
         size={18}
-        color={met ? Colors.primary : Colors.outline}
+        color={met ? Colors.brand : Colors.inkMuted}
       />
       <Text style={[req.label, !met && req.labelMuted]}>{label}</Text>
     </View>
@@ -129,9 +129,9 @@ const req = StyleSheet.create({
   label: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 13,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
-  labelMuted: { color: Colors.outline },
+  labelMuted: { color: Colors.inkMuted },
 });
 
 const styles = StyleSheet.create({
@@ -147,27 +147,29 @@ const styles = StyleSheet.create({
     width: 4,
     height: 48,
     borderRadius: 2,
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.brand,
     marginTop: 2,
   },
   introText: {
     flex: 1,
     fontFamily: FontFamily.bodyRegular,
     fontSize: 14,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     lineHeight: 22,
   },
   fields: { gap: Spacing.xxl },
   reqCard: {
-    backgroundColor: Colors.surfaceContainerLow,
+    backgroundColor: Colors.card,
     borderRadius: Radius.lg,
     padding: Spacing.xl,
     gap: Spacing.base,
+    borderWidth: 1,
+    borderColor: Colors.border,
   },
   reqTitle: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 14,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   reqList: { gap: Spacing.md },
 });
