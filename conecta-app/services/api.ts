@@ -33,12 +33,6 @@ export interface AuthResponse {
   token: string;
 }
 
-export interface GoogleNewUserResponse {
-  isNewUser: true;
-  googleName: string;
-  googleEmail: string;
-}
-
 export interface Service {
   id: number;
   user_id: number;
@@ -78,11 +72,6 @@ export const authApi = {
       body: JSON.stringify(data),
     }),
 
-  googleAuth: (payload: { access_token: string; role?: string }) =>
-    request<AuthResponse | GoogleNewUserResponse>('/auth/google', {
-      method: 'POST',
-      body: JSON.stringify(payload),
-    }),
 };
 
 // ── Services ──────────────────────────────────────────────────────────────────

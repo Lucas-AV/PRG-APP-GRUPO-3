@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   View,
   Text,
@@ -12,7 +12,6 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
-import * as SecureStore from 'expo-secure-store';
 import { Colors, FontFamily, Spacing, Radius } from '@/constants/theme';
 import { useAuth } from '@/context/AuthContext';
 import { RoleBadge } from '@/components/ui/role-badge';
@@ -40,21 +39,14 @@ const section = StyleSheet.create({
   title: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 10,
-    color: Colors.inkMuted,
+    color: Colors.onSurfaceVariant,
     letterSpacing: 1.6,
     paddingLeft: 2,
   },
   card: {
-    backgroundColor: Colors.card,
+    backgroundColor: Colors.surfaceContainerLowest,
     borderRadius: Radius.md,
     overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: Colors.border,
-    shadowColor: Colors.ink,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.04,
-    shadowRadius: 4,
-    elevation: 1,
   },
 });
 
@@ -70,7 +62,7 @@ interface RowProps {
 function SettingsRow({ icon, label, subtitle, onPress, accent, isLast }: RowProps) {
   return (
     <Pressable
-      style={({ pressed }) => [row.wrap, !isLast && row.border, pressed && { backgroundColor: Colors.card }]}
+      style={({ pressed }) => [row.wrap, !isLast && row.border, pressed && { backgroundColor: Colors.surfaceContainerLow }]}
       onPress={onPress}
     >
       <View style={[row.iconWrap, accent && row.iconAccent]}>
@@ -80,7 +72,7 @@ function SettingsRow({ icon, label, subtitle, onPress, accent, isLast }: RowProp
         <Text style={row.label}>{label}</Text>
         {subtitle && <Text style={row.subtitle}>{subtitle}</Text>}
       </View>
-      <MaterialIcons name="chevron-right" size={20} color={Colors.inkMuted} />
+      <MaterialIcons name="chevron-right" size={20} color={Colors.outlineVariant} />
     </Pressable>
   );
 }
@@ -103,9 +95,9 @@ function SettingsRowToggle({ icon, label, value, onValueChange, isLast }: Toggle
       <Switch
         value={value}
         onValueChange={onValueChange}
-        trackColor={{ false: Colors.border, true: Colors.primary }}
+        trackColor={{ false: Colors.surfaceContainerHighest, true: Colors.primary }}
         thumbColor="#ffffff"
-        ios_backgroundColor={Colors.border}
+        ios_backgroundColor={Colors.surfaceContainerHighest}
       />
     </View>
   );
@@ -121,29 +113,29 @@ const row = StyleSheet.create({
   },
   border: {
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: Colors.border,
+    borderBottomColor: Colors.surfaceContainerLow,
   },
   iconWrap: {
     width: 40,
     height: 40,
     borderRadius: Radius.sm,
-    backgroundColor: Colors.border + '60',
+    backgroundColor: Colors.surfaceContainer,
     alignItems: 'center',
     justifyContent: 'center',
   },
   iconAccent: {
-    backgroundColor: Colors.brand + '15',
+    backgroundColor: Colors.primaryContainer + '4D',
   },
   labelWrap: { flex: 1 },
   label: {
     fontFamily: FontFamily.bodyMedium,
     fontSize: 15,
-    color: Colors.ink,
+    color: Colors.onSurface,
   },
   subtitle: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 12,
-    color: Colors.inkMuted,
+    color: Colors.onSurfaceVariant,
     marginTop: 1,
   },
 });
@@ -152,26 +144,13 @@ export default function ProfileScreen() {
   const { user, logout } = useAuth();
   const { t, i18n } = useTranslation();
   const [darkMode, setDarkMode] = useState(false);
-  const [biometrics, setBiometrics] = useState(false);
-  const [notifications, setNotifications] = useState(false);
+  const [biometrics, setBiometrics] = useState(true);
   const [langModalVisible, setLangModalVisible] = useState(false);
 
   const currentLang = i18n.language as SupportedLanguage;
 
-  useEffect(() => {
-    SecureStore.getItemAsync('biometrics_enabled').then(v => setBiometrics(v === 'true'));
-    SecureStore.getItemAsync('notifications_enabled').then(v => setNotifications(v === 'true'));
-  }, []);
-
-  const handleBiometrics = async (value: boolean) => {
-    setBiometrics(value);
-    await SecureStore.setItemAsync('biometrics_enabled', String(value));
-  };
-
-  const handleNotifications = async (value: boolean) => {
-    setNotifications(value);
-    await SecureStore.setItemAsync('notifications_enabled', String(value));
-  };
+  const comingSoon = () =>
+    Alert.alert(t('profile.inDevelopment'), t('profile.inDevelopmentMsg'), [{ text: 'OK' }]);
 
   const handleLogout = () =>
     Alert.alert(t('profile.logoutAlert.title'), t('profile.logoutAlert.message'), [
@@ -249,7 +228,7 @@ export default function ProfileScreen() {
 
         {/* Preferências */}
         <SettingsSection title={t('profile.sections.preferences')}>
-          <SettingsRowToggle icon="notifications" label={t('profile.rows.notifications')} value={notifications} onValueChange={handleNotifications} />
+          <SettingsRow icon="notifications" label={t('profile.rows.notifications')} onPress={comingSoon} />
           <SettingsRow
             icon="language"
             label={t('profile.rows.language')}
@@ -263,7 +242,7 @@ export default function ProfileScreen() {
         <SettingsSection title={t('profile.sections.security')}>
           <SettingsRow icon="lock-reset" label={t('profile.rows.changePassword')} onPress={() => router.push('/(account)/change-password' as any)} />
           <SettingsRow icon="verified-user" label={t('profile.rows.privacy')} onPress={() => router.push('/(account)/privacy-security' as any)} />
-          <SettingsRowToggle icon="fingerprint" label={t('profile.rows.biometrics')} value={biometrics} onValueChange={handleBiometrics} isLast />
+          <SettingsRowToggle icon="fingerprint" label={t('profile.rows.biometrics')} value={biometrics} onValueChange={setBiometrics} isLast />
         </SettingsSection>
 
         {/* Suporte & Legal */}
@@ -343,11 +322,11 @@ export default function ProfileScreen() {
 const modal = StyleSheet.create({
   backdrop: {
     flex: 1,
-    backgroundColor: 'rgba(15,23,42,0.55)',
+    backgroundColor: 'rgba(0,0,0,0.45)',
     justifyContent: 'flex-end',
   },
   sheet: {
-    backgroundColor: Colors.card,
+    backgroundColor: Colors.surfaceContainerLowest,
     borderTopLeftRadius: Radius.xl,
     borderTopRightRadius: Radius.xl,
     paddingHorizontal: Spacing.xl,
@@ -359,20 +338,20 @@ const modal = StyleSheet.create({
     width: 40,
     height: 4,
     borderRadius: 2,
-    backgroundColor: Colors.border,
+    backgroundColor: Colors.outlineVariant,
     alignSelf: 'center',
     marginBottom: Spacing.md,
   },
   title: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 18,
-    color: Colors.ink,
+    color: Colors.onSurface,
     letterSpacing: -0.3,
   },
   subtitle: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 13,
-    color: Colors.inkMuted,
+    color: Colors.onSurfaceVariant,
     marginBottom: Spacing.sm,
   },
   langRow: {
@@ -383,7 +362,7 @@ const modal = StyleSheet.create({
   },
   langBorder: {
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: Colors.border,
+    borderBottomColor: Colors.surfaceContainerLow,
   },
   langRowActive: {
     // no background — checkmark is enough
@@ -391,7 +370,7 @@ const modal = StyleSheet.create({
   langLabel: {
     fontFamily: FontFamily.bodyMedium,
     fontSize: 16,
-    color: Colors.ink,
+    color: Colors.onSurface,
   },
   langLabelActive: {
     fontFamily: FontFamily.bodySemiBold,
@@ -403,12 +382,12 @@ const modal = StyleSheet.create({
     paddingVertical: Spacing.md,
     borderRadius: Radius.md,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: Colors.outlineVariant,
   },
   cancelLabel: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 15,
-    color: Colors.inkMuted,
+    color: Colors.onSurfaceVariant,
   },
 });
 
@@ -428,7 +407,7 @@ const styles = StyleSheet.create({
   topTitle: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 18,
-    color: Colors.ink,
+    color: Colors.onSurface,
     letterSpacing: -0.4,
   },
   topBrand: {
@@ -446,10 +425,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: Colors.card,
+    backgroundColor: Colors.surfaceContainerLowest,
     borderRadius: Radius.lg,
     padding: Spacing.xl,
-    shadowColor: Colors.ink,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.04,
     shadowRadius: 20,
@@ -464,7 +443,7 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: Colors.brand + '15',
+    backgroundColor: Colors.primaryContainer,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -478,13 +457,13 @@ const styles = StyleSheet.create({
   profileName: {
     fontFamily: FontFamily.headlineExtraBold,
     fontSize: 18,
-    color: Colors.ink,
+    color: Colors.onSurface,
     letterSpacing: -0.3,
   },
   profileEmail: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 12,
-    color: Colors.inkMuted,
+    color: Colors.onSurfaceVariant,
   },
   editLink: {
     fontFamily: FontFamily.bodySemiBold,

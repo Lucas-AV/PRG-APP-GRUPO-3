@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   View,
   Text,
@@ -19,16 +19,11 @@ import { GradientButton } from '@/components/ui/gradient-button';
 import { InputField } from '@/components/ui/input-field';
 import { Colors, FontFamily, Spacing, Radius } from '@/constants/theme';
 import { useAuth } from '@/context/AuthContext';
-import * as WebBrowser from 'expo-web-browser';
-import * as Google from 'expo-auth-session/providers/google';
-import { GOOGLE_WEB_CLIENT_ID } from '@/constants/config';
-
-WebBrowser.maybeCompleteAuthSession();
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function LoginScreen() {
-  const { login, loginWithGoogle } = useAuth();
+  const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState('');
@@ -40,41 +35,6 @@ export default function LoginScreen() {
   const [resetEmailError, setResetEmailError] = useState('');
   const [resetLoading, setResetLoading] = useState(false);
   const [resetSent, setResetSent] = useState(false);
-
-  const [_request, response, promptAsync] = Google.useAuthRequest({
-    webClientId: GOOGLE_WEB_CLIENT_ID,
-  });
-
-  const handleGoogleResponse = async (accessToken: string) => {
-    setLoading(true);
-    try {
-      const result = await loginWithGoogle(accessToken);
-      if ('isNewUser' in result) {
-        router.push({
-          pathname: '/(auth)/google-role' as any,
-          params: {
-            access_token: accessToken,
-            name: result.googleName,
-            email: result.googleEmail,
-          },
-        });
-        return;
-      }
-      const completed = await SecureStore.getItemAsync(`onboarding_${result.id}`);
-      router.replace(completed === 'true' ? '/(tabs)' : '/(onboarding)/step0');
-    } catch (e: any) {
-      Alert.alert('Erro ao entrar com Google', e.message ?? 'Tente novamente.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (response?.type === 'success') {
-      const accessToken = response.authentication?.accessToken;
-      if (accessToken) handleGoogleResponse(accessToken);
-    }
-  }, [response]);
 
   const openReset = () => {
     setResetEmail('');
@@ -188,22 +148,6 @@ export default function LoginScreen() {
               style={styles.ctaMargin}
             />
 
-            {/* Divider */}
-            <View style={styles.divider}>
-              <View style={styles.dividerLine} />
-              <Text style={styles.dividerText}>ou entre com</Text>
-              <View style={styles.dividerLine} />
-            </View>
-
-            {/* Google button */}
-            <Pressable
-              style={({ pressed }) => [styles.googleBtn, pressed && { opacity: 0.85 }]}
-              onPress={() => promptAsync()}
-              disabled={loading}
-            >
-              <MaterialIcons name="language" size={20} color="#4285F4" />
-              <Text style={styles.googleLabel}>Entrar com Google</Text>
-            </Pressable>
           </View>
 
           {/* Footer */}
@@ -366,43 +310,6 @@ const styles = StyleSheet.create({
   },
 
   ctaMargin: { marginTop: Spacing.xs },
-
-  // Divider
-  divider: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.base,
-  },
-  dividerLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: Colors.border,
-  },
-  dividerText: {
-    fontFamily: FontFamily.bodySemiBold,
-    fontSize: 10,
-    color: Colors.inkMuted,
-    letterSpacing: 2,
-    textTransform: 'uppercase',
-  },
-
-  // Google
-  googleBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: Spacing.md,
-    paddingVertical: Spacing.md + 2,
-    backgroundColor: Colors.card,
-    borderRadius: Radius.lg,
-    borderWidth: 1,
-    borderColor: Colors.border,
-  },
-  googleLabel: {
-    fontFamily: FontFamily.bodySemiBold,
-    fontSize: 14,
-    color: Colors.ink,
-  },
 
   // Reset modal
   backdrop: {

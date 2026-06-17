@@ -14,7 +14,7 @@ export function RoleBadge({ role }: RoleBadgeProps) {
       <MaterialIcons
         name={isProvider ? 'work' : 'person'}
         size={11}
-        color={isProvider ? Colors.onTertiaryContainer : Colors.ink}
+        color={isProvider ? Colors.onTertiaryContainer : Colors.onPrimaryContainer}
       />
       <Text style={[styles.label, isProvider ? styles.labelProvider : styles.labelClient]}>
         {isProvider ? 'Prestador' : 'Cliente'}
@@ -28,13 +28,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 3,
-    alignSelf: 'center',
+    alignSelf: 'flex-start',
     paddingHorizontal: Spacing.sm + 1,
     paddingVertical: 3,
     borderRadius: Radius.full,
   },
   badgeClient: {
-    backgroundColor: Colors.brand + '15',
+    backgroundColor: Colors.primaryContainer,
   },
   badgeProvider: {
     backgroundColor: Colors.tertiaryContainer,
@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.4,
   },
   labelClient: {
-    color: Colors.ink,
+    color: Colors.onPrimaryContainer,
   },
   labelProvider: {
     color: Colors.onTertiaryContainer,

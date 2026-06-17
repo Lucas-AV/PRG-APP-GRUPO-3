@@ -7,9 +7,7 @@ import {
   StyleSheet,
   Alert,
   ActivityIndicator,
-  Image,
 } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -27,25 +25,7 @@ export default function EditProfileScreen() {
   const [email, setEmail] = useState(user?.email ?? '');
   const [phone, setPhone] = useState(user?.phone ?? '');
   const [birthdate, setBirthdate] = useState('');
-  const [photoUri, setPhotoUri] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-
-  const handlePickPhoto = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert('Permissão necessária', 'Permita o acesso à galeria nas configurações do app.');
-      return;
-    }
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 0.85,
-    });
-    if (!result.canceled && result.assets[0]) {
-      setPhotoUri(result.assets[0].uri);
-    }
-  };
 
   const initials = name
     ? name.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase()
@@ -78,13 +58,11 @@ export default function EditProfileScreen() {
         <View style={styles.avatarSection}>
           <View style={styles.avatarWrap}>
             <View style={styles.avatar}>
-              {photoUri
-                ? <Image source={{ uri: photoUri }} style={styles.avatarImage} />
-                : <Text style={styles.avatarText}>{initials}</Text>}
+              <Text style={styles.avatarText}>{initials}</Text>
             </View>
             <Pressable
               style={({ pressed }) => [styles.cameraBtn, pressed && { opacity: 0.8 }]}
-              onPress={handlePickPhoto}
+              onPress={() => Alert.alert('Em breve', 'Alteração de foto estará disponível em breve.')}
             >
               <MaterialIcons name="photo-camera" size={18} color="#fff" />
             </Pressable>
@@ -137,17 +115,17 @@ export default function EditProfileScreen() {
           <View>
             <Text style={styles.fieldLabel}>ENDEREÇO PRINCIPAL</Text>
             <Pressable
-              style={({ pressed }) => [styles.addressCard, pressed && { backgroundColor: Colors.brand+'08' }]}
+              style={({ pressed }) => [styles.addressCard, pressed && { backgroundColor: Colors.surfaceContainer }]}
               onPress={() => router.push('/(account)/addresses' as any)}
             >
               <View style={styles.addressIconWrap}>
-                <MaterialIcons name="home" size={22} color={Colors.brand} />
+                <MaterialIcons name="home" size={22} color={Colors.primary} />
               </View>
               <View style={styles.addressInfo}>
                 <Text style={styles.addressStreet}>Adicionar endereço</Text>
                 <Text style={styles.addressDetail}>Toque para cadastrar</Text>
               </View>
-              <MaterialIcons name="chevron-right" size={20} color={Colors.border} />
+              <MaterialIcons name="chevron-right" size={20} color={Colors.outlineVariant} />
             </Pressable>
           </View>
         </View>
@@ -177,21 +155,15 @@ const styles = StyleSheet.create({
     width: 96,
     height: 96,
     borderRadius: 48,
-    backgroundColor: Colors.brand+'15',
+    backgroundColor: Colors.primaryContainer,
     alignItems: 'center',
     justifyContent: 'center',
   },
   avatarText: {
     fontFamily: FontFamily.headlineExtraBold,
     fontSize: 32,
-    color: Colors.brand,
+    color: Colors.primary,
     letterSpacing: -1,
-  },
-  avatarImage: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 999,
-    resizeMode: 'cover',
   },
   cameraBtn: {
     position: 'absolute',
@@ -200,10 +172,10 @@ const styles = StyleSheet.create({
     width: 34,
     height: 34,
     borderRadius: 17,
-    backgroundColor: Colors.brand,
+    backgroundColor: Colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: Colors.brand,
+    shadowColor: Colors.primary,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -213,7 +185,7 @@ const styles = StyleSheet.create({
     marginTop: Spacing.md,
     fontFamily: FontFamily.bodyRegular,
     fontSize: 13,
-    color: Colors.inkMuted,
+    color: Colors.onSurfaceVariant,
   },
   form: { gap: Spacing.xxl },
   row2col: { flexDirection: 'row', gap: Spacing.md },
@@ -221,7 +193,7 @@ const styles = StyleSheet.create({
   fieldLabel: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 10,
-    color: Colors.inkMuted,
+    color: Colors.onSurfaceVariant,
     letterSpacing: 1.2,
     marginLeft: 2,
     marginBottom: Spacing.sm,
@@ -231,9 +203,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: Spacing.base,
     padding: Spacing.base,
-    backgroundColor: Colors.card,
+    backgroundColor: Colors.surfaceContainerLowest,
     borderRadius: Radius.md,
-    shadowColor: Colors.ink,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.04,
     shadowRadius: 12,
@@ -243,7 +215,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: Colors.brand+'15',
+    backgroundColor: Colors.primaryContainer,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -251,19 +223,19 @@ const styles = StyleSheet.create({
   addressStreet: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 14,
-    color: Colors.ink,
+    color: Colors.onSurface,
   },
   addressDetail: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 12,
-    color: Colors.inkMuted,
+    color: Colors.onSurfaceVariant,
     marginTop: 1,
   },
   footer: { gap: Spacing.base },
   privacyNote: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 12,
-    color: Colors.inkMuted,
+    color: Colors.outline,
     textAlign: 'center',
     paddingHorizontal: Spacing.xxl,
     lineHeight: 18,
