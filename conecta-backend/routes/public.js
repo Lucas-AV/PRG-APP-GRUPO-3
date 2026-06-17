@@ -49,7 +49,7 @@ router.get('/public', (req, res) => {
 
   const services = db.prepare(`
     SELECT
-      s.id, s.name, s.category, s.price, s.price_type, s.description,
+      s.id, s.name, s.category, s.price, s.price_type, s.description, s.included_items,
       u.id AS provider_id, u.name AS provider_name,
       ROUND(AVG(r.rating), 1) AS avg_rating,
       COUNT(r.id) AS review_count
@@ -87,7 +87,7 @@ router.get('/public/:id', (req, res) => {
   const service = db.prepare(`
     SELECT
       s.id, s.name, s.category, s.price, s.price_type,
-      s.description, s.duration, s.status,
+      s.description, s.included_items, s.duration, s.status,
       u.id AS provider_id, u.name AS provider_name,
       ROUND(AVG(r.rating), 1) AS avg_rating,
       COUNT(r.id) AS review_count
@@ -143,6 +143,29 @@ router.get('/provider/:userId/reviews', (req, res) => {
   });
 
   return res.json({ avg_rating: avg, total_count: total, distribution, reviews });
+});
+
+router.get('/provider/:userId/profile', (req, res) => {
+  const userId = Number(req.params.userId);
+  if (isNaN(userId)) return res.status(400).json({ error: 'userId inválido' });
+
+  const user = db.prepare(`
+    SELECT id, name, bio, years_experience, response_time, specialties, certifications
+    FROM users WHERE id = ? AND role = 'prestador'
+  `).get(userId);
+
+  if (!user) return res.status(404).json({ error: 'Prestador não encontrado' });
+
+  const row = db.prepare(
+    "SELECT COUNT(*) as count FROM appointments WHERE provider_id = ? AND status = 'concluido'"
+  ).get(userId);
+
+  return res.json({
+    ...user,
+    specialties: user.specialties ? JSON.parse(user.specialties) : [],
+    certifications: user.certifications ? JSON.parse(user.certifications) : [],
+    completed_count: row ? row.count : 0,
+  });
 });
 
 module.exports = router;
