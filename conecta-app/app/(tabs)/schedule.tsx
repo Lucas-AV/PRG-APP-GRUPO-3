@@ -230,7 +230,7 @@ export default function ScheduleScreen() {
 
       {/* FAB — clientes apenas */}
       {user?.role === 'cliente' && (
-        <Pressable style={styles.fab} onPress={() => router.push('/(tabs)/explore' as any)}>
+        <Pressable style={styles.fab} onPress={() => router.replace('/(tabs)' as any)}>
           <LinearGradient colors={GradientColors} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.fabGradient}>
             <MaterialIcons name="add" size={20} color={Colors.onPrimary} />
             <Text style={styles.fabLabel}>Agendar Novo Serviço</Text>
