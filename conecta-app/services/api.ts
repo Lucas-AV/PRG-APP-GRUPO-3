@@ -266,6 +266,7 @@ export interface PublicService {
   price_type: 'fixo' | 'a_partir_de';
   description?: string;
   duration?: string;
+  included_items?: string[];
   provider_id: number;
   provider_name: string;
   avg_rating: number | null;
@@ -307,7 +308,35 @@ export interface ProviderReviews {
 export const providerApi = {
   reviews: (userId: number) =>
     request<ProviderReviews>(`/users/provider/${userId}/reviews`),
+
+  profile: (userId: number) =>
+    request<ProviderProfile>(`/users/provider/${userId}/profile`),
 };
+
+// ── Provider Profile ──────────────────────────────────────────────────────────
+
+export interface ProviderSpecialty {
+  icon: string;
+  label: string;
+  wide: boolean;
+}
+
+export interface ProviderCertification {
+  icon: string;
+  title: string;
+  subtitle: string;
+}
+
+export interface ProviderProfile {
+  id: number;
+  name: string;
+  bio: string | null;
+  years_experience: number | null;
+  response_time: string | null;
+  specialties: ProviderSpecialty[];
+  certifications: ProviderCertification[];
+  completed_count: number;
+}
 
 // ── Transactions ───────────────────────────────────────────────────────────────
 
