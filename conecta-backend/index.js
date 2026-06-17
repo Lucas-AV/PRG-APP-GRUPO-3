@@ -1,3 +1,6 @@
+require('dotenv').config();
+
+const path = require('path');
 const express = require('express');
 const cors = require('cors');
 const swaggerJsdoc = require('swagger-jsdoc');
@@ -13,6 +16,9 @@ const plansRoutes = require('./routes/plans');
 const subscriptionsRoutes = require('./routes/subscriptions');
 const availabilityRoutes = require('./routes/availability');
 const appointmentsRoutes = require('./routes/appointments');
+const uploadsRoutes = require('./routes/uploads');
+const paymentsRoutes = require('./routes/payments');
+const { UPLOADS_DIR } = require('./middleware/upload');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -44,6 +50,9 @@ const swaggerSpec = swaggerJsdoc({
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
+// Arquivos enviados (avatars e imagens de serviços) servidos estaticamente
+app.use('/uploads', express.static(UPLOADS_DIR));
+
 app.use('/services', publicRoutes);   // público — sem auth
 app.use('/users', publicRoutes);      // público — sem auth (provider reviews)
 app.use('/auth', authRoutes);
@@ -55,6 +64,8 @@ app.use('/plans', plansRoutes);
 app.use('/users', subscriptionsRoutes);
 app.use('/users', availabilityRoutes);
 app.use('/appointments', appointmentsRoutes);
+app.use('/uploads', uploadsRoutes);
+app.use('/payments', paymentsRoutes);
 
 app.get('/', (req, res) => {
   res.json({ message: 'ConectaApp API está rodando', docs: `http://localhost:${PORT}/api-docs` });
