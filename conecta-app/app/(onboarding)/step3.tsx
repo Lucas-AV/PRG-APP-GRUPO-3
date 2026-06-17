@@ -122,7 +122,7 @@ export default function Step3Screen() {
                   <MaterialIcons
                     name={chip.icon}
                     size={16}
-                    color={isSelected ? Colors.onPrimaryContainer : Colors.onSurface}
+                    color={isSelected ? Colors.ink : Colors.ink}
                   />
                   <Text
                     style={[styles.chipLabel, isSelected && styles.chipLabelSelected]}
@@ -140,7 +140,7 @@ export default function Step3Screen() {
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Experiência Profissional</Text>
             <Pressable style={styles.addBtn} onPress={addExperience}>
-              <MaterialIcons name="add-circle" size={16} color={Colors.primary} />
+              <MaterialIcons name="add-circle" size={16} color={Colors.brand} />
               <Text style={styles.addBtnLabel}>ADICIONAR</Text>
             </Pressable>
           </View>
@@ -154,14 +154,14 @@ export default function Step3Screen() {
                     style={styles.removeExpBtn}
                     onPress={() => removeExperience(index)}
                   >
-                    <MaterialIcons name="close" size={16} color={Colors.outline} />
+                    <MaterialIcons name="close" size={16} color={Colors.inkMuted} />
                   </Pressable>
                 )}
                 <Text style={styles.fieldLabel}>CARGO / FUNÇÃO</Text>
                 <TextInput
                   style={styles.fieldInput}
                   placeholder="Ex: Eletricista Residencial Sênior"
-                  placeholderTextColor={Colors.outline}
+                  placeholderTextColor={Colors.inkMuted}
                   value={exp.jobTitle}
                   onChangeText={(v) => updateExperience(index, 'jobTitle', v)}
                 />
@@ -171,7 +171,7 @@ export default function Step3Screen() {
                 <TextInput
                   style={[styles.fieldInput, styles.textarea]}
                   placeholder="Descreva suas atividades e especializações..."
-                  placeholderTextColor={Colors.outline}
+                  placeholderTextColor={Colors.inkMuted}
                   value={exp.jobDesc}
                   onChangeText={(v) => updateExperience(index, 'jobDesc', v)}
                   multiline
@@ -179,7 +179,7 @@ export default function Step3Screen() {
                   textAlignVertical="top"
                 />
                 <Pressable style={styles.uploadCertBtn}>
-                  <MaterialIcons name="upload-file" size={18} color={Colors.onSecondaryContainer} />
+                  <MaterialIcons name="upload-file" size={18} color={Colors.brand} />
                   <Text style={styles.uploadCertLabel}>Enviar Certificado</Text>
                   <Text style={styles.uploadHint}>Opcional: PDF, PNG até 5MB</Text>
                 </Pressable>
@@ -190,7 +190,7 @@ export default function Step3Screen() {
           {/* Add more placeholder */}
           <Pressable style={styles.addMoreCard} onPress={addExperience}>
             <View style={styles.addMoreIcon}>
-              <MaterialIcons name="work-history" size={24} color={Colors.outline} />
+              <MaterialIcons name="work-history" size={24} color={Colors.inkMuted} />
             </View>
             <Text style={styles.addMoreLabel}>Toque para adicionar outra experiência</Text>
           </Pressable>
@@ -205,7 +205,7 @@ export default function Step3Screen() {
           <TextInput
             style={styles.bioInput}
             placeholder="Conte para os clientes sobre sua trajetória, ética de trabalho e o que torna seu serviço único..."
-            placeholderTextColor={Colors.outline + '99'}
+            placeholderTextColor={Colors.inkMuted}
             value={bio}
             onChangeText={(t) => t.length <= 500 && setBio(t)}
             multiline
@@ -213,7 +213,7 @@ export default function Step3Screen() {
             textAlignVertical="top"
           />
           <View style={styles.bioInfo}>
-            <MaterialIcons name="info" size={14} color={Colors.outline} />
+            <MaterialIcons name="info" size={14} color={Colors.inkMuted} />
             <Text style={styles.bioInfoText}>
               Bios pessoais aumentam a taxa de reservas em até 40%.
             </Text>
@@ -231,9 +231,9 @@ export default function Step3Screen() {
           disabled={saving}
         >
           {saving ? (
-            <ActivityIndicator size="small" color={Colors.onSurfaceVariant} />
+            <ActivityIndicator size="small" color={Colors.inkMuted} />
           ) : (
-            <MaterialIcons name="save" size={18} color={Colors.onSurfaceVariant} />
+            <MaterialIcons name="save" size={18} color={Colors.inkMuted} />
           )}
           <Text style={styles.draftLabel}>Salvar</Text>
         </Pressable>
@@ -275,7 +275,7 @@ const styles = StyleSheet.create({
   sectionSubtitle: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 13,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     lineHeight: 18,
   },
 
@@ -293,22 +293,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm + 2,
     borderRadius: Radius.full,
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderWidth: 1,
-    borderColor: Colors.outlineVariant + '4D',
+    borderColor: Colors.border,
   },
   chipSelected: {
-    backgroundColor: Colors.primaryContainer,
-    borderColor: Colors.primary + '33',
+    backgroundColor: Colors.brand + '15',
+    borderColor: Colors.brand + '33',
   },
   chipLabel: {
     fontFamily: FontFamily.bodyMedium,
     fontSize: 13,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   chipLabelSelected: {
     fontFamily: FontFamily.bodySemiBold,
-    color: Colors.onPrimaryContainer,
+    color: Colors.ink,
   },
 
   // Add button
@@ -320,7 +320,7 @@ const styles = StyleSheet.create({
   addBtnLabel: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 11,
-    color: Colors.primary,
+    color: Colors.brand,
     letterSpacing: 1,
   },
 
@@ -332,10 +332,10 @@ const styles = StyleSheet.create({
 
   // Experience card
   expCard: {
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.md,
     overflow: 'hidden',
-    shadowColor: '#000',
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.03,
     shadowRadius: 16,
@@ -355,17 +355,17 @@ const styles = StyleSheet.create({
   fieldLabel: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 10,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     letterSpacing: 1.5,
   },
   fieldInput: {
-    backgroundColor: Colors.surfaceContainerHigh,
+    backgroundColor: Colors.card,
     borderRadius: Radius.sm,
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
     fontFamily: FontFamily.bodyMedium,
     fontSize: 14,
-    color: Colors.onSurface,
+    color: Colors.ink,
     marginTop: Spacing.xs,
   },
   textarea: {
@@ -377,7 +377,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.sm,
-    backgroundColor: Colors.secondaryContainer,
+    backgroundColor: Colors.brand + '12',
     borderRadius: Radius.sm,
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
@@ -387,55 +387,55 @@ const styles = StyleSheet.create({
   uploadCertLabel: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 12,
-    color: Colors.onSecondaryContainer,
+    color: Colors.brand,
   },
   uploadHint: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 11,
-    color: Colors.outline,
+    color: Colors.inkMuted,
     fontStyle: 'italic',
     flex: 1,
   },
 
   // Add more card
   addMoreCard: {
-    backgroundColor: Colors.surfaceContainerLow,
+    backgroundColor: Colors.card,
     borderRadius: Radius.md,
     padding: Spacing.xxxl,
     alignItems: 'center',
     gap: Spacing.md,
     borderWidth: 1,
-    borderColor: Colors.outlineVariant + '33',
+    borderColor: Colors.border,
     borderStyle: 'dashed',
   },
   addMoreIcon: {
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: Colors.surfaceContainerHighest,
+    backgroundColor: Colors.border,
     alignItems: 'center',
     justifyContent: 'center',
   },
   addMoreLabel: {
     fontFamily: FontFamily.bodyMedium,
     fontSize: 13,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
 
   // Bio
   bioInput: {
-    backgroundColor: Colors.surfaceContainerHighest,
+    backgroundColor: Colors.border,
     borderRadius: Radius.xl,
     padding: Spacing.xxl,
     fontFamily: FontFamily.bodyMedium,
     fontSize: 14,
-    color: Colors.onSurface,
+    color: Colors.ink,
     minHeight: 130,
   },
   bioCounter: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 10,
-    color: Colors.outline,
+    color: Colors.inkMuted,
     letterSpacing: 0.5,
   },
   bioInfo: {
@@ -446,7 +446,7 @@ const styles = StyleSheet.create({
   bioInfoText: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 12,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     lineHeight: 17,
     flex: 1,
   },
@@ -458,8 +458,8 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
     paddingHorizontal: Spacing.xl,
     paddingTop: Spacing.xl + 4,
-    backgroundColor: Colors.surfaceContainerLowest,
-    shadowColor: Colors.onSurface,
+    backgroundColor: Colors.card,
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.06,
     shadowRadius: 16,
@@ -476,7 +476,7 @@ const styles = StyleSheet.create({
   draftLabel: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 13,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
   continueBtn: {
     flex: 1,

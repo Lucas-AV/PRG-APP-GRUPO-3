@@ -93,7 +93,7 @@ export default function Step0Screen() {
                   </LinearGradient>
                 ) : (
                   <View style={[styles.iconContainer, styles.iconContainerDefault]}>
-                    <MaterialIcons name={opt.icon} size={28} color={Colors.primary} />
+                    <MaterialIcons name={opt.icon} size={28} color={Colors.brand} />
                   </View>
                 )}
 
@@ -110,7 +110,7 @@ export default function Step0Screen() {
                     <MaterialIcons
                       name="check-circle"
                       size={14}
-                      color={isSelected ? Colors.primary : Colors.outline}
+                      color={isSelected ? Colors.brand : Colors.inkMuted}
                     />
                     <Text
                       style={[
@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.headlineExtraBold,
     fontSize: 32,
     letterSpacing: -1,
-    color: Colors.primary,
+    color: Colors.brand,
   },
 
   headline: {
@@ -195,13 +195,13 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.headlineExtraBold,
     fontSize: 32,
     letterSpacing: -1,
-    color: Colors.onSurface,
+    color: Colors.ink,
     lineHeight: 38,
   },
   subtitle: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 15,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     lineHeight: 22,
   },
 
@@ -213,10 +213,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.base,
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.md,
     padding: Spacing.xl,
-    shadowColor: '#000',
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.04,
     shadowRadius: 16,
@@ -225,8 +225,8 @@ const styles = StyleSheet.create({
     borderColor: 'transparent',
   },
   optionCardSelected: {
-    borderColor: Colors.primary + '33',
-    backgroundColor: Colors.surfaceContainerLowest,
+    borderColor: Colors.brand + '33',
+    backgroundColor: Colors.card,
     shadowOpacity: 0.08,
     shadowRadius: 24,
   },
@@ -240,7 +240,7 @@ const styles = StyleSheet.create({
     flexShrink: 0,
   },
   iconContainerDefault: {
-    backgroundColor: Colors.primaryContainer,
+    backgroundColor: Colors.brand + '15',
   },
 
   optionText: {
@@ -250,16 +250,16 @@ const styles = StyleSheet.create({
   optionTitle: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 17,
-    color: Colors.onSurface,
+    color: Colors.ink,
     letterSpacing: -0.3,
   },
   optionTitleSelected: {
-    color: Colors.primary,
+    color: Colors.brand,
   },
   optionDescription: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 13,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     lineHeight: 18,
   },
 
@@ -272,10 +272,10 @@ const styles = StyleSheet.create({
   highlightText: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 11,
-    color: Colors.outline,
+    color: Colors.inkMuted,
   },
   highlightTextSelected: {
-    color: Colors.primary,
+    color: Colors.brand,
   },
 
   radioOuter: {
@@ -283,19 +283,19 @@ const styles = StyleSheet.create({
     height: 20,
     borderRadius: 10,
     borderWidth: 2,
-    borderColor: Colors.outlineVariant,
+    borderColor: Colors.border,
     alignItems: 'center',
     justifyContent: 'center',
     flexShrink: 0,
   },
   radioOuterSelected: {
-    borderColor: Colors.primary,
+    borderColor: Colors.brand,
   },
   radioInner: {
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.brand,
   },
 
   cta: { marginTop: Spacing.xs },
@@ -303,7 +303,7 @@ const styles = StyleSheet.create({
   footerNote: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 12,
-    color: Colors.outline,
+    color: Colors.inkMuted,
     textAlign: 'center',
     lineHeight: 17,
   },

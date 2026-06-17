@@ -132,9 +132,9 @@ export default function ProviderAvailabilityScreen() {
               <Switch
                 value={day.is_active}
                 onValueChange={v => updateDay(idx, { is_active: v })}
-                trackColor={{ false: Colors.surfaceContainerHighest, true: Colors.primary }}
+                trackColor={{ false: Colors.border, true: Colors.brand }}
                 thumbColor="#ffffff"
-                ios_backgroundColor={Colors.surfaceContainerHighest}
+                ios_backgroundColor={Colors.border}
               />
             </View>
 
@@ -147,7 +147,7 @@ export default function ProviderAvailabilityScreen() {
                     value={day.start_time}
                     onChangeText={v => updateDay(idx, { start_time: v })}
                     placeholder="08:00"
-                    placeholderTextColor={Colors.outlineVariant}
+                    placeholderTextColor={Colors.inkMuted}
                     keyboardType="numbers-and-punctuation"
                     maxLength={5}
                   />
@@ -160,7 +160,7 @@ export default function ProviderAvailabilityScreen() {
                     value={day.end_time}
                     onChangeText={v => updateDay(idx, { end_time: v })}
                     placeholder="18:00"
-                    placeholderTextColor={Colors.outlineVariant}
+                    placeholderTextColor={Colors.inkMuted}
                     keyboardType="numbers-and-punctuation"
                     maxLength={5}
                   />
@@ -191,12 +191,12 @@ const styles = StyleSheet.create({
   hint: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 14,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     lineHeight: 20,
     marginBottom: Spacing.sm,
   },
   dayCard: {
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.xl,
     padding: Spacing.xl,
     gap: Spacing.base,
@@ -205,21 +205,21 @@ const styles = StyleSheet.create({
   dayLabel: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 15,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   timeRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.md },
   timeField: { flex: 1, gap: Spacing.xs },
   timeLabel: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 10,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     letterSpacing: 1.2,
   },
   timeInput: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 18,
-    color: Colors.onSurface,
-    backgroundColor: Colors.surfaceContainerLow,
+    color: Colors.ink,
+    backgroundColor: Colors.card,
     borderRadius: Radius.md,
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm,
@@ -228,20 +228,20 @@ const styles = StyleSheet.create({
   timeSep: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 18,
-    color: Colors.outlineVariant,
+    color: Colors.border,
     marginTop: Spacing.xl,
   },
   unavailableText: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 13,
-    color: Colors.outlineVariant,
+    color: Colors.border,
     fontStyle: 'italic',
   },
   footer: {
     paddingHorizontal: Spacing.xl,
     paddingTop: Spacing.xl,
     backgroundColor: Colors.surface,
-    shadowColor: Colors.onSurface,
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.05,
     shadowRadius: 12,

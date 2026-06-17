@@ -35,8 +35,8 @@ export default function Step3bScreen() {
           {/* Identity document card */}
           <View style={styles.verifyCard}>
             <View style={styles.verifyCardLeft}>
-              <View style={[styles.verifyIconBox, { backgroundColor: Colors.primaryContainer }]}>
-                <MaterialIcons name="badge" size={22} color={Colors.primary} />
+              <View style={[styles.verifyIconBox, { backgroundColor: Colors.brand + '15' }]}>
+                <MaterialIcons name="badge" size={22} color={Colors.brand} />
               </View>
               <View style={styles.verifyCardText}>
                 <Text style={styles.verifyCardTitle}>Documento de Identidade</Text>
@@ -47,11 +47,11 @@ export default function Step3bScreen() {
             </View>
             <View style={styles.verifyBtnRow}>
               <Pressable style={styles.uploadSmallBtn}>
-                <MaterialIcons name="upload" size={14} color={Colors.onSurface} />
+                <MaterialIcons name="upload" size={14} color={Colors.ink} />
                 <Text style={styles.uploadSmallLabel}>Frente</Text>
               </Pressable>
               <Pressable style={styles.uploadSmallBtn}>
-                <MaterialIcons name="upload" size={14} color={Colors.onSurface} />
+                <MaterialIcons name="upload" size={14} color={Colors.ink} />
                 <Text style={styles.uploadSmallLabel}>Verso</Text>
               </Pressable>
             </View>
@@ -68,14 +68,14 @@ export default function Step3bScreen() {
                 Contas de luz, água ou internet dos últimos 90 dias.
               </Text>
               <Pressable style={styles.dashedUploadBtn}>
-                <MaterialIcons name="cloud-upload" size={22} color={Colors.outline} />
+                <MaterialIcons name="cloud-upload" size={22} color={Colors.inkMuted} />
                 <Text style={styles.dashedUploadLabel}>Clique para selecionar</Text>
               </Pressable>
             </View>
 
             <View style={styles.verifyCardSmall}>
               <View style={styles.recommendedRow}>
-                <View style={[styles.verifyIconBox, { backgroundColor: Colors.secondaryContainer }]}>
+                <View style={[styles.verifyIconBox, { backgroundColor: Colors.brand + '12' }]}>
                   <MaterialIcons name="gavel" size={22} color={Colors.secondary} />
                 </View>
                 <View style={styles.recommendedBadge}>
@@ -87,7 +87,7 @@ export default function Step3bScreen() {
                 Aumente sua taxa de aprovação em até 40% com este selo.
               </Text>
               <Pressable style={styles.dashedUploadBtn}>
-                <MaterialIcons name="verified-user" size={22} color={Colors.outline} />
+                <MaterialIcons name="verified-user" size={22} color={Colors.inkMuted} />
                 <Text style={styles.dashedUploadLabel}>Adicionar Certidão</Text>
               </Pressable>
             </View>
@@ -95,7 +95,7 @@ export default function Step3bScreen() {
 
           {/* Trust note */}
           <View style={styles.trustNote}>
-            <MaterialIcons name="info" size={14} color={Colors.outline} />
+            <MaterialIcons name="info" size={14} color={Colors.inkMuted} />
             <Text style={styles.trustNoteText}>
               Ao prosseguir, você concorda com nossos termos de privacidade. Seus documentos
               serão analisados pela equipe de segurança em até 24 horas úteis.
@@ -108,7 +108,7 @@ export default function Step3bScreen() {
         <Pressable
           style={({ pressed }) => [styles.draftBtn, pressed && { opacity: 0.6 }]}
         >
-          <MaterialIcons name="save" size={18} color={Colors.onSurfaceVariant} />
+          <MaterialIcons name="save" size={18} color={Colors.inkMuted} />
           <Text style={styles.draftLabel}>Salvar</Text>
         </Pressable>
         <GradientButton
@@ -139,22 +139,22 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.headlineExtraBold,
     fontSize: 30,
     letterSpacing: -0.8,
-    color: Colors.onSurface,
+    color: Colors.ink,
     lineHeight: 36,
   },
   subtitle: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 14,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     lineHeight: 20,
   },
 
   verifyCard: {
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.md,
     padding: Spacing.xxl,
     gap: Spacing.base,
-    shadowColor: '#000',
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.04,
     shadowRadius: 16,
@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
   verifyCardDesc: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 12,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     lineHeight: 17,
   },
   verifyBtnRow: {
@@ -197,13 +197,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: Spacing.xs,
     paddingVertical: Spacing.sm + 2,
-    backgroundColor: Colors.surfaceContainer,
+    backgroundColor: Colors.card,
     borderRadius: Radius.sm,
   },
   uploadSmallLabel: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 12,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
 
   verifyTwoCol: {
@@ -212,11 +212,11 @@ const styles = StyleSheet.create({
   },
   verifyCardSmall: {
     flex: 1,
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.md,
     padding: Spacing.xl,
     gap: Spacing.sm,
-    shadowColor: '#000',
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.04,
     shadowRadius: 16,
@@ -228,7 +228,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   recommendedBadge: {
-    backgroundColor: Colors.primaryContainer,
+    backgroundColor: Colors.brand + '15',
     borderRadius: 4,
     paddingHorizontal: Spacing.xs,
     paddingVertical: 2,
@@ -236,13 +236,13 @@ const styles = StyleSheet.create({
   recommendedText: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 8,
-    color: Colors.onPrimaryContainer,
+    color: Colors.ink,
     letterSpacing: 0.5,
   },
 
   dashedUploadBtn: {
     borderWidth: 1.5,
-    borderColor: Colors.outlineVariant + '4D',
+    borderColor: Colors.border,
     borderStyle: 'dashed',
     borderRadius: Radius.md,
     paddingVertical: Spacing.md,
@@ -253,7 +253,7 @@ const styles = StyleSheet.create({
   dashedUploadLabel: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 11,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     textAlign: 'center',
   },
 
@@ -261,7 +261,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
     gap: Spacing.sm,
-    backgroundColor: Colors.surfaceContainerLow,
+    backgroundColor: Colors.card,
     borderRadius: Radius.md,
     padding: Spacing.base,
   },
@@ -269,7 +269,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontFamily: FontFamily.bodyRegular,
     fontSize: 11,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     lineHeight: 17,
     fontStyle: 'italic',
   },
@@ -280,8 +280,8 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
     paddingHorizontal: Spacing.xl,
     paddingTop: Spacing.xl + 4,
-    backgroundColor: Colors.surfaceContainerLowest,
-    shadowColor: Colors.onSurface,
+    backgroundColor: Colors.card,
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.06,
     shadowRadius: 16,
@@ -298,7 +298,7 @@ const styles = StyleSheet.create({
   draftLabel: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 13,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
   continueBtn: { flex: 1 },
 });

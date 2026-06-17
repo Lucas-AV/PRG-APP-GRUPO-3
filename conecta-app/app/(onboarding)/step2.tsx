@@ -114,7 +114,7 @@ export default function Step2Screen() {
                   <MaterialIcons
                     name={t === 'casa' ? 'home' : 'work'}
                     size={18}
-                    color={isActive ? Colors.primary : Colors.onSurfaceVariant}
+                    color={isActive ? Colors.brand : Colors.inkMuted}
                   />
                   <Text style={[styles.segmentedLabel, isActive && styles.segmentedLabelActive]}>
                     {t === 'casa' ? 'Casa' : 'Trabalho'}
@@ -159,18 +159,18 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.headlineExtraBold,
     fontSize: 30,
     letterSpacing: -0.8,
-    color: Colors.onSurface,
+    color: Colors.ink,
     lineHeight: 36,
   },
   subtitle: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 14,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     lineHeight: 20,
   },
   segmentedTrack: {
     flexDirection: 'row',
-    backgroundColor: Colors.surfaceContainerHighest,
+    backgroundColor: Colors.border,
     borderRadius: Radius.full,
     padding: 6,
   },
@@ -190,8 +190,8 @@ const styles = StyleSheet.create({
     bottom: 6,
     left: 6,
     borderRadius: Radius.full,
-    backgroundColor: Colors.surfaceContainerLowest,
-    shadowColor: '#000',
+    backgroundColor: Colors.card,
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.06,
     shadowRadius: 4,
@@ -200,14 +200,14 @@ const styles = StyleSheet.create({
   segmentedLabel: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 14,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
-  segmentedLabelActive: { color: Colors.primary },
+  segmentedLabelActive: { color: Colors.brand },
   bottomNav: {
     paddingHorizontal: Spacing.xl,
     paddingTop: Spacing.xl + 4,
-    backgroundColor: Colors.surfaceContainerLowest,
-    shadowColor: Colors.onSurface,
+    backgroundColor: Colors.card,
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.06,
     shadowRadius: 16,

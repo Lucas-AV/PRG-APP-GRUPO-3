@@ -33,9 +33,9 @@ function formatDuration(minutes: number): string {
 }
 
 const STATUS_CONFIG = {
-  confirmado: { bg: Colors.primaryContainer, text: Colors.primary, label: 'Confirmado', icon: 'check-circle' as const },
+  confirmado: { bg: Colors.brand + '15', text: Colors.brand, label: 'Confirmado', icon: 'check-circle' as const },
   cancelado: { bg: '#FFE4E4', text: Colors.error, label: 'Cancelado', icon: 'cancel' as const },
-  concluido: { bg: Colors.surfaceContainerHigh, text: Colors.onSurfaceVariant, label: 'Concluído', icon: 'task-alt' as const },
+  concluido: { bg: Colors.card, text: Colors.inkMuted, label: 'Concluído', icon: 'task-alt' as const },
 };
 
 export default function AppointmentDetailScreen() {
@@ -83,7 +83,7 @@ export default function AppointmentDetailScreen() {
     return (
       <SafeAreaView style={styles.container} edges={['top']}>
         <TopAppBar title="Detalhes do Agendamento" />
-        <View style={styles.center}><ActivityIndicator color={Colors.primary} /></View>
+        <View style={styles.center}><ActivityIndicator color={Colors.brand} /></View>
       </SafeAreaView>
     );
   }
@@ -121,7 +121,7 @@ export default function AppointmentDetailScreen() {
         <View style={styles.serviceCard}>
           <Text style={styles.serviceName}>{appointment.service_name}</Text>
           <View style={styles.providerRow}>
-            <MaterialIcons name="verified" size={16} color={Colors.primary} />
+            <MaterialIcons name="verified" size={16} color={Colors.brand} />
             <Text style={styles.providerName}>{appointment.provider_name}</Text>
           </View>
         </View>
@@ -134,18 +134,18 @@ export default function AppointmentDetailScreen() {
           </View>
           <View style={styles.detailGrid}>
             <View style={styles.detailCard}>
-              <MaterialIcons name="calendar-today" size={22} color={Colors.primary} />
+              <MaterialIcons name="calendar-today" size={22} color={Colors.brand} />
               <Text style={styles.detailLabel}>DATA</Text>
               <Text style={styles.detailValue}>{formatDisplayDate(appointment.scheduled_date)}</Text>
             </View>
             <View style={styles.detailCard}>
-              <MaterialIcons name="schedule" size={22} color={Colors.primary} />
+              <MaterialIcons name="schedule" size={22} color={Colors.brand} />
               <Text style={styles.detailLabel}>HORÁRIO</Text>
               <Text style={styles.detailValue}>{appointment.scheduled_time}</Text>
             </View>
           </View>
           <View style={styles.durationCard}>
-            <MaterialIcons name="timer" size={22} color={Colors.primary} />
+            <MaterialIcons name="timer" size={22} color={Colors.brand} />
             <View>
               <Text style={styles.detailLabel}>DURAÇÃO ESTIMADA</Text>
               <Text style={styles.detailValue}>{formatDuration(appointment.duration_minutes)}</Text>
@@ -188,13 +188,13 @@ export default function AppointmentDetailScreen() {
           </View>
           <View style={styles.paymentRow}>
             <Text style={styles.payRowLabel}>Taxa de Plataforma</Text>
-            <Text style={[styles.payRowValue, { color: Colors.primary }]}>Incluída</Text>
+            <Text style={[styles.payRowValue, { color: Colors.brand }]}>Incluída</Text>
           </View>
           <View style={styles.payDivider} />
           <View style={styles.payTotalRow}>
             {isClient ? (
               <View style={styles.payMethodRow}>
-                <MaterialIcons name="credit-card" size={16} color={Colors.onSurfaceVariant} />
+                <MaterialIcons name="credit-card" size={16} color={Colors.inkMuted} />
                 <Text style={styles.payMethodLabel}>
                   {appointment.payment_method === 'cartao'
                     ? appointment.card_brand
@@ -236,45 +236,45 @@ export default function AppointmentDetailScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.surface },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  errorText: { fontFamily: FontFamily.bodyRegular, fontSize: 14, color: Colors.onSurfaceVariant },
+  errorText: { fontFamily: FontFamily.bodyRegular, fontSize: 14, color: Colors.inkMuted },
   scroll: { paddingHorizontal: Spacing.xl, paddingTop: Spacing.xxl, paddingBottom: Spacing.xxxl * 2, gap: Spacing.xxl },
 
   statusWrap: { alignItems: 'center', gap: Spacing.sm },
   statusBadge: { flexDirection: 'row', alignItems: 'center', gap: Spacing.xs, paddingHorizontal: Spacing.base, paddingVertical: Spacing.sm, borderRadius: Radius.full },
   statusLabel: { fontFamily: FontFamily.headlineBold, fontSize: 13, textTransform: 'uppercase', letterSpacing: 1 },
-  statusNote: { fontFamily: FontFamily.bodyRegular, fontSize: 12, color: Colors.onSurfaceVariant, textAlign: 'center' },
+  statusNote: { fontFamily: FontFamily.bodyRegular, fontSize: 12, color: Colors.inkMuted, textAlign: 'center' },
 
-  serviceCard: { backgroundColor: Colors.surfaceContainerLowest, borderRadius: Radius.xl, padding: Spacing.xl, gap: Spacing.sm, elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.06, shadowRadius: 16 },
-  serviceName: { fontFamily: FontFamily.headlineExtraBold, fontSize: 20, color: Colors.onSurface, letterSpacing: -0.5 },
+  serviceCard: { backgroundColor: Colors.card, borderRadius: Radius.xl, padding: Spacing.xl, gap: Spacing.sm, elevation: 2, shadowColor: Colors.ink, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.06, shadowRadius: 16 },
+  serviceName: { fontFamily: FontFamily.headlineExtraBold, fontSize: 20, color: Colors.ink, letterSpacing: -0.5 },
   providerRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.xs },
-  providerName: { fontFamily: FontFamily.bodyMedium, fontSize: 14, color: Colors.onSurfaceVariant },
+  providerName: { fontFamily: FontFamily.bodyMedium, fontSize: 14, color: Colors.inkMuted },
 
   section: { gap: Spacing.md },
   sectionHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  sectionTitle: { fontFamily: FontFamily.headlineExtraBold, fontSize: 18, color: Colors.onSurface, letterSpacing: -0.3 },
-  sectionTag: { backgroundColor: Colors.surfaceContainer, borderRadius: Radius.sm, paddingHorizontal: Spacing.sm, paddingVertical: 2 },
-  sectionTagText: { fontFamily: FontFamily.bodySemiBold, fontSize: 9, color: Colors.onSurfaceVariant, letterSpacing: 1.5, textTransform: 'uppercase' },
+  sectionTitle: { fontFamily: FontFamily.headlineExtraBold, fontSize: 18, color: Colors.ink, letterSpacing: -0.3 },
+  sectionTag: { backgroundColor: Colors.card, borderRadius: Radius.sm, paddingHorizontal: Spacing.sm, paddingVertical: 2 },
+  sectionTagText: { fontFamily: FontFamily.bodySemiBold, fontSize: 9, color: Colors.inkMuted, letterSpacing: 1.5, textTransform: 'uppercase' },
 
   detailGrid: { flexDirection: 'row', gap: Spacing.md },
-  detailCard: { flex: 1, backgroundColor: Colors.surfaceContainerLow, borderRadius: Radius.xl, padding: Spacing.base, gap: Spacing.xs },
-  durationCard: { flexDirection: 'row', alignItems: 'center', gap: Spacing.base, backgroundColor: Colors.surfaceContainerLow, borderRadius: Radius.xl, padding: Spacing.base },
-  detailLabel: { fontFamily: FontFamily.bodySemiBold, fontSize: 10, color: Colors.onSurfaceVariant, textTransform: 'uppercase', letterSpacing: 1.2, marginTop: Spacing.xs },
-  detailValue: { fontFamily: FontFamily.headlineBold, fontSize: 14, color: Colors.onSurface },
+  detailCard: { flex: 1, backgroundColor: Colors.card, borderRadius: Radius.xl, padding: Spacing.base, gap: Spacing.xs },
+  durationCard: { flexDirection: 'row', alignItems: 'center', gap: Spacing.base, backgroundColor: Colors.card, borderRadius: Radius.xl, padding: Spacing.base },
+  detailLabel: { fontFamily: FontFamily.bodySemiBold, fontSize: 10, color: Colors.inkMuted, textTransform: 'uppercase', letterSpacing: 1.2, marginTop: Spacing.xs },
+  detailValue: { fontFamily: FontFamily.headlineBold, fontSize: 14, color: Colors.ink },
 
-  locationCard: { backgroundColor: Colors.surfaceContainerLowest, borderRadius: Radius.xl, overflow: 'hidden' },
+  locationCard: { backgroundColor: Colors.card, borderRadius: Radius.xl, overflow: 'hidden' },
   locationAddress: { padding: Spacing.base },
-  locationStreet: { fontFamily: FontFamily.bodyMedium, fontSize: 14, color: Colors.onSurface },
-  locationCity: { fontFamily: FontFamily.bodyRegular, fontSize: 12, color: Colors.onSurfaceVariant, marginTop: 2 },
+  locationStreet: { fontFamily: FontFamily.bodyMedium, fontSize: 14, color: Colors.ink },
+  locationCity: { fontFamily: FontFamily.bodyRegular, fontSize: 12, color: Colors.inkMuted, marginTop: 2 },
 
-  paymentCard: { backgroundColor: Colors.surfaceContainerLow, borderRadius: Radius.xl, padding: Spacing.xl, gap: Spacing.md, borderLeftWidth: 4, borderLeftColor: Colors.primary },
+  paymentCard: { backgroundColor: Colors.card, borderRadius: Radius.xl, padding: Spacing.xl, gap: Spacing.md, borderLeftWidth: 4, borderLeftColor: Colors.brand },
   paymentRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  payRowLabel: { fontFamily: FontFamily.bodyRegular, fontSize: 14, color: Colors.onSurfaceVariant },
-  payRowValue: { fontFamily: FontFamily.headlineBold, fontSize: 14, color: Colors.onSurface },
-  payDivider: { height: StyleSheet.hairlineWidth, backgroundColor: Colors.outlineVariant },
+  payRowLabel: { fontFamily: FontFamily.bodyRegular, fontSize: 14, color: Colors.inkMuted },
+  payRowValue: { fontFamily: FontFamily.headlineBold, fontSize: 14, color: Colors.ink },
+  payDivider: { height: StyleSheet.hairlineWidth, backgroundColor: Colors.border },
   payTotalRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   payMethodRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.xs },
-  payMethodLabel: { fontFamily: FontFamily.bodyMedium, fontSize: 13, color: Colors.onSurfaceVariant },
-  payTotalValue: { fontFamily: FontFamily.headlineExtraBold, fontSize: 20, color: Colors.primary, letterSpacing: -0.5 },
+  payMethodLabel: { fontFamily: FontFamily.bodyMedium, fontSize: 13, color: Colors.inkMuted },
+  payTotalValue: { fontFamily: FontFamily.headlineExtraBold, fontSize: 20, color: Colors.brand, letterSpacing: -0.5 },
 
   actions: { gap: Spacing.md },
   cancelBtn: { alignItems: 'center', paddingVertical: Spacing.base },

@@ -98,7 +98,7 @@ export default function Step1Screen() {
             <View style={styles.photoCircle}>
               {photoUri
                 ? <Image source={{ uri: photoUri }} style={styles.photoImage} />
-                : <MaterialIcons name="person" size={48} color={Colors.outlineVariant} />}
+                : <MaterialIcons name="person" size={48} color={Colors.border} />}
             </View>
             <View style={styles.cameraBtn}>
               <MaterialIcons name="camera-alt" size={18} color={Colors.onPrimary} />
@@ -132,7 +132,7 @@ export default function Step1Screen() {
 
         {/* Tip card */}
         <View style={styles.tipCard}>
-          <MaterialIcons name="lightbulb" size={22} color={Colors.primary} />
+          <MaterialIcons name="lightbulb" size={22} color={Colors.brand} />
           <View style={styles.tipText}>
             <Text style={styles.tipTitle}>Dica Rápida</Text>
             <Text style={styles.tipBody}>
@@ -149,7 +149,7 @@ export default function Step1Screen() {
         <Pressable
           style={({ pressed }) => [styles.draftBtn, pressed && { opacity: 0.6 }]}
         >
-          <MaterialIcons name="save" size={18} color={Colors.onSurfaceVariant} />
+          <MaterialIcons name="save" size={18} color={Colors.inkMuted} />
           <Text style={styles.draftLabel}>Salvar</Text>
         </Pressable>
         <GradientButton
@@ -186,12 +186,12 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.headlineExtraBold,
     fontSize: 30,
     letterSpacing: -0.8,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   subtitle: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 14,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     lineHeight: 20,
   },
 
@@ -208,12 +208,12 @@ const styles = StyleSheet.create({
     width: 112,
     height: 112,
     borderRadius: 56,
-    backgroundColor: Colors.surfaceContainerLow,
+    backgroundColor: Colors.card,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 4,
-    borderColor: Colors.surfaceContainerLowest,
-    shadowColor: '#000',
+    borderColor: Colors.card,
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 8,
@@ -232,10 +232,10 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.brand,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: Colors.primary,
+    shadowColor: Colors.brand,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 4,
@@ -244,7 +244,7 @@ const styles = StyleSheet.create({
   photoLabel: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 10,
-    color: Colors.primary,
+    color: Colors.brand,
     letterSpacing: 1.5,
   },
 
@@ -256,7 +256,7 @@ const styles = StyleSheet.create({
   tipCard: {
     flexDirection: 'row',
     gap: Spacing.base,
-    backgroundColor: Colors.primaryContainer,
+    backgroundColor: Colors.brand + '15',
     borderRadius: Radius.xl,
     padding: Spacing.xxl,
   },
@@ -267,12 +267,12 @@ const styles = StyleSheet.create({
   tipTitle: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 14,
-    color: Colors.onPrimaryContainer,
+    color: Colors.ink,
   },
   tipBody: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 12,
-    color: Colors.onPrimaryContainer,
+    color: Colors.ink,
     lineHeight: 17,
     opacity: 0.85,
   },
@@ -284,8 +284,8 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
     paddingHorizontal: Spacing.xl,
     paddingTop: Spacing.xl + 4,
-    backgroundColor: Colors.surfaceContainerLowest,
-    shadowColor: Colors.onSurface,
+    backgroundColor: Colors.card,
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.06,
     shadowRadius: 16,
@@ -302,7 +302,7 @@ const styles = StyleSheet.create({
   draftLabel: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 13,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
   continueBtn: {
     flex: 1,
