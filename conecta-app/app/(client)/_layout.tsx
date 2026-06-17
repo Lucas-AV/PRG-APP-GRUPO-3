@@ -6,7 +6,7 @@ export default function ClientLayout() {
     <Stack
       screenOptions={{
         headerShown: false,
-        animation: 'slide_from_right',
+        animation: 'fade',
         contentStyle: { backgroundColor: Colors.surface },
       }}
     >
@@ -14,7 +14,7 @@ export default function ClientLayout() {
       <Stack.Screen name="provider-reviews" />
       <Stack.Screen name="service-detail" />
       <Stack.Screen name="search" />
-      <Stack.Screen name="filter" options={{ presentation: 'modal', animation: 'slide_from_bottom' }} />
+      <Stack.Screen name="filter" options={{ presentation: 'modal', animation: 'fade' }} />
     </Stack>
   );
 }
