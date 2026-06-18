@@ -21,7 +21,7 @@ import { useAuth } from '@/context/AuthContext';
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function SignUpScreen() {
-  const { register } = useAuth();
+  const { savePendingRegistration } = useAuth();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -46,16 +46,17 @@ export default function SignUpScreen() {
     if (!validate()) return;
     setLoading(true);
     try {
-      await register({
+      // Salva os dados localmente — a conta só será criada no banco após
+      // o usuário escolher o tipo de perfil (cliente/prestador) em step0.
+      await savePendingRegistration({
         name: name.trim(),
         email: email.trim().toLowerCase(),
         phone: phone.trim(),
         password,
-        role: 'cliente',
       });
       router.push('/(onboarding)/step0');
     } catch (e: any) {
-      Alert.alert('Erro ao criar conta', e.message ?? 'Tente novamente em instantes.');
+      Alert.alert('Erro', e.message ?? 'Tente novamente em instantes.');
     } finally {
       setLoading(false);
     }
@@ -158,12 +159,10 @@ export default function SignUpScreen() {
 
           {/* Footer */}
           <View style={styles.footer}>
-            <Text style={styles.footerText}>
-              Já tem uma conta?{' '}
-              <Text style={styles.footerLink} onPress={() => router.back()}>
-                Entrar
-              </Text>
-            </Text>
+            <Text style={styles.footerText}>Já tem uma conta? </Text>
+            <Pressable onPress={() => router.back()}>
+              <Text style={styles.footerLink}>Entrar</Text>
+            </Pressable>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -248,7 +247,7 @@ const styles = StyleSheet.create({
     color: Colors.primary,
   },
 
-  footer: { alignItems: 'center', paddingBottom: Spacing.xl },
+  footer: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingBottom: Spacing.xl },
   footerText: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 14,

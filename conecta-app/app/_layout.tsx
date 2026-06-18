@@ -33,7 +33,7 @@ function AppContent() {
   useEffect(() => {
     if (isLoading) return;
 
-    const isPublicRoute = pathname === '/' || pathname.includes('/(auth)');
+    const isPublicRoute = pathname === '/' || pathname === '/login' || pathname === '/sign-up';
     const isOnboardingRoute = pathname.includes('/(onboarding)');
 
     if (!user || !token) {
@@ -64,21 +64,24 @@ function AppContent() {
     pathname !== '/';
 
   let activeTab = '';
-  if (
-    pathname === '/(tabs)' ||
-    pathname === '/' ||
-    pathname.includes('/(client)') ||
-    pathname.includes('/(services)')
-  ) {
-    activeTab = 'index';
-  } else if (pathname.includes('/schedule') || pathname.includes('/appointment-detail')) {
+  // IMPORTANTE: a ordem importa — condições mais específicas primeiro
+  if (pathname.includes('/schedule') || pathname.includes('/appointment-detail') || pathname.includes('/(scheduling)')) {
+    // Agenda / agendamentos
     activeTab = 'schedule';
-  } else if (pathname.includes('/services') && !pathname.includes('/create')) {
+  } else if (pathname.includes('/(services)') || (pathname.includes('/services') && !pathname.includes('/create'))) {
+    // Serviços do prestador
     activeTab = 'services';
   } else if (pathname.includes('/messages')) {
     activeTab = 'messages';
   } else if (pathname.includes('/profile') || pathname.includes('/(account)')) {
     activeTab = 'profile';
+  } else if (
+    pathname === '/(tabs)' ||
+    pathname === '/' ||
+    pathname.includes('/(client)')
+  ) {
+    // Home / feed do cliente — verificar por último para não capturar rotas mais específicas
+    activeTab = 'index';
   }
 
   const isClient = user?.role === 'cliente';
@@ -93,6 +96,8 @@ function AppContent() {
           <Stack.Screen name="(tabs)" />
           <Stack.Screen name="(services)" />
           <Stack.Screen name="(client)" />
+          <Stack.Screen name="(scheduling)" />
+          <Stack.Screen name="(account)" />
         </Stack>
       </View>
 
