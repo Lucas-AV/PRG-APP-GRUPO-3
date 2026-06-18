@@ -7,7 +7,6 @@ import {
   StyleSheet,
   ActivityIndicator,
   Alert,
-  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -16,32 +15,6 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, FontFamily, Spacing, Radius, GradientColors } from '@/constants/theme';
 import { CATEGORIES } from '@/constants/categories';
 import { publicServicesApi, PublicService, reviewsApi, ServiceReview } from '@/services/api';
-
-// ── Constants ─────────────────────────────────────────────────────────────────
-
-const INCLUDED_ITEMS = [
-  'Materiais básicos de fixação e cabeamento padrão',
-  'Mão de obra qualificada por profissionais certificados',
-  'Certificado de garantia de 12 meses na instalação',
-  'Teste de funcionamento e configuração inicial',
-];
-
-const MOCK_REVIEWS: ServiceReview[] = [
-  {
-    id: -1,
-    rating: 5,
-    reviewer_name: 'Ricardo M.',
-    comment: 'Serviço impecável. O profissional explicou cada passo e deixou a garagem limpa. O carregador está funcionando perfeitamente.',
-    created_at: new Date().toISOString(),
-  },
-  {
-    id: -2,
-    rating: 5,
-    reviewer_name: 'Ana Luísa',
-    comment: 'Muito pontuais e profissionais. Recomendo fortemente para quem acabou de comprar um carro elétrico.',
-    created_at: new Date().toISOString(),
-  },
-];
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -113,7 +86,7 @@ export default function ServiceDetailScreen() {
   }
 
   const priceFormatted = formatPriceLabel(service);
-  const reviewsToDisplay = reviews.length > 0 ? reviews : MOCK_REVIEWS;
+  const reviewsToDisplay = reviews;
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -123,10 +96,18 @@ export default function ServiceDetailScreen() {
 
         {/* ── Hero ──────────────────────────────────────────────────────── */}
         <View style={styles.heroWrap}>
-          <Image
-            source={{ uri: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD9Jjk1nyObVUPrJ-VqE1Goa6Wndh6eWakL-h5m1o3qbZ73OZNV-58rLROcX7rNDKcobvWiLJnx0zB7Zg2i8cIuMda3eBje1wPPISi7BshH1kT5FTFhxTMWLGT5lb_d0nZEYCYYVUfYFXo2lbkP8As3c6MiCqlstv0d-EWIKqUQTqi0lviIxd2rVYMoZo_w6UC6iNXk61kIC50fRewkZQLHtAVFv34_CHqKtb5rMdYOE3rGlohCeUE35I8rO-031evGDEwasoqEsFA' }}
-            style={styles.heroImage}
-          />
+          <LinearGradient
+            colors={GradientColors}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={StyleSheet.absoluteFillObject}
+          >
+            {cat && (
+              <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                <MaterialIcons name={cat.icon as any} size={80} color="rgba(255,255,255,0.25)" />
+              </View>
+            )}
+          </LinearGradient>
           {/* Fade-to-dark overlay at bottom */}
           <LinearGradient
             colors={['transparent', 'rgba(0,0,0,0.55)']}
@@ -184,17 +165,19 @@ export default function ServiceDetailScreen() {
           ) : null}
 
           {/* O que está incluso */}
-          <View style={styles.includedCard}>
-            <Text style={styles.sectionTitle}>O que está incluso</Text>
-            <View style={styles.checkList}>
-              {INCLUDED_ITEMS.map(item => (
-                <View key={item} style={styles.checkRow}>
-                  <MaterialIcons name="check-circle" size={20} color={Colors.primary} />
-                  <Text style={styles.checkText}>{item}</Text>
-                </View>
-              ))}
+          {(service.included_items ?? []).length > 0 && (
+            <View style={styles.includedCard}>
+              <Text style={styles.sectionTitle}>O que está incluso</Text>
+              <View style={styles.checkList}>
+                {(service.included_items ?? []).map(item => (
+                  <View key={item} style={styles.checkRow}>
+                    <MaterialIcons name="check-circle" size={20} color={Colors.primary} />
+                    <Text style={styles.checkText}>{item}</Text>
+                  </View>
+                ))}
+              </View>
             </View>
-          </View>
+          )}
 
           {/* Avaliações preview */}
           {reviewsToDisplay.length > 0 && (
