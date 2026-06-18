@@ -47,30 +47,32 @@ export default function Step2Screen() {
   };
 
   const handleContinue = async () => {
+    const { cep, street, number, complement, neighborhood, city, state } = values;
+    if (!street.trim() || !city.trim() || !state.trim()) {
+      Alert.alert('Campos Obrigatórios', 'Por favor, preencha os campos de Endereço, Cidade e Estado.');
+      return;
+    }
     setSaving(true);
-    if (user && token && values.street && values.city && values.state) {
-      try {
+    try {
+      if (user && token) {
         await usersApi.addAddress(user.id, {
           type: locType,
-          zip_code: values.cep.trim() || undefined,
-          street: values.street,
-          number: values.number || '-',
-          complement: values.complement || '-',
-          neighborhood: values.neighborhood || undefined,
-          city: values.city,
-          state: values.state,
+          zip_code: cep.trim() || undefined,
+          street: street.trim(),
+          number: number.trim() || '-',
+          complement: complement.trim() || '-',
+          neighborhood: neighborhood.trim() || undefined,
+          city: city.trim(),
+          state: state.trim(),
         }, token);
-      } catch {
-        Alert.alert(
-          'Endereço não salvo',
-          'Não foi possível salvar seu endereço agora. Você pode adicioná-lo depois em Perfil > Endereços.',
-          [{ text: 'Continuar mesmo assim' }],
-        );
       }
+      const next = isPrestador ? '/(onboarding)/step3' : '/(onboarding)/step4';
+      router.push({ pathname: next as any, params: { role } });
+    } catch (e: any) {
+      Alert.alert('Erro ao salvar endereço', e.message ?? 'Não foi possível salvar seu endereço.');
+    } finally {
+      setSaving(false);
     }
-    setSaving(false);
-    const next = isPrestador ? '/(onboarding)/step3' : '/(onboarding)/step4';
-    router.push({ pathname: next as any, params: { role } });
   };
 
   return (

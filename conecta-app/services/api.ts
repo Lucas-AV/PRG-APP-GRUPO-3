@@ -1,5 +1,11 @@
 import { API_BASE_URL } from '@/constants/config';
 
+let onUnauthorizedCallback: (() => void) | null = null;
+
+export function onUnauthorized(callback: () => void) {
+  onUnauthorizedCallback = callback;
+}
+
 async function request<T>(
   path: string,
   options: RequestInit = {},
@@ -9,11 +15,23 @@ async function request<T>(
     'Content-Type': 'application/json',
     ...(options.headers as Record<string, string>),
   };
-  if (token) headers['Authorization'] = `Bearer ${token}`;
+  
+  if (token && token !== 'null' && token !== 'undefined') {
+    let cleanToken = token.trim();
+    if (cleanToken.startsWith('"') && cleanToken.endsWith('"')) {
+      cleanToken = cleanToken.slice(1, -1);
+    }
+    headers['Authorization'] = `Bearer ${cleanToken}`;
+  }
 
   const res = await fetch(`${API_BASE_URL}${path}`, { ...options, headers });
   const data = await res.json();
-  if (!res.ok) throw new Error(data.error ?? data.message ?? 'Erro desconhecido');
+  if (!res.ok) {
+    if (res.status === 401) {
+      if (onUnauthorizedCallback) onUnauthorizedCallback();
+    }
+    throw new Error(data.error ?? data.message ?? 'Erro desconhecido');
+  }
   return data as T;
 }
 
@@ -26,7 +44,7 @@ export interface User {
   phone?: string;
   role: 'cliente' | 'prestador';
   avatar?: string;
-  onboarding_completed: number;
+  onboarding_completed?: boolean;
 }
 
 export interface AuthResponse {
@@ -119,7 +137,19 @@ export interface Address {
 // ── Users ─────────────────────────────────────────────────────────────────────
 
 export const usersApi = {
-  update: (id: number, data: { name?: string; email?: string; phone?: string }, token: string) =>
+  update: (
+    id: number,
+    data: {
+      name?: string;
+      email?: string;
+      phone?: string;
+      role?: string;
+      onboarding_completed?: boolean;
+      specialties?: string;
+      bio?: string;
+    },
+    token: string
+  ) =>
     request<User>(`/users/${id}`, {
       method: 'PUT',
       body: JSON.stringify(data),
@@ -260,6 +290,23 @@ export const subscriptionsApi = {
     }, token),
 };
 
+// ── Coupons & Payments ────────────────────────────────────────────────────────
+export interface Coupon {
+  id: number;
+  code: string;
+  discount_percent: number | null;
+  discount_value: number | null;
+  description: string;
+}
+
+export const paymentsApi = {
+  validateCoupon: (code: string, token: string) =>
+    request<Coupon>('/payments/coupons/validate', {
+      method: 'POST',
+      body: JSON.stringify({ code }),
+    }, token),
+};
+
 // ── Public Services ───────────────────────────────────────────────────────────
 
 export interface PublicService {
@@ -381,8 +428,8 @@ export interface SlotsResponse {
 }
 
 export const availabilityApi = {
-  get: (providerId: number) =>
-    request<AvailabilityDay[]>(`/users/${providerId}/availability`),
+  get: (providerId: number, token: string) =>
+    request<AvailabilityDay[]>(`/users/${providerId}/availability`, {}, token),
 
   update: (providerId: number, days: AvailabilityDay[], token: string) =>
     request<{ message: string }>(`/users/${providerId}/availability`, {
@@ -390,8 +437,8 @@ export const availabilityApi = {
       body: JSON.stringify(days),
     }, token),
 
-  slots: (providerId: number, date: string, serviceId: number) =>
-    request<SlotsResponse>(`/users/${providerId}/slots?date=${date}&serviceId=${serviceId}`),
+  slots: (providerId: number, date: string, serviceId: number, token: string) =>
+    request<SlotsResponse>(`/users/${providerId}/slots?date=${date}&serviceId=${serviceId}`, {}, token),
 };
 
 // ── Appointments ──────────────────────────────────────────────────────────────
@@ -446,4 +493,41 @@ export const appointmentsApi = {
     request<{ message: string }>(`/appointments/${id}/cancel`, {
       method: 'PATCH',
     }, token),
+};
+
+export interface ProviderDocument {
+  type: string;
+  url: string;
+  created_at: string;
+}
+
+export const documentsApi = {
+  list: (token: string) =>
+    request<ProviderDocument[]>('/uploads/documents', {}, token),
+
+  upload: async (type: string, fileUri: string, token: string): Promise<{ type: string; url: string }> => {
+    const filename = fileUri.split('/').pop() ?? 'document.jpg';
+    const ext = filename.split('.').pop()?.toLowerCase() ?? 'jpg';
+    const mimeType = ext === 'png' ? 'image/png' : ext === 'webp' ? 'image/webp' : 'image/jpeg';
+
+    const form = new FormData();
+    form.append('file', { uri: fileUri, name: filename, type: mimeType } as any);
+
+    let cleanToken = token.trim();
+    if (cleanToken.startsWith('"') && cleanToken.endsWith('"')) {
+      cleanToken = cleanToken.slice(1, -1);
+    }
+
+    const res = await fetch(`${API_BASE_URL}/uploads/documents/${type}`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${cleanToken}` },
+      body: form,
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error ?? 'Erro ao enviar documento');
+    return data;
+  },
+
+  remove: (type: string, token: string) =>
+    request<{ message: string }>(`/uploads/documents/${type}`, { method: 'DELETE' }, token),
 };

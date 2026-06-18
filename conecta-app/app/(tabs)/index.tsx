@@ -19,7 +19,7 @@ import { useAuth } from '@/context/AuthContext';
 import { publicServicesApi, PublicService } from '@/services/api';
 import { useTranslation } from 'react-i18next';
 import { AvatarInitials } from '@/components/ui/avatar-initials';
-import { ProviderHomeScreen } from './home-provider';
+import ProviderHomeScreen from './_home-provider';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -332,7 +332,7 @@ export default function HomeScreen() {
                   onPress={() => handleCategoryPress(cat.key)}
                 >
                   <View style={[styles.categoryIconWrap, active && styles.categoryIconWrapActive]}>
-                    <MaterialIcons name={cat.icon} size={26} color={active ? Colors.primary : Colors.inkMuted} />
+                    <MaterialIcons name={cat.icon} size={26} color={active ? Colors.onPrimary : Colors.inkMuted} />
                   </View>
                   <Text style={[styles.categoryLabel, active && styles.categoryLabelActive]}>
                     {cat.label.toUpperCase()}
@@ -726,6 +726,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 6,
+    borderWidth: 2,
+    borderColor: 'transparent',
     shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.03,
@@ -733,7 +735,11 @@ const styles = StyleSheet.create({
     elevation: 1,
   },
   categoryTileActive: {
-    backgroundColor: Colors.brand + '15',
+    backgroundColor: Colors.primary + '08',
+    borderColor: Colors.primary,
+    shadowOpacity: 0.10,
+    shadowRadius: 8,
+    elevation: 3,
   },
   categoryIconWrap: {
     width: 48,
@@ -744,7 +750,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   categoryIconWrapActive: {
-    backgroundColor: Colors.brand + '15',
+    backgroundColor: Colors.primary,
   },
   categoryLabel: {
     fontFamily: FontFamily.bodySemiBold,
@@ -753,7 +759,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     letterSpacing: 0.6,
   },
-  categoryLabelActive: { color: Colors.primary },
+  categoryLabelActive: {
+    color: Colors.primary,
+    fontFamily: FontFamily.headlineBold,
+  },
 
   // Loading / empty
   loadingWrap: {

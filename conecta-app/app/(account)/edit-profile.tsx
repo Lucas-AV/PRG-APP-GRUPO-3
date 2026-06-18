@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -9,15 +9,16 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { GradientButton } from '@/components/ui/gradient-button';
 import { InputField } from '@/components/ui/input-field';
 import { TopAppBar } from '@/components/ui/top-app-bar';
 import { Colors, FontFamily, Spacing, Radius } from '@/constants/theme';
 import { useAuth } from '@/context/AuthContext';
 import { RoleBadge } from '@/components/ui/role-badge';
-import { usersApi } from '@/services/api';
+import { usersApi, Address } from '@/services/api';
 
 export default function EditProfileScreen() {
   const { user, token, updateUser } = useAuth();
@@ -26,6 +27,38 @@ export default function EditProfileScreen() {
   const [phone, setPhone] = useState(user?.phone ?? '');
   const [birthdate, setBirthdate] = useState('');
   const [loading, setLoading] = useState(false);
+  const [defaultAddress, setDefaultAddress] = useState<Address | null>(null);
+
+  useEffect(() => {
+    if (user) {
+      setName(user.name ?? '');
+      setEmail(user.email ?? '');
+      setPhone(user.phone ?? '');
+    }
+  }, [user]);
+
+  const loadAddress = useCallback(async () => {
+    if (!user || !token) return;
+    try {
+      const list = await usersApi.listAddresses(user.id, token);
+      if (list.length > 0) {
+        const stored = await AsyncStorage.getItem(`@default_address_id_${user.id}`);
+        const defaultId = stored ? Number(stored) : null;
+        const found = list.find(a => a.id === defaultId) || list[0];
+        setDefaultAddress(found);
+      } else {
+        setDefaultAddress(null);
+      }
+    } catch (e) {
+      console.warn('Erro ao carregar endereço principal:', e);
+    }
+  }, [user, token]);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadAddress();
+    }, [loadAddress])
+  );
 
   const initials = name
     ? name.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase()
@@ -121,10 +154,22 @@ export default function EditProfileScreen() {
               <View style={styles.addressIconWrap}>
                 <MaterialIcons name="home" size={22} color={Colors.primary} />
               </View>
-              <View style={styles.addressInfo}>
-                <Text style={styles.addressStreet}>Adicionar endereço</Text>
-                <Text style={styles.addressDetail}>Toque para cadastrar</Text>
-              </View>
+              {defaultAddress ? (
+                <View style={styles.addressInfo}>
+                  <Text style={styles.addressStreet} numberOfLines={1}>
+                    {defaultAddress.street}{defaultAddress.number ? `, ${defaultAddress.number}` : ''}
+                  </Text>
+                  <Text style={styles.addressDetail} numberOfLines={1}>
+                    {defaultAddress.neighborhood ? `${defaultAddress.neighborhood}, ` : ''}
+                    {defaultAddress.city} - {defaultAddress.state}
+                  </Text>
+                </View>
+              ) : (
+                <View style={styles.addressInfo}>
+                  <Text style={styles.addressStreet}>Adicionar endereço</Text>
+                  <Text style={styles.addressDetail}>Toque para cadastrar</Text>
+                </View>
+              )}
               <MaterialIcons name="chevron-right" size={20} color={Colors.outlineVariant} />
             </Pressable>
           </View>

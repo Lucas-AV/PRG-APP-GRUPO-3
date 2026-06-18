@@ -52,6 +52,13 @@ router.post('/register', async (req, res) => {
     return res.status(400).json({ error: 'role deve ser "cliente" ou "prestador"' });
   }
 
+  if (phone) {
+    const existingPhone = db.prepare('SELECT id FROM users WHERE phone = ?').get(phone);
+    if (existingPhone) {
+      return res.status(400).json({ error: 'Celular já cadastrado por outro usuário' });
+    }
+  }
+
   const hashedPassword = await bcrypt.hash(password, 10);
 
   try {
@@ -60,7 +67,15 @@ router.post('/register', async (req, res) => {
     );
     const result = stmt.run(name, email, phone || null, hashedPassword, role);
 
-    const user = { id: result.lastInsertRowid, name, email, phone: phone || null, role, onboarding_completed: 0 };
+    const userRow = db.prepare('SELECT id, name, email, phone, role, onboarding_completed FROM users WHERE id = ?').get(result.lastInsertRowid);
+    const user = {
+      id: userRow.id,
+      name: userRow.name,
+      email: userRow.email,
+      phone: userRow.phone,
+      role: userRow.role,
+      onboarding_completed: userRow.onboarding_completed === 1,
+    };
     const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, JWT_SECRET, {
       expiresIn: '7d',
     });
@@ -117,7 +132,14 @@ router.post('/login', async (req, res) => {
     return res.status(401).json({ error: 'Credenciais inválidas' });
   }
 
-  const user = { id: userRow.id, name: userRow.name, email: userRow.email, role: userRow.role, onboarding_completed: userRow.onboarding_completed ?? 0 };
+  const user = {
+    id: userRow.id,
+    name: userRow.name,
+    email: userRow.email,
+    phone: userRow.phone,
+    role: userRow.role,
+    onboarding_completed: userRow.onboarding_completed === 1,
+  };
   const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, JWT_SECRET, {
     expiresIn: '7d',
   });

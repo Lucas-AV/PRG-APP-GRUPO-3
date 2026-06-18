@@ -194,4 +194,99 @@ router.delete('/services/:serviceId/images/:imageId', (req, res) => {
   return res.json({ message: 'Imagem removida' });
 });
 
+/**
+ * @swagger
+ * /uploads/documents:
+ *   get:
+ *     summary: Lista documentos de verificação do usuário autenticado
+ *     tags: [Uploads]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lista de documentos
+ */
+router.get('/documents', (req, res) => {
+  const docs = db
+    .prepare('SELECT type, url, created_at FROM provider_documents WHERE user_id = ?')
+    .all(req.user.id);
+  return res.json(docs);
+});
+
+/**
+ * @swagger
+ * /uploads/documents/{type}:
+ *   post:
+ *     summary: Envia ou substitui um documento de verificação
+ *     tags: [Uploads]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: type
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               file:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       200:
+ *         description: Documento enviado
+ */
+router.post('/documents/:type', uploadSingle('file'), (req, res) => {
+  const { type } = req.params;
+  const url = fileUrl(req, req.file.filename);
+
+  const existing = db
+    .prepare('SELECT url FROM provider_documents WHERE user_id = ? AND type = ?')
+    .get(req.user.id, type);
+  if (existing?.url) deleteByUrl(existing.url);
+
+  db.prepare(
+    'INSERT INTO provider_documents (user_id, type, url) VALUES (?, ?, ?) ON CONFLICT(user_id, type) DO UPDATE SET url = excluded.url, created_at = CURRENT_TIMESTAMP'
+  ).run(req.user.id, type, url);
+
+  return res.json({ type, url });
+});
+
+/**
+ * @swagger
+ * /uploads/documents/{type}:
+ *   delete:
+ *     summary: Remove um documento de verificação
+ *     tags: [Uploads]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: type
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Documento removido
+ *       404:
+ *         description: Documento não encontrado
+ */
+router.delete('/documents/:type', (req, res) => {
+  const { type } = req.params;
+  const existing = db
+    .prepare('SELECT url FROM provider_documents WHERE user_id = ? AND type = ?')
+    .get(req.user.id, type);
+  if (!existing) return res.status(404).json({ error: 'Documento não encontrado' });
+
+  deleteByUrl(existing.url);
+  db.prepare('DELETE FROM provider_documents WHERE user_id = ? AND type = ?').run(req.user.id, type);
+  return res.json({ message: 'Documento removido' });
+});
+
 module.exports = router;

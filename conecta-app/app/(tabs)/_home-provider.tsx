@@ -16,7 +16,7 @@ import { useAuth } from '@/context/AuthContext';
 import { appointmentsApi, Appointment, servicesApi, Service } from '@/services/api';
 import { AvatarInitials } from '@/components/ui/avatar-initials';
 
-export function ProviderHomeScreen() {
+export default function ProviderHomeScreen() {
   const { user, token } = useAuth();
   const firstName = user?.name?.split(' ')[0] ?? 'prestador';
   const initials = user?.name

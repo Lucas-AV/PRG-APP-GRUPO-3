@@ -214,4 +214,58 @@ function mpPaymentTypeToInternal(type) {
   return type;
 }
 
+/**
+ * @swagger
+ * /payments/coupons/validate:
+ *   post:
+ *     summary: Valida um cupom de desconto
+ *     tags: [Pagamentos]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [code]
+ *             properties:
+ *               code:
+ *                 type: string
+ *                 example: SEVGEN20
+ *     responses:
+ *       200:
+ *         description: Cupom válido
+ *       400:
+ *         description: Cupom inválido, expirado ou inativo
+ */
+router.post('/coupons/validate', authMiddleware, (req, res) => {
+  const { code } = req.body;
+  if (!code) return res.status(400).json({ error: 'Código do cupom é obrigatório' });
+
+  const coupon = db.prepare('SELECT * FROM coupons WHERE code = ?').get(code.trim().toUpperCase());
+  if (!coupon) {
+    return res.status(400).json({ error: 'Cupom inválido ou não encontrado' });
+  }
+
+  if (coupon.is_active === 0) {
+    return res.status(400).json({ error: 'Este cupom não está mais ativo' });
+  }
+
+  if (coupon.expiration_date) {
+    const expDate = new Date(coupon.expiration_date);
+    if (expDate < new Date()) {
+      return res.status(400).json({ error: 'Este cupom já expirou' });
+    }
+  }
+
+  return res.json({
+    id: coupon.id,
+    code: coupon.code,
+    discount_percent: coupon.discount_percent,
+    discount_value: coupon.discount_value,
+    description: coupon.description,
+  });
+});
+
 module.exports = router;
