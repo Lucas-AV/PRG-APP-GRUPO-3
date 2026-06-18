@@ -63,6 +63,7 @@ export interface Service {
   description?: string;
   status: 'ativo' | 'rascunho';
   created_at: string;
+  cover_image_url?: string | null;
 }
 
 export type ServiceInput = Pick<
@@ -239,8 +240,8 @@ export interface ServiceReview {
 }
 
 export const reviewsApi = {
-  list: (serviceId: number) =>
-    request<ServiceReview[]>(`/services/${serviceId}/reviews`),
+  list: (serviceId: number, token?: string | null) =>
+    request<ServiceReview[]>(`/services/${serviceId}/reviews`, {}, token ?? undefined),
 
   create: (serviceId: number, data: { rating: number; comment?: string }, token: string) =>
     request<ServiceReview>(`/services/${serviceId}/reviews`, {
@@ -319,6 +320,7 @@ export interface PublicService {
   duration?: string;
   included_items?: string[];
   images?: { id: number; url: string }[];
+  cover_image_url?: string | null;
   provider_id: number;
   provider_name: string;
   avg_rating: number | null;

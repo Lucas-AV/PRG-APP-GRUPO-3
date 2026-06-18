@@ -8,6 +8,7 @@ import {
   StyleSheet,
   ActivityIndicator,
   useWindowDimensions,
+  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -446,18 +447,25 @@ export default function HomeScreen() {
                         })
                       }
                     >
-                      <View
-                        style={[
-                          styles.serviceIconBox,
-                          { backgroundColor: cat?.color ?? Colors.border },
-                        ]}
-                      >
-                        <MaterialIcons
-                          name={cat?.icon ?? 'home-repair-service'}
-                          size={26}
-                          color={Colors.inkMuted}
+                      {service.cover_image_url ? (
+                        <Image
+                          source={{ uri: service.cover_image_url }}
+                          style={styles.serviceIconBox}
                         />
-                      </View>
+                      ) : (
+                        <View
+                          style={[
+                            styles.serviceIconBox,
+                            { backgroundColor: cat?.color ?? Colors.border },
+                          ]}
+                        >
+                          <MaterialIcons
+                            name={cat?.icon ?? 'home-repair-service'}
+                            size={26}
+                            color={Colors.inkMuted}
+                          />
+                        </View>
+                      )}
                       <View style={styles.serviceBody}>
                         <Text style={styles.serviceName} numberOfLines={1}>{service.name}</Text>
                         <View style={styles.serviceMeta}>
@@ -914,6 +922,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     flexShrink: 0,
+    overflow: 'hidden',
   },
   serviceBody: { flex: 1, gap: 4 },
   serviceName: {

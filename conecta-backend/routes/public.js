@@ -52,7 +52,8 @@ router.get('/public', (req, res) => {
       s.id, s.name, s.category, s.price, s.price_type, s.description, s.included_items,
       u.id AS provider_id, u.name AS provider_name,
       ROUND(AVG(r.rating), 1) AS avg_rating,
-      COUNT(r.id) AS review_count
+      COUNT(r.id) AS review_count,
+      (SELECT url FROM service_images WHERE service_id = s.id ORDER BY created_at ASC LIMIT 1) AS cover_image_url
     FROM services s
     JOIN users u ON s.user_id = u.id
     LEFT JOIN reviews r ON r.service_id = s.id

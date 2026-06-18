@@ -6,6 +6,7 @@ import {
   Pressable,
   StyleSheet,
   ActivityIndicator,
+  Image,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router, useFocusEffect } from 'expo-router';
@@ -124,12 +125,16 @@ export default function ServicesScreen() {
             {activeServices.map((service) => (
               <View key={service.id} style={styles.serviceCard}>
                 <View style={styles.cardTopRow}>
-                  <LinearGradient
-                    colors={[Colors.brand + '15', Colors.card]}
-                    style={styles.serviceThumb}
-                  >
-                    <MaterialIcons name={getCategoryIcon(service.category)} size={26} color={Colors.primary} />
-                  </LinearGradient>
+                  {service.cover_image_url ? (
+                    <Image source={{ uri: service.cover_image_url }} style={styles.serviceThumb} />
+                  ) : (
+                    <LinearGradient
+                      colors={[Colors.brand + '15', Colors.card]}
+                      style={styles.serviceThumb}
+                    >
+                      <MaterialIcons name={getCategoryIcon(service.category)} size={26} color={Colors.primary} />
+                    </LinearGradient>
+                  )}
 
                   <View style={styles.cardInfo}>
                     <View style={styles.cardInfoTop}>
@@ -417,6 +422,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     flexShrink: 0,
+    overflow: 'hidden',
   },
   cardInfo: {
     flex: 1,

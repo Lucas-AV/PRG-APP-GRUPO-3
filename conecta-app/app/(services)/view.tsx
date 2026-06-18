@@ -90,11 +90,11 @@ export default function ViewServiceScreen() {
   }, [id, token]);
 
   useEffect(() => {
-    if (!id) return;
+    if (!id || !token) return;
     const serviceId = parseInt(id, 10);
     if (isNaN(serviceId)) return;
-    reviewsApi.list(serviceId).then(setApiReviews).catch(() => {});
-  }, [id]);
+    reviewsApi.list(serviceId, token).then(setApiReviews).catch(() => {});
+  }, [id, token]);
 
   useEffect(() => {
     if (!id || !token) return;

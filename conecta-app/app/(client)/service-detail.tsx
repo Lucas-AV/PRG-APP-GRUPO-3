@@ -16,6 +16,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, FontFamily, Spacing, Radius, GradientColors } from '@/constants/theme';
 import { CATEGORIES } from '@/constants/categories';
+import { useAuth } from '@/context/AuthContext';
 import { publicServicesApi, PublicService, reviewsApi, ServiceReview } from '@/services/api';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -44,6 +45,8 @@ export default function ServiceDetailScreen() {
   // accept both 'id' (new callers) and 'serviceId' (legacy) for compatibility
   const params = useLocalSearchParams<{ id?: string; serviceId?: string }>();
   const rawId = params.id ?? params.serviceId;
+  const { token } = useAuth();
+  const { width: screenWidth } = useWindowDimensions();
 
   const [service, setService] = useState<PublicService | null>(null);
   const [reviews, setReviews] = useState<ServiceReview[]>([]);
@@ -54,12 +57,12 @@ export default function ServiceDetailScreen() {
     const numId = Number(rawId);
     Promise.all([
       publicServicesApi.getById(numId),
-      reviewsApi.list(numId),
+      reviewsApi.list(numId, token),
     ])
       .then(([svc, rvs]) => { setService(svc); setReviews(rvs); })
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, [rawId]);
+  }, [rawId, token]);
 
   const cat = service ? CATEGORIES.find(c => c.key === service.category) : null;
 
@@ -87,9 +90,13 @@ export default function ServiceDetailScreen() {
     );
   }
 
-  const { width: screenWidth } = useWindowDimensions();
   const priceFormatted = formatPriceLabel(service);
   const reviewsToDisplay = reviews;
+  const includedItems: string[] = Array.isArray(service.included_items)
+    ? service.included_items
+    : typeof service.included_items === 'string'
+      ? (() => { try { return JSON.parse(service.included_items as string); } catch { return []; } })()
+      : [];
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -186,11 +193,11 @@ export default function ServiceDetailScreen() {
           ) : null}
 
           {/* O que está incluso */}
-          {(service.included_items ?? []).length > 0 && (
+          {includedItems.length > 0 && (
             <View style={styles.includedCard}>
               <Text style={styles.sectionTitle}>O que está incluso</Text>
               <View style={styles.checkList}>
-                {(service.included_items ?? []).map(item => (
+                {includedItems.map(item => (
                   <View key={item} style={styles.checkRow}>
                     <MaterialIcons name="check-circle" size={20} color={Colors.primary} />
                     <Text style={styles.checkText}>{item}</Text>

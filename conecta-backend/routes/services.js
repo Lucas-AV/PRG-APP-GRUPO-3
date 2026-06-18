@@ -21,9 +21,13 @@ router.use(authMiddleware);
  *         description: Não autenticado
  */
 router.get('/', (req, res) => {
-  const services = db
-    .prepare('SELECT * FROM services WHERE user_id = ? ORDER BY created_at DESC')
-    .all(req.user.id);
+  const services = db.prepare(`
+    SELECT s.*,
+      (SELECT url FROM service_images WHERE service_id = s.id ORDER BY created_at ASC LIMIT 1) AS cover_image_url
+    FROM services s
+    WHERE s.user_id = ?
+    ORDER BY s.created_at DESC
+  `).all(req.user.id);
   return res.json(services);
 });
 

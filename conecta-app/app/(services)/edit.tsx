@@ -9,6 +9,8 @@ import {
   Alert,
   ActivityIndicator,
   Image,
+  Modal,
+  useWindowDimensions,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -43,6 +45,8 @@ export default function EditServiceScreen() {
   const [category, setCategory] = useState('');
   const [images, setImages] = useState<ServiceImage[]>([]);
   const [imageUploading, setImageUploading] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const { width: screenWidth } = useWindowDimensions();
 
   useEffect(() => {
     if (!token || !id) return;
@@ -309,12 +313,12 @@ export default function EditServiceScreen() {
 
           <View style={styles.photoGrid}>
             {images.map((img) => (
-              <View key={img.id} style={styles.photoSlot}>
+              <Pressable key={img.id} style={styles.photoSlot} onPress={() => setPreviewUrl(img.url)}>
                 <Image source={{ uri: img.url }} style={styles.photoThumb} />
                 <Pressable style={styles.photoDeleteBtn} onPress={() => removeImage(img.id)}>
                   <MaterialIcons name="close" size={14} color="#fff" />
                 </Pressable>
-              </View>
+              </Pressable>
             ))}
             <Pressable style={styles.photoUpload} onPress={pickAndUploadImage} disabled={imageUploading}>
               {imageUploading ? (
@@ -356,6 +360,19 @@ export default function EditServiceScreen() {
           />
         </View>
       </View>
+      {/* Image preview modal */}
+      <Modal visible={!!previewUrl} transparent animationType="fade" onRequestClose={() => setPreviewUrl(null)}>
+        <Pressable style={styles.previewBackdrop} onPress={() => setPreviewUrl(null)}>
+          <Image
+            source={{ uri: previewUrl ?? '' }}
+            style={{ width: screenWidth - 48, height: screenWidth - 48, borderRadius: 16 }}
+            resizeMode="contain"
+          />
+          <Pressable style={styles.previewClose} onPress={() => setPreviewUrl(null)}>
+            <MaterialIcons name="close" size={20} color="#fff" />
+          </Pressable>
+        </Pressable>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -661,6 +678,23 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.headlineBold,
     fontSize: 13,
     color: Colors.error,
+  },
+  previewBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.88)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  previewClose: {
+    position: 'absolute',
+    top: 48,
+    right: 20,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255,255,255,0.18)',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 
   // Bottom bar
