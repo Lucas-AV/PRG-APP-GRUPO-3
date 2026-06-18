@@ -151,15 +151,10 @@ export default function LoginScreen() {
 
           {/* Footer */}
           <View style={styles.footer}>
-            <Text style={styles.footerText}>
-              Ainda não tem uma conta?{' '}
-              <Text
-                style={styles.footerLink}
-                onPress={() => router.push('/(auth)/sign-up')}
-              >
-                Cadastre-se
-              </Text>
-            </Text>
+            <Text style={styles.footerText}>Ainda não tem uma conta?</Text>
+            <Pressable onPress={() => router.push('/(auth)/sign-up')}>
+              <Text style={styles.footerLink}>Cadastre-se</Text>
+            </Pressable>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -365,7 +360,7 @@ const styles = StyleSheet.create({
   },
 
   // Footer
-  footer: { alignItems: 'center' },
+  footer: { alignItems: 'center', flexDirection: 'row', gap: 4, justifyContent: 'center' },
   footerText: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 14,
