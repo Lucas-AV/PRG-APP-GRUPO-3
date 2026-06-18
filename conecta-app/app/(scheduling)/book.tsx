@@ -77,7 +77,7 @@ export default function BookScreen() {
     setSlotsLoading(true);
     setSelectedTime(null);
     try {
-      const res = await availabilityApi.slots(Number(params.providerId), date, Number(params.serviceId));
+      const res = await availabilityApi.slots(Number(params.providerId), date, Number(params.serviceId), token ?? '');
       setSlots(res.slots);
     } catch { setSlots([]); } finally { setSlotsLoading(false); }
   };

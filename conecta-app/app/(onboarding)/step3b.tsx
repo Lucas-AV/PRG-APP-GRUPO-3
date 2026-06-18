@@ -1,16 +1,62 @@
-import { View, Text, Pressable, ScrollView, StyleSheet } from 'react-native';
+import { useState } from 'react';
+import { View, Text, Pressable, ScrollView, StyleSheet, Alert, ActivityIndicator, Image } from 'react-native';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
 import { TopAppBar } from '@/components/ui/top-app-bar';
 import { ProgressBar } from '@/components/ui/progress-bar';
 import { GradientButton } from '@/components/ui/gradient-button';
 import { Colors, FontFamily, Spacing, Radius } from '@/constants/theme';
+import { useAuth } from '@/context/AuthContext';
+import { documentsApi } from '@/services/api';
+
+type UploadSlot = { uri: string | null; uploading: boolean; url: string | null };
+const EMPTY_SLOT: UploadSlot = { uri: null, uploading: false, url: null };
 
 export default function Step3bScreen() {
   const { role } = useLocalSearchParams<{ role: string }>();
+  const { token } = useAuth();
   const insets = useSafeAreaInsets();
+
+  const [idFront, setIdFront]   = useState<UploadSlot>(EMPTY_SLOT);
+  const [idBack, setIdBack]     = useState<UploadSlot>(EMPTY_SLOT);
+  const [address, setAddress]   = useState<UploadSlot>(EMPTY_SLOT);
+  const [criminal, setCriminal] = useState<UploadSlot>(EMPTY_SLOT);
+
+  const pickAndUpload = async (
+    docType: string,
+    setter: React.Dispatch<React.SetStateAction<UploadSlot>>,
+  ) => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      quality: 0.8,
+      allowsEditing: false,
+    });
+    if (result.canceled) return;
+
+    const uri = result.assets[0].uri;
+    setter({ uri, uploading: true, url: null });
+
+    try {
+      const { url } = await documentsApi.upload(docType, uri, token!);
+      setter({ uri, uploading: false, url });
+    } catch (e: any) {
+      setter(EMPTY_SLOT);
+      Alert.alert('Erro ao enviar', e.message ?? 'Não foi possível enviar o arquivo. Tente novamente.');
+    }
+  };
+
+  const removeDoc = async (
+    docType: string,
+    setter: React.Dispatch<React.SetStateAction<UploadSlot>>,
+  ) => {
+    try {
+      await documentsApi.remove(docType, token!);
+    } catch (_) {}
+    setter(EMPTY_SLOT);
+  };
 
   return (
     <SafeAreaView style={styles.container} edges={['left', 'right']}>
@@ -32,7 +78,7 @@ export default function Step3bScreen() {
             </Text>
           </View>
 
-          {/* Identity document card */}
+          {/* Documento de Identidade */}
           <View style={styles.verifyCard}>
             <View style={styles.verifyCardLeft}>
               <View style={[styles.verifyIconBox, { backgroundColor: Colors.brand + '15' }]}>
@@ -46,14 +92,18 @@ export default function Step3bScreen() {
               </View>
             </View>
             <View style={styles.verifyBtnRow}>
-              <Pressable style={styles.uploadSmallBtn}>
-                <MaterialIcons name="upload" size={14} color={Colors.ink} />
-                <Text style={styles.uploadSmallLabel}>Frente</Text>
-              </Pressable>
-              <Pressable style={styles.uploadSmallBtn}>
-                <MaterialIcons name="upload" size={14} color={Colors.ink} />
-                <Text style={styles.uploadSmallLabel}>Verso</Text>
-              </Pressable>
+              <UploadButton
+                label="Frente"
+                slot={idFront}
+                onPress={() => pickAndUpload('identity_front', setIdFront)}
+                onRemove={() => removeDoc('identity_front', setIdFront)}
+              />
+              <UploadButton
+                label="Verso"
+                slot={idBack}
+                onPress={() => pickAndUpload('identity_back', setIdBack)}
+                onRemove={() => removeDoc('identity_back', setIdBack)}
+              />
             </View>
           </View>
 
@@ -67,10 +117,13 @@ export default function Step3bScreen() {
               <Text style={styles.verifyCardDesc}>
                 Contas de luz, água ou internet dos últimos 90 dias.
               </Text>
-              <Pressable style={styles.dashedUploadBtn}>
-                <MaterialIcons name="cloud-upload" size={22} color={Colors.inkMuted} />
-                <Text style={styles.dashedUploadLabel}>Clique para selecionar</Text>
-              </Pressable>
+              <DashedUploadButton
+                label="Selecionar arquivo"
+                icon="cloud-upload"
+                slot={address}
+                onPress={() => pickAndUpload('proof_of_address', setAddress)}
+                onRemove={() => removeDoc('proof_of_address', setAddress)}
+              />
             </View>
 
             <View style={styles.verifyCardSmall}>
@@ -86,10 +139,13 @@ export default function Step3bScreen() {
               <Text style={styles.verifyCardDesc}>
                 Aumente sua taxa de aprovação em até 40% com este selo.
               </Text>
-              <Pressable style={styles.dashedUploadBtn}>
-                <MaterialIcons name="verified-user" size={22} color={Colors.inkMuted} />
-                <Text style={styles.dashedUploadLabel}>Adicionar Certidão</Text>
-              </Pressable>
+              <DashedUploadButton
+                label="Adicionar Certidão"
+                icon="verified-user"
+                slot={criminal}
+                onPress={() => pickAndUpload('criminal_record', setCriminal)}
+                onRemove={() => removeDoc('criminal_record', setCriminal)}
+              />
             </View>
           </View>
 
@@ -105,17 +161,13 @@ export default function Step3bScreen() {
       </Animated.View>
 
       <View style={[styles.bottomNav, { paddingBottom: Math.max(insets.bottom + 8, Spacing.xl) }]}>
-        <Pressable
-          style={({ pressed }) => [styles.draftBtn, pressed && { opacity: 0.6 }]}
-        >
+        <Pressable style={({ pressed }) => [styles.draftBtn, pressed && { opacity: 0.6 }]}>
           <MaterialIcons name="save" size={18} color={Colors.inkMuted} />
           <Text style={styles.draftLabel}>Salvar</Text>
         </Pressable>
         <GradientButton
           label="Continuar →"
-          onPress={() =>
-            router.push({ pathname: '/(onboarding)/step4', params: { role } })
-          }
+          onPress={() => router.push({ pathname: '/(onboarding)/step4', params: { role } })}
           style={styles.continueBtn}
         />
       </View>
@@ -123,10 +175,84 @@ export default function Step3bScreen() {
   );
 }
 
+// ── Sub-components ────────────────────────────────────────────────────────────
+
+function UploadButton({
+  label, slot, onPress, onRemove,
+}: {
+  label: string;
+  slot: UploadSlot;
+  onPress: () => void;
+  onRemove: () => void;
+}) {
+  if (slot.uploading) {
+    return (
+      <View style={[styles.uploadSmallBtn, styles.uploadSmallBtnDone]}>
+        <ActivityIndicator size="small" color={Colors.primary} />
+        <Text style={styles.uploadSmallLabel}>Enviando…</Text>
+      </View>
+    );
+  }
+  if (slot.url) {
+    return (
+      <View style={[styles.uploadSmallBtn, styles.uploadSmallBtnDone]}>
+        <Image source={{ uri: slot.uri! }} style={styles.thumbSmall} />
+        <MaterialIcons name="check-circle" size={14} color={Colors.success ?? Colors.primary} />
+        <Pressable onPress={onRemove} hitSlop={8}>
+          <MaterialIcons name="close" size={14} color={Colors.inkMuted} />
+        </Pressable>
+      </View>
+    );
+  }
+  return (
+    <Pressable style={({ pressed }) => [styles.uploadSmallBtn, pressed && { opacity: 0.7 }]} onPress={onPress}>
+      <MaterialIcons name="upload" size={14} color={Colors.ink} />
+      <Text style={styles.uploadSmallLabel}>{label}</Text>
+    </Pressable>
+  );
+}
+
+function DashedUploadButton({
+  label, icon, slot, onPress, onRemove,
+}: {
+  label: string;
+  icon: React.ComponentProps<typeof MaterialIcons>['name'];
+  slot: UploadSlot;
+  onPress: () => void;
+  onRemove: () => void;
+}) {
+  if (slot.uploading) {
+    return (
+      <View style={styles.dashedUploadBtn}>
+        <ActivityIndicator size="small" color={Colors.primary} />
+        <Text style={styles.dashedUploadLabel}>Enviando…</Text>
+      </View>
+    );
+  }
+  if (slot.url) {
+    return (
+      <View style={[styles.dashedUploadBtn, styles.dashedUploadBtnDone]}>
+        <Image source={{ uri: slot.uri! }} style={styles.thumbDashed} />
+        <MaterialIcons name="check-circle" size={16} color={Colors.success ?? Colors.primary} />
+        <Pressable onPress={onRemove} hitSlop={8}>
+          <Text style={styles.alterar}>Alterar</Text>
+        </Pressable>
+      </View>
+    );
+  }
+  return (
+    <Pressable style={({ pressed }) => [styles.dashedUploadBtn, pressed && { opacity: 0.7 }]} onPress={onPress}>
+      <MaterialIcons name={icon} size={22} color={Colors.inkMuted} />
+      <Text style={styles.dashedUploadLabel}>{label}</Text>
+    </Pressable>
+  );
+}
+
+// ── Styles ────────────────────────────────────────────────────────────────────
+
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
   scroll: { flex: 1 },
-
   scrollContent: {
     paddingHorizontal: Spacing.xl,
     paddingTop: Spacing.xxl,
@@ -199,11 +325,22 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm + 2,
     backgroundColor: Colors.card,
     borderRadius: Radius.sm,
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  uploadSmallBtnDone: {
+    borderColor: Colors.primary + '40',
+    backgroundColor: Colors.primary + '08',
   },
   uploadSmallLabel: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 12,
     color: Colors.ink,
+  },
+  thumbSmall: {
+    width: 28,
+    height: 28,
+    borderRadius: 4,
   },
 
   verifyTwoCol: {
@@ -250,11 +387,26 @@ const styles = StyleSheet.create({
     gap: Spacing.xs,
     marginTop: 'auto',
   },
+  dashedUploadBtnDone: {
+    borderStyle: 'solid',
+    borderColor: Colors.primary + '40',
+    backgroundColor: Colors.primary + '08',
+  },
   dashedUploadLabel: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 11,
     color: Colors.inkMuted,
     textAlign: 'center',
+  },
+  thumbDashed: {
+    width: 48,
+    height: 48,
+    borderRadius: Radius.sm,
+  },
+  alterar: {
+    fontFamily: FontFamily.bodySemiBold,
+    fontSize: 11,
+    color: Colors.primary,
   },
 
   trustNote: {

@@ -424,8 +424,8 @@ export interface SlotsResponse {
 }
 
 export const availabilityApi = {
-  get: (providerId: number) =>
-    request<AvailabilityDay[]>(`/users/${providerId}/availability`),
+  get: (providerId: number, token: string) =>
+    request<AvailabilityDay[]>(`/users/${providerId}/availability`, {}, token),
 
   update: (providerId: number, days: AvailabilityDay[], token: string) =>
     request<{ message: string }>(`/users/${providerId}/availability`, {
@@ -433,8 +433,8 @@ export const availabilityApi = {
       body: JSON.stringify(days),
     }, token),
 
-  slots: (providerId: number, date: string, serviceId: number) =>
-    request<SlotsResponse>(`/users/${providerId}/slots?date=${date}&serviceId=${serviceId}`),
+  slots: (providerId: number, date: string, serviceId: number, token: string) =>
+    request<SlotsResponse>(`/users/${providerId}/slots?date=${date}&serviceId=${serviceId}`, {}, token),
 };
 
 // ── Appointments ──────────────────────────────────────────────────────────────
@@ -489,4 +489,41 @@ export const appointmentsApi = {
     request<{ message: string }>(`/appointments/${id}/cancel`, {
       method: 'PATCH',
     }, token),
+};
+
+export interface ProviderDocument {
+  type: string;
+  url: string;
+  created_at: string;
+}
+
+export const documentsApi = {
+  list: (token: string) =>
+    request<ProviderDocument[]>('/uploads/documents', {}, token),
+
+  upload: async (type: string, fileUri: string, token: string): Promise<{ type: string; url: string }> => {
+    const filename = fileUri.split('/').pop() ?? 'document.jpg';
+    const ext = filename.split('.').pop()?.toLowerCase() ?? 'jpg';
+    const mimeType = ext === 'png' ? 'image/png' : ext === 'webp' ? 'image/webp' : 'image/jpeg';
+
+    const form = new FormData();
+    form.append('file', { uri: fileUri, name: filename, type: mimeType } as any);
+
+    let cleanToken = token.trim();
+    if (cleanToken.startsWith('"') && cleanToken.endsWith('"')) {
+      cleanToken = cleanToken.slice(1, -1);
+    }
+
+    const res = await fetch(`${API_BASE_URL}/uploads/documents/${type}`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${cleanToken}` },
+      body: form,
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error ?? 'Erro ao enviar documento');
+    return data;
+  },
+
+  remove: (type: string, token: string) =>
+    request<{ message: string }>(`/uploads/documents/${type}`, { method: 'DELETE' }, token),
 };

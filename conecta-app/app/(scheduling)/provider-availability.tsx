@@ -55,11 +55,11 @@ export default function ProviderAvailabilityScreen() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    if (!user) return;
-    availabilityApi.get(user.id)
+    if (!user || !token) return;
+    availabilityApi.get(user.id, token)
       .then(apiDays => setDays(mergeWithApi(apiDays)))
       .catch(() => {});
-  }, [user?.id]);
+  }, [user?.id, token]);
 
   const updateDay = (idx: number, patch: Partial<DayConfig>) => {
     setDays(prev => prev.map((d, i) => i === idx ? { ...d, ...patch } : d));

@@ -136,19 +136,7 @@ function AppContent() {
             </Pressable>
           )}
 
-          {/* Mensagens */}
-          {isClient && (
-            <Pressable style={styles.tabItem} onPress={() => router.replace('/(tabs)/messages')}>
-              <MaterialIcons
-                name="chat-bubble-outline"
-                size={24}
-                color={activeTab === 'messages' ? Colors.primary : Colors.inkMuted}
-              />
-              <Text style={[styles.tabLabel, { color: activeTab === 'messages' ? Colors.primary : Colors.inkMuted }]}>
-                {t('tabs.messages')}
-              </Text>
-            </Pressable>
-          )}
+          {/* Mensagens — oculto temporariamente */}
 
           {/* Conta */}
           <Pressable style={styles.tabItem} onPress={() => router.replace('/(tabs)/profile')}>
