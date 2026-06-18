@@ -271,6 +271,7 @@ export interface PublicService {
   description?: string;
   duration?: string;
   included_items?: string[];
+  images?: { id: number; url: string }[];
   provider_id: number;
   provider_name: string;
   avg_rating: number | null;

@@ -293,6 +293,30 @@ function seed() {
   insertTx.run(cId(beatriz), 'Coloração Completa',              'Fernanda Lima',  180, dateOffset(-80));
   insertTx.run(cId(pedro),   'Limpeza Residencial Completa',    'Ana Ferreira',   180, dateOffset(-65));
 
+  const insertImg = db.prepare('INSERT INTO service_images (service_id, url) VALUES (?, ?)');
+
+  [
+    'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=800',
+    'https://images.unsplash.com/photo-1558618047-f4e90e8a43d2?w=800',
+    'https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=800',
+  ].forEach(url => insertImg.run(cId(sCarlos1), url));
+
+  [
+    'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800',
+    'https://images.unsplash.com/photo-1527515545081-5db817172677?w=800',
+  ].forEach(url => insertImg.run(cId(sAna1), url));
+
+  [
+    'https://images.unsplash.com/photo-1606800052052-a08af7148866?w=800',
+    'https://images.unsplash.com/photo-1554048612-b6a482bc67e5?w=800',
+    'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=800',
+  ].forEach(url => insertImg.run(cId(sMarcos1), url));
+
+  [
+    'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=800',
+    'https://images.unsplash.com/photo-1560066984-138daaa51de7?w=800',
+  ].forEach(url => insertImg.run(cId(sFernanda1), url));
+
   db.prepare('UPDATE users SET onboarding_completed = 1').run();
 
   console.log('\n✅ Seed concluído com sucesso!\n');

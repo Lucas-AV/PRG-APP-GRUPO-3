@@ -99,7 +99,12 @@ router.get('/public/:id', (req, res) => {
   `).get(Number(req.params.id));
 
   if (!service) return res.status(404).json({ error: 'Serviço não encontrado' });
-  return res.json(service);
+
+  const images = db
+    .prepare('SELECT id, url FROM service_images WHERE service_id = ? ORDER BY created_at')
+    .all(Number(req.params.id));
+
+  return res.json({ ...service, images });
 });
 
 /**

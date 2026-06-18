@@ -7,6 +7,8 @@ import {
   StyleSheet,
   ActivityIndicator,
   Alert,
+  Image,
+  useWindowDimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -85,6 +87,7 @@ export default function ServiceDetailScreen() {
     );
   }
 
+  const { width: screenWidth } = useWindowDimensions();
   const priceFormatted = formatPriceLabel(service);
   const reviewsToDisplay = reviews;
 
@@ -95,25 +98,43 @@ export default function ServiceDetailScreen() {
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
 
         {/* ── Hero ──────────────────────────────────────────────────────── */}
-        <View style={styles.heroWrap}>
-          <LinearGradient
-            colors={GradientColors}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={StyleSheet.absoluteFillObject}
+        {service.images && service.images.length > 0 ? (
+          <ScrollView
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            style={styles.galleryScroll}
           >
-            {cat && (
-              <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                <MaterialIcons name={cat.icon as any} size={80} color="rgba(255,255,255,0.25)" />
+            {service.images.map(img => (
+              <View key={img.id} style={[styles.gallerySlide, { width: screenWidth }]}>
+                <Image source={{ uri: img.url }} style={styles.galleryImage} />
+                <LinearGradient
+                  colors={['transparent', 'rgba(0,0,0,0.55)']}
+                  style={styles.heroOverlay}
+                />
               </View>
-            )}
-          </LinearGradient>
-          {/* Fade-to-dark overlay at bottom */}
-          <LinearGradient
-            colors={['transparent', 'rgba(0,0,0,0.55)']}
-            style={styles.heroOverlay}
-          />
-        </View>
+            ))}
+          </ScrollView>
+        ) : (
+          <View style={styles.heroWrap}>
+            <LinearGradient
+              colors={GradientColors}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={StyleSheet.absoluteFillObject}
+            >
+              {cat && (
+                <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                  <MaterialIcons name={cat.icon as any} size={80} color="rgba(255,255,255,0.25)" />
+                </View>
+              )}
+            </LinearGradient>
+            <LinearGradient
+              colors={['transparent', 'rgba(0,0,0,0.55)']}
+              style={styles.heroOverlay}
+            />
+          </View>
+        )}
 
         {/* ── Header Card (overlapping hero) ─────────────────────────── */}
         <View style={styles.headerCard}>
@@ -317,7 +338,10 @@ const styles = StyleSheet.create({
 
   scroll: { paddingBottom: Spacing.xxxl * 3 },
 
-  // Hero
+  // Hero / Gallery
+  galleryScroll: { height: 300 },
+  gallerySlide: { height: 300, position: 'relative' },
+  galleryImage: { width: '100%', height: '100%', resizeMode: 'cover' },
   heroWrap: { height: 300, position: 'relative' },
   heroImage: {
     width: '100%',
