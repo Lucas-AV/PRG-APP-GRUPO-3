@@ -26,6 +26,7 @@ export interface User {
   phone?: string;
   role: 'cliente' | 'prestador';
   avatar?: string;
+  onboarding_completed: number;
 }
 
 export interface AuthResponse {
@@ -123,6 +124,9 @@ export const usersApi = {
       method: 'PUT',
       body: JSON.stringify(data),
     }, token),
+
+  completeOnboarding: (id: number, token: string) =>
+    request<{ ok: boolean }>(`/users/${id}/complete-onboarding`, { method: 'POST' }, token),
 
   changePassword: (id: number, data: { current_password: string; new_password: string }, token: string) =>
     request<{ message: string }>(`/users/${id}/password`, {

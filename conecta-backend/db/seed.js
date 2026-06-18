@@ -293,6 +293,8 @@ function seed() {
   insertTx.run(cId(beatriz), 'Coloração Completa',              'Fernanda Lima',  180, dateOffset(-80));
   insertTx.run(cId(pedro),   'Limpeza Residencial Completa',    'Ana Ferreira',   180, dateOffset(-65));
 
+  db.prepare('UPDATE users SET onboarding_completed = 1').run();
+
   console.log('\n✅ Seed concluído com sucesso!\n');
   console.log('PRESTADORES (senha: senha123)');
   console.log('  carlos@example.com | ana@example.com | roberto@example.com');

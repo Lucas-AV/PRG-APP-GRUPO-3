@@ -101,6 +101,11 @@ router.put('/:userId', (req, res) => {
   return res.json(updated);
 });
 
+router.post('/:userId/complete-onboarding', (req, res) => {
+  db.prepare('UPDATE users SET onboarding_completed = 1 WHERE id = ?').run(req.user.id);
+  return res.json({ ok: true });
+});
+
 /**
  * @swagger
  * /users/{userId}/password:

@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import * as SecureStore from 'expo-secure-store';
-import { authApi, User } from '@/services/api';
+import { authApi, usersApi, User } from '@/services/api';
 
 interface AuthContextType {
   user: User | null;
@@ -79,8 +79,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const markOnboardingComplete = async () => {
-    if (!user) return;
-    await SecureStore.setItemAsync(`onboarding_${user.id}`, 'true');
+    if (!user || !token) return;
+    await usersApi.completeOnboarding(user.id, token);
+    const updated = { ...user, onboarding_completed: 1 };
+    await SecureStore.setItemAsync('user', JSON.stringify(updated));
+    setUser(updated);
   };
 
   return (

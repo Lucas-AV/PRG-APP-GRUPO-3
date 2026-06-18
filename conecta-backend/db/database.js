@@ -188,6 +188,8 @@ function addColumnIfMissing(table, column, definition) {
 addColumnIfMissing('users', 'google_id', 'TEXT');
 // users.avatar_url (upload de foto de perfil)
 addColumnIfMissing('users', 'avatar_url', 'TEXT');
+// users.onboarding_completed
+addColumnIfMissing('users', 'onboarding_completed', 'INTEGER NOT NULL DEFAULT 0');
 // transactions.* (integração com MercadoPago)
 addColumnIfMissing('transactions', 'mercadopago_payment_id', 'TEXT');
 addColumnIfMissing('transactions', 'external_reference', 'TEXT');
