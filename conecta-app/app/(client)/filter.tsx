@@ -5,7 +5,6 @@ import {
   ScrollView,
   Pressable,
   StyleSheet,
-  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -315,26 +314,6 @@ export default function FilterScreen() {
           </View>
         </View>
 
-        {/* Contextual Visual Hint */}
-        <View style={styles.visualHintContainer}>
-          <View style={styles.hintCard}>
-            <Image
-              source={{
-                uri: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAJseHimdm5vOxMt8Hgaj0p0G8VgXJr-Q54cueOgXehbfupO5j23wk_APJasUTXXWWWgC-Zi8L4BD9dz2ykUl7eo3aMqYhn-CfpKePcn_UhAVCrzH5nPvzzqFCVpjigSuhs53WoJxKwhzJfLhmV1-slbyRRNKyxpR2LNAAP2BRBbebkt3_XpQhn923wtU5wTMMYtgYpkHmAKtfMTkcTWT2ALkhKC3pqIXnLG7HHIceh4xDZfQUtxvJLoaY1c6pn5VR_7Lzc8XSo26E',
-              }}
-              style={styles.hintImage}
-            />
-            <LinearGradient
-              colors={['transparent', 'rgba(0,0,0,0.7)']}
-              style={styles.hintGradient}
-            >
-              <Text style={styles.hintTitle}>Encontre os melhores profissionais</Text>
-              <Text style={styles.hintSubtitle}>
-                Mais de 5.000 prestadores verificados na sua região.
-              </Text>
-            </LinearGradient>
-          </View>
-        </View>
       </ScrollView>
 
       {/* ── Footer ─────────────────────────────────────────────────────────── */}
@@ -655,38 +634,6 @@ const styles = StyleSheet.create({
   },
   categoryChipTextInactive: {
     color: Colors.ink,
-  },
-  visualHintContainer: {
-    marginTop: Spacing.xxxl,
-    paddingHorizontal: Spacing.xl,
-  },
-  hintCard: {
-    height: 160,
-    borderRadius: Radius.lg,
-    overflow: 'hidden',
-    position: 'relative',
-  },
-  hintImage: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover',
-  },
-  hintGradient: {
-    position: 'absolute',
-    inset: 0,
-    justifyContent: 'flex-end',
-    padding: Spacing.xl,
-  },
-  hintTitle: {
-    fontFamily: FontFamily.headlineBold,
-    fontSize: 18,
-    color: '#ffffff',
-  },
-  hintSubtitle: {
-    fontFamily: FontFamily.bodyRegular,
-    fontSize: 13,
-    color: 'rgba(255, 255, 255, 0.8)',
-    marginTop: 2,
   },
   footer: {
     position: 'absolute',
