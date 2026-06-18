@@ -33,7 +33,7 @@ router.use(authMiddleware);
  */
 router.get('/:userId', (req, res) => {
   const user = db
-    .prepare('SELECT id, name, email, phone, role, avatar, bio, years_experience, response_time, created_at FROM users WHERE id = ?')
+    .prepare('SELECT id, name, email, phone, role, avatar_url, bio, years_experience, response_time, created_at FROM users WHERE id = ?')
     .get(req.user.id);
 
   if (!user) return res.status(404).json({ error: 'Usuário não encontrado' });
@@ -96,7 +96,7 @@ router.put('/:userId', (req, res) => {
   }
 
   const updated = db
-    .prepare('SELECT id, name, email, phone, role, avatar, bio, years_experience, response_time, created_at FROM users WHERE id = ?')
+    .prepare('SELECT id, name, email, phone, role, avatar_url, bio, years_experience, response_time, created_at FROM users WHERE id = ?')
     .get(req.user.id);
   return res.json(updated);
 });
