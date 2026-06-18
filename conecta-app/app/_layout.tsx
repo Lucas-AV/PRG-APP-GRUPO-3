@@ -34,7 +34,7 @@ function AppContent() {
     if (isLoading) return;
 
     const isPublicRoute = pathname === '/' || pathname === '/login' || pathname === '/sign-up';
-    const isOnboardingRoute = pathname.includes('/(onboarding)');
+    const isOnboardingRoute = pathname.startsWith('/step');
 
     if (!user || !token) {
       if (!isPublicRoute) {
@@ -55,25 +55,29 @@ function AppContent() {
     );
   }
 
+  const CLIENT_ROUTES = ['/search', '/filter', '/provider-profile', '/service-detail', '/provider-reviews'];
+  const SCHEDULE_ROUTES = ['/schedule', '/appointment-detail', '/book', '/provider-availability'];
+  const SERVICES_ROUTES = ['/services', '/create', '/edit', '/view'];
+  const ACCOUNT_ROUTES = ['/profile', '/edit-profile', '/payments', '/addresses', '/about', '/add-address', '/add-balance', '/card-detail', '/change-password', '/delete-account', '/new-card', '/notifications', '/payment-history', '/plans', '/privacy-security', '/receipt', '/support', '/use-terms'];
+
   const showTabBar =
     !!user &&
     !!token &&
     !!user.onboarding_completed &&
-    !pathname.includes('/(auth)') &&
-    !pathname.includes('/(onboarding)') &&
-    pathname !== '/';
+    pathname !== '/login' &&
+    pathname !== '/sign-up' &&
+    !pathname.startsWith('/step');
 
   let activeTab = '';
-  // IMPORTANTE: a ordem importa — condições mais específicas primeiro
-  if (pathname.includes('/schedule') || pathname.includes('/appointment-detail') || pathname.includes('/(scheduling)')) {
-    // Agenda / agendamentos
+  if (pathname === '/' || CLIENT_ROUTES.some(r => pathname.includes(r))) {
+    activeTab = 'index';
+  } else if (SCHEDULE_ROUTES.some(r => pathname.includes(r))) {
     activeTab = 'schedule';
-  } else if (pathname.includes('/(services)') || (pathname.includes('/services') && !pathname.includes('/create'))) {
-    // Serviços do prestador
+  } else if (SERVICES_ROUTES.some(r => pathname.includes(r))) {
     activeTab = 'services';
   } else if (pathname.includes('/messages')) {
     activeTab = 'messages';
-  } else if (pathname.includes('/profile') || pathname.includes('/(account)')) {
+  } else if (ACCOUNT_ROUTES.some(r => pathname.includes(r))) {
     activeTab = 'profile';
   } else if (
     pathname === '/(tabs)' ||
