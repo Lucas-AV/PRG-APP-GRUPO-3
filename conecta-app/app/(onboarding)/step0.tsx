@@ -1,6 +1,11 @@
 /**
  * TELA COMPLETADA: O template step0.html continha conteúdo de verificação de documentos
  * por engano. Esta tela foi criada conforme descrição: seleção de tipo de conta (cliente/prestador).
+ *
+ * FLUXO DE REGISTRO:
+ * - O usuário preenche nome/email/senha em sign-up.tsx (dados salvos localmente).
+ * - Aqui ele escolhe o tipo de perfil (cliente ou prestador).
+ * - Somente após confirmar o tipo, a conta é criada no backend com o role correto.
  */
 import { useState } from 'react';
 import {
@@ -9,6 +14,7 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
+  Alert,
 } from 'react-native';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -17,6 +23,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { GradientButton } from '@/components/ui/gradient-button';
 import { Colors, FontFamily, GradientColors, Spacing, Radius } from '@/constants/theme';
+import { useAuth } from '@/context/AuthContext';
 
 type AccountType = 'cliente' | 'prestador' | null;
 
@@ -38,11 +45,45 @@ const OPTIONS = [
 ];
 
 export default function Step0Screen() {
+  const { completePendingRegistration, pendingRegistration } = useAuth();
   const [selected, setSelected] = useState<AccountType>(null);
+  const [loading, setLoading] = useState(false);
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     if (!selected) return;
-    router.push({ pathname: '/(onboarding)/step1', params: { role: selected } });
+
+    setLoading(true);
+    try {
+      if (pendingRegistration) {
+        // Fluxo de novo registro: cria a conta agora com o role correto
+        await completePendingRegistration(selected);
+      }
+      // Se não há pendingRegistration (ex: usuário logado refazendo onboarding),
+      // apenas navega para o próximo passo.
+      router.push({ pathname: '/(onboarding)/step1', params: { role: selected } });
+    } catch (e: any) {
+      const msg: string = e?.message ?? '';
+      // Mensagens exatas do backend (routes/auth.js):
+      // - Celular: 'Celular já cadastrado por outro usuário'
+      // - E-mail:  'E-mail já cadastrado'
+      if (msg.includes('Celular') || msg.toLowerCase().includes('phone') || msg.toLowerCase().includes('telefone')) {
+        Alert.alert(
+          'Número já cadastrado',
+          'Este celular já está associado a outra conta. Volte e use um número diferente.',
+          [{ text: 'OK' }]
+        );
+      } else if (msg.includes('E-mail') || msg.toLowerCase().includes('email')) {
+        Alert.alert(
+          'E-mail já cadastrado',
+          'Este e-mail já está em uso. Volte e use outro e-mail ou faça login.',
+          [{ text: 'OK' }]
+        );
+      } else {
+        Alert.alert('Erro ao criar conta', msg || 'Tente novamente em instantes.', [{ text: 'OK' }]);
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -139,9 +180,9 @@ export default function Step0Screen() {
 
         {/* CTA */}
         <GradientButton
-          label="Continuar"
+          label={loading ? 'Criando conta…' : 'Continuar'}
           onPress={handleContinue}
-          disabled={!selected}
+          disabled={!selected || loading}
           style={styles.cta}
         />
 

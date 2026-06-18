@@ -79,6 +79,13 @@ function AppContent() {
     activeTab = 'messages';
   } else if (ACCOUNT_ROUTES.some(r => pathname.includes(r))) {
     activeTab = 'profile';
+  } else if (
+    pathname === '/(tabs)' ||
+    pathname === '/' ||
+    pathname.includes('/(client)')
+  ) {
+    // Home / feed do cliente — verificar por último para não capturar rotas mais específicas
+    activeTab = 'index';
   }
 
   const isClient = user?.role === 'cliente';
@@ -93,6 +100,8 @@ function AppContent() {
           <Stack.Screen name="(tabs)" />
           <Stack.Screen name="(services)" />
           <Stack.Screen name="(client)" />
+          <Stack.Screen name="(scheduling)" />
+          <Stack.Screen name="(account)" />
         </Stack>
       </View>
 
