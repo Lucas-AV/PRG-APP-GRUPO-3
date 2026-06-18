@@ -203,7 +203,7 @@ export default function SearchScreen() {
           >
             <MaterialIcons name="arrow-back" size={24} color={Colors.ink} />
           </Pressable>
-          <Text style={styles.topBarLogo}>SevGen</Text>
+          <Text style={styles.topBarLogo}>ConectaApp</Text>
         </View>
         <Pressable style={({ pressed }) => [styles.iconBtn, pressed && styles.iconBtnPressed]}>
           <MaterialIcons name="more-vert" size={24} color={Colors.secondary} />

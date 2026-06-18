@@ -89,7 +89,7 @@ export default function AboutScreen() {
         >
           <MaterialIcons name="arrow-back" size={24} color={Colors.ink} />
         </Pressable>
-        <Text style={styles.topBarTitle}>About SevGen</Text>
+        <Text style={styles.topBarTitle}>About ConectaApp</Text>
         <View style={{ width: 38 }} />
       </View>
 
@@ -104,7 +104,7 @@ export default function AboutScreen() {
             <View style={styles.logoShine} />
           </View>
           <View style={styles.heroTitles}>
-            <Text style={styles.heroName}>SevGen</Text>
+            <Text style={styles.heroName}>ConectaApp</Text>
             <Text style={styles.heroVersion}>Versão {appVersion}</Text>
           </View>
         </View>
@@ -113,7 +113,7 @@ export default function AboutScreen() {
         <View style={styles.missionCard}>
           <Text style={styles.missionTitle}>A Nossa Missão</Text>
           <Text style={styles.missionText}>
-            O SevGen é a plataforma definitiva para a curadoria de serviços de alta fidelidade.
+            O ConectaApp é a plataforma definitiva para a curadoria de serviços de alta fidelidade.
             Rejeitamos a mediocridade do mercado de massa, focando implacavelmente na precisão, na
             estética minimalista e numa experiência de concierge digital superior. Não somos apenas um
             mercado; somos a galeria onde o talento excepcional encontra a procura exigente.
@@ -127,13 +127,13 @@ export default function AboutScreen() {
           <ExpandableCard
             icon="history"
             title="Nossa História"
-            summary="Fundado com o objetivo de redefinir o mercado de contratação de serviços, o SevGen nasceu da fusão entre tecnologia avançada e curadoria humana. Desde o primeiro dia, nos dedicamos a selecionar os melhores profissionais, garantindo um padrão estético e técnico inigualável."
+            summary="Fundado com o objetivo de redefinir o mercado de contratação de serviços, o ConectaApp nasceu da fusão entre tecnologia avançada e curadoria humana. Desde o primeiro dia, nos dedicamos a selecionar os melhores profissionais, garantindo um padrão estético e técnico inigualável."
           />
 
           <ExpandableCard
             icon="work"
             title="Trabalhe Conosco"
-            summary="Se você busca excelência técnica e compartilha da nossa paixão por design refinado e processos precisos, o SevGen é o seu lugar. Oferecemos um ambiente dinâmico, oportunidades de crescimento acelerado e a chance de moldar o futuro do concierge digital."
+            summary="Se você busca excelência técnica e compartilha da nossa paixão por design refinado e processos precisos, o ConectaApp é o seu lugar. Oferecemos um ambiente dinâmico, oportunidades de crescimento acelerado e a chance de moldar o futuro do concierge digital."
           />
 
           <ExpandableCard
@@ -150,7 +150,7 @@ export default function AboutScreen() {
           <ExpandableCard
             icon="description"
             title="Termos de Uso"
-            summary="Estes termos regulam o uso da plataforma SevGen. Ao acessar a plataforma, você concorda com nossas regras de conduta, segurança e uso aceitável dos serviços."
+            summary="Estes termos regulam o uso da plataforma ConectaApp. Ao acessar a plataforma, você concorda com nossas regras de conduta, segurança e uso aceitável dos serviços."
             linkText="Ler Termo Completo"
             onLinkPress={() => router.push('/(account)/use-terms')}
           />

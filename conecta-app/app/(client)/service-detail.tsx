@@ -305,7 +305,7 @@ function TopNav() {
         >
           <MaterialIcons name="arrow-back" size={22} color={Colors.secondary} />
         </Pressable>
-        <Text style={styles.topNavLogo}>SevGen</Text>
+        <Text style={styles.topNavLogo}>ConectaApp</Text>
       </View>
       <Pressable style={({ pressed }) => [styles.iconBtn, pressed && { opacity: 0.6 }]}>
         <MaterialIcons name="share" size={22} color={Colors.secondary} />

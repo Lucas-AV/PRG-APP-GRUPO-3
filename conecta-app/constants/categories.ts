@@ -15,5 +15,5 @@ export const CATEGORIES: Category[] = [
   { key: 'Reformas',     label: 'Reformas',     icon: 'construction',        color: '#fde0d0' },
   { key: 'Jardinagem',   label: 'Jardinagem',   icon: 'yard',                color: '#d0f0d8' },
   { key: 'Climatização', label: 'Climatização', icon: 'ac-unit',             color: '#c8e8fd' },
-  { key: 'Mais',         label: 'Mais',         icon: 'apps',                color: '#e4e2e6' },
+  { key: 'Todos',        label: 'Todos',        icon: 'apps',                color: '#e4e2e6' },
 ];

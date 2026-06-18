@@ -232,7 +232,7 @@ function mpPaymentTypeToInternal(type) {
  *             properties:
  *               code:
  *                 type: string
- *                 example: SEVGEN20
+ *                 example: ConectaApp20
  *     responses:
  *       200:
  *         description: Cupom válido

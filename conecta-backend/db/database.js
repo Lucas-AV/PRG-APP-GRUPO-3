@@ -187,7 +187,7 @@ if (couponsCount.n === 0) {
     'INSERT INTO coupons (code, discount_percent, discount_value, description, is_active) VALUES (?, ?, ?, ?, ?)'
   );
   const seedCoupons = db.transaction(() => {
-    insertCoupon.run('SEVGEN20', 20, null, '20% de desconto no próximo serviço', 1);
+    insertCoupon.run('ConectaApp20', 20, null, '20% de desconto no próximo serviço', 1);
     insertCoupon.run('CONECTA50', 50, null, '50% de desconto no primeiro mês', 1);
     insertCoupon.run('BOASVINDAS10', null, 10, 'R$ 10,00 de desconto de boas-vindas', 1);
   });

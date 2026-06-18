@@ -1,7 +1,7 @@
 # Design System Strategy: The Elevated Service Curator
 
 ## 1. Overview & Creative North Star
-This design system moves beyond the utility of a "standard marketplace" to establish a **"Precision Minimalist"** aesthetic. Our goal is to transform the 'SevGen' experience into a high-end editorial gallery of services. 
+This design system moves beyond the utility of a "standard marketplace" to establish a **"Precision Minimalist"** aesthetic. Our goal is to transform the 'ConectaApp' experience into a high-end editorial gallery of services. 
 
 The Creative North Star is **"The Invisible Grid."** We reject the cluttered, "boxed-in" look of traditional apps. Instead, we use intentional white space, extreme typographic scale, and tonal layering to guide the eye. By removing 1px borders and heavy dividers, we create an interface that feels like a premium digital concierge—sophisticated, effortless, and hyper-organized.
 
@@ -55,7 +55,7 @@ We replace traditional shadows with **Tonal Layering** and **Ambient Light.**
 - **Secondary:** Use `secondary_container` background with `on_secondary_container` text. No border.
 - **Tertiary:** Purely typographic using `primary` color, sitting on `transparent`.
 
-### Cards (The "SevGen" Signature)
+### Cards (The "ConectaApp" Signature)
 - **Grid & Carousel:** No borders. Use `surface_container_lowest` for the card body. 
 - **Spacing:** Use `spacing-4` (1rem) for internal padding. 
 - **Imagery:** Service images must have a `md` (0.75rem/12px) corner radius to feel softer than the container.

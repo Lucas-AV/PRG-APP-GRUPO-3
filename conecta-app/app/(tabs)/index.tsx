@@ -60,10 +60,6 @@ export default function HomeScreen() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(params.category ?? null);
   const [activeFilter, setActiveFilter]   = useState<string>('todos');
 
-  // Grid tile size — 4 per row
-  const HPAD = Spacing.xl * 2;
-  const tileSize = (width - HPAD - Spacing.sm * 3) / 4;
-
   const fetchServices = (category?: string, q?: string) => {
     setLoading(true);
     publicServicesApi
@@ -88,8 +84,7 @@ export default function HomeScreen() {
   }, [params.category, params.q, params.applied]);
 
   const handleCategoryPress = (key: string) => {
-    if (key === 'Mais') return;
-    const next = selectedCategory === key ? null : key;
+    const next = key === 'Todos' ? null : selectedCategory === key ? null : key;
     setSelectedCategory(next);
     fetchServices(next ?? undefined, searchText);
   };
@@ -318,30 +313,41 @@ export default function HomeScreen() {
               <Text style={styles.sectionLink}>{t('feed.viewAll')}</Text>
             </Pressable>
           </View>
-          <View style={styles.categoryGrid}>
-            {CATEGORIES.map(cat => {
-              const active = selectedCategory === cat.key;
-              return (
-                <Pressable
-                  key={cat.key}
-                  style={({ pressed }) => [
-                    styles.categoryTile,
-                    { width: tileSize, height: tileSize },
-                    active && styles.categoryTileActive,
-                    pressed && { opacity: 0.82 },
-                  ]}
-                  onPress={() => handleCategoryPress(cat.key)}
-                >
-                  <View style={[styles.categoryIconWrap, active && styles.categoryIconWrapActive]}>
-                    <MaterialIcons name={cat.icon} size={26} color={active ? Colors.onPrimary : Colors.inkMuted} />
-                  </View>
-                  <Text style={[styles.categoryLabel, active && styles.categoryLabelActive]}>
-                    {cat.label.toUpperCase()}
-                  </Text>
-                </Pressable>
-              );
-            })}
-          </View>
+          {(() => {
+            const chipWidth = (width - Spacing.xl * 2 - Spacing.sm * 3) / 4;
+            return (
+              <View style={styles.categoryGrid}>
+                {CATEGORIES.map(cat => {
+                  const active = selectedCategory === cat.key;
+                  return (
+                    <Pressable
+                      key={cat.key}
+                      style={({ pressed }) => [
+                        styles.categoryChip,
+                        { width: chipWidth, backgroundColor: active ? Colors.primary : cat.color },
+                        pressed && { opacity: 0.80 },
+                      ]}
+                      onPress={() => handleCategoryPress(cat.key)}
+                    >
+                      <View style={[
+                        styles.categoryChipIconWrap,
+                        { backgroundColor: active ? 'rgba(255,255,255,0.20)' : 'rgba(0,0,0,0.07)' },
+                      ]}>
+                        <MaterialIcons
+                          name={cat.icon}
+                          size={24}
+                          color={active ? Colors.onPrimary : Colors.ink}
+                        />
+                      </View>
+                      <Text style={[styles.categoryChipLabel, active && styles.categoryChipLabelActive]}>
+                        {cat.label}
+                      </Text>
+                    </Pressable>
+                  );
+                })}
+              </View>
+            );
+          })()}
         </View>
 
         {/* ── Conteúdo dinâmico ──────────────────────────────────────────── */}
@@ -721,55 +727,40 @@ const styles = StyleSheet.create({
     color: Colors.inkMuted,
   },
 
-  // Category grid
+  // Category grid 2×4
   categoryGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     paddingHorizontal: Spacing.xl,
     gap: Spacing.sm,
   },
-  categoryTile: {
-    backgroundColor: Colors.card,
-    borderRadius: Radius.lg,
+  categoryChip: {
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 6,
-    borderWidth: 2,
-    borderColor: 'transparent',
+    gap: 8,
+    paddingVertical: Spacing.base,
+    borderRadius: Radius.xl,
     shadowColor: Colors.ink,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.03,
-    shadowRadius: 4,
-    elevation: 1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    elevation: 2,
   },
-  categoryTileActive: {
-    backgroundColor: Colors.primary + '08',
-    borderColor: Colors.primary,
-    shadowOpacity: 0.10,
-    shadowRadius: 8,
-    elevation: 3,
-  },
-  categoryIconWrap: {
+  categoryChipIconWrap: {
     width: 48,
     height: 48,
-    borderRadius: Radius.md,
-    backgroundColor: Colors.border,
+    borderRadius: Radius.full,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  categoryIconWrapActive: {
-    backgroundColor: Colors.primary,
-  },
-  categoryLabel: {
+  categoryChipLabel: {
     fontFamily: FontFamily.bodySemiBold,
-    fontSize: 10,
-    color: Colors.inkMuted,
+    fontSize: 12,
+    color: Colors.ink,
     textAlign: 'center',
-    letterSpacing: 0.6,
   },
-  categoryLabelActive: {
-    color: Colors.primary,
-    fontFamily: FontFamily.headlineBold,
+  categoryChipLabelActive: {
+    color: Colors.onPrimary,
   },
 
   // Loading / empty

@@ -6,7 +6,6 @@ import {
   Pressable,
   StyleSheet,
   ActivityIndicator,
-  useWindowDimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -49,7 +48,6 @@ const THUMB_ICONS: Array<keyof typeof MaterialIcons.glyphMap> = [
 
 export default function ProviderReviewsScreen() {
   const { userId } = useLocalSearchParams<{ userId?: string; name?: string }>();
-  const { width } = useWindowDimensions();
 
   const [data, setData] = useState<ProviderReviews | null>(null);
   const [loading, setLoading] = useState(true);
@@ -62,12 +60,6 @@ export default function ProviderReviewsScreen() {
       .catch(() => setData(null))
       .finally(() => setLoading(false));
   }, [userId]);
-
-  // bar chart: right column width = total width - left column (rating) - gap
-  const HPAD   = Spacing.xl * 2;
-  const GAP    = Spacing.xxl;
-  const LEFT_W = 100;
-  const barW   = width - HPAD - GAP - LEFT_W;
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -101,23 +93,26 @@ export default function ProviderReviewsScreen() {
           contentContainerStyle={styles.scroll}
         >
 
-          {/* ── Summary card (2 colunas) ──────────────────────────────── */}
+          {/* ── Summary card (vertical) ───────────────────────────────── */}
           <View style={styles.summaryCard}>
-            {/* Esquerda: nota grande + estrelas + contagem */}
-            <View style={styles.summaryLeft}>
+            {/* Nota + estrelas + total — centrado */}
+            <View style={styles.summaryTop}>
               <Text style={styles.ratingBig}>{data.avg_rating?.toFixed(1)}</Text>
               <View style={styles.starsRow}>
                 {[1, 2, 3, 4, 5].map(i => (
-                  <MaterialIcons key={i} name="star" size={20} color={Colors.primary} />
+                  <MaterialIcons key={i} name="star" size={22} color={Colors.primary} />
                 ))}
               </View>
               <Text style={styles.totalCount}>
-                {data.total_count} AVALIAÇÕES
+                {data.total_count} avaliações
               </Text>
             </View>
 
-            {/* Direita: barras de distribuição */}
-            <View style={[styles.summaryRight, { width: barW }]}>
+            {/* Separador */}
+            <View style={styles.summaryDivider} />
+
+            {/* Barras de distribuição — full width */}
+            <View style={styles.barsBlock}>
               {[5, 4, 3, 2, 1].map(star => {
                 const count = data.distribution[star] ?? 0;
                 const pct   = data.total_count > 0
@@ -126,9 +121,11 @@ export default function ProviderReviewsScreen() {
                 return (
                   <View key={star} style={styles.barRow}>
                     <Text style={styles.barNum}>{star}</Text>
+                    <MaterialIcons name="star" size={12} color={Colors.primary} />
                     <View style={styles.barTrack}>
                       <View style={[styles.barFill, { width: `${pct}%` as any }]} />
                     </View>
+                    <Text style={styles.barCount}>{count}</Text>
                   </View>
                 );
               })}
@@ -242,33 +239,33 @@ const styles = StyleSheet.create({
     gap: Spacing.xxl,
   },
 
-  // Summary card — 2 colunas
+  // Summary card — vertical
   summaryCard: {
     backgroundColor: Colors.card,
     borderRadius: 20, padding: Spacing.xl,
-    flexDirection: 'row', alignItems: 'center',
-    gap: Spacing.xxl,
+    gap: Spacing.xl,
     elevation: 1, shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.04, shadowRadius: 4,
   },
-  summaryLeft: {
-    width: 100, alignItems: 'center', gap: Spacing.xs,
-  },
+  summaryTop: { alignItems: 'center', gap: Spacing.sm },
   ratingBig: {
     fontFamily: FontFamily.headlineExtraBold,
-    fontSize: 56, color: Colors.ink, letterSpacing: -3,
+    fontSize: 64, color: Colors.ink, letterSpacing: -4, lineHeight: 68,
   },
-  starsRow: { flexDirection: 'row', gap: 2 },
+  starsRow: { flexDirection: 'row', gap: 3 },
   totalCount: {
     fontFamily: FontFamily.bodyMedium,
-    fontSize: 9, color: Colors.inkMuted,
-    letterSpacing: 1, textAlign: 'center',
+    fontSize: 13, color: Colors.inkMuted,
   },
-  summaryRight: { gap: Spacing.sm },
+  summaryDivider: {
+    height: 1, backgroundColor: Colors.border,
+    marginHorizontal: -Spacing.xl,
+  },
+  barsBlock: { gap: Spacing.md },
   barRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
   barNum: {
-    fontFamily: FontFamily.bodySemiBold,
-    fontSize: 12, color: Colors.inkMuted, width: 10,
+    fontFamily: FontFamily.headlineBold,
+    fontSize: 13, color: Colors.ink, width: 14, textAlign: 'right',
   },
   barTrack: {
     flex: 1, height: 8,
@@ -277,6 +274,10 @@ const styles = StyleSheet.create({
   },
   barFill: {
     height: '100%', backgroundColor: Colors.primary, borderRadius: Radius.full,
+  },
+  barCount: {
+    fontFamily: FontFamily.bodyMedium,
+    fontSize: 12, color: Colors.inkMuted, width: 28, textAlign: 'right',
   },
 
   // Filter header

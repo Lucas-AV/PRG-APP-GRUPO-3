@@ -250,23 +250,26 @@ export default function ProviderProfileScreen() {
             ) : (
               <>
                 <View style={styles.ratingCardContainer}>
-                  <View style={styles.ratingCardLeft}>
+                  <View style={styles.ratingCardTop}>
                     <Text style={styles.ratingBigNum}>{reviewData.avg_rating?.toFixed(1)}</Text>
                     <View style={styles.starsRow}>
-                      {[1,2,3,4,5].map(i => <MaterialIcons key={i} name="star" size={16} color="#f59e0b" />)}
+                      {[1,2,3,4,5].map(i => <MaterialIcons key={i} name="star" size={18} color="#f59e0b" />)}
                     </View>
                     <Text style={styles.ratingCardCount}>{reviewData.total_count} avaliações</Text>
                   </View>
-                  <View style={styles.ratingCardRight}>
+                  <View style={styles.summaryDivider} />
+                  <View style={styles.barsBlock}>
                     {[5,4,3,2,1].map(star => {
                       const count = reviewData.distribution?.[star] ?? 0;
                       const pct = reviewData.total_count > 0 ? (count / reviewData.total_count) * 100 : 0;
                       return (
                         <View key={star} style={styles.barRow}>
                           <Text style={styles.barNum}>{star}</Text>
+                          <MaterialIcons name="star" size={12} color="#f59e0b" />
                           <View style={styles.barTrack}>
                             <View style={[styles.barFill, { width: `${pct}%` as any }]} />
                           </View>
+                          <Text style={styles.barCount}>{count}</Text>
                         </View>
                       );
                     })}
@@ -417,15 +420,17 @@ const styles = StyleSheet.create({
   certText:            { flex: 1, gap: 2 },
   certTitle:           { fontFamily: FontFamily.headlineBold, fontSize: 14, color: Colors.ink },
   certSubtitle:        { fontFamily: FontFamily.bodyRegular, fontSize: 12, color: Colors.inkMuted, lineHeight: 17 },
-  ratingCardContainer: { flexDirection: 'row', backgroundColor: Colors.card, borderRadius: Radius.lg, padding: Spacing.xl, alignItems: 'center', gap: Spacing.xxl },
-  ratingCardLeft:      { alignItems: 'center', gap: Spacing.xs, width: 100 },
-  ratingCardRight:     { flex: 1, gap: Spacing.sm },
+  ratingCardContainer: { backgroundColor: Colors.card, borderRadius: Radius.lg, padding: Spacing.xl, gap: Spacing.xl, elevation: 1, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.04, shadowRadius: 4 },
+  ratingCardTop:       { alignItems: 'center', gap: Spacing.sm },
+  summaryDivider:      { height: 1, backgroundColor: Colors.border, marginHorizontal: -Spacing.xl },
+  barsBlock:           { gap: Spacing.md },
   barRow:              { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
-  barNum:              { fontFamily: FontFamily.bodySemiBold, fontSize: 12, color: Colors.inkMuted, width: 10 },
+  barNum:              { fontFamily: FontFamily.headlineBold, fontSize: 13, color: Colors.ink, width: 14, textAlign: 'right' },
   barTrack:            { flex: 1, height: 8, backgroundColor: Colors.border, borderRadius: Radius.full, overflow: 'hidden' },
   barFill:             { height: '100%', backgroundColor: Colors.primary, borderRadius: Radius.full },
-  ratingBigNum:        { fontFamily: FontFamily.headlineExtraBold, fontSize: 56, color: Colors.ink, letterSpacing: -3 },
-  starsRow:            { flexDirection: 'row', gap: 2 },
+  barCount:            { fontFamily: FontFamily.bodyMedium, fontSize: 12, color: Colors.inkMuted, width: 28, textAlign: 'right' },
+  ratingBigNum:        { fontFamily: FontFamily.headlineExtraBold, fontSize: 64, color: Colors.ink, letterSpacing: -4, lineHeight: 68 },
+  starsRow:            { flexDirection: 'row', gap: 3 },
   ratingCardCount:     { fontFamily: FontFamily.bodyRegular, fontSize: 13, color: Colors.inkMuted },
   reviewCard:          { backgroundColor: Colors.card, borderRadius: Radius.md, padding: Spacing.base, gap: Spacing.xs },
   reviewCardHeader:    { flexDirection: 'row', alignItems: 'center', gap: Spacing.md, marginBottom: Spacing.sm },
