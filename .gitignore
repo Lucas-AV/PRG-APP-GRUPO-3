@@ -52,3 +52,10 @@ conecta-backend/db/*.db-wal
 conecta-backend/db/*.db-shm
 conecta-app/conecta-app.code-workspace
 conecta-app/.mcp.json
+
+# backend uploads (arquivos enviados pelos usuários)
+conecta-backend/uploads/*
+!conecta-backend/uploads/.gitkeep
+
+# backend env (credenciais MercadoPago etc.)
+conecta-backend/.env
