@@ -52,18 +52,31 @@ export default function Step1Screen() {
   const badge = isPrestador ? 'Passo 1 de 5' : 'Passo 1 de 3';
 
   const handleContinue = async () => {
-    if (user && token && name.trim() && name.trim() !== user.name) {
-      setSaving(true);
-      try {
-        const updated = await usersApi.update(user.id, { name: name.trim() }, token);
-        await updateUser(updated);
-      } catch {
-        // silently continue — user can update later in edit-profile
-      } finally {
-        setSaving(false);
-      }
+    const trimmedName = name.trim();
+    if (!trimmedName) {
+      Alert.alert('Atenção', 'O campo Nome Completo é obrigatório.');
+      return;
     }
-    router.push({ pathname: '/(onboarding)/step2', params: { role } });
+    setSaving(true);
+    try {
+      if (user && token) {
+        const updated = await usersApi.update(
+          user.id,
+          {
+            name: trimmedName,
+            role: role as any,
+            ...(isPrestador && specialty.trim() ? { specialties: specialty.trim() } : {}),
+          },
+          token
+        );
+        await updateUser(updated);
+      }
+      router.push({ pathname: '/(onboarding)/step2', params: { role } });
+    } catch (e: any) {
+      Alert.alert('Erro', e.message ?? 'Não foi possível salvar os dados. Tente novamente.');
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (

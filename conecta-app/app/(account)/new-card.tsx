@@ -8,6 +8,8 @@ import {
   Switch,
   Alert,
   Dimensions,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -87,11 +89,16 @@ export default function NewCardScreen() {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <TopAppBar title="Adicionar Cartão" />
-      <ScrollView
-        contentContainerStyle={styles.scroll}
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
       >
+        <ScrollView
+          contentContainerStyle={styles.scroll}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
         {/* Live card preview */}
         <LinearGradient
           colors={['#0054d6', '#003894']}
@@ -214,7 +221,8 @@ export default function NewCardScreen() {
 
           <GradientButton label={loading ? 'Salvando...' : 'Salvar Cartão'} onPress={handleSave} />
         </View>
-      </ScrollView>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }

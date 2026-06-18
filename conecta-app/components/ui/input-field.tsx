@@ -31,6 +31,7 @@ interface InputFieldProps {
   numberOfLines?: number;
   errorMessage?: string;
   maxLength?: number;
+  onBlur?: () => void;
 }
 
 export const InputField = React.forwardRef<TextInput, InputFieldProps>(({
@@ -47,6 +48,7 @@ export const InputField = React.forwardRef<TextInput, InputFieldProps>(({
   numberOfLines,
   errorMessage,
   maxLength,
+  onBlur,
 }, ref) => {
   const [showPassword, setShowPassword] = useState(false);
   const [focused, setFocused] = useState(false);
@@ -103,6 +105,7 @@ export const InputField = React.forwardRef<TextInput, InputFieldProps>(({
     if (!errorMessage) {
       borderProgress.value = withTiming(0, { duration: 200 });
     }
+    onBlur?.();
   };
 
   return (

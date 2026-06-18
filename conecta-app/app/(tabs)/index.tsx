@@ -19,7 +19,7 @@ import { useAuth } from '@/context/AuthContext';
 import { publicServicesApi, PublicService } from '@/services/api';
 import { useTranslation } from 'react-i18next';
 import { AvatarInitials } from '@/components/ui/avatar-initials';
-import { ProviderHomeScreen } from './home-provider';
+import { ProviderHomeScreen } from './_home-provider';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 

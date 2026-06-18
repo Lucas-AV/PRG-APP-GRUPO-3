@@ -160,10 +160,24 @@ router.get('/provider/:userId/profile', (req, res) => {
     "SELECT COUNT(*) as count FROM appointments WHERE provider_id = ? AND status = 'concluido'"
   ).get(userId);
 
+  let specialties = [];
+  try {
+    specialties = user.specialties ? JSON.parse(user.specialties) : [];
+  } catch {
+    specialties = user.specialties ? [{ icon: 'build', label: user.specialties }] : [];
+  }
+
+  let certifications = [];
+  try {
+    certifications = user.certifications ? JSON.parse(user.certifications) : [];
+  } catch {
+    certifications = [];
+  }
+
   return res.json({
     ...user,
-    specialties: user.specialties ? JSON.parse(user.specialties) : [],
-    certifications: user.certifications ? JSON.parse(user.certifications) : [],
+    specialties,
+    certifications,
     completed_count: row ? row.count : 0,
   });
 });

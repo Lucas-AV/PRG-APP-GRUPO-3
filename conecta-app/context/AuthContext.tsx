@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import * as SecureStore from 'expo-secure-store';
-import { authApi, User } from '@/services/api';
+import { authApi, usersApi, User, onUnauthorized } from '@/services/api';
 
 interface AuthContextType {
   user: User | null;
@@ -27,14 +27,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    onUnauthorized(() => {
+      logout();
+    });
+
     (async () => {
       try {
         const storedToken = await SecureStore.getItemAsync('token');
         const storedUser = await SecureStore.getItemAsync('user');
         if (storedToken && storedUser) {
-          setToken(storedToken);
-          setUser(JSON.parse(storedUser));
+          let cleanToken = storedToken.trim();
+          if (cleanToken.startsWith('"') && cleanToken.endsWith('"')) {
+            cleanToken = cleanToken.slice(1, -1);
+          }
+          if (cleanToken !== 'null' && cleanToken !== 'undefined') {
+            setToken(cleanToken);
+            setUser(JSON.parse(storedUser));
+          } else {
+            // Limpa credenciais corrompidas do armazenamento
+            await SecureStore.deleteItemAsync('token');
+            await SecureStore.deleteItemAsync('user');
+          }
         }
+      } catch (e) {
+        console.warn('Erro ao restaurar a sessão:', e);
       } finally {
         setIsLoading(false);
       }
@@ -42,9 +58,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const persist = async (newToken: string, newUser: User) => {
-    await SecureStore.setItemAsync('token', newToken);
+    let cleanToken = newToken;
+    if (cleanToken && typeof cleanToken === 'string') {
+      cleanToken = cleanToken.trim();
+      if (cleanToken.startsWith('"') && cleanToken.endsWith('"')) {
+        cleanToken = cleanToken.slice(1, -1);
+      }
+    }
+    await SecureStore.setItemAsync('token', cleanToken);
     await SecureStore.setItemAsync('user', JSON.stringify(newUser));
-    setToken(newToken);
+    setToken(cleanToken);
     setUser(newUser);
   };
 
@@ -73,13 +96,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
   };
 
-  const updateUser = async (updated: User) => {
-    await SecureStore.setItemAsync('user', JSON.stringify(updated));
-    setUser(updated);
+  const updateUser = async (updated: User & { token?: string }) => {
+    const { token: newToken, ...userData } = updated;
+    await SecureStore.setItemAsync('user', JSON.stringify(userData));
+    setUser(userData);
+    if (newToken) {
+      await SecureStore.setItemAsync('token', newToken);
+      setToken(newToken);
+    }
   };
 
   const markOnboardingComplete = async () => {
-    if (!user) return;
+    if (!user || !token) return;
+    try {
+      const updated = await usersApi.update(user.id, { onboarding_completed: true } as any, token);
+      await updateUser(updated);
+    } catch (e) {
+      console.warn('Erro ao salvar onboarding_completed no backend:', e);
+    }
     await SecureStore.setItemAsync(`onboarding_${user.id}`, 'true');
   };
 

@@ -1,5 +1,11 @@
 import { API_BASE_URL } from '@/constants/config';
 
+let onUnauthorizedCallback: (() => void) | null = null;
+
+export function onUnauthorized(callback: () => void) {
+  onUnauthorizedCallback = callback;
+}
+
 async function request<T>(
   path: string,
   options: RequestInit = {},
@@ -9,11 +15,23 @@ async function request<T>(
     'Content-Type': 'application/json',
     ...(options.headers as Record<string, string>),
   };
-  if (token) headers['Authorization'] = `Bearer ${token}`;
+  
+  if (token && token !== 'null' && token !== 'undefined') {
+    let cleanToken = token.trim();
+    if (cleanToken.startsWith('"') && cleanToken.endsWith('"')) {
+      cleanToken = cleanToken.slice(1, -1);
+    }
+    headers['Authorization'] = `Bearer ${cleanToken}`;
+  }
 
   const res = await fetch(`${API_BASE_URL}${path}`, { ...options, headers });
   const data = await res.json();
-  if (!res.ok) throw new Error(data.error ?? data.message ?? 'Erro desconhecido');
+  if (!res.ok) {
+    if (res.status === 401) {
+      if (onUnauthorizedCallback) onUnauthorizedCallback();
+    }
+    throw new Error(data.error ?? data.message ?? 'Erro desconhecido');
+  }
   return data as T;
 }
 
@@ -26,6 +44,7 @@ export interface User {
   phone?: string;
   role: 'cliente' | 'prestador';
   avatar?: string;
+  onboarding_completed?: boolean;
 }
 
 export interface AuthResponse {
@@ -118,7 +137,19 @@ export interface Address {
 // ── Users ─────────────────────────────────────────────────────────────────────
 
 export const usersApi = {
-  update: (id: number, data: { name?: string; email?: string; phone?: string }, token: string) =>
+  update: (
+    id: number,
+    data: {
+      name?: string;
+      email?: string;
+      phone?: string;
+      role?: string;
+      onboarding_completed?: boolean;
+      specialties?: string;
+      bio?: string;
+    },
+    token: string
+  ) =>
     request<User>(`/users/${id}`, {
       method: 'PUT',
       body: JSON.stringify(data),
@@ -253,6 +284,23 @@ export const subscriptionsApi = {
     request<Subscription>(`/users/${userId}/subscription`, {
       method: 'POST',
       body: JSON.stringify({ plan_id: planId }),
+    }, token),
+};
+
+// ── Coupons & Payments ────────────────────────────────────────────────────────
+export interface Coupon {
+  id: number;
+  code: string;
+  discount_percent: number | null;
+  discount_value: number | null;
+  description: string;
+}
+
+export const paymentsApi = {
+  validateCoupon: (code: string, token: string) =>
+    request<Coupon>('/payments/coupons/validate', {
+      method: 'POST',
+      body: JSON.stringify({ code }),
     }, token),
 };
 

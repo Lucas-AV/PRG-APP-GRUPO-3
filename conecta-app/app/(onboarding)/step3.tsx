@@ -11,6 +11,7 @@ import {
   ScrollView,
   TextInput,
   StyleSheet,
+  Alert,
 } from 'react-native';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -20,6 +21,8 @@ import { TopAppBar } from '@/components/ui/top-app-bar';
 import { ProgressBar } from '@/components/ui/progress-bar';
 import { GradientButton } from '@/components/ui/gradient-button';
 import { Colors, FontFamily, Spacing, Radius } from '@/constants/theme';
+import { useAuth } from '@/context/AuthContext';
+import { usersApi } from '@/services/api';
 
 const SERVICE_CHIPS = [
   { key: 'limpeza', label: 'Limpeza', icon: 'cleaning-services' as const },
@@ -32,10 +35,38 @@ const SERVICE_CHIPS = [
 
 export default function Step3Screen() {
   const { role } = useLocalSearchParams<{ role: string }>();
+  const { user, token, updateUser } = useAuth();
   const insets = useSafeAreaInsets();
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [experiences, setExperiences] = useState([{ jobTitle: '', jobDesc: '' }]);
   const [bio, setBio] = useState('');
+  const [saving, setSaving] = useState(false);
+
+  const handleContinue = async () => {
+    setSaving(true);
+    try {
+      if (user && token) {
+        const specialtiesStr = selectedServices
+          .map(k => SERVICE_CHIPS.find(c => c.key === k)?.label || k)
+          .join(', ');
+
+        const updated = await usersApi.update(
+          user.id,
+          {
+            specialties: specialtiesStr || undefined,
+            bio: bio.trim() || undefined,
+          },
+          token
+        );
+        await updateUser(updated);
+      }
+      router.push({ pathname: '/(onboarding)/step3b' as any, params: { role } });
+    } catch (e: any) {
+      Alert.alert('Erro', e.message ?? 'Não foi possível salvar os dados. Tente novamente.');
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const toggleService = (key: string) => {
     setSelectedServices((prev) =>
@@ -201,10 +232,9 @@ export default function Step3Screen() {
           <Text style={styles.draftLabel}>Salvar</Text>
         </Pressable>
         <GradientButton
-          label="Continuar →"
-          onPress={() =>
-            router.push({ pathname: '/(onboarding)/step3b' as any, params: { role } })
-          }
+          label={saving ? 'Salvando…' : 'Continuar →'}
+          onPress={handleContinue}
+          disabled={saving}
           style={styles.continueBtn}
         />
       </View>

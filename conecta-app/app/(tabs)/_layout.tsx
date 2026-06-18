@@ -5,15 +5,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useTranslation } from 'react-i18next';
 
 const TAB_BAR_STYLE = {
-  backgroundColor: Colors.card,
-  borderTopWidth: 1,
-  borderTopColor: Colors.border,
-  elevation: 8,
-  shadowColor: Colors.ink,
-  shadowOffset: { width: 0, height: -4 },
-  shadowOpacity: 0.06,
-  shadowRadius: 16,
-  height: 68,
+  display: 'none',
 } as const;
 
 const TAB_LABEL_STYLE = {

@@ -8,6 +8,8 @@ import {
   TextInput,
   Alert,
   ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -17,7 +19,7 @@ import { GradientButton } from '@/components/ui/gradient-button';
 import { TopAppBar } from '@/components/ui/top-app-bar';
 import { Colors, FontFamily, GradientColors, Spacing, Radius } from '@/constants/theme';
 import { useAuth } from '@/context/AuthContext';
-import { transactionsApi, Transaction, cardsApi, Card, subscriptionsApi } from '@/services/api';
+import { transactionsApi, Transaction, cardsApi, Card, subscriptionsApi, paymentsApi } from '@/services/api';
 import { useComingSoonAlert } from '@/hooks/useComingSoonAlert';
 
 
@@ -94,20 +96,32 @@ export default function PaymentsScreen() {
 
   const comingSoon = useComingSoonAlert();
 
-  const handleApplyCoupon = () => {
-    if (!couponCode.trim()) return;
-    setActiveCoupon({ code: couponCode.toUpperCase(), description: 'Cupom aplicado com sucesso.' });
-    setCouponCode('');
+  const handleApplyCoupon = async () => {
+    const trimmedCode = couponCode.trim();
+    if (!trimmedCode || !token) return;
+    try {
+      const coupon = await paymentsApi.validateCoupon(trimmedCode, token);
+      setActiveCoupon({ code: coupon.code, description: coupon.description });
+      Alert.alert('Cupom aplicado', `O cupom ${coupon.code} foi aplicado com sucesso!`);
+      setCouponCode('');
+    } catch (e: any) {
+      Alert.alert('Erro ao aplicar cupom', e.message ?? 'Código de cupom inválido.');
+    }
   };
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <TopAppBar title="Pagamentos" />
-      <ScrollView
-        contentContainerStyle={styles.scroll}
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
       >
+        <ScrollView
+          contentContainerStyle={styles.scroll}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
         {/* Plan subscription checkout */}
         {!!subscribe_plan_id && (
           <View style={styles.checkoutCard}>
@@ -265,7 +279,8 @@ export default function PaymentsScreen() {
             )}
           </View>
         </View>
-      </ScrollView>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
