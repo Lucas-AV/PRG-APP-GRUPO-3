@@ -37,23 +37,23 @@ const styles = StyleSheet.create({
   label: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 10,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     letterSpacing: 1.5,
   },
   percentage: {
     fontFamily: FontFamily.headlineExtraBold,
     fontSize: 13,
-    color: Colors.primary,
+    color: Colors.brand,
   },
   track: {
     height: 6,
-    backgroundColor: Colors.surfaceContainerHighest,
+    backgroundColor: Colors.border,
     borderRadius: Radius.full,
     overflow: 'hidden',
   },
   fill: {
     height: '100%',
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.brand,
     borderRadius: Radius.full,
   },
 });

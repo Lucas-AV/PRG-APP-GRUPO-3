@@ -63,7 +63,7 @@ function StarRow({ count }: { count: number }) {
           key={i}
           name="star"
           size={14}
-          color={i < count ? '#F59E0B' : Colors.outlineVariant}
+          color={i < count ? '#F59E0B' : Colors.border}
         />
       ))}
     </View>
@@ -116,13 +116,13 @@ export default function ViewServiceScreen() {
       <SafeAreaView style={styles.container} edges={['left', 'right']}>
         <View style={[styles.header, { paddingTop: insets.top }]}>
           <Pressable style={styles.backBtn} onPress={() => router.back()}>
-            <MaterialIcons name="arrow-back" size={24} color={Colors.onSurface} />
+            <MaterialIcons name="arrow-back" size={24} color={Colors.ink} />
           </Pressable>
           <Text style={styles.headerBrand}>Conecta</Text>
           <View style={{ width: 40 }} />
         </View>
         <View style={styles.errorState}>
-          <MaterialIcons name="error-outline" size={48} color={Colors.outlineVariant} />
+          <MaterialIcons name="error-outline" size={48} color={Colors.border} />
           <Text style={styles.errorText}>Serviço não encontrado.</Text>
         </View>
       </SafeAreaView>
@@ -139,9 +139,9 @@ export default function ViewServiceScreen() {
   const computedMetrics: Metric[] = apiMetrics
     ? [
         { icon: 'trending-up', label: 'Faturamento', value: `R$ ${apiMetrics.total_revenue.toLocaleString('pt-BR')}`, badge: 'Total', badgeColor: '#065F46', badgeBg: '#D1FAE5' },
-        { icon: 'event-available', label: 'Agendamentos', value: String(apiMetrics.total_bookings), badge: 'Total', badgeColor: Colors.onSurfaceVariant, badgeBg: Colors.surfaceContainerLow },
-        { icon: 'star', label: 'Nota Média', value: apiMetrics.avg_rating.toFixed(1), badge: '★ Top', badgeColor: Colors.primary, badgeBg: Colors.primaryContainer },
-        { icon: 'schedule', label: 'Resp. Média', value: '—', badge: 'Rápido', badgeColor: Colors.primary, badgeBg: Colors.primaryContainer },
+        { icon: 'event-available', label: 'Agendamentos', value: String(apiMetrics.total_bookings), badge: 'Total', badgeColor: Colors.inkMuted, badgeBg: Colors.card },
+        { icon: 'star', label: 'Nota Média', value: apiMetrics.avg_rating.toFixed(1), badge: '★ Top', badgeColor: Colors.primary, badgeBg: Colors.brand + '15' },
+        { icon: 'schedule', label: 'Resp. Média', value: '—', badge: 'Rápido', badgeColor: Colors.primary, badgeBg: Colors.brand + '15' },
       ]
     : [];
 
@@ -157,11 +157,11 @@ export default function ViewServiceScreen() {
       {/* Header */}
       <View style={[styles.header, { paddingTop: insets.top }]}>
         <Pressable style={styles.backBtn} onPress={() => router.back()}>
-          <MaterialIcons name="arrow-back" size={24} color={Colors.onSurface} />
+          <MaterialIcons name="arrow-back" size={24} color={Colors.ink} />
         </Pressable>
         <Text style={styles.headerBrand}>Conecta</Text>
         <Pressable style={styles.headerIconBtn}>
-          <MaterialIcons name="notifications" size={24} color={Colors.onSurfaceVariant} />
+          <MaterialIcons name="notifications" size={24} color={Colors.inkMuted} />
         </Pressable>
       </View>
 
@@ -211,10 +211,10 @@ export default function ViewServiceScreen() {
             <View style={styles.statusToggleRow}>
               <Switch
                 value={isActive}
-                trackColor={{ false: Colors.outlineVariant, true: Colors.primary }}
-                thumbColor={Colors.surfaceContainerLowest}
+                trackColor={{ false: Colors.border, true: Colors.primary }}
+                thumbColor="#ffffff"
               />
-              <Text style={[styles.statusLabel, { color: isActive ? Colors.primary : Colors.outline }]}>
+              <Text style={[styles.statusLabel, { color: isActive ? Colors.primary : Colors.inkMuted }]}>
                 {isActive ? 'Ativo' : 'Inativo'}
               </Text>
             </View>
@@ -271,7 +271,7 @@ export default function ViewServiceScreen() {
 
           {displayedReviews.length === 0 ? (
             <View style={styles.emptyCard}>
-              <MaterialIcons name="star-border" size={32} color={Colors.outlineVariant} />
+              <MaterialIcons name="star-border" size={32} color={Colors.border} />
               <Text style={styles.emptyText}>Nenhuma avaliação ainda.</Text>
             </View>
           ) : (
@@ -280,7 +280,7 @@ export default function ViewServiceScreen() {
                 <View style={styles.reviewHeader}>
                   <View style={styles.reviewAuthorRow}>
                     <View style={styles.reviewAvatar}>
-                      <MaterialIcons name="person" size={20} color={Colors.onSurfaceVariant} />
+                      <MaterialIcons name="person" size={20} color={Colors.inkMuted} />
                     </View>
                     <View>
                       <Text style={styles.reviewName}>{review.name}</Text>
@@ -307,7 +307,7 @@ export default function ViewServiceScreen() {
                       styles.bar,
                       {
                         height: (pct / 100) * maxBar,
-                        backgroundColor: i === peakIdx && hasWeeklyData ? Colors.primary : Colors.surfaceContainerHighest,
+                        backgroundColor: i === peakIdx && hasWeeklyData ? Colors.primary : Colors.border,
                       },
                     ]}
                   />
@@ -341,7 +341,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.xl,
     paddingBottom: Spacing.base,
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.04,
@@ -378,7 +378,7 @@ const styles = StyleSheet.create({
   errorText: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 14,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
 
   scroll: { flex: 1 },
@@ -423,13 +423,13 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.headlineExtraBold,
     fontSize: 26,
     letterSpacing: -0.8,
-    color: Colors.onSurface,
+    color: Colors.ink,
     lineHeight: 32,
   },
   heroDesc: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 13,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     lineHeight: 19,
   },
   editHeroBtn: {
@@ -458,7 +458,7 @@ const styles = StyleSheet.create({
   // Card
   card: {
     marginHorizontal: Spacing.xl,
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.xl,
     padding: Spacing.xxl,
     gap: Spacing.xxl,
@@ -471,7 +471,7 @@ const styles = StyleSheet.create({
   cardSectionTitle: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 16,
-    color: Colors.onSurface,
+    color: Colors.ink,
     letterSpacing: -0.3,
   },
   statusRow: {
@@ -493,7 +493,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: Colors.surfaceContainerLow,
+    backgroundColor: Colors.card,
     borderRadius: Radius.md,
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
@@ -506,12 +506,12 @@ const styles = StyleSheet.create({
   infoRowLabel: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 13,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   infoRowValue: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 14,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
 
   // Metrics
@@ -523,7 +523,7 @@ const styles = StyleSheet.create({
   },
   metricCard: {
     width: '47%',
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.xl,
     padding: Spacing.xxl,
     gap: Spacing.sm,
@@ -543,7 +543,7 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: Radius.md,
-    backgroundColor: Colors.primaryContainer,
+    backgroundColor: Colors.brand + '15',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -560,7 +560,7 @@ const styles = StyleSheet.create({
   metricLabel: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 10,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     letterSpacing: 1,
     textTransform: 'uppercase',
   },
@@ -568,7 +568,7 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.headlineExtraBold,
     fontSize: 22,
     letterSpacing: -0.6,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
 
   // Section
@@ -585,7 +585,7 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.headlineExtraBold,
     fontSize: 20,
     letterSpacing: -0.5,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   sectionLink: {
     fontFamily: FontFamily.headlineBold,
@@ -599,18 +599,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: Spacing.sm,
     paddingVertical: Spacing.xxxl,
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.xl,
   },
   emptyText: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 13,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
 
   // Review card
   reviewCard: {
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.xl,
     padding: Spacing.xxl,
     gap: Spacing.base,
@@ -636,25 +636,25 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: Colors.surfaceContainerHigh,
+    backgroundColor: Colors.card,
     alignItems: 'center',
     justifyContent: 'center',
   },
   reviewName: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 14,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   reviewDate: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 11,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     marginTop: 2,
   },
   reviewText: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 13,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     lineHeight: 20,
     fontStyle: 'italic',
   },
@@ -665,7 +665,7 @@ const styles = StyleSheet.create({
 
   // Chart
   chartCard: {
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.xl,
     padding: Spacing.xxl,
     shadowColor: '#000',
@@ -701,7 +701,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily: FontFamily.headlineBold,
     fontSize: 9,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     letterSpacing: 0.5,
     textTransform: 'uppercase',
   },
@@ -711,12 +711,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: Spacing.base,
     borderTopWidth: 1,
-    borderTopColor: Colors.surfaceContainerHighest,
+    borderTopColor: Colors.border,
   },
   chartFooterLabel: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 13,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
   chartFooterValue: {
     fontFamily: FontFamily.headlineBold,

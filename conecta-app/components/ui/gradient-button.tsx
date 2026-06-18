@@ -1,5 +1,7 @@
-import { Pressable, Text, StyleSheet, ViewStyle } from 'react-native';
+import { Pressable, Text, StyleSheet, ViewStyle, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import Animated, { useSharedValue, withSpring, useAnimatedStyle } from 'react-native-reanimated';
+import * as Haptics from 'expo-haptics';
 import { Colors, FontFamily, GradientColors, Radius, Spacing } from '@/constants/theme';
 
 interface GradientButtonProps {
@@ -7,39 +9,62 @@ interface GradientButtonProps {
   onPress: () => void;
   style?: ViewStyle;
   disabled?: boolean;
+  loading?: boolean;
 }
 
-export function GradientButton({ label, onPress, style, disabled }: GradientButtonProps) {
+export function GradientButton({ label, onPress, style, disabled, loading }: GradientButtonProps) {
+  const scale = useSharedValue(1);
+  const animStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
+
+  const handlePressIn = () => {
+    scale.value = withSpring(0.97, { damping: 15, stiffness: 300 });
+  };
+
+  const handlePressOut = () => {
+    scale.value = withSpring(1.0, { damping: 15, stiffness: 300 });
+  };
+
+  const handlePress = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    onPress();
+  };
+
   return (
-    <Pressable
-      onPress={onPress}
-      disabled={disabled}
-      style={({ pressed }) => [
-        styles.wrapper,
-        style,
-        pressed && styles.pressed,
-        disabled && styles.disabled,
-      ]}
-    >
-      <LinearGradient
-        colors={GradientColors}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.gradient}
+    <Animated.View style={[animStyle, style]}>
+      <Pressable
+        onPress={handlePress}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+        disabled={disabled || loading}
+        style={[
+          styles.wrapper,
+          (disabled || loading) && styles.disabled,
+        ]}
       >
-        <Text style={styles.label}>{label}</Text>
-      </LinearGradient>
-    </Pressable>
+        <LinearGradient
+          colors={GradientColors}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.gradient}
+        >
+          {loading ? (
+            <ActivityIndicator size="small" color={Colors.onPrimary} />
+          ) : (
+            <Text style={styles.label}>{label}</Text>
+          )}
+        </LinearGradient>
+      </Pressable>
+    </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
   wrapper: {
-    borderRadius: Radius.sm,
+    borderRadius: Radius.lg,
     overflow: 'hidden',
-    shadowColor: Colors.primary,
+    shadowColor: Colors.brand,
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
+    shadowOpacity: 0.28,
     shadowRadius: 8,
     elevation: 6,
   },
@@ -55,11 +80,7 @@ const styles = StyleSheet.create({
     color: Colors.onPrimary,
     letterSpacing: 0.2,
   },
-  pressed: {
-    transform: [{ scale: 0.98 }],
-    opacity: 0.92,
-  },
   disabled: {
-    opacity: 0.5,
+    opacity: 0.45,
   },
 });

@@ -91,7 +91,7 @@ export default function PlansScreen() {
         </View>
 
         {loading ? (
-          <ActivityIndicator size="large" color={Colors.primary} style={{ marginTop: Spacing.xxxl }} />
+          <ActivityIndicator size="large" color={Colors.brand} style={{ marginTop: Spacing.xxxl }} />
         ) : tab === 'cliente' ? (
           <ClientTab
             freePlan={freePlan}
@@ -172,7 +172,7 @@ function ClientTab({ freePlan, premiumPlan, subscription, activePlanId, onSubscr
           <View style={tabs.premiumCard}>
             <View style={tabs.premiumLeft}>
               <View style={tabs.premiumHeader}>
-                <MaterialIcons name="workspace-premium" size={22} color={Colors.primary} />
+                <MaterialIcons name="workspace-premium" size={22} color={Colors.brand} />
                 <Text style={tabs.premiumName}>{premiumPlan.name}</Text>
               </View>
               <View style={tabs.premiumPrice}>
@@ -196,7 +196,7 @@ function ClientTab({ freePlan, premiumPlan, subscription, activePlanId, onSubscr
           {/* Support bento card */}
           <View style={tabs.supportCard}>
             <View style={tabs.supportIcon}>
-              <MaterialIcons name="support-agent" size={24} color={Colors.primary} />
+              <MaterialIcons name="support-agent" size={24} color={Colors.brand} />
             </View>
             <Text style={tabs.supportTitle}>Suporte Prioritário</Text>
             <Text style={tabs.supportSub}>Atendimento em menos de 5 minutos via chat direto no app.</Text>
@@ -263,7 +263,7 @@ function WorkerTab({ freePlan, premiumPlan, subscription, activePlanId, onSubscr
 
           <View style={tabs.eliteHeader}>
             <Text style={tabs.eliteTitle}>{premiumPlan.name}</Text>
-            <MaterialIcons name="verified" size={28} color={Colors.primary} />
+            <MaterialIcons name="verified" size={28} color={Colors.brand} />
           </View>
           <Text style={tabs.eliteSub}>O plano definitivo para profissionais que buscam escala e autoridade no mercado.</Text>
 
@@ -298,13 +298,13 @@ function WorkerTab({ freePlan, premiumPlan, subscription, activePlanId, onSubscr
           <View style={tabs.compareHeader}>
             <Text style={[tabs.compareColHead, { flex: 2 }]}>BENEFÍCIO</Text>
             <Text style={tabs.compareColHead}>BÁSICO</Text>
-            <Text style={[tabs.compareColHead, { color: Colors.primary }]}>ELITE PRO</Text>
+            <Text style={[tabs.compareColHead, { color: Colors.brand }]}>ELITE PRO</Text>
           </View>
           {COMPARE_ROWS.map((row, idx) => (
             <View key={row.benefit} style={[tabs.compareRow, idx < COMPARE_ROWS.length - 1 && tabs.compareRowBorder]}>
               <Text style={[tabs.compareCell, { flex: 2 }]}>{row.benefit}</Text>
               <Text style={tabs.compareCell}>{row.basic}</Text>
-              <Text style={[tabs.compareCell, { color: Colors.primary, fontFamily: FontFamily.bodySemiBold }]}>{row.elite}</Text>
+              <Text style={[tabs.compareCell, { color: Colors.brand, fontFamily: FontFamily.bodySemiBold }]}>{row.elite}</Text>
             </View>
           ))}
         </View>
@@ -316,20 +316,20 @@ function WorkerTab({ freePlan, premiumPlan, subscription, activePlanId, onSubscr
 function PlanFeature({ label }: { label: string }) {
   return (
     <View style={feat.row}>
-      <MaterialIcons name="check-circle" size={18} color={Colors.primary} />
+      <MaterialIcons name="check-circle" size={18} color={Colors.brand} />
       <Text style={feat.label}>{label}</Text>
     </View>
   );
 }
 const feat = StyleSheet.create({
   row: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
-  label: { fontFamily: FontFamily.bodyRegular, fontSize: 13, color: Colors.onSurface },
+  label: { fontFamily: FontFamily.bodyRegular, fontSize: 13, color: Colors.ink },
 });
 
 function PremiumFeature({ icon, title, sub }: { icon: keyof typeof MaterialIcons.glyphMap; title: string; sub: string }) {
   return (
     <View style={pf.row}>
-      <MaterialIcons name={icon} size={20} color={Colors.primary} />
+      <MaterialIcons name={icon} size={20} color={Colors.brand} />
       <View>
         <Text style={pf.title}>{title}</Text>
         {!!sub && <Text style={pf.sub}>{sub}</Text>}
@@ -339,28 +339,28 @@ function PremiumFeature({ icon, title, sub }: { icon: keyof typeof MaterialIcons
 }
 const pf = StyleSheet.create({
   row: { flexDirection: 'row', gap: Spacing.md, alignItems: 'flex-start' },
-  title: { fontFamily: FontFamily.bodySemiBold, fontSize: 13, color: Colors.onSurface },
-  sub: { fontFamily: FontFamily.bodyRegular, fontSize: 12, color: Colors.onSurfaceVariant },
+  title: { fontFamily: FontFamily.bodySemiBold, fontSize: 13, color: Colors.ink },
+  sub: { fontFamily: FontFamily.bodyRegular, fontSize: 12, color: Colors.inkMuted },
 });
 
 function WorkerFeature({ icon, label }: { icon: keyof typeof MaterialIcons.glyphMap; label: string }) {
   return (
     <View style={wf.row}>
-      <MaterialIcons name={icon} size={20} color={Colors.primary} />
+      <MaterialIcons name={icon} size={20} color={Colors.brand} />
       <Text style={wf.label}>{label}</Text>
     </View>
   );
 }
 const wf = StyleSheet.create({
   row: { flexDirection: 'row', alignItems: 'center', gap: Spacing.md },
-  label: { fontFamily: FontFamily.bodyRegular, fontSize: 13, color: Colors.onSurfaceVariant },
+  label: { fontFamily: FontFamily.bodyRegular, fontSize: 13, color: Colors.inkMuted },
 });
 
 function EliteFeature({ icon, label }: { icon: keyof typeof MaterialIcons.glyphMap; label: string }) {
   return (
     <View style={ef.row}>
       <View style={ef.iconWrap}>
-        <MaterialIcons name={icon} size={18} color={Colors.primary} />
+        <MaterialIcons name={icon} size={18} color={Colors.brand} />
       </View>
       <Text style={ef.label}>{label}</Text>
     </View>
@@ -372,11 +372,11 @@ const ef = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: Colors.primaryContainer,
+    backgroundColor: Colors.brand + '12',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  label: { flex: 1, fontFamily: FontFamily.bodyMedium, fontSize: 13, color: Colors.onSurface },
+  label: { flex: 1, fontFamily: FontFamily.bodyMedium, fontSize: 13, color: Colors.ink },
 });
 
 const tabs = StyleSheet.create({
@@ -384,11 +384,13 @@ const tabs = StyleSheet.create({
 
   // Client tab
   planCard: {
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.lg,
     padding: Spacing.xxl,
     gap: Spacing.xl,
-    shadowColor: '#000',
+    borderWidth: 2,
+    borderColor: Colors.brand,
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.04,
     shadowRadius: 20,
@@ -401,41 +403,41 @@ const tabs = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     paddingVertical: 4,
     borderRadius: Radius.full,
-    backgroundColor: Colors.primaryContainer,
+    backgroundColor: Colors.brand + '12',
   },
   planBadgeText: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 9,
-    color: Colors.primary,
+    color: Colors.brand,
     letterSpacing: 1.5,
   },
   planTitle: {
     fontFamily: FontFamily.headlineExtraBold,
     fontSize: 32,
-    color: Colors.onSurface,
+    color: Colors.ink,
     letterSpacing: -1,
   },
   planSub: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 13,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
   planFeatures: { gap: Spacing.sm },
   manageBtn: {
     alignSelf: 'flex-start',
     paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.xl,
-    backgroundColor: Colors.secondaryContainer,
+    backgroundColor: Colors.brand + '12',
     borderRadius: Radius.sm,
     marginTop: Spacing.sm,
   },
   manageBtnLabel: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 13,
-    color: Colors.onSecondaryContainer,
+    color: Colors.brand,
   },
   planStats: {
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.brand,
     borderRadius: Radius.md,
     padding: Spacing.xl,
     gap: Spacing.xs,
@@ -443,13 +445,13 @@ const tabs = StyleSheet.create({
   planStatsNumber: {
     fontFamily: FontFamily.headlineExtraBold,
     fontSize: 36,
-    color: Colors.onPrimary,
+    color: '#ffffff',
     letterSpacing: -1,
   },
   planStatsLabel: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 9,
-    color: Colors.onPrimary + 'B3',
+    color: '#ffffffB3',
     letterSpacing: 2,
     textTransform: 'uppercase',
   },
@@ -458,16 +460,16 @@ const tabs = StyleSheet.create({
   upgradeTitle: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 22,
-    color: Colors.onSurface,
+    color: Colors.ink,
     letterSpacing: -0.5,
   },
   premiumCard: {
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.lg,
     padding: Spacing.xxl,
     borderWidth: 1,
-    borderColor: Colors.primary + '1A',
-    shadowColor: '#000',
+    borderColor: Colors.border,
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.03,
     shadowRadius: 12,
@@ -478,36 +480,38 @@ const tabs = StyleSheet.create({
   premiumName: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 18,
-    color: Colors.primary,
+    color: Colors.brand,
     letterSpacing: -0.3,
   },
   premiumPrice: { flexDirection: 'row', alignItems: 'baseline', gap: 4 },
   premiumAmount: {
     fontFamily: FontFamily.headlineExtraBold,
     fontSize: 34,
-    color: Colors.onSurface,
+    color: Colors.ink,
     letterSpacing: -1,
   },
   premiumPeriod: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 13,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
   premiumFeatures: { gap: Spacing.base },
   supportCard: {
-    backgroundColor: Colors.surfaceContainerHigh,
+    backgroundColor: Colors.card,
     borderRadius: Radius.lg,
     padding: Spacing.xl,
     gap: Spacing.md,
+    borderWidth: 1,
+    borderColor: Colors.border,
   },
   supportIcon: {
     width: 48,
     height: 48,
     borderRadius: Radius.md,
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.brand + '12',
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#000',
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.04,
     shadowRadius: 6,
@@ -516,21 +520,21 @@ const tabs = StyleSheet.create({
   supportTitle: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 18,
-    color: Colors.onSurface,
+    color: Colors.ink,
     letterSpacing: -0.3,
   },
   supportSub: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 13,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     lineHeight: 20,
   },
   providerTeaser: {
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.lg,
     padding: Spacing.base,
     borderWidth: 1,
-    borderColor: Colors.outlineVariant + '1A',
+    borderColor: Colors.border,
   },
   providerLeft: { flexDirection: 'row', alignItems: 'center', gap: Spacing.base },
   providerIconWrap: {
@@ -544,21 +548,21 @@ const tabs = StyleSheet.create({
   providerTitle: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 13,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   providerSub: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 12,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
 
   // Worker tab
   workerCurrentCard: {
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.lg,
     padding: Spacing.xxl,
     gap: Spacing.base,
-    shadowColor: '#000',
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.04,
     shadowRadius: 20,
@@ -567,13 +571,13 @@ const tabs = StyleSheet.create({
   workerCurrentMeta: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 9,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     letterSpacing: 2,
   },
   workerCurrentTitle: {
     fontFamily: FontFamily.headlineExtraBold,
     fontSize: 28,
-    color: Colors.onSurface,
+    color: Colors.ink,
     letterSpacing: -0.8,
   },
   workerCurrentFeatures: { gap: Spacing.md },
@@ -581,26 +585,26 @@ const tabs = StyleSheet.create({
     marginTop: Spacing.md,
     paddingTop: Spacing.base,
     borderTopWidth: 1,
-    borderTopColor: Colors.surfaceContainerHigh,
+    borderTopColor: Colors.border,
     gap: 2,
   },
   workerCostLabel: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 12,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   workerCostValue: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 22,
-    color: Colors.primary,
+    color: Colors.brand,
   },
   eliteCard: {
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.lg,
     padding: Spacing.xxl,
     gap: Spacing.xl,
     overflow: 'hidden',
-    shadowColor: '#000',
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.05,
     shadowRadius: 32,
@@ -622,13 +626,13 @@ const tabs = StyleSheet.create({
   eliteTitle: {
     fontFamily: FontFamily.headlineExtraBold,
     fontSize: 32,
-    color: Colors.onSurface,
+    color: Colors.ink,
     letterSpacing: -1,
   },
   eliteSub: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 14,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     lineHeight: 22,
   },
   eliteFeatures: { gap: Spacing.base },
@@ -636,51 +640,53 @@ const tabs = StyleSheet.create({
   elitePriceLabel: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 9,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     letterSpacing: 2,
   },
   elitePriceRow: { flexDirection: 'row', alignItems: 'baseline', gap: 4 },
   eliteCurrency: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 22,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   eliteAmount: {
     fontFamily: FontFamily.headlineExtraBold,
     fontSize: 48,
-    color: Colors.onSurface,
+    color: Colors.ink,
     letterSpacing: -2,
   },
   elitePeriod: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 13,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
 
   compareSection: { gap: Spacing.base },
   compareTitle: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 22,
-    color: Colors.onSurface,
+    color: Colors.ink,
     letterSpacing: -0.5,
   },
   compareCard: {
-    backgroundColor: Colors.surfaceContainerLow,
+    backgroundColor: Colors.card,
     borderRadius: Radius.lg,
     overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: Colors.border,
   },
   compareHeader: {
     flexDirection: 'row',
     paddingVertical: Spacing.base,
     paddingHorizontal: Spacing.base,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.surfaceContainerHigh,
+    borderBottomColor: Colors.border,
   },
   compareColHead: {
     flex: 1,
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 10,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     letterSpacing: 1.5,
     textTransform: 'uppercase',
     textAlign: 'center',
@@ -693,13 +699,13 @@ const tabs = StyleSheet.create({
   },
   compareRowBorder: {
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: Colors.surfaceContainerHigh,
+    borderBottomColor: Colors.border,
   },
   compareCell: {
     flex: 1,
     fontFamily: FontFamily.bodyMedium,
     fontSize: 13,
-    color: Colors.onSurface,
+    color: Colors.ink,
     textAlign: 'center',
   },
 });
@@ -714,7 +720,7 @@ const styles = StyleSheet.create({
   },
   segTrack: {
     flexDirection: 'row',
-    backgroundColor: Colors.surfaceContainerHighest,
+    backgroundColor: Colors.border,
     borderRadius: Radius.full,
     padding: 4,
   },
@@ -725,8 +731,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   segItemActive: {
-    backgroundColor: Colors.surfaceContainerLowest,
-    shadowColor: '#000',
+    backgroundColor: Colors.card,
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.06,
     shadowRadius: 4,
@@ -735,10 +741,10 @@ const styles = StyleSheet.create({
   segLabel: {
     fontFamily: FontFamily.bodyMedium,
     fontSize: 13,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
   segLabelActive: {
     fontFamily: FontFamily.bodySemiBold,
-    color: Colors.primary,
+    color: Colors.brand,
   },
 });

@@ -5,14 +5,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useTranslation } from 'react-i18next';
 
 const TAB_BAR_STYLE = {
-  backgroundColor: Colors.surfaceContainerLowest,
-  borderTopWidth: 0,
-  elevation: 8,
-  shadowColor: Colors.onSurface,
-  shadowOffset: { width: 0, height: -4 },
-  shadowOpacity: 0.06,
-  shadowRadius: 16,
-  height: 60,
+  display: 'none',
 } as const;
 
 const TAB_LABEL_STYLE = {
@@ -30,11 +23,12 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors.primary,
-        tabBarInactiveTintColor: Colors.onSurfaceVariant,
+        tabBarInactiveTintColor: Colors.inkMuted,
         headerShown: false,
         tabBarStyle: TAB_BAR_STYLE,
         tabBarLabelStyle: TAB_LABEL_STYLE,
-        tabBarItemStyle: { paddingVertical: 6 },
+        tabBarItemStyle: { paddingVertical: 8 },
+        tabBarActiveBackgroundColor: Colors.brand + '12',
       }}
     >
       {/* Início — visível para todos */}

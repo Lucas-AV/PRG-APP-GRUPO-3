@@ -8,17 +8,18 @@ import {
   StyleSheet,
   ActivityIndicator,
   useWindowDimensions,
-  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Colors, FontFamily, Spacing, Radius, GradientColors } from '@/constants/theme';
+import { Colors, FontFamily, Spacing, Radius } from '@/constants/theme';
 import { CATEGORIES } from '@/constants/categories';
 import { useAuth } from '@/context/AuthContext';
 import { publicServicesApi, PublicService } from '@/services/api';
 import { useTranslation } from 'react-i18next';
+import { AvatarInitials } from '@/components/ui/avatar-initials';
+import ProviderHomeScreen from './_home-provider';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -28,10 +29,8 @@ function formatPrice(service: PublicService): string {
   return `${prefix}R$ ${service.price.toFixed(2).replace('.', ',')}`;
 }
 
-const PROVIDER_IMAGES: string[] = [
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuDDYvz5DNWYKumUPqcHbsPW4oXDpyN1aawLRcHRWXFnuOg5IbdH_QwkwLBxdOAhh0GFR_iPArXrcN8FuD4YOTgAeTGDs-nA5PqLbrAnlI2WyVgvMTPkxWGMdA8AH1fkRh_5LJGI1T7jMSYhSaL8iHhLp2Ok5C5FToGPJZhYiHzgrL22wHUQJGUqTK8Z9Hx-xUHZJld_BFkBnM7Sf5tNlW-6AiozFaA7sCEv5QC5HI0dH82oVk2SVxf8NeMJjtrq1UNEqLqWaZlevTQ',
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuBdsI7AlRE5Y8UVf7NA4Y7MfRVlL6yrakbEXSHbtAe2NABe8NHpHos6BpYPvQmw68PequalsJ4b-c4v13-3Esc9awoEK4qFLhzidjdiqUUjUWFJThaDKPlunxSFFlW8PKwP0BnFuuxd8Le8HZDBPePA-ldtlc0bZm61cMj6k40b8N1LeHfi3ZAp02k3bxKTvU3mteNZHseJmnRkwrTcnDYiAldeI4yzR33uLMVW6_iSoUFqIj-V8PsHdsENtwG4HeePPKseNMbUqsM',
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuDl6nnS_1yci62TCyJKWdDJpTGso1WVbB7SWS1dFycbQNVK5VKGbo0KBHPdjVNy5WW_hAwlevHZC2Jt65vNkzznm4XRfsrzC4tN34SaMywsGDXjI89hizixuHhSRavg0MLl0kc0eDEMSFwlhXwrbiL_bgS_jeXETbmplm2OaP6v_-8AN-T7N9zl81nantEZUNLGjh-mW9Os3nlPAqyMjkJKmr0OVdGPoq1uIH-bGAriAi8INsKdO4sZkyfQFOArpBJqh04oPU6xaK4',
+const CARD_BG_COLORS = [
+  '#dbeafe', '#fce7f3', '#dcfce7', '#fef9c3', '#ede9fe',
 ];
 
 const QUICK_FILTERS = [
@@ -94,6 +93,18 @@ export default function HomeScreen() {
     fetchServices(next ?? undefined, searchText);
   };
 
+  const heroStats = useMemo(() => {
+    const rated = services.filter(s => s.avg_rating !== null);
+    const avgRating = rated.length > 0
+      ? (rated.reduce((sum, s) => sum + (s.avg_rating ?? 0), 0) / rated.length).toFixed(1)
+      : null;
+    return [
+      { value: services.length > 0 ? `${services.length}` : '—', label: t('feed.statServices') },
+      { value: avgRating ? `${avgRating}★` : '—',               label: t('feed.statRating') },
+      { value: String(CATEGORIES.length),                        label: t('feed.statCategories') },
+    ];
+  }, [services, t]);
+
   const featuredProviders = useMemo(() => {
     const seen = new Set<number>();
     return services.filter(s => {
@@ -132,21 +143,9 @@ export default function HomeScreen() {
     return result;
   }, [services, activeFilter, params.applied, params.sortBy, params.rating, params.priceRange]);
 
-  // ── Prestador placeholder ────────────────────────────────────────────────
+  // ── Dashboard do prestador ───────────────────────────────────────────────
   if (!isClient) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.placeholderContent}>
-          <View style={styles.placeholderIcon}>
-            <MaterialIcons name="home" size={48} color={Colors.primary} />
-          </View>
-          <Text style={styles.placeholderTitle}>Bem-vindo ao Conecta</Text>
-          <Text style={styles.placeholderSubtitle}>
-            A visão inicial do prestador estará disponível em breve.
-          </Text>
-        </View>
-      </SafeAreaView>
-    );
+    return <ProviderHomeScreen />;
   }
 
   // ── Hero header height ───────────────────────────────────────────────────
@@ -174,21 +173,20 @@ export default function HomeScreen() {
           <View style={styles.headerActions}>
             <Pressable
               style={styles.notifBtn}
-              onPress={() => {/* futura navegação para notificações */}}
+              onPress={() => router.push('/(account)/notifications' as any)}
             >
-              <MaterialIcons name="notifications-none" size={24} color={Colors.onSurfaceVariant} />
+              <MaterialIcons name="notifications-none" size={24} color={Colors.inkMuted} />
               {/* Badge de notificação */}
               <View style={styles.notifDot} />
             </Pressable>
-            <Pressable
-              style={styles.avatarBtn}
-              onPress={() => router.push('/(account)/edit-profile' as any)}
-            >
-              <Image
-                source={{ uri: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCLpzBr8xoiZIfx3nQl6rgfnJrO63XuAPxZqxoWileXY-SOSGzgPcHJrNNGcWNNnpOMDrzpWdT6-nLiwzsBt3svOUAZVBYr1qGQNUEBPGMgyidrQhKe8gsJ19q3HFCZK52EMjA29zrY8L1OuBHfMcvy8xzOybEIe9jeBHL9GEh873WU_C-PW13SgTUqZzv3JR1_TxG4ChqXxnLiHqjF9WuKZhYgKo8vLNEJS8T3dkYkVCqsqkk5vhiYgsiQfTUBH0uMxnVLGVaeEdE' }}
-                style={styles.avatarImage}
+            <View style={styles.avatarBtn}>
+              <AvatarInitials
+                initials={initials}
+                imageUri={user?.avatar as string | undefined}
+                size="sm"
+                onPress={() => router.push('/(account)/edit-profile' as any)}
               />
-            </Pressable>
+            </View>
           </View>
         </View>
 
@@ -287,7 +285,7 @@ export default function HomeScreen() {
 
         {/* ── Hero banner com headline ───────────────────────────────────── */}
         <LinearGradient
-          colors={['#f0f4ff', '#faf5ff', '#fff']}
+          colors={['#e8f0fe', '#f0f5ff', '#f8fafc']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.heroBanner}
@@ -299,11 +297,7 @@ export default function HomeScreen() {
             </Text>
           </View>
           <View style={styles.heroStatsRow}>
-            {[
-              { value: '12k+', label: 'Profissionais' },
-              { value: '4.9★', label: 'Avaliação média' },
-              { value: '50+', label: 'Categorias' },
-            ].map(stat => (
+            {heroStats.map(stat => (
               <View key={stat.label} style={styles.heroStat}>
                 <Text style={styles.heroStatValue}>{stat.value}</Text>
                 <Text style={styles.heroStatLabel}>{stat.label}</Text>
@@ -316,7 +310,10 @@ export default function HomeScreen() {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>{t('feed.popularCategories')}</Text>
-            <Pressable onPress={() => router.push({ pathname: '/(client)/search' })}>
+            <Pressable onPress={() => router.push({
+              pathname: '/(client)/search',
+              params: { category: selectedCategory ?? '' },
+            })}>
               <Text style={styles.sectionLink}>{t('feed.viewAll')}</Text>
             </Pressable>
           </View>
@@ -335,7 +332,7 @@ export default function HomeScreen() {
                   onPress={() => handleCategoryPress(cat.key)}
                 >
                   <View style={[styles.categoryIconWrap, active && styles.categoryIconWrapActive]}>
-                    <MaterialIcons name={cat.icon} size={26} color={active ? Colors.primary : Colors.onSurfaceVariant} />
+                    <MaterialIcons name={cat.icon} size={26} color={active ? Colors.onPrimary : Colors.inkMuted} />
                   </View>
                   <Text style={[styles.categoryLabel, active && styles.categoryLabelActive]}>
                     {cat.label.toUpperCase()}
@@ -385,10 +382,14 @@ export default function HomeScreen() {
                       }
                     >
                       <View style={styles.providerImageWrap}>
-                        <Image
-                          source={{ uri: PROVIDER_IMAGES[index % PROVIDER_IMAGES.length] }}
-                          style={styles.providerCardImage}
-                        />
+                        <View style={[
+                          styles.providerCardImagePlaceholder,
+                          { backgroundColor: CARD_BG_COLORS[index % CARD_BG_COLORS.length] },
+                        ]}>
+                          <Text style={styles.providerCardInitials}>
+                            {item.provider_name.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase()}
+                          </Text>
+                        </View>
                         <LinearGradient
                           colors={['transparent', 'rgba(0,0,0,0.55)']}
                           style={styles.providerImageGradient}
@@ -448,13 +449,13 @@ export default function HomeScreen() {
                       <View
                         style={[
                           styles.serviceIconBox,
-                          { backgroundColor: cat?.color ?? Colors.surfaceContainerHighest },
+                          { backgroundColor: cat?.color ?? Colors.border },
                         ]}
                       >
                         <MaterialIcons
                           name={cat?.icon ?? 'home-repair-service'}
                           size={26}
-                          color={Colors.onSurfaceVariant}
+                          color={Colors.inkMuted}
                         />
                       </View>
                       <View style={styles.serviceBody}>
@@ -494,35 +495,14 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.surface },
 
-  // Placeholder (prestador)
-  placeholderContent: {
-    flex: 1, alignItems: 'center', justifyContent: 'center',
-    gap: Spacing.base, paddingHorizontal: Spacing.xxxl,
-  },
-  placeholderIcon: {
-    width: 80, height: 80, borderRadius: Radius.full,
-    backgroundColor: Colors.primaryContainer,
-    alignItems: 'center', justifyContent: 'center',
-  },
-  placeholderTitle: {
-    fontFamily: FontFamily.headlineBold, fontSize: 20,
-    color: Colors.onSurface, letterSpacing: -0.4,
-    marginTop: Spacing.base, textAlign: 'center',
-  },
-  placeholderSubtitle: {
-    fontFamily: FontFamily.bodyRegular, fontSize: 14,
-    color: Colors.onSurfaceVariant, textAlign: 'center',
-    lineHeight: 20, maxWidth: 280,
-  },
-
   // ── HEADER FIXO ──────────────────────────────────────────────────────────
   header: {
-    backgroundColor: Colors.surface,
+    backgroundColor: Colors.card,
     paddingHorizontal: Spacing.xl,
     paddingTop: Spacing.md,
     paddingBottom: 0,
     gap: Spacing.md,
-    shadowColor: '#000',
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 8,
@@ -538,17 +518,17 @@ const styles = StyleSheet.create({
   greetingSmall: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 13,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
   greetingBold: {
     fontFamily: FontFamily.bodySemiBold,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   headerBrand: {
     fontFamily: FontFamily.headlineExtraBold,
-    fontSize: 24,
+    fontSize: 26,
     color: Colors.primary,
-    letterSpacing: -0.8,
+    letterSpacing: -1.0,
     marginTop: -2,
   },
   headerActions: {
@@ -560,7 +540,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: Radius.full,
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
@@ -577,24 +557,23 @@ const styles = StyleSheet.create({
     borderColor: Colors.surface,
   },
   avatarBtn: {
-    width: 40,
-    height: 40,
     borderRadius: Radius.full,
-    overflow: 'hidden',
     borderWidth: 2,
     borderColor: Colors.primary + '33',
+    overflow: 'hidden',
   },
-  avatarImage: { width: '100%', height: '100%', resizeMode: 'cover' },
 
   // Barra de pesquisa
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.surfaceContainerHighest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.full,
     paddingLeft: Spacing.base,
     paddingRight: Spacing.xs,
     paddingVertical: Spacing.xs,
+    borderWidth: 1.5,
+    borderColor: Colors.border,
   },
   searchFakeInput: {
     flex: 1,
@@ -607,22 +586,22 @@ const styles = StyleSheet.create({
     flex: 1,
     fontFamily: FontFamily.bodyRegular,
     fontSize: 14,
-    color: Colors.outline,
+    color: Colors.inkMuted,
   },
   searchInputText: {
     flex: 1,
     fontFamily: FontFamily.bodyRegular,
     fontSize: 14,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   filterBtn: {
     width: 38,
     height: 38,
     borderRadius: Radius.full,
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#000',
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.06,
     shadowRadius: 3,
@@ -639,12 +618,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.xs,
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     paddingHorizontal: 14,
     paddingVertical: 7,
     borderRadius: Radius.full,
     borderWidth: 1,
-    borderColor: Colors.outlineVariant + '44',
+    borderColor: Colors.border,
   },
   filterPillActive: {
     backgroundColor: Colors.primary,
@@ -653,13 +632,13 @@ const styles = StyleSheet.create({
   filterPillText: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 12,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
   filterPillTextActive: { color: Colors.onPrimary },
 
   headerDivider: {
     height: StyleSheet.hairlineWidth,
-    backgroundColor: Colors.outlineVariant + '33',
+    backgroundColor: Colors.border,
     marginHorizontal: -Spacing.xl,
   },
 
@@ -678,15 +657,15 @@ const styles = StyleSheet.create({
   heroTextBlock: { gap: Spacing.xs },
   heroHeadline: {
     fontFamily: FontFamily.headlineExtraBold,
-    fontSize: 26,
-    color: Colors.onSurface,
-    letterSpacing: -0.8,
-    lineHeight: 32,
+    fontSize: 32,
+    color: Colors.ink,
+    letterSpacing: -1.2,
+    lineHeight: 38,
   },
   heroSub: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 13,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     lineHeight: 18,
   },
   heroStatsRow: {
@@ -696,14 +675,14 @@ const styles = StyleSheet.create({
   heroStat: { gap: 2 },
   heroStatValue: {
     fontFamily: FontFamily.headlineBold,
-    fontSize: 18,
+    fontSize: 20,
     color: Colors.primary,
     letterSpacing: -0.4,
   },
   heroStatLabel: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 11,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
 
   // Sections
@@ -718,7 +697,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 18,
-    color: Colors.onSurface,
+    color: Colors.ink,
     letterSpacing: -0.4,
   },
   sectionLink: {
@@ -731,7 +710,7 @@ const styles = StyleSheet.create({
   sectionCount: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 12,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
 
   // Category grid
@@ -742,39 +721,48 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   categoryTile: {
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.lg,
     alignItems: 'center',
     justifyContent: 'center',
     gap: 6,
-    shadowColor: '#000',
+    borderWidth: 2,
+    borderColor: 'transparent',
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.03,
     shadowRadius: 4,
     elevation: 1,
   },
   categoryTileActive: {
-    backgroundColor: Colors.primaryContainer + '55',
+    backgroundColor: Colors.primary + '08',
+    borderColor: Colors.primary,
+    shadowOpacity: 0.10,
+    shadowRadius: 8,
+    elevation: 3,
   },
   categoryIconWrap: {
-    width: 44,
-    height: 44,
+    width: 48,
+    height: 48,
     borderRadius: Radius.md,
-    backgroundColor: Colors.surfaceContainerHigh,
+    backgroundColor: Colors.border,
     alignItems: 'center',
     justifyContent: 'center',
   },
   categoryIconWrapActive: {
-    backgroundColor: Colors.primaryContainer,
+    backgroundColor: Colors.primary,
   },
   categoryLabel: {
     fontFamily: FontFamily.bodySemiBold,
-    fontSize: 9,
-    color: Colors.onSurfaceVariant,
+    fontSize: 10,
+    color: Colors.inkMuted,
     textAlign: 'center',
     letterSpacing: 0.6,
   },
-  categoryLabelActive: { color: Colors.primary },
+  categoryLabelActive: {
+    color: Colors.primary,
+    fontFamily: FontFamily.headlineBold,
+  },
 
   // Loading / empty
   loadingWrap: {
@@ -785,7 +773,7 @@ const styles = StyleSheet.create({
   loadingText: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 14,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
   emptyWrap: {
     paddingVertical: Spacing.xxxl * 2,
@@ -796,36 +784,48 @@ const styles = StyleSheet.create({
     width: 72,
     height: 72,
     borderRadius: Radius.full,
-    backgroundColor: Colors.surfaceContainerHighest,
+    backgroundColor: Colors.border,
     alignItems: 'center',
     justifyContent: 'center',
   },
   emptyTitle: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 16,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   emptySubtitle: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 13,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
 
   // Featured providers
   carouselContent: { paddingHorizontal: Spacing.xl, gap: Spacing.base },
   providerCard: {
-    width: 240,
-    backgroundColor: Colors.surfaceContainerLowest,
+    width: 220,
+    backgroundColor: Colors.card,
     borderRadius: 20,
     overflow: 'hidden',
     elevation: 3,
-    shadowColor: '#000',
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.08,
     shadowRadius: 12,
   },
   providerImageWrap: { height: 150, position: 'relative' },
-  providerCardImage: { width: '100%', height: '100%', resizeMode: 'cover' },
+  providerCardImagePlaceholder: {
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  providerCardInitials: {
+    fontFamily: FontFamily.headlineExtraBold,
+    fontSize: 44,
+    color: Colors.ink,
+    opacity: 0.25,
+    letterSpacing: -1,
+  },
   providerImageGradient: {
     position: 'absolute',
     bottom: 0,
@@ -848,7 +848,7 @@ const styles = StyleSheet.create({
   ratingBadgeText: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 12,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   providerNearTag: {
     position: 'absolute',
@@ -872,12 +872,12 @@ const styles = StyleSheet.create({
   providerName: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 15,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   providerService: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 12,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
   providerBtn: {
     backgroundColor: Colors.primary,
@@ -897,12 +897,12 @@ const styles = StyleSheet.create({
   serviceCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.surfaceContainerLowest,
-    borderRadius: 18,
+    backgroundColor: Colors.card,
+    borderRadius: Radius.lg,
     padding: Spacing.base,
     gap: Spacing.base,
     elevation: 1,
-    shadowColor: '#000',
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.04,
     shadowRadius: 4,
@@ -919,13 +919,13 @@ const styles = StyleSheet.create({
   serviceName: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 14,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   serviceMeta: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
   serviceProvider: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 12,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     flex: 1,
   },
   ratingPill: {
@@ -946,7 +946,7 @@ const styles = StyleSheet.create({
   servicePrice: {
     fontFamily: FontFamily.headlineExtraBold,
     fontSize: 13,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   bookBtn: {
     backgroundColor: Colors.primary,

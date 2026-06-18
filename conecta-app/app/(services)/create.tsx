@@ -74,7 +74,7 @@ export default function CreateServiceScreen() {
       {/* Header */}
       <View style={[styles.header, { paddingTop: insets.top }]}>
         <Pressable style={styles.backBtn} onPress={() => router.back()}>
-          <MaterialIcons name="arrow-back" size={24} color={Colors.onSurface} />
+          <MaterialIcons name="arrow-back" size={24} color={Colors.ink} />
         </Pressable>
         <Text style={styles.headerTitle}>Criar Serviço</Text>
         <View style={{ width: 40 }} />
@@ -101,7 +101,7 @@ export default function CreateServiceScreen() {
             <TextInput
               style={styles.input}
               placeholder="Ex: Fotografia de Casamento Premium"
-              placeholderTextColor={Colors.outline}
+              placeholderTextColor={Colors.inkMuted}
               value={name}
               onChangeText={setName}
               autoCapitalize="words"
@@ -120,7 +120,7 @@ export default function CreateServiceScreen() {
               <MaterialIcons
                 name={showCategory ? 'keyboard-arrow-up' : 'keyboard-arrow-down'}
                 size={20}
-                color={Colors.outline}
+                color={Colors.inkMuted}
               />
             </Pressable>
             {showCategory && (
@@ -175,7 +175,7 @@ export default function CreateServiceScreen() {
               <TextInput
                 style={styles.input}
                 placeholder="0,00"
-                placeholderTextColor={Colors.outline}
+                placeholderTextColor={Colors.inkMuted}
                 value={price}
                 onChangeText={setPrice}
                 keyboardType="numeric"
@@ -194,7 +194,7 @@ export default function CreateServiceScreen() {
                 <MaterialIcons
                   name={showDuration ? 'keyboard-arrow-up' : 'keyboard-arrow-down'}
                   size={20}
-                  color={Colors.outline}
+                  color={Colors.inkMuted}
                 />
               </Pressable>
               {showDuration && (
@@ -228,7 +228,7 @@ export default function CreateServiceScreen() {
           <TextInput
             style={[styles.input, styles.textarea]}
             placeholder="Descreva detalhadamente o que o cliente receberá ao contratar este serviço..."
-            placeholderTextColor={Colors.outline + '99'}
+            placeholderTextColor={Colors.inkMuted + '99'}
             value={description}
             onChangeText={setDescription}
             multiline
@@ -245,14 +245,14 @@ export default function CreateServiceScreen() {
           </View>
           <View style={styles.photoGrid}>
             <Pressable style={styles.photoUpload}>
-              <MaterialIcons name="add-a-photo" size={28} color={Colors.outline} />
+              <MaterialIcons name="add-a-photo" size={28} color={Colors.inkMuted} />
               <Text style={styles.photoUploadLabel}>Adicionar</Text>
             </Pressable>
             <View style={styles.photoSlot}>
-              <MaterialIcons name="image" size={28} color={Colors.outlineVariant} />
+              <MaterialIcons name="image" size={28} color={Colors.border} />
             </View>
-            <View style={[styles.photoSlot, { backgroundColor: Colors.surfaceContainerHighest }]}>
-              <MaterialIcons name="image" size={28} color={Colors.outlineVariant} />
+            <View style={[styles.photoSlot, { backgroundColor: Colors.border }]}>
+              <MaterialIcons name="image" size={28} color={Colors.border} />
             </View>
           </View>
         </View>
@@ -268,8 +268,8 @@ export default function CreateServiceScreen() {
           <Switch
             value={publishNow}
             onValueChange={setPublishNow}
-            trackColor={{ false: Colors.outlineVariant, true: Colors.primary }}
-            thumbColor={Colors.surfaceContainerLowest}
+            trackColor={{ false: Colors.border, true: Colors.primary }}
+            thumbColor="#ffffff"
           />
         </View>
       </ScrollView>
@@ -298,7 +298,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.xl,
     paddingBottom: Spacing.base,
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.04,
@@ -316,7 +316,7 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.headlineBold,
     fontSize: 18,
     letterSpacing: -0.4,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
 
   scroll: { flex: 1 },
@@ -339,25 +339,25 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.headlineExtraBold,
     fontSize: 22,
     letterSpacing: -0.6,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
 
   fieldGroup: { gap: Spacing.sm },
   fieldLabel: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 10,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     letterSpacing: 1.5,
     textTransform: 'uppercase',
   },
   input: {
-    backgroundColor: Colors.surfaceContainerHighest,
+    backgroundColor: Colors.border,
     borderRadius: Radius.md,
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.base,
     fontFamily: FontFamily.bodyRegular,
     fontSize: 14,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   textarea: {
     minHeight: 110,
@@ -369,7 +369,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: Colors.surfaceContainerHighest,
+    backgroundColor: Colors.border,
     borderRadius: Radius.md,
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.base,
@@ -377,13 +377,13 @@ const styles = StyleSheet.create({
   selectorText: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 14,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   selectorPlaceholder: {
-    color: Colors.outline,
+    color: Colors.inkMuted,
   },
   dropdown: {
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.md,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
@@ -400,7 +400,7 @@ const styles = StyleSheet.create({
   dropdownItemText: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 14,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
 
   twoCol: {
@@ -411,7 +411,7 @@ const styles = StyleSheet.create({
 
   priceToggle: {
     flexDirection: 'row',
-    backgroundColor: Colors.surfaceContainerHighest,
+    backgroundColor: Colors.border,
     borderRadius: Radius.md,
     padding: 4,
     marginBottom: Spacing.sm,
@@ -423,7 +423,7 @@ const styles = StyleSheet.create({
     borderRadius: Radius.sm,
   },
   priceBtnActive: {
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
@@ -433,7 +433,7 @@ const styles = StyleSheet.create({
   priceBtnText: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 11,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
   priceBtnTextActive: {
     color: Colors.primary,
@@ -449,16 +449,16 @@ const styles = StyleSheet.create({
     borderRadius: Radius.xl,
     borderWidth: 1.5,
     borderStyle: 'dashed',
-    borderColor: Colors.outlineVariant,
+    borderColor: Colors.border,
     alignItems: 'center',
     justifyContent: 'center',
     gap: Spacing.xs,
-    backgroundColor: Colors.surfaceContainerLow,
+    backgroundColor: Colors.card,
   },
   photoUploadLabel: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 10,
-    color: Colors.outline,
+    color: Colors.inkMuted,
     textTransform: 'uppercase',
     letterSpacing: 1,
   },
@@ -466,7 +466,7 @@ const styles = StyleSheet.create({
     flex: 1,
     aspectRatio: 1,
     borderRadius: Radius.xl,
-    backgroundColor: Colors.surfaceContainerHigh,
+    backgroundColor: Colors.card,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -475,7 +475,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: Colors.surfaceContainerLow,
+    backgroundColor: Colors.card,
     borderRadius: Radius.xl,
     padding: Spacing.xxl,
   },
@@ -483,12 +483,12 @@ const styles = StyleSheet.create({
   publishTitle: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 15,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   publishSubtitle: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 12,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     lineHeight: 17,
   },
 
@@ -496,8 +496,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.xl,
     paddingTop: Spacing.xl + 4,
     gap: Spacing.xs,
-    backgroundColor: Colors.surfaceContainerLowest,
-    shadowColor: Colors.onSurface,
+    backgroundColor: Colors.card,
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.06,
     shadowRadius: 16,
@@ -510,7 +510,7 @@ const styles = StyleSheet.create({
   draftBtnText: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 13,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     letterSpacing: 1,
     textTransform: 'uppercase',
   },

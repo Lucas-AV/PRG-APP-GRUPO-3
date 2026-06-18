@@ -77,7 +77,7 @@ export default function BookScreen() {
     setSlotsLoading(true);
     setSelectedTime(null);
     try {
-      const res = await availabilityApi.slots(Number(params.providerId), date, Number(params.serviceId));
+      const res = await availabilityApi.slots(Number(params.providerId), date, Number(params.serviceId), token ?? '');
       setSlots(res.slots);
     } catch { setSlots([]); } finally { setSlotsLoading(false); }
   };
@@ -121,7 +121,7 @@ export default function BookScreen() {
           <View style={styles.serviceInfo}>
             <Text style={styles.serviceName} numberOfLines={2}>{params.serviceName}</Text>
             <View style={styles.providerRow}>
-              <MaterialIcons name="verified" size={16} color={Colors.primary} />
+              <MaterialIcons name="verified" size={16} color={Colors.brand} />
               <Text style={styles.providerName}>{params.providerName}</Text>
             </View>
           </View>
@@ -154,7 +154,7 @@ export default function BookScreen() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Selecione o Horário</Text>
           {slotsLoading ? (
-            <ActivityIndicator color={Colors.primary} style={{ marginTop: Spacing.xl }} />
+            <ActivityIndicator color={Colors.brand} style={{ marginTop: Spacing.xl }} />
           ) : slots.length === 0 ? (
             <Text style={styles.noSlotsText}>Nenhum horário disponível para este dia.</Text>
           ) : (
@@ -170,8 +170,8 @@ export default function BookScreen() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Pagamento</Text>
           <Pressable style={[styles.paymentRow, paymentMethod === 'pix' && styles.paymentRowSelected]} onPress={() => setPaymentMethod('pix')}>
-            <View style={[styles.paymentIcon, { backgroundColor: Colors.primaryContainer }]}>
-              <MaterialIcons name="bolt" size={22} color={Colors.primary} />
+            <View style={[styles.paymentIcon, { backgroundColor: Colors.brand + '15' }]}>
+              <MaterialIcons name="bolt" size={22} color={Colors.brand} />
             </View>
             <View style={styles.paymentInfo}>
               <Text style={styles.paymentLabel}>Pix</Text>
@@ -181,8 +181,8 @@ export default function BookScreen() {
           </Pressable>
 
           <Pressable style={[styles.paymentRow, paymentMethod === 'cartao' && styles.paymentRowSelected]} onPress={() => setPaymentMethod('cartao')}>
-            <View style={[styles.paymentIcon, { backgroundColor: Colors.surfaceContainerHigh }]}>
-              <MaterialIcons name="credit-card" size={22} color={Colors.onSurfaceVariant} />
+            <View style={[styles.paymentIcon, { backgroundColor: Colors.card }]}>
+              <MaterialIcons name="credit-card" size={22} color={Colors.inkMuted} />
             </View>
             <View style={styles.paymentInfo}>
               <Text style={styles.paymentLabel}>Cartão de Crédito</Text>
@@ -194,7 +194,7 @@ export default function BookScreen() {
 
         {/* Cancellation note */}
         <View style={styles.infoCard}>
-          <MaterialIcons name="info" size={20} color={Colors.primary} />
+          <MaterialIcons name="info" size={20} color={Colors.brand} />
           <Text style={styles.infoText}>Cancelamento gratuito até 24h antes do serviço.</Text>
         </View>
       </ScrollView>
@@ -235,7 +235,7 @@ function SlotGroup({ icon, label, slots, selected, onSelect }: {
   return (
     <View style={sgStyles.group}>
       <View style={sgStyles.header}>
-        <MaterialIcons name={icon} size={16} color={Colors.onSurfaceVariant} />
+        <MaterialIcons name={icon} size={16} color={Colors.inkMuted} />
         <Text style={sgStyles.label}>{label}</Text>
       </View>
       <View style={sgStyles.grid}>
@@ -259,65 +259,65 @@ function SlotGroup({ icon, label, slots, selected, onSelect }: {
 }
 
 const rdStyles = StyleSheet.create({
-  radio: { width: 22, height: 22, borderRadius: 11, borderWidth: 2, borderColor: Colors.outlineVariant, alignItems: 'center', justifyContent: 'center' },
-  radioSelected: { borderColor: Colors.primary, backgroundColor: Colors.primary },
+  radio: { width: 22, height: 22, borderRadius: 11, borderWidth: 2, borderColor: Colors.border, alignItems: 'center', justifyContent: 'center' },
+  radioSelected: { borderColor: Colors.brand, backgroundColor: Colors.brand },
   dot: { width: 8, height: 8, borderRadius: 4, backgroundColor: Colors.onPrimary },
 });
 
 const sgStyles = StyleSheet.create({
   group: { gap: Spacing.sm },
   header: { flexDirection: 'row', alignItems: 'center', gap: Spacing.xs },
-  label: { fontFamily: FontFamily.headlineBold, fontSize: 11, color: Colors.onSurfaceVariant, textTransform: 'uppercase', letterSpacing: 1.2 },
+  label: { fontFamily: FontFamily.headlineBold, fontSize: 11, color: Colors.inkMuted, textTransform: 'uppercase', letterSpacing: 1.2 },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm },
-  btn: { paddingHorizontal: Spacing.xl, paddingVertical: Spacing.md, borderRadius: Radius.md, backgroundColor: Colors.surfaceContainerLowest },
-  btnSelected: { backgroundColor: Colors.primary },
+  btn: { paddingHorizontal: Spacing.xl, paddingVertical: Spacing.md, borderRadius: Radius.md, backgroundColor: Colors.card, borderWidth: 1, borderColor: Colors.border },
+  btnSelected: { backgroundColor: Colors.brand },
   btnDisabled: { opacity: 0.4 },
-  time: { fontFamily: FontFamily.headlineBold, fontSize: 13, color: Colors.onSurface },
+  time: { fontFamily: FontFamily.headlineBold, fontSize: 13, color: Colors.ink },
   timeSelected: { color: Colors.onPrimary },
-  timeDisabled: { color: Colors.outline },
+  timeDisabled: { color: Colors.inkMuted },
 });
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.surface },
   scroll: { paddingHorizontal: Spacing.xl, paddingTop: Spacing.xxl, paddingBottom: 160, gap: Spacing.xxxl },
 
-  serviceCard: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: Colors.surfaceContainerLowest, borderRadius: Radius.xl, padding: Spacing.xl, gap: Spacing.md, elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.06, shadowRadius: 12 },
+  serviceCard: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: Colors.card, borderRadius: Radius.xl, padding: Spacing.xl, gap: Spacing.md, elevation: 2, shadowColor: Colors.ink, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.06, shadowRadius: 12 },
   serviceInfo: { flex: 1, gap: Spacing.xs },
-  serviceName: { fontFamily: FontFamily.headlineExtraBold, fontSize: 16, color: Colors.onSurface, letterSpacing: -0.3 },
+  serviceName: { fontFamily: FontFamily.headlineExtraBold, fontSize: 16, color: Colors.ink, letterSpacing: -0.3 },
   providerRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.xs },
-  providerName: { fontFamily: FontFamily.bodyMedium, fontSize: 13, color: Colors.onSurfaceVariant },
-  servicePrice: { fontFamily: FontFamily.headlineExtraBold, fontSize: 20, color: Colors.primary, letterSpacing: -0.5 },
+  providerName: { fontFamily: FontFamily.bodyMedium, fontSize: 13, color: Colors.inkMuted },
+  servicePrice: { fontFamily: FontFamily.headlineExtraBold, fontSize: 20, color: Colors.brand, letterSpacing: -0.5 },
 
   section: { gap: Spacing.md },
   sectionHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  sectionTitle: { fontFamily: FontFamily.headlineExtraBold, fontSize: 18, color: Colors.onSurface, letterSpacing: -0.3 },
-  sectionSub: { fontFamily: FontFamily.bodyMedium, fontSize: 12, color: Colors.onSurfaceVariant },
+  sectionTitle: { fontFamily: FontFamily.headlineExtraBold, fontSize: 18, color: Colors.ink, letterSpacing: -0.3 },
+  sectionSub: { fontFamily: FontFamily.bodyMedium, fontSize: 12, color: Colors.inkMuted },
 
   datesRow: { gap: Spacing.sm, paddingVertical: Spacing.xs },
-  dateChip: { width: 64, height: 80, borderRadius: Radius.xl, backgroundColor: Colors.surfaceContainerLowest, alignItems: 'center', justifyContent: 'center', gap: 4, elevation: 1, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04, shadowRadius: 6 },
-  dateChipSelected: { backgroundColor: Colors.primary, shadowColor: Colors.primary, shadowOpacity: 0.3, elevation: 4 },
-  dateDayName: { fontFamily: FontFamily.bodyMedium, fontSize: 11, color: Colors.onSurfaceVariant, textTransform: 'uppercase' },
-  dateDayNum: { fontFamily: FontFamily.headlineExtraBold, fontSize: 20, color: Colors.onSurface },
+  dateChip: { width: 64, height: 80, borderRadius: Radius.xl, backgroundColor: Colors.card, alignItems: 'center', justifyContent: 'center', gap: 4, elevation: 1, shadowColor: Colors.ink, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04, shadowRadius: 6 },
+  dateChipSelected: { backgroundColor: Colors.brand, shadowColor: Colors.brand, shadowOpacity: 0.3, elevation: 4 },
+  dateDayName: { fontFamily: FontFamily.bodyMedium, fontSize: 11, color: Colors.inkMuted, textTransform: 'uppercase' },
+  dateDayNum: { fontFamily: FontFamily.headlineExtraBold, fontSize: 20, color: Colors.ink },
   dateTextSelected: { color: Colors.onPrimary },
   dateDot: { width: 4, height: 4, borderRadius: 2, backgroundColor: Colors.onPrimary },
 
-  noSlotsText: { fontFamily: FontFamily.bodyRegular, fontSize: 14, color: Colors.onSurfaceVariant, textAlign: 'center', marginTop: Spacing.xl },
+  noSlotsText: { fontFamily: FontFamily.bodyRegular, fontSize: 14, color: Colors.inkMuted, textAlign: 'center', marginTop: Spacing.xl },
   slotGroups: { gap: Spacing.xl },
 
-  paymentRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.base, padding: Spacing.base + 4, borderRadius: Radius.xl, backgroundColor: Colors.surfaceContainerLowest, borderWidth: 1.5, borderColor: 'transparent' },
-  paymentRowSelected: { borderColor: Colors.primary },
+  paymentRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.base, padding: Spacing.base + 4, borderRadius: Radius.xl, backgroundColor: Colors.card, borderWidth: 1.5, borderColor: 'transparent' },
+  paymentRowSelected: { borderColor: Colors.brand },
   paymentIcon: { width: 48, height: 48, borderRadius: Radius.md, alignItems: 'center', justifyContent: 'center' },
   paymentInfo: { flex: 1 },
-  paymentLabel: { fontFamily: FontFamily.headlineBold, fontSize: 15, color: Colors.onSurface },
-  paymentSub: { fontFamily: FontFamily.bodyRegular, fontSize: 12, color: Colors.onSurfaceVariant, marginTop: 1 },
+  paymentLabel: { fontFamily: FontFamily.headlineBold, fontSize: 15, color: Colors.ink },
+  paymentSub: { fontFamily: FontFamily.bodyRegular, fontSize: 12, color: Colors.inkMuted, marginTop: 1 },
 
-  infoCard: { flexDirection: 'row', alignItems: 'flex-start', gap: Spacing.sm, backgroundColor: Colors.primaryContainer + '40', borderRadius: Radius.xl, padding: Spacing.base, borderLeftWidth: 3, borderLeftColor: Colors.primary },
-  infoText: { fontFamily: FontFamily.bodyMedium, fontSize: 12, color: Colors.onSurface, flex: 1, lineHeight: 18 },
+  infoCard: { flexDirection: 'row', alignItems: 'flex-start', gap: Spacing.sm, backgroundColor: Colors.brand + '10', borderRadius: Radius.xl, padding: Spacing.base, borderLeftWidth: 3, borderLeftColor: Colors.brand },
+  infoText: { fontFamily: FontFamily.bodyMedium, fontSize: 12, color: Colors.ink, flex: 1, lineHeight: 18 },
 
-  footer: { paddingHorizontal: Spacing.xl, paddingTop: Spacing.xl, backgroundColor: Colors.surface, shadowColor: Colors.onSurface, shadowOffset: { width: 0, height: -4 }, shadowOpacity: 0.05, shadowRadius: 12, elevation: 6, gap: Spacing.md },
+  footer: { paddingHorizontal: Spacing.xl, paddingTop: Spacing.xl, backgroundColor: Colors.surface, shadowColor: Colors.ink, shadowOffset: { width: 0, height: -4 }, shadowOpacity: 0.05, shadowRadius: 12, elevation: 6, gap: Spacing.md },
   footerInfo: { flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between' },
-  totalLabel: { fontFamily: FontFamily.bodyMedium, fontSize: 10, color: Colors.onSurfaceVariant, letterSpacing: 1.2 },
-  totalValue: { fontFamily: FontFamily.headlineExtraBold, fontSize: 24, color: Colors.onSurface, letterSpacing: -0.5 },
-  footerDateTime: { fontFamily: FontFamily.bodyMedium, fontSize: 12, color: Colors.onSurfaceVariant },
+  totalLabel: { fontFamily: FontFamily.bodyMedium, fontSize: 10, color: Colors.inkMuted, letterSpacing: 1.2 },
+  totalValue: { fontFamily: FontFamily.headlineExtraBold, fontSize: 24, color: Colors.ink, letterSpacing: -0.5 },
+  footerDateTime: { fontFamily: FontFamily.bodyMedium, fontSize: 12, color: Colors.inkMuted },
   confirmBtn: { height: 56 },
 });

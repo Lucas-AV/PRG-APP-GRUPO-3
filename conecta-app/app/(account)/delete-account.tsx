@@ -74,11 +74,11 @@ export default function DeleteAccountScreen() {
 
           <View style={styles.infoCards}>
             <View style={styles.infoCard}>
-              <MaterialIcons name="history" size={22} color={Colors.outline} />
+              <MaterialIcons name="history" size={22} color={Colors.inkMuted} />
               <Text style={styles.infoCardLabel}>Histórico</Text>
             </View>
             <View style={styles.infoCard}>
-              <MaterialIcons name="account-balance-wallet" size={22} color={Colors.outline} />
+              <MaterialIcons name="account-balance-wallet" size={22} color={Colors.inkMuted} />
               <Text style={styles.infoCardLabel}>Saldo</Text>
             </View>
           </View>
@@ -142,35 +142,37 @@ const styles = StyleSheet.create({
   warnTag: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 10,
-    color: Colors.outline,
+    color: Colors.inkMuted,
     letterSpacing: 2,
     textTransform: 'uppercase',
   },
   warnTitle: {
     fontFamily: FontFamily.headlineExtraBold,
     fontSize: 28,
-    color: Colors.onSurface,
+    color: Colors.ink,
     letterSpacing: -0.8,
     lineHeight: 34,
   },
   warnText: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 14,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     lineHeight: 22,
   },
   infoCards: { flexDirection: 'row', gap: Spacing.md, marginTop: Spacing.sm },
   infoCard: {
     flex: 1,
-    backgroundColor: Colors.surfaceContainerLow,
+    backgroundColor: Colors.card,
     borderRadius: Radius.md,
     padding: Spacing.base,
     gap: Spacing.sm,
+    borderWidth: 1,
+    borderColor: Colors.border,
   },
   infoCardLabel: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 12,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   actions: { gap: Spacing.md },
   deleteBtn: {
@@ -188,13 +190,13 @@ const styles = StyleSheet.create({
   supportNote: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 13,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     textAlign: 'center',
     lineHeight: 20,
     paddingHorizontal: Spacing.xl,
   },
   supportLink: {
     fontFamily: FontFamily.bodySemiBold,
-    color: Colors.primary,
+    color: Colors.brand,
   },
 });

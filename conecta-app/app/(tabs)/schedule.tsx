@@ -118,10 +118,10 @@ export default function ScheduleScreen() {
           </View>
           <View style={styles.monthNav}>
             <Pressable style={styles.monthNavBtn} onPress={() => setViewDate(new Date(year, month - 1, 1))}>
-              <MaterialIcons name="chevron-left" size={22} color={Colors.onSurfaceVariant} />
+              <MaterialIcons name="chevron-left" size={22} color={Colors.inkMuted} />
             </Pressable>
             <Pressable style={styles.monthNavBtn} onPress={() => setViewDate(new Date(year, month + 1, 1))}>
-              <MaterialIcons name="chevron-right" size={22} color={Colors.onSurfaceVariant} />
+              <MaterialIcons name="chevron-right" size={22} color={Colors.inkMuted} />
             </Pressable>
           </View>
         </View>
@@ -158,7 +158,7 @@ export default function ScheduleScreen() {
           </View>
 
           <View style={styles.legend}>
-            {[{ color: Colors.primary, label: 'Agendado' }, { color: Colors.error, label: 'Ocupado' }, { color: Colors.surfaceContainerHighest, label: 'Livre' }].map(l => (
+            {[{ color: Colors.primary, label: 'Agendado' }, { color: Colors.error, label: 'Ocupado' }, { color: Colors.border, label: 'Livre' }].map(l => (
               <View key={l.label} style={styles.legendItem}>
                 <View style={[styles.legendDot, { backgroundColor: l.color }]} />
                 <Text style={styles.legendLabel}>{l.label}</Text>
@@ -230,7 +230,7 @@ export default function ScheduleScreen() {
 
       {/* FAB — clientes apenas */}
       {user?.role === 'cliente' && (
-        <Pressable style={styles.fab} onPress={() => router.push('/(tabs)/explore' as any)}>
+        <Pressable style={styles.fab} onPress={() => router.replace('/(tabs)' as any)}>
           <LinearGradient colors={GradientColors} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.fabGradient}>
             <MaterialIcons name="add" size={20} color={Colors.onPrimary} />
             <Text style={styles.fabLabel}>Agendar Novo Serviço</Text>
@@ -245,28 +245,28 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.surface },
   topBar: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: Spacing.xl, paddingVertical: Spacing.base },
   topLeft: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
-  topTitle: { fontFamily: FontFamily.headlineBold, fontSize: 18, color: Colors.onSurface, letterSpacing: -0.4 },
+  topTitle: { fontFamily: FontFamily.headlineBold, fontSize: 18, color: Colors.ink, letterSpacing: -0.4 },
   scroll: { paddingHorizontal: Spacing.xl, paddingBottom: 100, gap: Spacing.xxl },
 
   monthHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  monthTitle: { fontFamily: FontFamily.headlineExtraBold, fontSize: 24, color: Colors.onSurface, letterSpacing: -0.6 },
-  monthSub: { fontFamily: FontFamily.bodyRegular, fontSize: 13, color: Colors.onSurfaceVariant },
+  monthTitle: { fontFamily: FontFamily.headlineExtraBold, fontSize: 24, color: Colors.ink, letterSpacing: -0.6 },
+  monthSub: { fontFamily: FontFamily.bodyRegular, fontSize: 13, color: Colors.inkMuted },
   monthNav: { flexDirection: 'row', gap: Spacing.xs },
-  monthNavBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: Colors.surfaceContainerLow, alignItems: 'center', justifyContent: 'center' },
+  monthNavBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: Colors.card, borderWidth: 1, borderColor: Colors.border, alignItems: 'center', justifyContent: 'center' },
 
-  calCard: { backgroundColor: Colors.surfaceContainerLowest, borderRadius: Radius.xl, padding: Spacing.xl, gap: Spacing.base, elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.04, shadowRadius: 12 },
+  calCard: { backgroundColor: Colors.card, borderRadius: Radius.xl, padding: Spacing.xl, gap: Spacing.base, elevation: 2, shadowColor: Colors.ink, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.04, shadowRadius: 12 },
   weekdays: { flexDirection: 'row' },
   weekdayLabel: { flex: 1, textAlign: 'center', fontFamily: FontFamily.bodySemiBold, fontSize: 10, color: Colors.outline, textTransform: 'uppercase', letterSpacing: 1 },
   calGrid: { flexDirection: 'row', flexWrap: 'wrap' },
   calCell: { width: `${100 / 7}%` as any, aspectRatio: 1, alignItems: 'center', justifyContent: 'center', gap: 2 },
   calCellSel: {},
-  calDay: { fontFamily: FontFamily.bodyMedium, fontSize: 14, color: Colors.onSurface, width: 36, height: 36, textAlign: 'center', lineHeight: 36, borderRadius: 18 },
-  calDayOut: { color: Colors.outlineVariant },
+  calDay: { fontFamily: FontFamily.bodyMedium, fontSize: 14, color: Colors.ink, width: 36, height: 36, textAlign: 'center', lineHeight: 36, borderRadius: 18 },
+  calDayOut: { color: Colors.inkMuted },
   calDaySelected: { backgroundColor: Colors.primary, color: Colors.onPrimary, fontFamily: FontFamily.headlineBold, overflow: 'hidden' },
   calDayToday: { color: Colors.primary, fontFamily: FontFamily.headlineBold },
   calDot: { width: 4, height: 4, borderRadius: 2, backgroundColor: Colors.primary },
 
-  legend: { flexDirection: 'row', justifyContent: 'center', gap: Spacing.xl, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: Colors.surfaceContainer, paddingTop: Spacing.base },
+  legend: { flexDirection: 'row', justifyContent: 'center', gap: Spacing.xl, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: Colors.border, paddingTop: Spacing.base },
   legendItem: { flexDirection: 'row', alignItems: 'center', gap: Spacing.xs },
   legendDot: { width: 8, height: 8, borderRadius: 4 },
   legendLabel: { fontFamily: FontFamily.bodySemiBold, fontSize: 10, color: Colors.outline, textTransform: 'uppercase', letterSpacing: 0.8 },
@@ -290,12 +290,12 @@ const styles = StyleSheet.create({
 
   nextSection: { gap: Spacing.md },
   nextHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  nextTitle: { fontFamily: FontFamily.headlineExtraBold, fontSize: 18, color: Colors.onSurface, letterSpacing: -0.3 },
+  nextTitle: { fontFamily: FontFamily.headlineExtraBold, fontSize: 18, color: Colors.ink, letterSpacing: -0.3 },
   nextScroll: { gap: Spacing.md, paddingBottom: Spacing.xs },
-  nextCard: { width: 120, backgroundColor: Colors.surfaceContainerLow, borderRadius: Radius.xl, padding: Spacing.base, gap: Spacing.xs },
+  nextCard: { width: 120, backgroundColor: Colors.card, borderRadius: Radius.xl, padding: Spacing.base, gap: Spacing.xs, borderWidth: 1, borderColor: Colors.border },
   nextLabel: { fontFamily: FontFamily.bodySemiBold, fontSize: 10, color: Colors.outline, textTransform: 'uppercase' },
-  nextDay: { fontFamily: FontFamily.headlineExtraBold, fontSize: 28, color: Colors.onSurface, letterSpacing: -0.6 },
-  nextCount: { fontFamily: FontFamily.bodyRegular, fontSize: 12, color: Colors.onSurfaceVariant },
+  nextDay: { fontFamily: FontFamily.headlineExtraBold, fontSize: 28, color: Colors.ink, letterSpacing: -0.6 },
+  nextCount: { fontFamily: FontFamily.bodyRegular, fontSize: 12, color: Colors.inkMuted },
 
   fab: { position: 'absolute', bottom: 16, right: Spacing.xl, borderRadius: Radius.full, overflow: 'hidden', elevation: 8, shadowColor: Colors.primary, shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.3, shadowRadius: 16 },
   fabGradient: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm, paddingHorizontal: Spacing.xl, height: 52 },

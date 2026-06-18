@@ -113,7 +113,7 @@ export default function AddAddressScreen() {
                   <MaterialIcons
                     name={chip.icon}
                     size={18}
-                    color={active ? Colors.primary : Colors.outline}
+                    color={active ? Colors.brand : Colors.inkMuted}
                   />
                   <Text style={[styles.chipLabel, active && styles.chipLabelActive]}>
                     {chip.label}
@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
   chipsLabel: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 10,
-    color: Colors.onSurface,
+    color: Colors.ink,
     letterSpacing: 1.2,
     marginLeft: 2,
   },
@@ -158,21 +158,21 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm + 2,
     paddingHorizontal: Spacing.base,
     borderRadius: Radius.full,
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderWidth: 1,
-    borderColor: Colors.outlineVariant + '22',
+    borderColor: Colors.border,
   },
   chipActive: {
-    backgroundColor: Colors.primaryContainer,
-    borderColor: Colors.primary + '33',
+    backgroundColor: Colors.brand + '12',
+    borderColor: Colors.brand + '33',
   },
   chipLabel: {
     fontFamily: FontFamily.bodyMedium,
     fontSize: 13,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
   chipLabelActive: {
     fontFamily: FontFamily.bodySemiBold,
-    color: Colors.primary,
+    color: Colors.brand,
   },
 });

@@ -125,6 +125,26 @@ db.exec(`
     url TEXT NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   );
+
+  CREATE TABLE IF NOT EXISTS coupons (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    code TEXT UNIQUE NOT NULL,
+    discount_percent REAL,
+    discount_value REAL,
+    expiration_date TEXT,
+    description TEXT,
+    is_active INTEGER NOT NULL DEFAULT 1,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+
+  CREATE TABLE IF NOT EXISTS provider_documents (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    type TEXT NOT NULL,
+    url TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(user_id, type)
+  );
 `);
 
 const plansCount = db.prepare('SELECT COUNT(*) as n FROM plans').get();
@@ -161,6 +181,34 @@ if (plansCount.n === 0) {
   seedPlans();
 }
 
+const couponsCount = db.prepare('SELECT COUNT(*) as n FROM coupons').get();
+if (couponsCount.n === 0) {
+  const insertCoupon = db.prepare(
+    'INSERT INTO coupons (code, discount_percent, discount_value, description, is_active) VALUES (?, ?, ?, ?, ?)'
+  );
+  const seedCoupons = db.transaction(() => {
+    insertCoupon.run('SEVGEN20', 20, null, '20% de desconto no próximo serviço', 1);
+    insertCoupon.run('CONECTA50', 50, null, '50% de desconto no primeiro mês', 1);
+    insertCoupon.run('BOASVINDAS10', null, 10, 'R$ 10,00 de desconto de boas-vindas', 1);
+  });
+  seedCoupons();
+}
+
+// ── Schema Migrations ─────────────────────────────────────────────────────────
+// Idempotentes: SQLite lança erro se a coluna já existe; ignoramos silenciosamente.
+const schemaMigrations = [
+  'ALTER TABLE users ADD COLUMN avatar TEXT',
+  'ALTER TABLE users ADD COLUMN bio TEXT',
+  'ALTER TABLE users ADD COLUMN years_experience INTEGER',
+  'ALTER TABLE users ADD COLUMN response_time TEXT',
+  'ALTER TABLE users ADD COLUMN specialties TEXT',
+  'ALTER TABLE users ADD COLUMN certifications TEXT',
+  'ALTER TABLE services ADD COLUMN included_items TEXT',
+];
+
+for (const sql of schemaMigrations) {
+  try { db.exec(sql); } catch (_) { /* coluna já existe */ }
+}
 // Migrations idempotentes para colunas adicionadas em entregas posteriores
 function addColumnIfMissing(table, column, definition) {
   const cols = db.pragma(`table_info(${table})`).map((c) => c.name);
@@ -173,6 +221,8 @@ function addColumnIfMissing(table, column, definition) {
 addColumnIfMissing('users', 'google_id', 'TEXT');
 // users.avatar_url (upload de foto de perfil)
 addColumnIfMissing('users', 'avatar_url', 'TEXT');
+// users.onboarding_completed (status do onboarding)
+addColumnIfMissing('users', 'onboarding_completed', 'INTEGER DEFAULT 0');
 // transactions.* (integração com MercadoPago)
 addColumnIfMissing('transactions', 'mercadopago_payment_id', 'TEXT');
 addColumnIfMissing('transactions', 'external_reference', 'TEXT');

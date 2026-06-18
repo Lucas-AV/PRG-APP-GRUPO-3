@@ -136,12 +136,12 @@ export default function AddressesScreen() {
 
       {loading ? (
         <View style={styles.center}>
-          <ActivityIndicator color={Colors.primary} />
+          <ActivityIndicator color={Colors.brand} />
         </View>
       ) : sortedAddresses.length === 0 ? (
         <View style={styles.center}>
           <View style={styles.emptyIconBox}>
-            <MaterialIcons name="location-off" size={48} color={Colors.primary} />
+            <MaterialIcons name="location-off" size={48} color={Colors.brand} />
           </View>
           <Text style={styles.emptyTitle}>Nenhum endereço cadastrado</Text>
           <Text style={styles.emptySubtitle}>Adicione um endereço para poder contratar e gerenciar seus serviços com facilidade.</Text>
@@ -170,7 +170,7 @@ export default function AddressesScreen() {
                     <MaterialIcons
                       name={TYPE_ICON[address.type] ?? 'location-on'}
                       size={20}
-                      color={isDefault ? Colors.primary : Colors.outline}
+                      color={isDefault ? Colors.brand : Colors.inkMuted}
                     />
                   </View>
                   <Text style={[styles.cardType, isDefault && styles.cardTypeActive]}>
@@ -178,7 +178,7 @@ export default function AddressesScreen() {
                   </Text>
                   {isDefault && (
                     <View style={styles.defaultBadge}>
-                      <MaterialIcons name="check" size={10} color={Colors.primary} style={{ marginRight: 2 }} />
+                      <MaterialIcons name="check" size={10} color={Colors.brand} style={{ marginRight: 2 }} />
                       <Text style={styles.defaultBadgeText}>Padrão</Text>
                     </View>
                   )}
@@ -204,7 +204,7 @@ export default function AddressesScreen() {
                     style={styles.footerActionBtn}
                     hitSlop={8}
                   >
-                    <MaterialIcons name="edit" size={16} color={Colors.primary} />
+                    <MaterialIcons name="edit" size={16} color={Colors.brand} />
                     <Text style={styles.footerActionText}>Editar</Text>
                   </Pressable>
                   <Pressable
@@ -248,20 +248,20 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing.xxxl * 3,
   },
   card: {
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.lg,
     padding: Spacing.base,
     elevation: 2,
-    shadowColor: '#000',
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 8,
     borderWidth: 1,
-    borderColor: Colors.outlineVariant + '22',
+    borderColor: Colors.border,
   },
   cardDefaultActive: {
-    borderColor: Colors.primary + '55',
-    backgroundColor: Colors.surfaceContainerLowest,
+    borderColor: Colors.brand + '55',
+    backgroundColor: Colors.card,
     shadowOpacity: 0.08,
     shadowRadius: 12,
   },
@@ -275,12 +275,12 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: Radius.full,
-    backgroundColor: Colors.surfaceContainerLow,
+    backgroundColor: Colors.card,
     alignItems: 'center',
     justifyContent: 'center',
   },
   cardIconDefault: {
-    backgroundColor: Colors.primaryContainer + '40',
+    backgroundColor: Colors.brand+'10',
   },
   cardBody: {
     paddingLeft: 44,
@@ -289,17 +289,17 @@ const styles = StyleSheet.create({
   cardType: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 12,
-    color: Colors.outline,
+    color: Colors.inkMuted,
     textTransform: 'uppercase',
     letterSpacing: 0.8,
   },
   cardTypeActive: {
-    color: Colors.primary,
+    color: Colors.brand,
   },
   defaultBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.primaryContainer + '40',
+    backgroundColor: Colors.brand+'10',
     paddingHorizontal: Spacing.sm,
     paddingVertical: 2,
     borderRadius: Radius.full,
@@ -308,29 +308,29 @@ const styles = StyleSheet.create({
   defaultBadgeText: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 10,
-    color: Colors.primary,
+    color: Colors.brand,
   },
   cardStreet: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 15,
-    color: Colors.onSurface,
+    color: Colors.ink,
     letterSpacing: -0.2,
   },
   cardDetail: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 12,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     lineHeight: 18,
   },
   cardComplement: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 12,
-    color: Colors.primary,
+    color: Colors.brand,
     marginTop: 2,
   },
   cardDivider: {
     height: 1,
-    backgroundColor: Colors.outlineVariant + '22',
+    backgroundColor: Colors.border,
     marginVertical: Spacing.md,
   },
   cardFooter: {
@@ -347,13 +347,13 @@ const styles = StyleSheet.create({
   footerActionText: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 13,
-    color: Colors.primary,
+    color: Colors.brand,
   },
   emptyIconBox: {
     width: 80,
     height: 80,
     borderRadius: Radius.full,
-    backgroundColor: Colors.primaryContainer + '33',
+    backgroundColor: Colors.brand+'10',
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: Spacing.md,
@@ -361,17 +361,17 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontFamily: FontFamily.headlineSemiBold,
     fontSize: 16,
-    color: Colors.onSurface,
+    color: Colors.ink,
     textAlign: 'center',
   },
   emptySubtitle: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 13,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     textAlign: 'center',
   },
   emptyBtn: {
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.brand,
     paddingHorizontal: Spacing.xl,
     paddingVertical: Spacing.md,
     borderRadius: Radius.full,
@@ -389,11 +389,11 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: Radius.full,
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.brand,
     alignItems: 'center',
     justifyContent: 'center',
     elevation: 4,
-    shadowColor: '#000',
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,

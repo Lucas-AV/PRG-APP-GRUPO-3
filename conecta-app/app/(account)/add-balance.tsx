@@ -82,7 +82,7 @@ export default function AddBalanceScreen() {
             value={displayValue}
             onChangeText={handleAmountChange}
             placeholder="R$ 0,00"
-            placeholderTextColor={Colors.primary + '66'}
+            placeholderTextColor={Colors.brand+'66'}
             keyboardType="numeric"
             textAlign="center"
           />
@@ -118,8 +118,8 @@ export default function AddBalanceScreen() {
             icon="bolt"
             label="Pix"
             subtitle="Aprovação imediata"
-            iconBg={Colors.primaryContainer}
-            iconColor={Colors.primary}
+            iconBg={Colors.brand+'15'}
+            iconColor={Colors.brand}
           />
           <MethodOption
             selected={paymentMethod === 'card'}
@@ -127,8 +127,8 @@ export default function AddBalanceScreen() {
             icon="credit-card"
             label="Cartão de Crédito"
             subtitle={firstCard ? `${firstCard.brand} final ${firstCard.last_four}` : 'Nenhum cartão salvo'}
-            iconBg={Colors.surfaceContainerHigh}
-            iconColor={Colors.onSurfaceVariant}
+            iconBg={Colors.card}
+            iconColor={Colors.inkMuted}
           />
           <MethodOption
             selected={paymentMethod === 'boleto'}
@@ -136,15 +136,15 @@ export default function AddBalanceScreen() {
             icon="qr-code-scanner"
             label="Boleto"
             subtitle="Aprovação em até 2 dias úteis"
-            iconBg={Colors.surfaceContainerHigh}
-            iconColor={Colors.onSurfaceVariant}
+            iconBg={Colors.card}
+            iconColor={Colors.inkMuted}
           />
 
           <Pressable
             style={({ pressed }) => [styles.newCardBtn, pressed && { opacity: 0.7 }]}
             onPress={() => router.push('/(account)/new-card' as any)}
           >
-            <MaterialIcons name="add" size={20} color={Colors.onSurfaceVariant} />
+            <MaterialIcons name="add" size={20} color={Colors.inkMuted} />
             <Text style={styles.newCardLabel}>Usar novo cartão</Text>
           </Pressable>
         </View>
@@ -177,7 +177,7 @@ function MethodOption({ selected, onPress, icon, label, subtitle, iconBg, iconCo
     <Pressable
       style={({ pressed }) => [
         styles.methodRow,
-        pressed && { backgroundColor: Colors.surfaceContainerLow },
+        pressed && { backgroundColor: Colors.brand+'08' },
       ]}
       onPress={onPress}
     >
@@ -210,13 +210,13 @@ const styles = StyleSheet.create({
   amountLabel: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 11,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     letterSpacing: 1.6,
   },
   amountInput: {
     fontFamily: FontFamily.headlineExtraBold,
     fontSize: 48,
-    color: Colors.primary,
+    color: Colors.brand,
     letterSpacing: -1.5,
     minWidth: 200,
     paddingVertical: Spacing.sm,
@@ -225,9 +225,9 @@ const styles = StyleSheet.create({
     width: '25%',
     height: 3,
     borderRadius: 2,
-    backgroundColor: Colors.primary + '1A',
+    backgroundColor: Colors.brand+'15',
   },
-  amountUnderlineActive: { backgroundColor: Colors.primary },
+  amountUnderlineActive: { backgroundColor: Colors.brand },
 
   // Chips
   chipsRow: {
@@ -240,31 +240,31 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.xl,
     paddingVertical: Spacing.md,
     borderRadius: Radius.md,
-    backgroundColor: Colors.surfaceContainerLowest,
-    shadowColor: '#000',
+    backgroundColor: Colors.card,
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.04,
     shadowRadius: 6,
     elevation: 1,
   },
   chipActive: {
-    backgroundColor: Colors.primaryContainer,
+    backgroundColor: Colors.brand+'15',
     borderWidth: 1,
-    borderColor: Colors.primary,
+    borderColor: Colors.brand,
   },
   chipLabel: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 14,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
-  chipLabelActive: { color: Colors.onPrimaryContainer },
+  chipLabelActive: { color: Colors.ink },
 
   // Method section
   methodSection: { gap: Spacing.md },
   methodTitle: {
     fontFamily: FontFamily.headlineExtraBold,
     fontSize: 18,
-    color: Colors.onSurface,
+    color: Colors.ink,
     letterSpacing: -0.3,
   },
   methodRow: {
@@ -273,7 +273,7 @@ const styles = StyleSheet.create({
     gap: Spacing.base,
     padding: Spacing.base + 4,
     borderRadius: Radius.xl,
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
   },
   methodIconWrap: {
     width: 48,
@@ -286,12 +286,12 @@ const styles = StyleSheet.create({
   methodLabel: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 15,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   methodSub: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 12,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     marginTop: 1,
   },
   radio: {
@@ -299,13 +299,13 @@ const styles = StyleSheet.create({
     height: 22,
     borderRadius: 11,
     borderWidth: 2,
-    borderColor: Colors.outlineVariant,
+    borderColor: Colors.border,
     alignItems: 'center',
     justifyContent: 'center',
   },
   radioSelected: {
-    borderColor: Colors.primary,
-    backgroundColor: Colors.primary,
+    borderColor: Colors.brand,
+    backgroundColor: Colors.brand,
   },
   radioDot: {
     width: 8,
@@ -325,12 +325,12 @@ const styles = StyleSheet.create({
     borderRadius: Radius.xl,
     borderWidth: 1.5,
     borderStyle: 'dashed',
-    borderColor: Colors.outlineVariant,
+    borderColor: Colors.border,
   },
   newCardLabel: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 14,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
 
   // Footer
@@ -338,7 +338,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.xl,
     paddingTop: Spacing.xl,
     backgroundColor: Colors.surface,
-    shadowColor: Colors.onSurface,
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.05,
     shadowRadius: 12,

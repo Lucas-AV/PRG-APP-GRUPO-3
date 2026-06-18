@@ -1,5 +1,8 @@
 export const Colors = {
+  // ── Tokens de marca ──────────────────────────────────────────────────
   primary: '#0054d6',
+  brand: '#0054d6',
+  brandDeep: '#003fa3',
   primaryDim: '#004abd',
   primaryFixed: '#dae1ff',
   primaryFixedDim: '#c7d3ff',
@@ -9,6 +12,13 @@ export const Colors = {
   onPrimaryContainer: '#0049bb',
   inversePrimary: '#5e8bff',
 
+  // ── Tokens premium (novos) ────────────────────────────────────────────
+  ink: '#0f172a',
+  inkMuted: '#64748b',
+  card: '#ffffff',
+  border: 'rgba(15,23,42,0.08)',
+
+  // ── Secundário / terciário (M3) ───────────────────────────────────────
   secondary: '#5f5f62',
   secondaryDim: '#535356',
   secondaryContainer: '#e4e2e6',
@@ -21,13 +31,15 @@ export const Colors = {
   onTertiary: '#fcf7ff',
   onTertiaryContainer: '#504b66',
 
+  // ── Erro ──────────────────────────────────────────────────────────────
   error: '#9f403d',
   errorContainer: '#fe8983',
   onError: '#fff7f6',
   onErrorContainer: '#752121',
 
-  surface: '#f9f9f9',
-  surfaceBright: '#f9f9f9',
+  // ── Superfícies ───────────────────────────────────────────────────────
+  surface: '#f8fafc',
+  surfaceBright: '#f8fafc',
   surfaceDim: '#d4dbdd',
   surfaceVariant: '#dde4e5',
   surfaceContainerLowest: '#ffffff',
@@ -36,16 +48,17 @@ export const Colors = {
   surfaceContainerHigh: '#e4e9ea',
   surfaceContainerHighest: '#dde4e5',
 
-  onSurface: '#2d3435',
-  onSurfaceVariant: '#5a6061',
+  // ── On-surface ────────────────────────────────────────────────────────
+  onSurface: '#0f172a',
+  onSurfaceVariant: '#64748b',
   inverseSurface: '#0c0f0f',
 
   outline: '#757c7d',
   outlineVariant: '#adb3b4',
 
-  background: '#f9f9f9',
-  onBackground: '#2d3435',
-};
+  background: '#f8fafc',
+  onBackground: '#0f172a',
+} as const;
 
 export const FontFamily = {
   headlineExtraBold: 'Manrope-ExtraBold',
@@ -54,7 +67,58 @@ export const FontFamily = {
   bodyRegular: 'Inter-Regular',
   bodyMedium: 'Inter-Medium',
   bodySemiBold: 'Inter-SemiBold',
-};
+} as const;
+
+export const Typography = {
+  display: {
+    fontFamily: FontFamily.headlineExtraBold,
+    fontSize: 32,
+    letterSpacing: -1.2,
+    lineHeight: 38,
+  },
+  headline: {
+    fontFamily: FontFamily.headlineBold,
+    fontSize: 22,
+    letterSpacing: -0.6,
+    lineHeight: 28,
+  },
+  title: {
+    fontFamily: FontFamily.headlineSemiBold,
+    fontSize: 17,
+    letterSpacing: -0.3,
+    lineHeight: 24,
+  },
+  body: {
+    fontFamily: FontFamily.bodyRegular,
+    fontSize: 14,
+    letterSpacing: 0,
+    lineHeight: 20,
+  },
+  bodyMedium: {
+    fontFamily: FontFamily.bodyMedium,
+    fontSize: 14,
+    letterSpacing: 0,
+    lineHeight: 20,
+  },
+  label: {
+    fontFamily: FontFamily.bodySemiBold,
+    fontSize: 12,
+    letterSpacing: 0.1,
+    lineHeight: 16,
+  },
+  caption: {
+    fontFamily: FontFamily.bodyRegular,
+    fontSize: 11,
+    letterSpacing: 0.2,
+    lineHeight: 15,
+  },
+  overline: {
+    fontFamily: FontFamily.bodySemiBold,
+    fontSize: 10,
+    letterSpacing: 1.4,
+    lineHeight: 14,
+  },
+} as const;
 
 export const Spacing = {
   xs: 4,
@@ -65,7 +129,7 @@ export const Spacing = {
   xxl: 24,
   xxxl: 32,
   screen: 20,
-};
+} as const;
 
 export const Radius = {
   sm: 8,
@@ -73,6 +137,6 @@ export const Radius = {
   lg: 16,
   xl: 24,
   full: 9999,
-};
+} as const;
 
-export const GradientColors: [string, string] = ['#0054d6', '#004abd'];
+export const GradientColors: [string, string] = ['#0054d6', '#003fa3'];

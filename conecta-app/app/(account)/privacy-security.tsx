@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -6,19 +6,79 @@ import {
   Pressable,
   StyleSheet,
   Switch,
+  Alert,
+  Share,
+  Linking,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
+import * as SecureStore from 'expo-secure-store';
 import { TopAppBar } from '@/components/ui/top-app-bar';
 import { Colors, FontFamily, Spacing, Radius } from '@/constants/theme';
-import { useComingSoonAlert } from '@/hooks/useComingSoonAlert';
+import { useAuth } from '@/context/AuthContext';
+
+const BIOMETRICS_KEY = 'biometrics_enabled';
 
 export default function PrivacySecurityScreen() {
-  const [biometrics, setBiometrics] = useState(true);
+  const { user } = useAuth();
+  const [biometrics, setBiometrics] = useState(false);
   const [publicProfile, setPublicProfile] = useState(false);
 
-  const comingSoon = useComingSoonAlert();
+  useEffect(() => {
+    SecureStore.getItemAsync(BIOMETRICS_KEY).then(val => {
+      setBiometrics(val === 'true');
+    });
+  }, []);
+
+  const handleBiometricsToggle = async (value: boolean) => {
+    setBiometrics(value);
+    await SecureStore.setItemAsync(BIOMETRICS_KEY, String(value));
+  };
+
+  const handleOpenSettings = () => {
+    Linking.openSettings();
+  };
+
+  const handleDownloadData = async () => {
+    if (!user) return;
+    const date = new Date().toLocaleDateString('pt-BR', {
+      day: '2-digit', month: '2-digit', year: 'numeric',
+      hour: '2-digit', minute: '2-digit',
+    });
+    const lines = [
+      'CONECTA — CÓPIA DOS SEUS DADOS',
+      `Gerado em: ${date}`,
+      '',
+      '── INFORMAÇÕES DA CONTA ──────────────',
+      `Nome:     ${user.name}`,
+      `E-mail:   ${user.email}`,
+      `Telefone: ${user.phone ?? 'Não informado'}`,
+      `Perfil:   ${user.role === 'prestador' ? 'Prestador de serviços' : 'Cliente'}`,
+      '',
+      '── NOTA DE PRIVACIDADE ───────────────',
+      'Sua senha e tokens de sessão não são',
+      'armazenados em formato legível e não',
+      'aparecem nesta exportação por segurança.',
+      '',
+      'Para solicitar exclusão de todos os seus',
+      'dados, acesse Configurações › Excluir conta',
+      'ou envie e-mail para suporte@conectaapp.com.br',
+    ];
+    try {
+      await Share.share({ message: lines.join('\n'), title: 'Meus dados — Conecta' });
+    } catch {
+      // user cancelled
+    }
+  };
+
+  const handle2FA = () => {
+    Alert.alert(
+      'Autenticação de Dois Fatores',
+      'A verificação em duas etapas via SMS e aplicativo autenticador (TOTP) estará disponível em breve.\n\nSua conta já está protegida por senha segura e, opcionalmente, autenticação biométrica.',
+      [{ text: 'Entendi' }],
+    );
+  };
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -36,7 +96,7 @@ export default function PrivacySecurityScreen() {
               Controle como seus dados são usados e proteja sua conta com as ferramentas mais avançadas.
             </Text>
           </View>
-          <MaterialIcons name="verified-user" size={48} color={Colors.primary} />
+          <MaterialIcons name="verified-user" size={48} color={Colors.brand} />
         </View>
 
         {/* Segurança da Conta */}
@@ -50,22 +110,22 @@ export default function PrivacySecurityScreen() {
 
           <View style={styles.card}>
             <Pressable
-              style={({ pressed }) => [styles.secRow, styles.rowBorder, pressed && { backgroundColor: Colors.surfaceContainerLow }]}
+              style={({ pressed }) => [styles.secRow, styles.rowBorder, pressed && { backgroundColor: Colors.brand+'08' }]}
               onPress={() => router.push('/(account)/change-password' as any)}
             >
               <View style={styles.secIconWrap}>
-                <MaterialIcons name="lock-reset" size={20} color={Colors.primary} />
+                <MaterialIcons name="lock-reset" size={20} color={Colors.brand} />
               </View>
               <View style={styles.secInfo}>
                 <Text style={styles.secLabel}>Alterar senha</Text>
                 <Text style={styles.secSub}>Recomendamos trocar a cada 6 meses</Text>
               </View>
-              <MaterialIcons name="chevron-right" size={20} color={Colors.outline} />
+              <MaterialIcons name="chevron-right" size={20} color={Colors.inkMuted} />
             </Pressable>
 
             <View style={[styles.secRow, styles.rowBorder]}>
               <View style={styles.secIconWrap}>
-                <MaterialIcons name="fingerprint" size={20} color={Colors.primary} />
+                <MaterialIcons name="fingerprint" size={20} color={Colors.brand} />
               </View>
               <View style={styles.secInfo}>
                 <Text style={styles.secLabel}>Autenticação biométrica</Text>
@@ -73,25 +133,25 @@ export default function PrivacySecurityScreen() {
               </View>
               <Switch
                 value={biometrics}
-                onValueChange={setBiometrics}
-                trackColor={{ false: Colors.surfaceContainerHighest, true: Colors.primary }}
+                onValueChange={handleBiometricsToggle}
+                trackColor={{ false: Colors.border, true: Colors.brand }}
                 thumbColor="#ffffff"
-                ios_backgroundColor={Colors.surfaceContainerHighest}
+                ios_backgroundColor={Colors.border}
               />
             </View>
 
             <Pressable
-              style={({ pressed }) => [styles.secRow, pressed && { backgroundColor: Colors.surfaceContainerLow }]}
-              onPress={comingSoon}
+              style={({ pressed }) => [styles.secRow, pressed && { backgroundColor: Colors.brand+'08' }]}
+              onPress={handle2FA}
             >
               <View style={styles.secIconWrap}>
-                <MaterialIcons name="security" size={20} color={Colors.primary} />
+                <MaterialIcons name="security" size={20} color={Colors.brand} />
               </View>
               <View style={styles.secInfo}>
                 <Text style={styles.secLabel}>Autenticação de dois fatores</Text>
-                <Text style={[styles.secSub, { color: Colors.primary }]}>Ativado via SMS</Text>
+                <Text style={[styles.secSub, { color: Colors.brand }]}>Ativado via SMS</Text>
               </View>
-              <MaterialIcons name="chevron-right" size={20} color={Colors.outline} />
+              <MaterialIcons name="chevron-right" size={20} color={Colors.inkMuted} />
             </Pressable>
           </View>
         </View>
@@ -100,24 +160,24 @@ export default function PrivacySecurityScreen() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Privacidade de Dados</Text>
           <View style={styles.bentoRow}>
-            <Pressable style={[styles.bentoCard, styles.bentoCardWhite]} onPress={comingSoon}>
-              <MaterialIcons name="settings-accessibility" size={32} color={Colors.primary} />
+            <Pressable style={[styles.bentoCard, styles.bentoCardWhite]} onPress={handleOpenSettings}>
+              <MaterialIcons name="settings-accessibility" size={32} color={Colors.brand} />
               <Text style={styles.bentoTitle}>Permissões do App</Text>
               <Text style={styles.bentoSub}>Localização, câmera e notificações em um só lugar.</Text>
               <Text style={styles.bentoAction}>Gerenciar agora</Text>
             </Pressable>
 
             <View style={styles.bentoCard}>
-              <MaterialIcons name="visibility" size={32} color={Colors.onSurfaceVariant} />
+              <MaterialIcons name="visibility" size={32} color={Colors.inkMuted} />
               <Text style={styles.bentoTitle}>Visibilidade do Perfil</Text>
               <View style={styles.bentoToggleRow}>
                 <Text style={styles.bentoSub}>Perfil Público</Text>
                 <Switch
                   value={publicProfile}
                   onValueChange={setPublicProfile}
-                  trackColor={{ false: Colors.outlineVariant + '4D', true: Colors.primary }}
+                  trackColor={{ false: Colors.border, true: Colors.brand }}
                   thumbColor="#ffffff"
-                  ios_backgroundColor={Colors.outlineVariant + '4D'}
+                  ios_backgroundColor={Colors.border}
                 />
               </View>
             </View>
@@ -129,19 +189,19 @@ export default function PrivacySecurityScreen() {
           <Text style={styles.sectionTitle}>Gerenciar Dados</Text>
           <View style={styles.manageCard}>
             <Pressable
-              style={({ pressed }) => [styles.manageRow, styles.rowBorder, pressed && { backgroundColor: Colors.surfaceContainerLow }]}
-              onPress={comingSoon}
+              style={({ pressed }) => [styles.manageRow, styles.rowBorder, pressed && { backgroundColor: Colors.brand+'08' }]}
+              onPress={handleDownloadData}
             >
-              <MaterialIcons name="file-download" size={22} color={Colors.onSurfaceVariant} />
+              <MaterialIcons name="file-download" size={22} color={Colors.inkMuted} />
               <Text style={styles.manageLabel}>Baixar cópia dos meus dados</Text>
-              <MaterialIcons name="open-in-new" size={18} color={Colors.outline} />
+              <MaterialIcons name="open-in-new" size={18} color={Colors.inkMuted} />
             </Pressable>
             <Pressable
               style={({ pressed }) => [styles.manageRow, pressed && { backgroundColor: Colors.errorContainer + '1A' }]}
               onPress={() => router.push('/(account)/delete-account' as any)}
             >
-              <MaterialIcons name="person-remove" size={22} color={Colors.onSurfaceVariant} />
-              <Text style={[styles.manageLabel, { color: Colors.onSurfaceVariant }]}>
+              <MaterialIcons name="person-remove" size={22} color={Colors.inkMuted} />
+              <Text style={[styles.manageLabel, { color: Colors.inkMuted }]}>
                 Solicitar exclusão de conta
               </Text>
             </Pressable>
@@ -150,7 +210,7 @@ export default function PrivacySecurityScreen() {
 
         {/* Badge */}
         <View style={styles.encryptedBadge}>
-          <MaterialIcons name="lock" size={32} color={Colors.onSurfaceVariant} />
+          <MaterialIcons name="lock" size={32} color={Colors.inkMuted} />
           <Text style={styles.encryptedText}>PROTOCOLO DE SEGURANÇA ATIVO{'\n'}CONECTA v1.0.0</Text>
         </View>
       </ScrollView>
@@ -170,7 +230,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: Colors.primaryContainer,
+    backgroundColor: Colors.brand+'15',
     borderRadius: Radius.lg,
     padding: Spacing.xxl,
     overflow: 'hidden',
@@ -179,14 +239,14 @@ const styles = StyleSheet.create({
   heroTitle: {
     fontFamily: FontFamily.headlineExtraBold,
     fontSize: 18,
-    color: Colors.onPrimaryContainer,
+    color: Colors.ink,
     letterSpacing: -0.4,
     lineHeight: 24,
   },
   heroSub: {
     fontFamily: FontFamily.bodyMedium,
     fontSize: 12,
-    color: Colors.onPrimaryContainer + 'CC',
+    color: Colors.ink + 'CC',
     lineHeight: 18,
   },
   section: { gap: Spacing.base },
@@ -198,25 +258,25 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 18,
-    color: Colors.onSurface,
+    color: Colors.ink,
     letterSpacing: -0.3,
   },
   badge: {
     paddingHorizontal: Spacing.md,
     paddingVertical: 4,
-    backgroundColor: Colors.primary + '1A',
+    backgroundColor: Colors.brand+'15',
     borderRadius: Radius.full,
   },
   badgeText: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 11,
-    color: Colors.primary,
+    color: Colors.brand,
   },
   card: {
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.md,
     overflow: 'hidden',
-    shadowColor: '#000',
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.03,
     shadowRadius: 8,
@@ -230,13 +290,13 @@ const styles = StyleSheet.create({
   },
   rowBorder: {
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: Colors.surfaceContainerLow,
+    borderBottomColor: Colors.border,
   },
   secIconWrap: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: Colors.surfaceContainer,
+    backgroundColor: Colors.border,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -244,22 +304,22 @@ const styles = StyleSheet.create({
   secLabel: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 14,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   secSub: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 12,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     marginTop: 1,
   },
   bentoRow: { flexDirection: 'row', gap: Spacing.md },
   bentoCard: {
     flex: 1,
-    backgroundColor: Colors.surfaceContainerHigh,
+    backgroundColor: Colors.card,
     borderRadius: Radius.md,
     padding: Spacing.xl,
     gap: Spacing.sm,
-    shadowColor: '#000',
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.02,
     shadowRadius: 8,
@@ -267,21 +327,21 @@ const styles = StyleSheet.create({
     minHeight: 160,
     justifyContent: 'space-between',
   },
-  bentoCardWhite: { backgroundColor: Colors.surfaceContainerLowest },
+  bentoCardWhite: { backgroundColor: Colors.card },
   bentoTitle: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 15,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   bentoSub: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 12,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
   bentoAction: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 11,
-    color: Colors.primary,
+    color: Colors.brand,
     letterSpacing: 1,
     textTransform: 'uppercase',
   },
@@ -292,7 +352,7 @@ const styles = StyleSheet.create({
     marginTop: Spacing.sm,
   },
   manageCard: {
-    backgroundColor: Colors.surfaceContainerLow,
+    backgroundColor: Colors.card,
     borderRadius: Radius.md,
     overflow: 'hidden',
   },
@@ -306,13 +366,13 @@ const styles = StyleSheet.create({
     flex: 1,
     fontFamily: FontFamily.bodyMedium,
     fontSize: 14,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   encryptedBadge: { alignItems: 'center', gap: Spacing.sm, opacity: 0.4, paddingVertical: Spacing.xl },
   encryptedText: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 10,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     letterSpacing: 1.5,
     textTransform: 'uppercase',
     textAlign: 'center',

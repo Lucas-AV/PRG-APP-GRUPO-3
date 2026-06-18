@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 3,
-    alignSelf: 'center',
+    alignSelf: 'flex-start',
     paddingHorizontal: Spacing.sm + 1,
     paddingVertical: 3,
     borderRadius: Radius.full,

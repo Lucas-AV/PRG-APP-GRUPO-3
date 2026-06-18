@@ -101,14 +101,14 @@ function FaqPanel({ icon, label, content, expanded, onToggle }: FaqPanelProps) {
       <View style={styles.panelHeader}>
         <View style={styles.panelLeft}>
           <View style={styles.panelIconWrap}>
-            <MaterialIcons name={icon} size={20} color={Colors.onSurfaceVariant} />
+            <MaterialIcons name={icon} size={20} color={Colors.inkMuted} />
           </View>
           <Text style={styles.panelLabel}>{label}</Text>
         </View>
         <MaterialIcons
           name="chevron-right"
           size={20}
-          color={Colors.outlineVariant}
+          color={Colors.border}
           style={{ transform: [{ rotate: expanded ? '90deg' : '0deg' }] }}
         />
       </View>
@@ -162,7 +162,7 @@ export default function SupportScreen() {
               <Text style={styles.statusSub}>Estamos prontos para te ajudar agora.</Text>
             </View>
             <View style={styles.statusAvatar}>
-              <MaterialIcons name="support-agent" size={32} color={Colors.primary} />
+              <MaterialIcons name="support-agent" size={32} color={Colors.brand} />
             </View>
           </View>
           <GradientButton
@@ -183,7 +183,7 @@ export default function SupportScreen() {
                 onPress={c.action}
               >
                 <View style={styles.contactIconWrap}>
-                  <MaterialIcons name={c.icon} size={24} color={Colors.primary} />
+                  <MaterialIcons name={c.icon} size={24} color={Colors.brand} />
                 </View>
                 <Text style={styles.contactLabel}>{c.label}</Text>
               </Pressable>
@@ -230,10 +230,10 @@ const styles = StyleSheet.create({
 
   // Status card
   statusCard: {
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.lg,
     padding: Spacing.xxl,
-    shadowColor: '#000',
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.04,
     shadowRadius: 24,
@@ -251,19 +251,19 @@ const styles = StyleSheet.create({
   statusTitle: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 17,
-    color: Colors.onSurface,
+    color: Colors.ink,
     letterSpacing: -0.3,
   },
   statusSub: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 13,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
   statusAvatar: {
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: Colors.primaryContainer,
+    backgroundColor: Colors.brand+'15',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -273,7 +273,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontFamily: FontFamily.headlineExtraBold,
     fontSize: 20,
-    color: Colors.onSurface,
+    color: Colors.ink,
     letterSpacing: -0.4,
   },
 
@@ -282,11 +282,11 @@ const styles = StyleSheet.create({
   contactCard: {
     flex: 1,
     alignItems: 'center',
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.md,
     paddingVertical: Spacing.xl,
     gap: Spacing.md,
-    shadowColor: '#000',
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.03,
     shadowRadius: 8,
@@ -296,14 +296,14 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: Colors.primaryContainer,
+    backgroundColor: Colors.brand+'15',
     alignItems: 'center',
     justifyContent: 'center',
   },
   contactLabel: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 11,
-    color: Colors.onSurface,
+    color: Colors.ink,
     letterSpacing: 0.8,
     textTransform: 'uppercase',
   },
@@ -313,27 +313,27 @@ const styles = StyleSheet.create({
   seeAll: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 10,
-    color: Colors.primary,
+    color: Colors.brand,
     letterSpacing: 1.5,
   },
 
   // Expansion panels
   panelList: { gap: Spacing.sm },
   panel: {
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.md,
     padding: Spacing.base,
-    shadowColor: '#000',
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.02,
     shadowRadius: 8,
     elevation: 1,
   },
   panelPressed: {
-    backgroundColor: Colors.surfaceContainerLow,
+    backgroundColor: Colors.card,
   },
   panelExpanded: {
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
   },
   panelHeader: {
     flexDirection: 'row',
@@ -350,7 +350,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: Radius.full,
-    backgroundColor: Colors.surfaceContainer,
+    backgroundColor: Colors.border,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -358,7 +358,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontFamily: FontFamily.headlineSemiBold,
     fontSize: 15,
-    color: Colors.onSurface,
+    color: Colors.ink,
     letterSpacing: -0.2,
   },
   panelBody: {
@@ -368,7 +368,7 @@ const styles = StyleSheet.create({
   panelContent: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 13,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     lineHeight: 20,
   },
 });

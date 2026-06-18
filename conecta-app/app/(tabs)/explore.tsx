@@ -19,6 +19,6 @@ const styles = StyleSheet.create({
   text: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 16,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
 });

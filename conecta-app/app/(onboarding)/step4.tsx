@@ -118,7 +118,7 @@ export default function Step4Screen() {
             {NEXT_STEPS.map((step, i) => (
               <View key={i} style={styles.stepItem}>
                 <View style={styles.stepIconBox}>
-                  <MaterialIcons name={step.icon} size={20} color={Colors.primary} />
+                  <MaterialIcons name={step.icon} size={20} color={Colors.brand} />
                 </View>
                 <View style={styles.stepText}>
                   <Text style={styles.stepTitle}>{step.title}</Text>
@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
 
   // Icon
   iconWrap: {
-    shadowColor: Colors.primary,
+    shadowColor: Colors.brand,
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.25,
     shadowRadius: 24,
@@ -195,13 +195,13 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.headlineExtraBold,
     fontSize: 36,
     letterSpacing: -1.2,
-    color: Colors.onSurface,
+    color: Colors.ink,
     textAlign: 'center',
   },
   subtitle: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 15,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     textAlign: 'center',
     lineHeight: 22,
     maxWidth: 320,
@@ -209,12 +209,12 @@ const styles = StyleSheet.create({
 
   // Info card
   infoCard: {
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.md,
     padding: Spacing.xxl,
     gap: Spacing.sm,
     width: '100%',
-    shadowColor: '#000',
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.04,
     shadowRadius: 16,
@@ -223,13 +223,13 @@ const styles = StyleSheet.create({
   infoCardTitle: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 16,
-    color: Colors.onSurface,
+    color: Colors.ink,
     letterSpacing: -0.3,
   },
   infoCardDesc: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 13,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     lineHeight: 19,
   },
 
@@ -241,7 +241,7 @@ const styles = StyleSheet.create({
   nextStepsTitle: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 10,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     letterSpacing: 2,
   },
   stepList: {
@@ -256,7 +256,7 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: Radius.md,
-    backgroundColor: Colors.primaryContainer,
+    backgroundColor: Colors.brand + '15',
     alignItems: 'center',
     justifyContent: 'center',
     flexShrink: 0,
@@ -265,13 +265,13 @@ const styles = StyleSheet.create({
   stepTitle: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 14,
-    color: Colors.onSurface,
+    color: Colors.ink,
     letterSpacing: -0.2,
   },
   stepDesc: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 12,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     lineHeight: 17,
   },
 
@@ -284,6 +284,6 @@ const styles = StyleSheet.create({
   laterLabel: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 14,
-    color: Colors.primary,
+    color: Colors.brand,
   },
 });

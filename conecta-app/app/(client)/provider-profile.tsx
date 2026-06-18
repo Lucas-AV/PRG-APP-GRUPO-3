@@ -9,7 +9,6 @@ import {
   Alert,
   Share,
   useWindowDimensions,
-  Image,
   Modal,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -18,21 +17,8 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, FontFamily, Spacing, Radius, GradientColors } from '@/constants/theme';
 import { CATEGORIES } from '@/constants/categories';
-import { publicServicesApi, PublicService, providerApi, ProviderReviews } from '@/services/api';
-
-const PROJECT_IMAGES = [
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuAkYLWjdnNCAWwVOJ8spa1r2yta3qV_DJlzHC_H743ZYD_UuzGRu20txyNVmlzEd_VDJwd7rOLN4mw6APe28NV9Jtd_Eti_F_Wf2K6F_NKEKfC3lGW2uldL_78PgHKxT59G7fGJQXptNcg2krdmPxR9qtk5rQ3aKH6IAvj-76E_mjYLi8rJlbzcJEOagLZ0JqyvvyT0sRwVoqyqAA05wC5Ds-EyieW8DNx9YytubZutm7idgzlS9JQPaeRhQSIK4LS3x8Oan2hxI44',
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuCHioSqVsdvNWqldBN0womer80lijQWyGy4awbONETroBDBpTXu_uuaKvBfw9kfuzOi0jUZAN9UkobowYo0xcwHkQJ9f4a9LQTAsIscqCunPi_l-4_szHt8Hk4xwQbSR3GkIHQjJfXK9Mdi7q0X25Oj3qGw8yzx5tj0pHc3RcNRPmS7dp7vLhL9qlh99sw3xzDWDylCN5DJddbaCSZmYMtRJDCVmxYsjWaXjaNCzRy4KXIOA_b0_3nRVredBT04J0tmhyfBqddzPhQ',
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuAb5XupgdG5UBWeJjThuTv3_Jg4SQHanoqXdeM_iQb-H_d9uXF-gJO14zr9jF_Tl3ljehA9joyl-i4EoBrBiPjZSQbQTQOwoTlcpoamC7l2QFs4LIML6w8R4Repwhw1IqMV-sUju0TBwPUa5FwHtD57OZKvGPDk4a-KYk0lRLTM3HO_qa0dnHDRHBeI3vITGs9WWZkX-5rHm2gdT8zvkRuaO-cwmIMioo-Q0tiZyC6wKJ1W-3r41id26DK7MkO8MvQjoMgckmU4hmA',
-];
-
-const CLIENT_IMAGES = [
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuAwc82zLeu0B7_p29mp9qroynrHleO2haoo2qTAcwvAXaVzpPfvMI-5Z11YD3rdqUlrBTu6LRUGc1MTX2dTJQ2yOu8auCrrpZ8cUUOjqWSIftUePg4HDUeDTzqpG1Xb7vk13ysmCdn7AgUO-3z2fLtgBIjsf9b4WF-UueSGMicaV18Oq7yxkLDw1OWdrSXgdVHc9pXIzaAHVRbp1agWadD5j8u3TaTnkpietf6-iZSGXj138sgYuSrSzqwXyRwIuDP5teZ3tTrjbrY',
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuAEyt8aKGRoo4cASjst9rzYDo5SDJuSns-JeVJx5Lz4cPfQ0UZQ_SJfQsj05fapd5sPpds6lF7jjwnXhhxfbB6AIzO-FzYhoWXeZFtJI9IjFBWOpDqr0nmsr3xriTLJGtTMDj9DQMKW87pMu_Me_SAbZn_jTytcazT2aKIvtKNWVSYBy6kYDWDWk36_oIPQoWL-aCp-gu7rV2R2KueydTy2__u0XWSczeYV7HlLfgoxDng6h95HiKa_JLmxBeq4cwvnGaaJAykWnwA',
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuBkjg3NyIQjmVGiXuOxRdcAQos0yYalbVHAMPK9auuLGdBHslnmE-OiT1MdCeA_cjG6AQoRSjyWuwhnGmj6TTln1G9_e2Rsk-E-y5Ej5BNuvAMu_HnjARKGZqDDgbGL4sAk48a1qYSGZs7tdh7Xob-86UuKCAHY8nWFTSGvZBmCLb44KaTG5hN-XzVDild1GrUtx475dbeK-VVnVzyrgxNC7ENLPTB_EcKUXImg6fBenBsyiRQ-7Apzzd9-h8pAuyl2IjWSwWwM8bQ',
-];
-
-// ── Types & constants ─────────────────────────────────────────────────────────
+import { publicServicesApi, PublicService, providerApi, ProviderReviews, ProviderProfile } from '@/services/api';
+import { AvatarInitials } from '@/components/ui/avatar-initials';
 
 type Tab = 'servicos' | 'sobre' | 'avaliacoes';
 
@@ -41,44 +27,6 @@ const TABS: { key: Tab; label: string }[] = [
   { key: 'sobre',      label: 'Sobre'             },
   { key: 'avaliacoes', label: 'Avaliações'        },
 ];
-
-const MOCK_BIO =
-  'Com mais de uma década de atuação no setor, dedico minha carreira a entregar soluções ' +
-  'seguras e inovadoras para residências e empresas. Meu compromisso vai além da execução ' +
-  'técnica: prezo pela transparência e pela segurança em cada etapa do trabalho. ' +
-  'Especialista em resolver problemas complexos com agilidade e precisão.';
-
-const SPECIALTIES = [
-  { icon: 'home'        as const, label: 'Automação Residencial',               wide: false },
-  { icon: 'settings'    as const, label: 'Manutenção Preventiva',               wide: false },
-  { icon: 'bolt'        as const, label: 'Projetos Elétricos de Alta Complexidade', wide: true  },
-];
-
-const CERTS = [
-  {
-    icon: 'workspace-premium' as const,
-    title: 'NR-10',
-    subtitle: 'Segurança em Instalações e Serviços em Eletricidade',
-  },
-  {
-    icon: 'electric-bolt' as const,
-    title: 'Especialista em Carregadores EV',
-    subtitle: 'Certificação Tesla & Schneider para Home Charging',
-  },
-];
-
-const PROJECT_GRADIENTS: [string, string][] = [
-  ['#1e3a8a', '#3b82f6'],
-  ['#065f46', '#10b981'],
-  ['#581c87', '#a855f7'],
-];
-const PROJECT_ICONS: Array<keyof typeof MaterialIcons.glyphMap> = [
-  'electrical-services',
-  'lightbulb',
-  'settings',
-];
-
-// ── Helpers ───────────────────────────────────────────────────────────────────
 
 function getInitials(name: string) {
   return name.split(' ').slice(0, 2).map(w => w[0]?.toUpperCase() ?? '').join('');
@@ -89,38 +37,34 @@ function formatPrice(s: PublicService) {
   return `${s.price_type === 'a_partir_de' ? 'A partir de ' : ''}R$ ${s.price.toFixed(2).replace('.', ',')}`;
 }
 
-// ── Component ─────────────────────────────────────────────────────────────────
-
 export default function ProviderProfileScreen() {
   const { id, name } = useLocalSearchParams<{ id?: string; name?: string }>();
   const { width } = useWindowDimensions();
   const providerId = Number(id);
   const providerName = name ?? 'Prestador';
 
-  const [activeTab, setActiveTab]   = useState<Tab>('servicos');
-  const [services, setServices]     = useState<PublicService[]>([]);
-  const [reviewData, setReviewData] = useState<ProviderReviews | null>(null);
-  const [loadingServices, setLS] = useState(true);
-  const [loadingReviews, setLR]  = useState(true);
+  const [activeTab, setActiveTab]     = useState<Tab>('servicos');
+  const [services, setServices]       = useState<PublicService[]>([]);
+  const [reviewData, setReviewData]   = useState<ProviderReviews | null>(null);
+  const [profile, setProfile]         = useState<ProviderProfile | null>(null);
+  const [loading, setLoading]         = useState(true);
   const [menuVisible, setMenuVisible] = useState(false);
 
-  // Load services + reviews in parallel at mount so the rating pill
-  // is visible immediately without requiring the Avaliações tab to open.
   useEffect(() => {
     if (!providerId) return;
     Promise.all([
       publicServicesApi.list({ provider_id: providerId }),
       providerApi.reviews(providerId),
+      providerApi.profile(providerId),
     ])
-      .then(([svcs, rvs]) => {
+      .then(([svcs, rvs, prof]) => {
         setServices(svcs);
         setReviewData(rvs);
+        setProfile(prof);
       })
       .catch(() => {})
-      .finally(() => { setLS(false); setLR(false); });
+      .finally(() => setLoading(false));
   }, [providerId]);
-
-  const handleTabPress = (tab: Tab) => setActiveTab(tab);
 
   const specialty = services.length > 0
     ? (CATEGORIES.find(c => c.key === services[0].category)?.label ?? services[0].category)
@@ -129,7 +73,6 @@ export default function ProviderProfileScreen() {
   const avgRating   = reviewData?.avg_rating ?? null;
   const reviewCount = reviewData?.total_count ?? 0;
 
-  // bento tile widths
   const HPAD    = Spacing.xl * 2;
   const GAP     = Spacing.md;
   const halfCol = (width - HPAD - GAP) / 2;
@@ -137,88 +80,71 @@ export default function ProviderProfileScreen() {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
 
-      {/* ── TopAppBar ─────────────────────────────────────────────────── */}
       <View style={styles.topBar}>
-        <Pressable
-          style={({ pressed }) => [styles.iconBtn, pressed && { opacity: 0.6 }]}
-          onPress={() => router.back()}
-        >
+        <Pressable style={({ pressed }) => [styles.iconBtn, pressed && { opacity: 0.6 }]} onPress={() => router.back()}>
           <MaterialIcons name="arrow-back" size={24} color={Colors.primary} />
         </Pressable>
         <Text style={styles.topBarTitle}>Sobre o Profissional</Text>
-        <Pressable
-          style={({ pressed }) => [styles.iconBtn, pressed && { opacity: 0.6 }]}
-          onPress={() => setMenuVisible(true)}
-        >
+        <Pressable style={({ pressed }) => [styles.iconBtn, pressed && { opacity: 0.6 }]} onPress={() => setMenuVisible(true)}>
           <MaterialIcons name="more-vert" size={24} color={Colors.primary} />
         </Pressable>
       </View>
 
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scroll}
-      >
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
 
-        {/* ── Hero — centrado ───────────────────────────────────────────── */}
+        {/* Hero */}
         <View style={styles.hero}>
-          {/* Circular avatar + verified badge */}
           <View style={styles.avatarWrap}>
-            <View style={styles.avatarGradient}>
-              <Image
-                source={{ uri: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD3F1v9rc28ZCLH3WaEX5qfJpRMtrybN7V2LJIYzQ46era8XckLtJQNy_-r7-R5jxTnhmQDVezSsdZmxJf2Czg61mpVFflFZrtS73OyRyxa2NRwAzwkdmdym__bkPbxVsQYFxB3y-xKRipwJNqePP6gZTKG7QnQ-m5cjvgC-lQPn3Wq1BFVB7zUmTdESDp98aEqhL03v39FTvKI-MykyAX75ihSXS4RvZ49PfFeETjNT5zil3X6vNcAoImnIx_DwJNpbbKjxGKoZkY' }}
-                style={styles.avatarImage}
-              />
-            </View>
+            <AvatarInitials initials={getInitials(providerName)} size="lg" />
             <View style={styles.verifiedBadge}>
               <MaterialIcons name="verified" size={14} color={Colors.onPrimary} />
             </View>
           </View>
-
           <Text style={styles.heroName}>{providerName}</Text>
           {specialty && <Text style={styles.heroSpecialty}>{specialty}</Text>}
-
-          {/* Rating pill */}
           <View style={styles.ratingPill}>
             <MaterialIcons name="star" size={14} color="#f59e0b" />
             <Text style={styles.ratingNum}>{(avgRating ?? 0).toFixed(1)}</Text>
-            <Text style={styles.ratingCount}>
-              ({reviewCount} {reviewCount === 1 ? 'avaliação' : 'avaliações'})
-            </Text>
+            <Text style={styles.ratingCount}>({reviewCount} {reviewCount === 1 ? 'avaliação' : 'avaliações'})</Text>
           </View>
         </View>
 
-        {/* ── Stats Chips Row ───────────────────────────────────────────── */}
+        {/* Stats */}
         <View style={styles.statsContainer}>
           <View style={styles.statsCard}>
             <MaterialIcons name="history-edu" size={20} color={Colors.primary} />
             <View style={styles.statsTextWrap}>
               <Text style={styles.statsLabel}>Experiência</Text>
-              <Text style={styles.statsValue}>12 Anos</Text>
+              <Text style={styles.statsValue}>
+                {profile?.years_experience != null ? `${profile.years_experience} Anos` : '—'}
+              </Text>
             </View>
           </View>
           <View style={styles.statsCard}>
             <MaterialIcons name="task-alt" size={20} color={Colors.primary} />
             <View style={styles.statsTextWrap}>
               <Text style={styles.statsLabel}>Realizados</Text>
-              <Text style={styles.statsValue}>850+ Proj.</Text>
+              <Text style={styles.statsValue}>
+                {profile != null ? `${profile.completed_count}+ Proj.` : '—'}
+              </Text>
             </View>
           </View>
           <View style={styles.statsCard}>
             <MaterialIcons name="bolt" size={20} color={Colors.primary} />
             <View style={styles.statsTextWrap}>
               <Text style={styles.statsLabel}>Resposta</Text>
-              <Text style={styles.statsValue}>&lt; 15 min</Text>
+              <Text style={styles.statsValue}>{profile?.response_time ?? '—'}</Text>
             </View>
           </View>
         </View>
 
-        {/* ── Tab Navigation ────────────────────────────────────────────── */}
+        {/* Tabs */}
         <View style={styles.tabNav}>
           {TABS.map(tab => (
             <Pressable
               key={tab.key}
               style={[styles.tabItem, activeTab === tab.key && styles.tabItemActive]}
-              onPress={() => handleTabPress(tab.key)}
+              onPress={() => setActiveTab(tab.key)}
             >
               <Text style={[styles.tabLabel, activeTab === tab.key && styles.tabLabelActive]}>
                 {tab.label}
@@ -227,12 +153,10 @@ export default function ProviderProfileScreen() {
           ))}
         </View>
 
-        {/* ══════════════════════════════════════════════════════════════
-            Tab: Serviços e Preços
-        ══════════════════════════════════════════════════════════════ */}
+        {/* Tab: Serviços */}
         {activeTab === 'servicos' && (
           <View style={styles.tabContent}>
-            {loadingServices ? (
+            {loading ? (
               <ActivityIndicator color={Colors.primary} style={styles.loader} />
             ) : services.length === 0 ? (
               <Text style={styles.emptyText}>Nenhum serviço cadastrado.</Text>
@@ -241,12 +165,7 @@ export default function ProviderProfileScreen() {
                 <Pressable
                   key={service.id}
                   style={({ pressed }) => [styles.serviceCard, pressed && { opacity: 0.9 }]}
-                  onPress={() =>
-                    router.push({
-                      pathname: '/(client)/service-detail' as any,
-                      params: { id: String(service.id) },
-                    })
-                  }
+                  onPress={() => router.push({ pathname: '/(client)/service-detail' as any, params: { id: String(service.id) } })}
                 >
                   <View style={styles.serviceBody}>
                     <View style={styles.serviceTopRow}>
@@ -254,186 +173,134 @@ export default function ProviderProfileScreen() {
                       <Text style={styles.servicePrice}>{formatPrice(service)}</Text>
                     </View>
                     {service.description ? (
-                      <Text style={styles.serviceDesc} numberOfLines={2}>
-                        {service.description}
-                      </Text>
+                      <Text style={styles.serviceDesc} numberOfLines={2}>{service.description}</Text>
                     ) : null}
                   </View>
-                  <Pressable
-                    style={styles.addBtn}
-                    onPress={() =>
-                      router.push({
-                        pathname: '/(client)/service-detail' as any,
-                        params: { id: String(service.id) },
-                      })
-                    }
-                    hitSlop={8}
-                  >
+                  <View style={styles.addBtn}>
                     <MaterialIcons name="add" size={22} color={Colors.primary} />
-                  </Pressable>
+                  </View>
                 </Pressable>
               ))
             )}
           </View>
         )}
 
-        {/* ══════════════════════════════════════════════════════════════
-            Tab: Sobre
-        ══════════════════════════════════════════════════════════════ */}
+        {/* Tab: Sobre */}
         {activeTab === 'sobre' && (
           <View style={styles.tabContent}>
-
-            {/* ── Biografia ─────────────────────────────────────────── */}
             <View style={styles.bioSection}>
               <View style={styles.bioHeader}>
                 <Text style={styles.sectionTitle}>Biografia</Text>
-                <View style={styles.expBadge}>
-                  <Text style={styles.expBadgeText}>12 ANOS EXP.</Text>
+                {profile?.years_experience != null && (
+                  <View style={styles.expBadge}>
+                    <Text style={styles.expBadgeText}>{profile.years_experience} ANOS EXP.</Text>
+                  </View>
+                )}
+              </View>
+              <Text style={styles.bioText}>
+                {profile?.bio ?? 'Informações sobre este profissional em breve.'}
+              </Text>
+            </View>
+
+            {profile?.specialties && profile.specialties.length > 0 && (
+              <View style={styles.specialtiesSection}>
+                <Text style={styles.sectionTitle}>Especialidades</Text>
+                <View style={styles.bentoGrid}>
+                  {profile.specialties.map((spec, i) => (
+                    <View
+                      key={i}
+                      style={[styles.bentoCard, spec.wide ? { width: '100%' } : { width: halfCol }]}
+                    >
+                      <MaterialIcons name={spec.icon as any} size={26} color={Colors.primary} />
+                      <Text style={styles.bentoLabel}>{spec.label}</Text>
+                    </View>
+                  ))}
                 </View>
               </View>
-              <Text style={styles.bioText}>{MOCK_BIO}</Text>
-            </View>
+            )}
 
-            {/* ── Especialidades (Bento Grid) ───────────────────────── */}
-            <View style={styles.specialtiesSection}>
-              <Text style={styles.sectionTitle}>Especialidades</Text>
-              <View style={styles.bentoGrid}>
-                {SPECIALTIES.map((spec, i) => (
-                  <View
-                    key={i}
-                    style={[
-                      styles.bentoCard,
-                      spec.wide
-                        ? { width: '100%' }
-                        : { width: halfCol },
-                    ]}
-                  >
-                    <MaterialIcons name={spec.icon} size={26} color={Colors.primary} />
-                    <Text style={styles.bentoLabel}>{spec.label}</Text>
-                  </View>
-                ))}
-              </View>
-            </View>
-
-            {/* ── Certificações ─────────────────────────────────────── */}
-            <View style={styles.certsSection}>
-              <Text style={styles.sectionTitle}>Certificações</Text>
-              <View style={styles.certList}>
-                {CERTS.map(cert => (
-                  <View key={cert.title} style={styles.certRow}>
-                    <View style={styles.certIconBox}>
-                      <MaterialIcons name={cert.icon} size={22} color={Colors.onSurfaceVariant} />
+            {profile?.certifications && profile.certifications.length > 0 && (
+              <View style={styles.certsSection}>
+                <Text style={styles.sectionTitle}>Certificações</Text>
+                <View style={styles.certList}>
+                  {profile.certifications.map(cert => (
+                    <View key={cert.title} style={styles.certRow}>
+                      <View style={styles.certIconBox}>
+                        <MaterialIcons name={cert.icon as any} size={22} color={Colors.inkMuted} />
+                      </View>
+                      <View style={styles.certText}>
+                        <Text style={styles.certTitle}>{cert.title}</Text>
+                        <Text style={styles.certSubtitle}>{cert.subtitle}</Text>
+                      </View>
                     </View>
-                    <View style={styles.certText}>
-                      <Text style={styles.certTitle}>{cert.title}</Text>
-                      <Text style={styles.certSubtitle}>{cert.subtitle}</Text>
-                    </View>
-                  </View>
-                ))}
+                  ))}
+                </View>
               </View>
-            </View>
-
-            {/* ── Projetos Recentes ─────────────────────────────────── */}
-            <View style={styles.projectsSection}>
-              <View style={styles.projectsHeader}>
-                <Text style={styles.sectionTitle}>Projetos Recentes</Text>
-                <Pressable
-                  onPress={() =>
-                    Alert.alert('Em breve', 'O portfólio completo estará disponível em breve.')
-                  }
-                >
-                  <Text style={styles.seeAllLink}>Ver todos</Text>
-                </Pressable>
-              </View>
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={styles.projectsScroll}
-              >
-                {PROJECT_IMAGES.map((img, i) => (
-                  <View key={i} style={styles.projectCard}>
-                    <Image source={{ uri: img }} style={styles.projectCardImage} />
-                  </View>
-                ))}
-              </ScrollView>
-            </View>
-
+            )}
           </View>
         )}
 
-        {/* ══════════════════════════════════════════════════════════════
-            Tab: Avaliações
-        ══════════════════════════════════════════════════════════════ */}
+        {/* Tab: Avaliações */}
         {activeTab === 'avaliacoes' && (
           <View style={styles.tabContent}>
-            {loadingReviews ? (
+            {loading ? (
               <ActivityIndicator color={Colors.primary} style={styles.loader} />
             ) : !reviewData || reviewData.total_count === 0 ? (
               <Text style={styles.emptyText}>Nenhuma avaliação ainda.</Text>
             ) : (
               <>
-                 <View style={styles.ratingCardContainer}>
-                   <View style={styles.ratingCardLeft}>
-                     <Text style={styles.ratingBigNum}>{reviewData.avg_rating?.toFixed(1)}</Text>
-                     <View style={styles.starsRow}>
-                       {[1, 2, 3, 4, 5].map(i => (
-                         <MaterialIcons key={i} name="star" size={16} color="#f59e0b" />
-                       ))}
-                     </View>
-                  <Text style={styles.ratingCardCount}>{reviewData.total_count} avaliações</Text>
-                   </View>
-                   <View style={styles.ratingCardRight}>
-                     {[5, 4, 3, 2, 1].map(star => {
-                       const count = reviewData.distribution?.[star] ?? (star === 5 ? Math.floor(reviewData.total_count * 0.9) : 0);
-                       const pct = reviewData.total_count > 0 ? (count / reviewData.total_count) * 100 : 0;
-                       return (
-                         <View key={star} style={styles.barRow}>
-                           <Text style={styles.barNum}>{star}</Text>
-                           <View style={styles.barTrack}>
-                             <View style={[styles.barFill, { width: `${pct}%` as any }]} />
-                           </View>
-                         </View>
-                       );
-                     })}
-                   </View>
-                 </View>
+                <View style={styles.ratingCardContainer}>
+                  <View style={styles.ratingCardLeft}>
+                    <Text style={styles.ratingBigNum}>{reviewData.avg_rating?.toFixed(1)}</Text>
+                    <View style={styles.starsRow}>
+                      {[1,2,3,4,5].map(i => <MaterialIcons key={i} name="star" size={16} color="#f59e0b" />)}
+                    </View>
+                    <Text style={styles.ratingCardCount}>{reviewData.total_count} avaliações</Text>
+                  </View>
+                  <View style={styles.ratingCardRight}>
+                    {[5,4,3,2,1].map(star => {
+                      const count = reviewData.distribution?.[star] ?? 0;
+                      const pct = reviewData.total_count > 0 ? (count / reviewData.total_count) * 100 : 0;
+                      return (
+                        <View key={star} style={styles.barRow}>
+                          <Text style={styles.barNum}>{star}</Text>
+                          <View style={styles.barTrack}>
+                            <View style={[styles.barFill, { width: `${pct}%` as any }]} />
+                          </View>
+                        </View>
+                      );
+                    })}
+                  </View>
+                </View>
 
-                 {reviewData.reviews.slice(0, 5).map((review, idx) => (
-                   <View key={review.id} style={styles.reviewCard}>
-                     <View style={styles.reviewCardHeader}>
-                       <Image
-                         source={{ uri: CLIENT_IMAGES[idx % CLIENT_IMAGES.length] }}
-                         style={styles.reviewAvatarImage}
-                       />
-                       <View style={styles.reviewMeta}>
-                         <Text style={styles.reviewerName}>{review.reviewer_name}</Text>
-                         <Text style={styles.reviewDate}>
-                           {new Date(review.created_at).toLocaleDateString('pt-BR')}
-                         </Text>
-                       </View>
-                       <View style={styles.starsRowRight}>
-                         {Array.from({ length: review.rating }).map((_, i) => (
-                           <MaterialIcons key={i} name="star" size={13} color="#f59e0b" />
-                         ))}
-                         {Array.from({ length: 5 - review.rating }).map((_, i) => (
-                           <MaterialIcons key={`e${i}`} name="star-border" size={13} color={Colors.outlineVariant} />
-                         ))}
-                       </View>
-                     </View>
-                     {review.comment ? (
-                       <Text style={styles.reviewComment}>{`"${review.comment}"`}</Text>
-                     ) : null}
-                   </View>
-                 ))}
+                {reviewData.reviews.slice(0, 5).map(review => (
+                  <View key={review.id} style={styles.reviewCard}>
+                    <View style={styles.reviewCardHeader}>
+                      <AvatarInitials initials={getInitials(review.reviewer_name)} size="md" />
+                      <View style={styles.reviewMeta}>
+                        <Text style={styles.reviewerName}>{review.reviewer_name}</Text>
+                        <Text style={styles.reviewDate}>
+                          {new Date(review.created_at).toLocaleDateString('pt-BR')}
+                        </Text>
+                      </View>
+                      <View style={styles.starsRowRight}>
+                        {Array.from({ length: review.rating }).map((_, i) => (
+                          <MaterialIcons key={i} name="star" size={13} color="#f59e0b" />
+                        ))}
+                        {Array.from({ length: 5 - review.rating }).map((_, i) => (
+                          <MaterialIcons key={`e${i}`} name="star-border" size={13} color={Colors.border} />
+                        ))}
+                      </View>
+                    </View>
+                    {review.comment ? (
+                      <Text style={styles.reviewComment}>{`"${review.comment}"`}</Text>
+                    ) : null}
+                  </View>
+                ))}
 
                 <Pressable
                   style={({ pressed }) => [styles.seeAllBtn, pressed && { opacity: 0.8 }]}
-                  onPress={() =>
-                    router.push({
-                      pathname: '/(client)/provider-reviews' as any,
-                      params: { userId: String(providerId), name: providerName },
-                    })
-                  }
+                  onPress={() => router.push({ pathname: '/(client)/provider-reviews' as any, params: { userId: String(providerId), name: providerName } })}
                 >
                   <Text style={styles.seeAllBtnLabel}>Ver todas as avaliações</Text>
                   <MaterialIcons name="chevron-right" size={18} color={Colors.primary} />
@@ -445,83 +312,50 @@ export default function ProviderProfileScreen() {
 
       </ScrollView>
 
-      {/* ── CTA fixo ─────────────────────────────────────────────────── */}
+      {/* CTA */}
       <View style={styles.ctaWrap}>
         <Pressable
           style={({ pressed }) => [styles.ctaBtn, pressed && { opacity: 0.92 }]}
-          onPress={() =>
-            Alert.alert('Em breve', 'A funcionalidade de agendamento estará disponível em breve.')
-          }
+          onPress={() => Alert.alert('Em breve', 'A funcionalidade de agendamento estará disponível em breve.')}
         >
-          <LinearGradient
-            colors={GradientColors}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={styles.ctaGradient}
-          >
+          <LinearGradient colors={GradientColors} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.ctaGradient}>
             <Text style={styles.ctaLabel}>Agendar uma Consulta</Text>
           </LinearGradient>
         </Pressable>
       </View>
 
-      {/* ── Modal Bottom Sheet ───────────────────────────────────────── */}
-      <Modal
-        visible={menuVisible}
-        transparent
-        animationType="slide"
-        onRequestClose={() => setMenuVisible(false)}
-      >
+      {/* Menu Modal */}
+      <Modal visible={menuVisible} transparent animationType="slide" onRequestClose={() => setMenuVisible(false)}>
         <Pressable style={styles.modalOverlay} onPress={() => setMenuVisible(false)}>
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
               <View style={styles.modalIndicator} />
               <Text style={styles.modalTitle}>{providerName}</Text>
             </View>
-
             <Pressable
               style={({ pressed }) => [styles.modalOption, pressed && styles.modalOptionPressed]}
-              onPress={() => {
-                setMenuVisible(false);
-                Share.share({
-                  message: `Confira o perfil de ${providerName} no Conecta!`,
-                  title: providerName,
-                });
-              }}
+              onPress={() => { setMenuVisible(false); Share.share({ message: `Confira o perfil de ${providerName} no Conecta!`, title: providerName }); }}
             >
-              <MaterialIcons name="share" size={22} color={Colors.onSurfaceVariant} />
+              <MaterialIcons name="share" size={22} color={Colors.inkMuted} />
               <Text style={styles.modalOptionText}>Compartilhar perfil</Text>
             </Pressable>
-
             <View style={styles.modalDivider} />
-
             <Pressable
               style={({ pressed }) => [styles.modalOption, pressed && styles.modalOptionPressed]}
-              onPress={() => {
-                setMenuVisible(false);
-                Alert.alert('Salvo!', `${providerName} foi adicionado aos seus favoritos.`);
-              }}
+              onPress={() => { setMenuVisible(false); Alert.alert('Salvo!', `${providerName} foi adicionado aos seus favoritos.`); }}
             >
-              <MaterialIcons name="bookmark-border" size={22} color={Colors.onSurfaceVariant} />
+              <MaterialIcons name="bookmark-border" size={22} color={Colors.inkMuted} />
               <Text style={styles.modalOptionText}>Salvar prestador</Text>
             </Pressable>
-
             <View style={styles.modalDivider} />
-
             <Pressable
               style={({ pressed }) => [styles.modalOption, pressed && styles.modalOptionPressed]}
-              onPress={() => {
-                setMenuVisible(false);
-                Alert.alert('Denúncia enviada', 'Obrigado. Vamos analisar este perfil em breve.');
-              }}
+              onPress={() => { setMenuVisible(false); Alert.alert('Denúncia enviada', 'Obrigado. Vamos analisar este perfil em breve.'); }}
             >
               <MaterialIcons name="report-problem" size={22} color="#dc2626" />
               <Text style={[styles.modalOptionText, styles.modalOptionDestructive]}>Denunciar perfil</Text>
             </Pressable>
-
-            <Pressable
-              style={({ pressed }) => [styles.modalCancelBtn, pressed && { opacity: 0.9 }]}
-              onPress={() => setMenuVisible(false)}
-            >
+            <Pressable style={({ pressed }) => [styles.modalCancelBtn, pressed && { opacity: 0.9 }]} onPress={() => setMenuVisible(false)}>
               <Text style={styles.modalCancelLabel}>Cancelar</Text>
             </Pressable>
           </View>
@@ -532,441 +366,90 @@ export default function ProviderProfileScreen() {
   );
 }
 
-// ── Styles ────────────────────────────────────────────────────────────────────
-
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.surface },
-
-  // TopAppBar — icon esquerda / título centro / icon direita
-  topBar: {
-    flexDirection: 'row', alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: Spacing.xl, height: 56,
-    backgroundColor: Colors.surface + 'CC',
-  },
-  topBarTitle: {
-    fontFamily: FontFamily.headlineBold, fontSize: 17,
-    color: Colors.onSurface, letterSpacing: -0.3,
-  },
-  iconBtn: {
-    width: 40, height: 40, borderRadius: Radius.full,
-    alignItems: 'center', justifyContent: 'center',
-  },
-
-  scroll: { paddingBottom: Spacing.xxxl * 3 },
-
-  // Hero — centrado
-  hero: {
-    alignItems: 'center',
-    paddingTop: Spacing.xxl,
-    paddingBottom: Spacing.xl,
-    paddingHorizontal: Spacing.xl,
-    gap: Spacing.xs,
-  },
-  avatarWrap: {
-    position: 'relative',
-    marginBottom: Spacing.md,
-  },
-  avatarGradient: {
-    width: 112, height: 112, borderRadius: 56,
-    alignItems: 'center', justifyContent: 'center',
-    borderWidth: 4, borderColor: Colors.surfaceContainerLowest,
-    overflow: 'hidden',
-    // shadow
-    shadowColor: '#000', shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.15, shadowRadius: 16, elevation: 6,
-  },
-  avatarImage: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover',
-  },
-  statsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: Spacing.sm,
-    marginHorizontal: Spacing.xl,
-    marginBottom: Spacing.xl,
-  },
-  statsCard: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.xs,
-    backgroundColor: Colors.surfaceContainerLow,
-    paddingHorizontal: Spacing.xs,
-    paddingVertical: Spacing.md,
-    borderRadius: Radius.lg,
-  },
-  statsTextWrap: {
-    flex: 1,
-    flexDirection: 'column',
-  },
-  statsLabel: {
-    fontFamily: FontFamily.bodySemiBold,
-    fontSize: 9,
-    color: Colors.onSurfaceVariant,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  statsValue: {
-    fontFamily: FontFamily.headlineBold,
-    fontSize: 11,
-    color: Colors.onSurface,
-  },
-  avatarInitials: {
-    fontFamily: FontFamily.headlineExtraBold,
-    fontSize: 40, color: 'rgba(255,255,255,0.92)', letterSpacing: -1,
-  },
-  verifiedBadge: {
-    position: 'absolute', bottom: 4, right: 4,
-    width: 26, height: 26, borderRadius: 13,
-    backgroundColor: Colors.primary,
-    alignItems: 'center', justifyContent: 'center',
-    borderWidth: 2, borderColor: Colors.surfaceContainerLowest,
-  },
-  heroName: {
-    fontFamily: FontFamily.headlineExtraBold,
-    fontSize: 28, color: Colors.onSurface, letterSpacing: -1,
-    textAlign: 'center',
-  },
-  heroSpecialty: {
-    fontFamily: FontFamily.bodyMedium,
-    fontSize: 15, color: Colors.onSurfaceVariant,
-    textAlign: 'center',
-  },
-  ratingPill: {
-    flexDirection: 'row', alignItems: 'center', gap: 4,
-    backgroundColor: Colors.surfaceContainerHigh,
-    paddingHorizontal: Spacing.md, paddingVertical: 5,
-    borderRadius: Radius.full, marginTop: 4,
-  },
-  ratingNum: { fontFamily: FontFamily.headlineBold, fontSize: 13, color: Colors.onSurface },
-  ratingCount: { fontFamily: FontFamily.bodyRegular, fontSize: 12, color: Colors.onSurfaceVariant },
-
-  // Tab navigation — rounded-xl (não rounded-full)
-  tabNav: {
-    flexDirection: 'row',
-    marginHorizontal: Spacing.xl,
-    marginBottom: Spacing.xl,
-    backgroundColor: Colors.surfaceContainerLow,
-    borderRadius: Radius.lg,
-    padding: 4,
-    gap: 2,
-  },
-  tabItem: {
-    flex: 1, paddingVertical: Spacing.md - 2,
-    borderRadius: Radius.md, alignItems: 'center',
-  },
-  tabItemActive: {
-    backgroundColor: Colors.surfaceContainerLowest,
-    shadowColor: '#000', shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.07, shadowRadius: 4, elevation: 2,
-  },
-  tabLabel: {
-    fontFamily: FontFamily.bodySemiBold,
-    fontSize: 12, color: Colors.onSurfaceVariant,
-    textAlign: 'center',
-  },
-  tabLabelActive: {
-    fontFamily: FontFamily.headlineBold,
-    color: Colors.primary,
-  },
-
-  // Tab content wrapper
-  tabContent: { paddingHorizontal: Spacing.xl, gap: Spacing.xxl },
-  loader: { marginTop: Spacing.xxxl },
-  emptyText: {
-    fontFamily: FontFamily.bodyRegular, fontSize: 14,
-    color: Colors.onSurfaceVariant, textAlign: 'center', marginTop: Spacing.xxxl,
-  },
-
-  // Serviços tab
-  serviceCard: {
-    backgroundColor: Colors.surfaceContainerLowest,
-    borderRadius: Radius.lg, padding: Spacing.xl,
-    flexDirection: 'row', alignItems: 'center', gap: Spacing.base,
-    elevation: 1, shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.04, shadowRadius: 4,
-  },
-  serviceBody: { flex: 1, gap: Spacing.xs },
-  serviceTopRow: {
-    flexDirection: 'row', justifyContent: 'space-between',
-    alignItems: 'flex-start', gap: Spacing.sm,
-  },
-  serviceName: {
-    fontFamily: FontFamily.headlineBold, fontSize: 16,
-    color: Colors.onSurface, flex: 1, letterSpacing: -0.2,
-  },
-  servicePrice: {
-    fontFamily: FontFamily.headlineExtraBold,
-    fontSize: 16, color: Colors.primary, flexShrink: 0,
-  },
-  serviceDesc: {
-    fontFamily: FontFamily.bodyRegular, fontSize: 13,
-    color: Colors.onSurfaceVariant, lineHeight: 19,
-  },
-  addBtn: {
-    width: 48, height: 48, borderRadius: Radius.full,
-    backgroundColor: Colors.primaryContainer,
-    alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-  },
-
-  // Sobre tab — Biografia
-  bioSection: { gap: Spacing.md },
-  bioHeader: {
-    flexDirection: 'row', alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  sectionTitle: {
-    fontFamily: FontFamily.headlineBold,
-    fontSize: 20, color: Colors.onSurface, letterSpacing: -0.5,
-  },
-  expBadge: {
-    backgroundColor: Colors.primaryContainer,
-    paddingHorizontal: Spacing.sm, paddingVertical: 3,
-    borderRadius: Radius.sm,
-  },
-  expBadgeText: {
-    fontFamily: FontFamily.bodySemiBold, fontSize: 10,
-    color: Colors.primary, letterSpacing: 1,
-  },
-  bioText: {
-    fontFamily: FontFamily.bodyRegular, fontSize: 16,
-    color: Colors.onSurfaceVariant, lineHeight: 26,
-  },
-
-  // Sobre tab — Especialidades (Bento)
-  specialtiesSection: { gap: Spacing.base },
-  bentoGrid: {
-    flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.md,
-  },
-  bentoCard: {
-    backgroundColor: Colors.surfaceContainerLowest,
-    borderRadius: Radius.lg, padding: Spacing.xl,
-    gap: Spacing.md,
-    elevation: 1, shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.04, shadowRadius: 4,
-  },
-  bentoLabel: {
-    fontFamily: FontFamily.bodySemiBold, fontSize: 13, color: Colors.onSurface,
-  },
-
-  // Sobre tab — Certificações
-  certsSection: { gap: Spacing.base },
-  certList: { gap: Spacing.md },
-  certRow: {
-    flexDirection: 'row', alignItems: 'center', gap: Spacing.base,
-    backgroundColor: Colors.surfaceContainerLow,
-    borderRadius: Radius.lg, padding: Spacing.base,
-  },
-  certIconBox: {
-    width: 48, height: 48, borderRadius: Radius.md,
-    backgroundColor: Colors.surfaceContainerHighest,
-    alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-  },
-  certText: { flex: 1, gap: 2 },
-  certTitle: {
-    fontFamily: FontFamily.headlineBold, fontSize: 14, color: Colors.onSurface,
-  },
-  certSubtitle: {
-    fontFamily: FontFamily.bodyRegular, fontSize: 12,
-    color: Colors.onSurfaceVariant, lineHeight: 17,
-  },
-
-  // Sobre tab — Projetos Recentes
-  projectsSection: { gap: Spacing.base },
-  projectsHeader: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-  },
-  seeAllLink: {
-    fontFamily: FontFamily.headlineBold,
-    fontSize: 13, color: Colors.primary,
-  },
-  projectsScroll: { gap: Spacing.base, paddingRight: Spacing.xl },
-  projectCard: {
-    width: 220, height: 140, borderRadius: Radius.lg,
-    overflow: 'hidden',
-    elevation: 2, shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.08, shadowRadius: 8,
-  },
-  projectCardImage: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover',
-  },
-
-  // Avaliações tab
-  ratingCardContainer: {
-    flexDirection: 'row',
-    backgroundColor: Colors.surfaceContainerLow,
-    borderRadius: Radius.lg,
-    padding: Spacing.xl,
-    alignItems: 'center',
-    gap: Spacing.xxl,
-  },
-  ratingCardLeft: {
-    alignItems: 'center',
-    gap: Spacing.xs,
-    width: 100,
-  },
-  ratingCardRight: {
-    flex: 1,
-    gap: Spacing.sm,
-  },
-  barRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.sm,
-  },
-  barNum: {
-    fontFamily: FontFamily.bodySemiBold,
-    fontSize: 12,
-    color: Colors.onSurfaceVariant,
-    width: 10,
-  },
-  barTrack: {
-    flex: 1,
-    height: 8,
-    backgroundColor: Colors.surfaceContainer,
-    borderRadius: Radius.full,
-    overflow: 'hidden',
-  },
-  barFill: {
-    height: '100%',
-    backgroundColor: Colors.primary,
-    borderRadius: Radius.full,
-  },
-  ratingBigNum: {
-    fontFamily: FontFamily.headlineExtraBold,
-    fontSize: 56, color: Colors.onSurface, letterSpacing: -3,
-  },
-  starsRow: { flexDirection: 'row', gap: 2 },
-  ratingCardCount: {
-    fontFamily: FontFamily.bodyRegular, fontSize: 13, color: Colors.onSurfaceVariant,
-  },
-  reviewCard: {
-    backgroundColor: Colors.surfaceContainerLowest, borderRadius: Radius.md,
-    padding: Spacing.base, gap: Spacing.xs,
-  },
-  reviewCardHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.md,
-    marginBottom: Spacing.sm,
-  },
-  reviewAvatarImage: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    resizeMode: 'cover',
-  },
-  reviewMeta: {
-    flex: 1,
-    gap: 2,
-  },
-  starsRowRight: {
-    flexDirection: 'row',
-    gap: 1,
-  },
-  reviewerName: {
-    fontFamily: FontFamily.bodySemiBold, fontSize: 13, color: Colors.onSurface,
-  },
-  reviewDate: {
-    fontFamily: FontFamily.bodyRegular, fontSize: 11, color: Colors.outlineVariant,
-  },
-  reviewComment: {
-    fontFamily: FontFamily.bodyRegular, fontSize: 13,
-    color: Colors.onSurfaceVariant, fontStyle: 'italic', lineHeight: 19,
-  },
-  seeAllBtn: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-    gap: Spacing.xs, paddingVertical: Spacing.md,
-    backgroundColor: Colors.surfaceContainerHighest, borderRadius: Radius.md,
-  },
-  seeAllBtnLabel: {
-    fontFamily: FontFamily.bodySemiBold, fontSize: 13, color: Colors.primary,
-  },
-
-  // CTA fixo
-  ctaWrap: {
-    paddingHorizontal: Spacing.xl, paddingVertical: Spacing.base,
-    backgroundColor: Colors.surface,
-  },
-  ctaBtn: { borderRadius: Radius.lg, overflow: 'hidden' },
-  ctaGradient: {
-    height: 56, alignItems: 'center', justifyContent: 'center',
-    borderRadius: Radius.lg,
-    shadowColor: Colors.primary, shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.2, shadowRadius: 20, elevation: 6,
-  },
-  ctaLabel: {
-    fontFamily: FontFamily.headlineBold,
-    fontSize: 17, color: Colors.onPrimary, letterSpacing: -0.2,
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',
-    justifyContent: 'flex-end',
-  },
-  modalContent: {
-    backgroundColor: Colors.surface,
-    borderTopLeftRadius: Radius.xl,
-    borderTopRightRadius: Radius.xl,
-    paddingHorizontal: Spacing.xl,
-    paddingTop: Spacing.md,
-    paddingBottom: Spacing.xxl,
-    gap: Spacing.xs,
-  },
-  modalHeader: {
-    alignItems: 'center',
-    marginBottom: Spacing.md,
-  },
-  modalIndicator: {
-    width: 38,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: Colors.outlineVariant,
-    marginBottom: Spacing.md,
-  },
-  modalTitle: {
-    fontFamily: FontFamily.headlineBold,
-    fontSize: 16,
-    color: Colors.onSurface,
-  },
-  modalOption: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.md,
-    paddingVertical: Spacing.base,
-  },
-  modalOptionPressed: {
-    opacity: 0.7,
-  },
-  modalOptionText: {
-    fontFamily: FontFamily.bodySemiBold,
-    fontSize: 15,
-    color: Colors.onSurface,
-  },
-  modalOptionDestructive: {
-    color: '#dc2626',
-  },
-  modalDivider: {
-    height: 1,
-    backgroundColor: Colors.outlineVariant,
-    opacity: 0.4,
-  },
-  modalCancelBtn: {
-    backgroundColor: Colors.surfaceContainerHigh,
-    borderRadius: Radius.lg,
-    height: 52,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: Spacing.base,
-  },
-  modalCancelLabel: {
-    fontFamily: FontFamily.headlineBold,
-    fontSize: 15,
-    color: Colors.onSurfaceVariant,
-  },
+  container:           { flex: 1, backgroundColor: Colors.surface },
+  topBar:              { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: Spacing.xl, height: 56 },
+  topBarTitle:         { fontFamily: FontFamily.headlineBold, fontSize: 17, color: Colors.ink, letterSpacing: -0.3 },
+  iconBtn:             { width: 40, height: 40, borderRadius: Radius.full, alignItems: 'center', justifyContent: 'center' },
+  scroll:              { paddingBottom: Spacing.xxxl * 3 },
+  hero:                { alignItems: 'center', paddingTop: Spacing.xxl, paddingBottom: Spacing.xl, paddingHorizontal: Spacing.xl, gap: Spacing.xs },
+  avatarWrap:          { position: 'relative', marginBottom: Spacing.md },
+  verifiedBadge:       { position: 'absolute', bottom: 4, right: 4, width: 26, height: 26, borderRadius: 13, backgroundColor: Colors.primary, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: Colors.card },
+  heroName:            { fontFamily: FontFamily.headlineExtraBold, fontSize: 28, color: Colors.ink, letterSpacing: -1, textAlign: 'center' },
+  heroSpecialty:       { fontFamily: FontFamily.bodyMedium, fontSize: 15, color: Colors.inkMuted, textAlign: 'center' },
+  ratingPill:          { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: Colors.card, paddingHorizontal: Spacing.md, paddingVertical: 5, borderRadius: Radius.full, marginTop: 4 },
+  ratingNum:           { fontFamily: FontFamily.headlineBold, fontSize: 13, color: Colors.ink },
+  ratingCount:         { fontFamily: FontFamily.bodyRegular, fontSize: 12, color: Colors.inkMuted },
+  statsContainer:      { flexDirection: 'row', justifyContent: 'space-between', gap: Spacing.sm, marginHorizontal: Spacing.xl, marginBottom: Spacing.xl },
+  statsCard:           { flex: 1, flexDirection: 'row', alignItems: 'center', gap: Spacing.xs, backgroundColor: Colors.card, paddingHorizontal: Spacing.xs, paddingVertical: Spacing.md, borderRadius: Radius.lg },
+  statsTextWrap:       { flex: 1 },
+  statsLabel:          { fontFamily: FontFamily.bodySemiBold, fontSize: 9, color: Colors.inkMuted, textTransform: 'uppercase', letterSpacing: 0.5 },
+  statsValue:          { fontFamily: FontFamily.headlineBold, fontSize: 11, color: Colors.ink },
+  tabNav:              { flexDirection: 'row', marginHorizontal: Spacing.xl, marginBottom: Spacing.xl, backgroundColor: Colors.card, borderRadius: Radius.lg, padding: 4, gap: 2 },
+  tabItem:             { flex: 1, paddingVertical: Spacing.md - 2, borderRadius: Radius.md, alignItems: 'center' },
+  tabItemActive:       { backgroundColor: Colors.surface, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.07, shadowRadius: 4, elevation: 2 },
+  tabLabel:            { fontFamily: FontFamily.bodySemiBold, fontSize: 12, color: Colors.inkMuted, textAlign: 'center' },
+  tabLabelActive:      { fontFamily: FontFamily.headlineBold, color: Colors.primary },
+  tabContent:          { paddingHorizontal: Spacing.xl, gap: Spacing.xxl },
+  loader:              { marginTop: Spacing.xxxl },
+  emptyText:           { fontFamily: FontFamily.bodyRegular, fontSize: 14, color: Colors.inkMuted, textAlign: 'center', marginTop: Spacing.xxxl },
+  serviceCard:         { backgroundColor: Colors.card, borderRadius: Radius.lg, padding: Spacing.xl, flexDirection: 'row', alignItems: 'center', gap: Spacing.base, elevation: 1, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.04, shadowRadius: 4 },
+  serviceBody:         { flex: 1, gap: Spacing.xs },
+  serviceTopRow:       { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', gap: Spacing.sm },
+  serviceName:         { fontFamily: FontFamily.headlineBold, fontSize: 16, color: Colors.ink, flex: 1, letterSpacing: -0.2 },
+  servicePrice:        { fontFamily: FontFamily.headlineExtraBold, fontSize: 16, color: Colors.primary, flexShrink: 0 },
+  serviceDesc:         { fontFamily: FontFamily.bodyRegular, fontSize: 13, color: Colors.inkMuted, lineHeight: 19 },
+  addBtn:              { width: 48, height: 48, borderRadius: Radius.full, backgroundColor: Colors.brand + '15', alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
+  bioSection:          { gap: Spacing.md },
+  bioHeader:           { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  sectionTitle:        { fontFamily: FontFamily.headlineBold, fontSize: 20, color: Colors.ink, letterSpacing: -0.5 },
+  expBadge:            { backgroundColor: Colors.brand + '15', paddingHorizontal: Spacing.sm, paddingVertical: 3, borderRadius: Radius.sm },
+  expBadgeText:        { fontFamily: FontFamily.bodySemiBold, fontSize: 10, color: Colors.primary, letterSpacing: 1 },
+  bioText:             { fontFamily: FontFamily.bodyRegular, fontSize: 16, color: Colors.inkMuted, lineHeight: 26 },
+  specialtiesSection:  { gap: Spacing.base },
+  bentoGrid:           { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.md },
+  bentoCard:           { backgroundColor: Colors.card, borderRadius: Radius.lg, padding: Spacing.xl, gap: Spacing.md, elevation: 1, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.04, shadowRadius: 4 },
+  bentoLabel:          { fontFamily: FontFamily.bodySemiBold, fontSize: 13, color: Colors.ink },
+  certsSection:        { gap: Spacing.base },
+  certList:            { gap: Spacing.md },
+  certRow:             { flexDirection: 'row', alignItems: 'center', gap: Spacing.base, backgroundColor: Colors.card, borderRadius: Radius.lg, padding: Spacing.base },
+  certIconBox:         { width: 48, height: 48, borderRadius: Radius.md, backgroundColor: Colors.border, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
+  certText:            { flex: 1, gap: 2 },
+  certTitle:           { fontFamily: FontFamily.headlineBold, fontSize: 14, color: Colors.ink },
+  certSubtitle:        { fontFamily: FontFamily.bodyRegular, fontSize: 12, color: Colors.inkMuted, lineHeight: 17 },
+  ratingCardContainer: { flexDirection: 'row', backgroundColor: Colors.card, borderRadius: Radius.lg, padding: Spacing.xl, alignItems: 'center', gap: Spacing.xxl },
+  ratingCardLeft:      { alignItems: 'center', gap: Spacing.xs, width: 100 },
+  ratingCardRight:     { flex: 1, gap: Spacing.sm },
+  barRow:              { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
+  barNum:              { fontFamily: FontFamily.bodySemiBold, fontSize: 12, color: Colors.inkMuted, width: 10 },
+  barTrack:            { flex: 1, height: 8, backgroundColor: Colors.border, borderRadius: Radius.full, overflow: 'hidden' },
+  barFill:             { height: '100%', backgroundColor: Colors.primary, borderRadius: Radius.full },
+  ratingBigNum:        { fontFamily: FontFamily.headlineExtraBold, fontSize: 56, color: Colors.ink, letterSpacing: -3 },
+  starsRow:            { flexDirection: 'row', gap: 2 },
+  ratingCardCount:     { fontFamily: FontFamily.bodyRegular, fontSize: 13, color: Colors.inkMuted },
+  reviewCard:          { backgroundColor: Colors.card, borderRadius: Radius.md, padding: Spacing.base, gap: Spacing.xs },
+  reviewCardHeader:    { flexDirection: 'row', alignItems: 'center', gap: Spacing.md, marginBottom: Spacing.sm },
+  reviewMeta:          { flex: 1, gap: 2 },
+  starsRowRight:       { flexDirection: 'row', gap: 1 },
+  reviewerName:        { fontFamily: FontFamily.bodySemiBold, fontSize: 13, color: Colors.ink },
+  reviewDate:          { fontFamily: FontFamily.bodyRegular, fontSize: 11, color: Colors.border },
+  reviewComment:       { fontFamily: FontFamily.bodyRegular, fontSize: 13, color: Colors.inkMuted, fontStyle: 'italic', lineHeight: 19 },
+  seeAllBtn:           { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: Spacing.xs, paddingVertical: Spacing.md, backgroundColor: Colors.border, borderRadius: Radius.md },
+  seeAllBtnLabel:      { fontFamily: FontFamily.bodySemiBold, fontSize: 13, color: Colors.primary },
+  ctaWrap:             { paddingHorizontal: Spacing.xl, paddingVertical: Spacing.base, backgroundColor: Colors.surface },
+  ctaBtn:              { borderRadius: Radius.lg, overflow: 'hidden' },
+  ctaGradient:         { height: 56, alignItems: 'center', justifyContent: 'center', borderRadius: Radius.lg },
+  ctaLabel:            { fontFamily: FontFamily.headlineBold, fontSize: 17, color: Colors.onPrimary, letterSpacing: -0.2 },
+  modalOverlay:        { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'flex-end' },
+  modalContent:        { backgroundColor: Colors.surface, borderTopLeftRadius: Radius.xl, borderTopRightRadius: Radius.xl, paddingHorizontal: Spacing.xl, paddingTop: Spacing.md, paddingBottom: Spacing.xxl, gap: Spacing.xs },
+  modalHeader:         { alignItems: 'center', marginBottom: Spacing.md },
+  modalIndicator:      { width: 38, height: 4, borderRadius: 2, backgroundColor: Colors.border, marginBottom: Spacing.md },
+  modalTitle:          { fontFamily: FontFamily.headlineBold, fontSize: 16, color: Colors.ink },
+  modalOption:         { flexDirection: 'row', alignItems: 'center', gap: Spacing.md, paddingVertical: Spacing.base },
+  modalOptionPressed:  { opacity: 0.7 },
+  modalOptionText:     { fontFamily: FontFamily.bodySemiBold, fontSize: 15, color: Colors.ink },
+  modalOptionDestructive: { color: '#dc2626' },
+  modalDivider:        { height: 1, backgroundColor: Colors.border, opacity: 0.4 },
+  modalCancelBtn:      { backgroundColor: Colors.card, borderRadius: Radius.lg, height: 52, alignItems: 'center', justifyContent: 'center', marginTop: Spacing.base },
+  modalCancelLabel:    { fontFamily: FontFamily.headlineBold, fontSize: 15, color: Colors.inkMuted },
 });

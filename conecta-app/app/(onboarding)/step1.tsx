@@ -5,7 +5,10 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
+  Alert,
+  Image,
 } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -24,25 +27,56 @@ export default function Step1Screen() {
   const { user, token, updateUser } = useAuth();
   const [name, setName] = useState(user?.name ?? '');
   const [specialty, setSpecialty] = useState('');
+  const [photoUri, setPhotoUri] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+
+  const handlePickPhoto = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('Permissão necessária', 'Permita o acesso à galeria nas configurações do app.');
+      return;
+    }
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.85,
+    });
+    if (!result.canceled && result.assets[0]) {
+      setPhotoUri(result.assets[0].uri);
+    }
+  };
 
   const isPrestador = role === 'prestador';
   const progress = isPrestador ? 1 / 5 : 1 / 3;
   const badge = isPrestador ? 'Passo 1 de 5' : 'Passo 1 de 3';
 
   const handleContinue = async () => {
-    if (user && token && name.trim() && name.trim() !== user.name) {
-      setSaving(true);
-      try {
-        const updated = await usersApi.update(user.id, { name: name.trim() }, token);
-        await updateUser(updated);
-      } catch {
-        // silently continue — user can update later in edit-profile
-      } finally {
-        setSaving(false);
-      }
+    const trimmedName = name.trim();
+    if (!trimmedName) {
+      Alert.alert('Atenção', 'O campo Nome Completo é obrigatório.');
+      return;
     }
-    router.push({ pathname: '/(onboarding)/step2', params: { role } });
+    setSaving(true);
+    try {
+      if (user && token) {
+        const updated = await usersApi.update(
+          user.id,
+          {
+            name: trimmedName,
+            role: role as any,
+            ...(isPrestador && specialty.trim() ? { specialties: specialty.trim() } : {}),
+          },
+          token
+        );
+        await updateUser(updated);
+      }
+      router.push({ pathname: '/(onboarding)/step2', params: { role } });
+    } catch (e: any) {
+      Alert.alert('Erro', e.message ?? 'Não foi possível salvar os dados. Tente novamente.');
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -73,15 +107,19 @@ export default function Step1Screen() {
 
         {/* Profile photo */}
         <View style={styles.photoSection}>
-          <Pressable style={styles.photoWrapper}>
+          <Pressable style={styles.photoWrapper} onPress={handlePickPhoto}>
             <View style={styles.photoCircle}>
-              <MaterialIcons name="person" size={48} color={Colors.outlineVariant} />
+              {photoUri
+                ? <Image source={{ uri: photoUri }} style={styles.photoImage} />
+                : <MaterialIcons name="person" size={48} color={Colors.border} />}
             </View>
             <View style={styles.cameraBtn}>
               <MaterialIcons name="camera-alt" size={18} color={Colors.onPrimary} />
             </View>
           </Pressable>
-          <Text style={styles.photoLabel}>CARREGAR FOTO DE PERFIL</Text>
+          <Text style={styles.photoLabel}>
+            {photoUri ? 'FOTO SELECIONADA' : 'CARREGAR FOTO DE PERFIL'}
+          </Text>
         </View>
 
         {/* Form fields */}
@@ -107,7 +145,7 @@ export default function Step1Screen() {
 
         {/* Tip card */}
         <View style={styles.tipCard}>
-          <MaterialIcons name="lightbulb" size={22} color={Colors.primary} />
+          <MaterialIcons name="lightbulb" size={22} color={Colors.brand} />
           <View style={styles.tipText}>
             <Text style={styles.tipTitle}>Dica Rápida</Text>
             <Text style={styles.tipBody}>
@@ -124,7 +162,7 @@ export default function Step1Screen() {
         <Pressable
           style={({ pressed }) => [styles.draftBtn, pressed && { opacity: 0.6 }]}
         >
-          <MaterialIcons name="save" size={18} color={Colors.onSurfaceVariant} />
+          <MaterialIcons name="save" size={18} color={Colors.inkMuted} />
           <Text style={styles.draftLabel}>Salvar</Text>
         </Pressable>
         <GradientButton
@@ -161,12 +199,12 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.headlineExtraBold,
     fontSize: 30,
     letterSpacing: -0.8,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   subtitle: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 14,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     lineHeight: 20,
   },
 
@@ -183,16 +221,22 @@ const styles = StyleSheet.create({
     width: 112,
     height: 112,
     borderRadius: 56,
-    backgroundColor: Colors.surfaceContainerLow,
+    backgroundColor: Colors.card,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 4,
-    borderColor: Colors.surfaceContainerLowest,
-    shadowColor: '#000',
+    borderColor: Colors.card,
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 8,
     elevation: 2,
+    overflow: 'hidden',
+  },
+  photoImage: {
+    width: 112,
+    height: 112,
+    resizeMode: 'cover',
   },
   cameraBtn: {
     position: 'absolute',
@@ -201,10 +245,10 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.brand,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: Colors.primary,
+    shadowColor: Colors.brand,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 4,
@@ -213,7 +257,7 @@ const styles = StyleSheet.create({
   photoLabel: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 10,
-    color: Colors.primary,
+    color: Colors.brand,
     letterSpacing: 1.5,
   },
 
@@ -225,7 +269,7 @@ const styles = StyleSheet.create({
   tipCard: {
     flexDirection: 'row',
     gap: Spacing.base,
-    backgroundColor: Colors.primaryContainer,
+    backgroundColor: Colors.brand + '15',
     borderRadius: Radius.xl,
     padding: Spacing.xxl,
   },
@@ -236,12 +280,12 @@ const styles = StyleSheet.create({
   tipTitle: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 14,
-    color: Colors.onPrimaryContainer,
+    color: Colors.ink,
   },
   tipBody: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 12,
-    color: Colors.onPrimaryContainer,
+    color: Colors.ink,
     lineHeight: 17,
     opacity: 0.85,
   },
@@ -253,8 +297,8 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
     paddingHorizontal: Spacing.xl,
     paddingTop: Spacing.xl + 4,
-    backgroundColor: Colors.surfaceContainerLowest,
-    shadowColor: Colors.onSurface,
+    backgroundColor: Colors.card,
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.06,
     shadowRadius: 16,
@@ -271,7 +315,7 @@ const styles = StyleSheet.create({
   draftLabel: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 13,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
   continueBtn: {
     flex: 1,

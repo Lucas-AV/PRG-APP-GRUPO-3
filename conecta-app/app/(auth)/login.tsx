@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   View,
   Text,
@@ -13,22 +13,16 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import * as SecureStore from 'expo-secure-store';
 import { MaterialIcons } from '@expo/vector-icons';
 import { GradientButton } from '@/components/ui/gradient-button';
 import { InputField } from '@/components/ui/input-field';
 import { Colors, FontFamily, Spacing, Radius } from '@/constants/theme';
 import { useAuth } from '@/context/AuthContext';
-import * as WebBrowser from 'expo-web-browser';
-import * as Google from 'expo-auth-session/providers/google';
-import { GOOGLE_WEB_CLIENT_ID } from '@/constants/config';
-
-WebBrowser.maybeCompleteAuthSession();
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function LoginScreen() {
-  const { login, loginWithGoogle } = useAuth();
+  const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState('');
@@ -40,41 +34,6 @@ export default function LoginScreen() {
   const [resetEmailError, setResetEmailError] = useState('');
   const [resetLoading, setResetLoading] = useState(false);
   const [resetSent, setResetSent] = useState(false);
-
-  const [_request, response, promptAsync] = Google.useAuthRequest({
-    webClientId: GOOGLE_WEB_CLIENT_ID,
-  });
-
-  const handleGoogleResponse = async (accessToken: string) => {
-    setLoading(true);
-    try {
-      const result = await loginWithGoogle(accessToken);
-      if ('isNewUser' in result) {
-        router.push({
-          pathname: '/(auth)/google-role' as any,
-          params: {
-            access_token: accessToken,
-            name: result.googleName,
-            email: result.googleEmail,
-          },
-        });
-        return;
-      }
-      const completed = await SecureStore.getItemAsync(`onboarding_${result.id}`);
-      router.replace(completed === 'true' ? '/(tabs)' : '/(onboarding)/step0');
-    } catch (e: any) {
-      Alert.alert('Erro ao entrar com Google', e.message ?? 'Tente novamente.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (response?.type === 'success') {
-      const accessToken = response.authentication?.accessToken;
-      if (accessToken) handleGoogleResponse(accessToken);
-    }
-  }, [response]);
 
   const openReset = () => {
     setResetEmail('');
@@ -115,8 +74,7 @@ export default function LoginScreen() {
     setLoading(true);
     try {
       const user = await login(email.trim().toLowerCase(), password);
-      const completed = await SecureStore.getItemAsync(`onboarding_${user.id}`);
-      if (completed === 'true') {
+      if (user.onboarding_completed) {
         router.replace('/(tabs)');
       } else {
         router.replace('/(onboarding)/step0');
@@ -130,10 +88,6 @@ export default function LoginScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Decorative blobs */}
-      <View style={styles.blobTR} pointerEvents="none" />
-      <View style={styles.blobBL} pointerEvents="none" />
-
       <KeyboardAvoidingView
         style={styles.flex1}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -192,35 +146,14 @@ export default function LoginScreen() {
               style={styles.ctaMargin}
             />
 
-            {/* Divider */}
-            <View style={styles.divider}>
-              <View style={styles.dividerLine} />
-              <Text style={styles.dividerText}>ou entre com</Text>
-              <View style={styles.dividerLine} />
-            </View>
-
-            {/* Google button */}
-            <Pressable
-              style={({ pressed }) => [styles.googleBtn, pressed && { opacity: 0.85 }]}
-              onPress={() => promptAsync()}
-              disabled={loading}
-            >
-              <MaterialIcons name="language" size={20} color="#4285F4" />
-              <Text style={styles.googleLabel}>Entrar com Google</Text>
-            </Pressable>
           </View>
 
           {/* Footer */}
           <View style={styles.footer}>
-            <Text style={styles.footerText}>
-              Ainda não tem uma conta?{' '}
-              <Text
-                style={styles.footerLink}
-                onPress={() => router.push('/(auth)/sign-up')}
-              >
-                Cadastre-se
-              </Text>
-            </Text>
+            <Text style={styles.footerText}>Ainda não tem uma conta?</Text>
+            <Pressable onPress={() => router.push('/(auth)/sign-up')}>
+              <Text style={styles.footerLink}>Cadastre-se</Text>
+            </Pressable>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -291,29 +224,9 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.surface,
+    backgroundColor: '#f0f5ff',
   },
   flex1: { flex: 1 },
-
-  // Decorative background
-  blobTR: {
-    position: 'absolute',
-    top: -60,
-    right: -40,
-    width: 220,
-    height: 220,
-    borderRadius: 110,
-    backgroundColor: 'rgba(0,84,214,0.05)',
-  },
-  blobBL: {
-    position: 'absolute',
-    bottom: -60,
-    left: -40,
-    width: 180,
-    height: 180,
-    borderRadius: 90,
-    backgroundColor: 'rgba(97,91,119,0.05)',
-  },
 
   scrollContent: {
     flexGrow: 1,
@@ -330,8 +243,8 @@ const styles = StyleSheet.create({
   },
   logo: {
     fontFamily: FontFamily.headlineExtraBold,
-    fontSize: 38,
-    letterSpacing: -1.5,
+    fontSize: 42,
+    letterSpacing: -2.0,
     color: Colors.primary,
   },
   headerText: {
@@ -340,15 +253,15 @@ const styles = StyleSheet.create({
   },
   title: {
     fontFamily: FontFamily.headlineExtraBold,
-    fontSize: 28,
-    letterSpacing: -0.5,
-    color: Colors.onSurface,
+    fontSize: 32,
+    letterSpacing: -1.0,
+    color: Colors.ink,
     textAlign: 'center',
   },
   subtitle: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 14,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     textAlign: 'center',
     maxWidth: 280,
     lineHeight: 20,
@@ -356,13 +269,13 @@ const styles = StyleSheet.create({
 
   // Card
   card: {
-    backgroundColor: Colors.surfaceContainerLowest,
-    borderRadius: Radius.sm,
+    backgroundColor: Colors.card,
+    borderRadius: Radius.xl,
     padding: Spacing.xxxl,
     gap: Spacing.xxl,
-    shadowColor: '#000',
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.04,
+    shadowOpacity: 0.07,
     shadowRadius: 32,
     elevation: 3,
   },
@@ -380,7 +293,7 @@ const styles = StyleSheet.create({
   passwordLabel: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 10,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     letterSpacing: 1.2,
   },
   forgotLink: {
@@ -391,58 +304,21 @@ const styles = StyleSheet.create({
 
   ctaMargin: { marginTop: Spacing.xs },
 
-  // Divider
-  divider: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.base,
-  },
-  dividerLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: Colors.outlineVariant + '33',
-  },
-  dividerText: {
-    fontFamily: FontFamily.bodySemiBold,
-    fontSize: 10,
-    color: Colors.outline,
-    letterSpacing: 2,
-    textTransform: 'uppercase',
-  },
-
-  // Google
-  googleBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: Spacing.md,
-    paddingVertical: Spacing.md + 2,
-    backgroundColor: Colors.surfaceContainerLow,
-    borderRadius: Radius.sm,
-    borderWidth: 1,
-    borderColor: Colors.outlineVariant + '1A',
-  },
-  googleLabel: {
-    fontFamily: FontFamily.bodySemiBold,
-    fontSize: 14,
-    color: Colors.onSurface,
-  },
-
   // Reset modal
   backdrop: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.45)',
+    backgroundColor: 'rgba(15,23,42,0.55)',
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: Spacing.xl,
   },
   resetCard: {
     width: '100%',
-    backgroundColor: Colors.surfaceContainerLowest,
-    borderRadius: Radius.lg,
+    backgroundColor: Colors.card,
+    borderRadius: Radius.xl,
     padding: Spacing.xxxl,
     gap: Spacing.xxl,
-    shadowColor: '#000',
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 12 },
     shadowOpacity: 0.12,
     shadowRadius: 32,
@@ -453,21 +329,21 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: Colors.primaryContainer,
+    backgroundColor: Colors.brand + '15',
     alignItems: 'center',
     justifyContent: 'center',
   },
   resetTitle: {
     fontFamily: FontFamily.headlineExtraBold,
     fontSize: 22,
-    color: Colors.onSurface,
+    color: Colors.ink,
     textAlign: 'center',
     letterSpacing: -0.4,
   },
   resetSubtitle: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 14,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     textAlign: 'center',
     lineHeight: 20,
   },
@@ -479,15 +355,15 @@ const styles = StyleSheet.create({
   resetCancelLabel: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 14,
-    color: Colors.outline,
+    color: Colors.inkMuted,
   },
 
   // Footer
-  footer: { alignItems: 'center' },
+  footer: { alignItems: 'center', flexDirection: 'row', gap: 4, justifyContent: 'center' },
   footerText: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 14,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
   footerLink: {
     fontFamily: FontFamily.headlineBold,

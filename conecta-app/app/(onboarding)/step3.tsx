@@ -11,15 +11,24 @@ import {
   ScrollView,
   TextInput,
   StyleSheet,
+  Alert,
+  ActivityIndicator,
+  Image,
 } from 'react-native';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
 import { TopAppBar } from '@/components/ui/top-app-bar';
 import { ProgressBar } from '@/components/ui/progress-bar';
 import { GradientButton } from '@/components/ui/gradient-button';
 import { Colors, FontFamily, Spacing, Radius } from '@/constants/theme';
+import { useAuth } from '@/context/AuthContext';
+import { usersApi, documentsApi } from '@/services/api';
+
+type UploadSlot = { uri: string | null; uploading: boolean; url: string | null };
+const EMPTY_SLOT: UploadSlot = { uri: null, uploading: false, url: null };
 
 const SERVICE_CHIPS = [
   { key: 'limpeza', label: 'Limpeza', icon: 'cleaning-services' as const },
@@ -32,10 +41,38 @@ const SERVICE_CHIPS = [
 
 export default function Step3Screen() {
   const { role } = useLocalSearchParams<{ role: string }>();
+  const { user, token, updateUser } = useAuth();
   const insets = useSafeAreaInsets();
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
-  const [experiences, setExperiences] = useState([{ jobTitle: '', jobDesc: '' }]);
+  const [experiences, setExperiences] = useState([{ jobTitle: '', jobDesc: '', certSlot: EMPTY_SLOT }]);
   const [bio, setBio] = useState('');
+  const [saving, setSaving] = useState(false);
+
+  const handleContinue = async () => {
+    setSaving(true);
+    try {
+      if (user && token) {
+        const specialtiesStr = selectedServices
+          .map(k => SERVICE_CHIPS.find(c => c.key === k)?.label || k)
+          .join(', ');
+
+        const updated = await usersApi.update(
+          user.id,
+          {
+            specialties: specialtiesStr || undefined,
+            bio: bio.trim() || undefined,
+          },
+          token
+        );
+        await updateUser(updated);
+      }
+      router.push({ pathname: '/(onboarding)/step3b' as any, params: { role } });
+    } catch (e: any) {
+      Alert.alert('Erro', e.message ?? 'Não foi possível salvar os dados. Tente novamente.');
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const toggleService = (key: string) => {
     setSelectedServices((prev) =>
@@ -44,7 +81,7 @@ export default function Step3Screen() {
   };
 
   const addExperience = () => {
-    setExperiences((prev) => [...prev, { jobTitle: '', jobDesc: '' }]);
+    setExperiences((prev) => [...prev, { jobTitle: '', jobDesc: '', certSlot: EMPTY_SLOT }]);
   };
 
   const updateExperience = (index: number, field: 'jobTitle' | 'jobDesc', value: string) => {
@@ -55,6 +92,39 @@ export default function Step3Screen() {
 
   const removeExperience = (index: number) => {
     setExperiences((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const pickCertificate = async (index: number) => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      quality: 0.8,
+      allowsEditing: false,
+    });
+    if (result.canceled) return;
+
+    const uri = result.assets[0].uri;
+    setExperiences((prev) =>
+      prev.map((exp, i) => i === index ? { ...exp, certSlot: { uri, uploading: true, url: null } } : exp)
+    );
+
+    try {
+      const { url } = await documentsApi.upload(`certificate_${index}`, uri, token!);
+      setExperiences((prev) =>
+        prev.map((exp, i) => i === index ? { ...exp, certSlot: { uri, uploading: false, url } } : exp)
+      );
+    } catch (e: any) {
+      setExperiences((prev) =>
+        prev.map((exp, i) => i === index ? { ...exp, certSlot: EMPTY_SLOT } : exp)
+      );
+      Alert.alert('Erro ao enviar', e.message ?? 'Não foi possível enviar o certificado. Tente novamente.');
+    }
+  };
+
+  const removeCertificate = async (index: number) => {
+    try { await documentsApi.remove(`certificate_${index}`, token!); } catch (_) {}
+    setExperiences((prev) =>
+      prev.map((exp, i) => i === index ? { ...exp, certSlot: EMPTY_SLOT } : exp)
+    );
   };
 
   return (
@@ -147,11 +217,11 @@ export default function Step3Screen() {
                   numberOfLines={3}
                   textAlignVertical="top"
                 />
-                <Pressable style={styles.uploadCertBtn}>
-                  <MaterialIcons name="upload-file" size={18} color={Colors.onSecondaryContainer} />
-                  <Text style={styles.uploadCertLabel}>Enviar Certificado</Text>
-                  <Text style={styles.uploadHint}>Opcional: PDF, PNG até 5MB</Text>
-                </Pressable>
+                <CertUploadButton
+                  slot={exp.certSlot}
+                  onPress={() => pickCertificate(index)}
+                  onRemove={() => removeCertificate(index)}
+                />
               </View>
             </View>
           ))}
@@ -201,14 +271,52 @@ export default function Step3Screen() {
           <Text style={styles.draftLabel}>Salvar</Text>
         </Pressable>
         <GradientButton
-          label="Continuar →"
-          onPress={() =>
-            router.push({ pathname: '/(onboarding)/step3b' as any, params: { role } })
-          }
+          label={saving ? 'Salvando…' : 'Continuar →'}
+          onPress={handleContinue}
+          disabled={saving}
           style={styles.continueBtn}
         />
       </View>
     </SafeAreaView>
+  );
+}
+
+function CertUploadButton({
+  slot, onPress, onRemove,
+}: {
+  slot: UploadSlot;
+  onPress: () => void;
+  onRemove: () => void;
+}) {
+  if (slot.uploading) {
+    return (
+      <View style={styles.uploadCertBtn}>
+        <ActivityIndicator size="small" color={Colors.primary} />
+        <Text style={styles.uploadCertLabel}>Enviando…</Text>
+      </View>
+    );
+  }
+  if (slot.url) {
+    return (
+      <View style={[styles.uploadCertBtn, styles.uploadCertBtnDone]}>
+        <Image source={{ uri: slot.uri! }} style={styles.certThumb} />
+        <MaterialIcons name="check-circle" size={16} color={Colors.success ?? Colors.primary} />
+        <Text style={styles.uploadCertLabel}>Certificado enviado</Text>
+        <Pressable onPress={onRemove} hitSlop={8} style={{ marginLeft: 'auto' }}>
+          <MaterialIcons name="close" size={16} color={Colors.inkMuted} />
+        </Pressable>
+      </View>
+    );
+  }
+  return (
+    <Pressable
+      style={({ pressed }) => [styles.uploadCertBtn, pressed && { opacity: 0.7 }]}
+      onPress={onPress}
+    >
+      <MaterialIcons name="upload-file" size={18} color={Colors.onSecondaryContainer} />
+      <Text style={styles.uploadCertLabel}>Enviar Certificado</Text>
+      <Text style={styles.uploadHint}>Opcional: PNG, JPG até 5MB</Text>
+    </Pressable>
   );
 }
 
@@ -348,6 +456,11 @@ const styles = StyleSheet.create({
     marginTop: Spacing.base,
     flexWrap: 'wrap',
   },
+  uploadCertBtnDone: {
+    backgroundColor: Colors.primary + '08',
+    borderWidth: 1,
+    borderColor: Colors.primary + '40',
+  },
   uploadCertLabel: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 12,
@@ -359,6 +472,11 @@ const styles = StyleSheet.create({
     color: Colors.outline,
     fontStyle: 'italic',
     flex: 1,
+  },
+  certThumb: {
+    width: 36,
+    height: 36,
+    borderRadius: Radius.xs ?? 4,
   },
 
   // Add more card

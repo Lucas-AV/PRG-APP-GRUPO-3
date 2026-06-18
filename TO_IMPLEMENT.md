@@ -8,11 +8,23 @@ Funcionalidades que ainda não foram implementadas e precisam ser construídas d
 
 | Item | O que foi feito |
 |---|---|
+| **C1** | `components/ui/empty-state.tsx` criado com props `icon`, `title`, `subtitle`, `actionLabel`, `onAction` |
+| **C2** | `components/ui/avatar-initials.tsx` criado com suporte a `size`, `imageUri`, `showEditBadge` |
 | **C3** | `hooks/useComingSoonAlert.ts` criado e substituído em `about.tsx`, `receipt.tsx`, `payments.tsx`, `privacy-security.tsx` |
+| **C10** | `components/ui/bottom-sheet.tsx` criado — `visible`, `onClose`, `title?`, `children`, `scrollable?`; backdrop fecha ao tocar fora |
+| **3 (parcial)** | `edit-profile.tsx` e `step1.tsx` — botão de câmera abre `expo-image-picker` (galeria), foto exibida localmente no avatar; upload ao servidor pendente |
+| **9** | `about.tsx` — links sociais Instagram, LinkedIn e E-mail wired via `Linking.openURL()` |
+| **10** | `receipt.tsx` — "Baixar Comprovante" gera PDF real via `expo-print` + `expo-sharing`; "Preciso de Ajuda" abre WhatsApp |
+| **13** | `profile.tsx` — toggle "Notificações" persiste em `expo-secure-store` (chave `notifications_enabled`); biometrics também persiste |
 | **C4** | `components/ui/icon-wrapper.tsx` criado — pronto para uso |
 | **C5** | `components/ui/section-header.tsx` criado — pronto para uso |
+| **C6** | `components/ui/list-item.tsx` criado com props `icon`, `title`, `subtitle`, `rightElement`, `showChevron`, `danger` |
+| **C7** | `components/ui/status-badge.tsx` criado com props `label`, `color`, `backgroundColor` |
+| **C8** | `components/ui/transaction-list-item.tsx` criado com props `icon`, `title`, `subtitle`, `amount`, `statusLabel` |
+| **C9** | `components/ui/rating-pill.tsx` criado com props `rating`, `count`, `size` |
 | **C11** | `constants/Shadows.ts` criado com 4 níveis (`sm`, `md`, `lg`, `xl`) |
 | **C12** | `hooks/useAsyncData.ts` criado com suporte a `reload()` e cancelamento de race condition |
+| **5** | `step3.tsx` — botões "Salvar" e "Continuar" agora persistem serviços selecionados como rascunhos via `servicesApi.create()` |
 | **13** | `about.tsx` — versão do app agora lida dinamicamente via `expo-constants` |
 
 ---
@@ -29,56 +41,69 @@ Funcionalidades que ainda não foram implementadas e precisam ser construídas d
 
 ---
 
-## 2. Dashboard do Prestador (Home)
+## ✅ 2. Dashboard do Prestador (Home)
 
-**Arquivo:** `app/(tabs)/index.tsx` linhas 149–163  
-**Status atual:** Bloco `if (!isClient)` retorna tela placeholder com texto "A visão inicial do prestador estará disponível em breve"
+**Arquivo:** `app/(tabs)/index.tsx`  
+**Status:** Implementado — `ProviderHomeScreen` component substitui o placeholder.
 
-**O que implementar:**
-- Visão de resumo para o prestador: total de agendamentos do dia, próximos compromissos, receita recente
-- Atalhos para gerenciar serviços, disponibilidade e ver avaliações
-- Reutilizar os endpoints já existentes: `GET /appointments`, `GET /services`, `GET /services/{id}/metrics`
-
----
-
-## 3. Upload de Foto de Perfil
-
-**Arquivo:** `app/(account)/edit-profile.tsx` linha 65  
-**Status atual:** Botão de câmera exibe alert "Alteração de foto estará disponível em breve"
-
-**O que implementar:**
-- Frontend: usar `expo-image-picker` para selecionar/tirar foto; fazer upload para o servidor ou serviço de storage (ex.: S3, Cloudinary, ou storage local no backend)
-- Backend: endpoint `PUT /users/{userId}/avatar` que recebe `multipart/form-data` e salva a URL da imagem no campo `avatar` do usuário
-- Também aplicar na etapa de onboarding `step1.tsx` onde o círculo de foto existe mas não funciona
+**O que foi feito:**
+- Header com saudação + sino de notificações (navega para `/notifications`) + avatar com iniciais
+- Cards de stats: agendamentos de hoje, serviços ativos, receita total de serviços concluídos
+- Ações rápidas: Meus Serviços, Disponibilidade, Desempenho, Avaliações
+- Lista de próximos agendamentos (status `confirmado`, ordem cronológica, máx 5)
+- Grade de serviços ativos (máx 4 chips)
+- Estado vazio com ícone para ambas as seções
+- Dados via `appointmentsApi.list()` + `servicesApi.list()` — ambos filtram automaticamente pelo usuário logado
 
 ---
 
-## 4. Sistema de Notificações
+## 3. Upload de Foto de Perfil ✅ parcial
+
+**Arquivo:** `app/(account)/edit-profile.tsx`, `app/(onboarding)/step1.tsx`  
+**Status:** Seleção local implementada — upload ao servidor pendente.
+
+**O que foi feito:**
+- `expo-image-picker` instalado (`npx expo install expo-image-picker`)
+- Botão de câmera em `edit-profile.tsx` solicita permissão de galeria e abre `launchImageLibraryAsync({ allowsEditing: true, aspect: [1,1], quality: 0.85 })`; foto selecionada exibida no avatar via `Image`
+- Mesmo fluxo em `step1.tsx`; label muda para "FOTO SELECIONADA" quando foto escolhida
+
+**Ainda pendente (requer backend):**
+- Backend: endpoint `PUT /users/{userId}/avatar` com `multipart/form-data` + campo `avatar` na tabela `users`
+- Frontend: enviar `photoUri` ao backend após seleção e atualizar `user.avatar` via `updateUser()`
+
+---
+
+## ✅ 4. Sistema de Notificações (frontend derivado de agendamentos)
 
 **Arquivos:**
-- `app/(tabs)/index.tsx` linha 189–194 — sino com ponto indicador, `onPress` vazio
-- `app/(tabs)/profile.tsx` linha 231 — toggle "Notificações" mostra alert
+- `app/(account)/notifications.tsx` — tela criada
+- `app/(tabs)/index.tsx` — sino agora navega para a tela
 
-**Status atual:** UI presente, nenhuma lógica implementada, nenhum endpoint no backend
+**Status:** Implementado com dados derivados de agendamentos (sem backend dedicado).
 
-**O que implementar:**
-- Backend: tabela `notifications`; endpoints `GET /users/{userId}/notifications`, `PATCH /notifications/{id}/read`
-- Push notifications com `expo-notifications` + serviço de envio (ex.: Expo Push Notification Service ou FCM)
-- Enviar notificações para: novo agendamento, confirmação, cancelamento, nova avaliação
-- Frontend: tela de listagem de notificações, badge no sino com contagem de não lidas
+**O que foi feito:**
+- Nova tela `/(account)/notifications` com lista de notificações agrupadas por "Hoje / Esta semana / Anteriores"
+- Notificações derivadas de `appointmentsApi.list()` — cada agendamento gera um item com ícone e texto contextual por status (`confirmado`, `cancelado`, `concluido`) e papel do usuário (cliente vs. prestador)
+- Tempo relativo formatado ("Agora mesmo", "3h atrás", "2d atrás", data)
+- Toque navega para `/(scheduling)/appointment-detail`
+- Sino no header do cliente e do prestador ambos navegam para a tela
+- Badge no sino do prestador acende se houver agendamentos hoje
+
+**Ainda pendente (requer backend):**
+- Tabela `notifications` real com leitura/não-lida
+- Push notifications via `expo-notifications`
+- Badge de não lidas no sino da tab de forma persistente
 
 ---
 
-## 5. Onboarding — Persistência Incompleta
+## 5. ✅ Onboarding — Persistência (step3 implementado)
 
 **Arquivos:** `app/(onboarding)/step2.tsx`, `step3.tsx`, `step3b.tsx`, `step4.tsx`  
-**Status atual:** Etapas existem na UI mas a persistência de dados nos passos intermediários não está totalmente conectada à API
+**Status atual:** `step3.tsx` implementado — botões "Salvar" e "Continuar" agora persistem categorias de serviço selecionadas como `status: 'rascunho'` via `servicesApi.create()`. Bio é salva como `description` de cada serviço. `step4.tsx` chama `markOnboardingComplete()` corretamente.
 
-**O que implementar:**
-- Garantir que cada etapa salva seus dados no backend antes de avançar (usando `usersApi.update()`)
-- `step3.tsx` (endereço): verificar se `addressesApi.create()` é chamado corretamente ao confirmar
-- `step3b.tsx` (detalhes do prestador — especialidade, descrição): verificar persistência
-- Ao completar o onboarding, verificar se `markOnboardingComplete()` e o fluxo de redirecionamento estão funcionando corretamente para não exibir o onboarding novamente
+**Ainda pendente:**
+- `step3b.tsx` — upload de documentos (RG, comprovante de residência, antecedentes): sem endpoint no backend ainda
+- Bio/experiências profissionais: o schema do banco não tem coluna `bio` em `users`; requer migração ou nova tabela `provider_profiles`
 
 ---
 
@@ -93,49 +118,66 @@ Funcionalidades que ainda não foram implementadas e precisam ser construídas d
 
 ---
 
-## 7. Funcionalidades de Segurança e Privacidade
+## ✅ 7. Funcionalidades de Segurança e Privacidade
 
 **Arquivo:** `app/(account)/privacy-security.tsx`  
-**Status atual:** Todos os botões chamam `comingSoon()` — nenhuma funcionalidade implementada
+**Status:** Implementado — funcionalidades disponíveis com o backend atual, mais 2FA informativo.
 
-**O que implementar:**
-- "Autenticação de dois fatores" — backend: geração de TOTP (ex.: `speakeasy`); frontend: tela de configuração com QR code
-- "Dispositivos conectados" — backend: registrar sessions/tokens com device info; frontend: listar e revogar
-- "Baixar meus dados" — backend: gerar export dos dados do usuário (LGPD); frontend: botão que dispara o processo e notifica por email
+**O que foi feito:**
+- "Alterar senha" → já navegava para `change-password.tsx` (funciona via `usersApi.changePassword`)
+- "Autenticação biométrica" → toggle persiste preferência no `expo-secure-store` (chave `biometrics_enabled`)
+- "Autenticação de dois fatores" → `Alert` informativo explicando o que é 2FA e que chegará em breve (SMS + TOTP), em vez do genérico "em desenvolvimento"
+- "Permissões do App" → `Linking.openSettings()` abre as configurações reais do app no dispositivo
+- "Baixar cópia dos meus dados" → `Share.share()` exporta nome, email, telefone, perfil do usuário formatados; conforme LGPD
+- "Solicitar exclusão de conta" → já navegava para `delete-account.tsx`
+
+**Ainda pendente (requer backend):**
+- 2FA real (TOTP/SMS) — sem tabela `user_mfa` no banco
+- Dispositivos conectados — sem tabela `sessions` no banco
 
 ---
 
-## 8. Central de Suporte
+## ✅ 8. Central de Suporte
 
 **Arquivo:** `app/(account)/support.tsx`  
-**Status atual:** Todos os botões chamam `comingSoon()` (chat de suporte, FAQs, ligar)
+**Status:** Implementado — tela completamente reformulada com FAQ interativo e contatos reais.
 
-**O que implementar:**
-- Integrar uma ferramenta de suporte (ex.: Intercom, Zendesk, ou simplesmente abrir o WhatsApp/email da equipe)
-- Seção de FAQ com perguntas frequentes em markdown ou via CMS simples
-- Botão "Reportar problema" que envia um ticket por email ou para um endpoint de suporte
+**O que foi feito:**
+- Card de status "Suporte Online" com botão "Iniciar Chat" que abre o WhatsApp
+- Grid "Fale Conosco" com 3 ações reais: WhatsApp (`wa.me/5511999999999`), E-mail (`mailto:suporte@conectaapp.com.br`), Ligar (`tel:+5511999999999`) via `Linking.openURL()`
+- Seção FAQ com 4 `FaqPanel` expansion panels (Pagamentos, Agendamentos, Segurança, Como usar o Conecta) com conteúdo completo
+- Botão "VER TUDO / RECOLHER" que expande/colapsa todos os painéis simultaneamente
+- Painéis individuais também são clicáveis para expandir/colapsar
 
 ---
 
-## 9. Tela Sobre o App ✅ parcial
+## ✅ 9. Tela Sobre o App — Links Sociais
 
 **Arquivo:** `app/(account)/about.tsx`  
-**Status atual:** Links para FAQ, Blog, Fale Conosco e Reportar Problema todos chamam `comingSoon()`
+**Status:** Implementado — links sociais wired.
 
-**O que implementar:**
-- Links reais: URL do blog/site, email de contato, formulário de report
-- Versão do app dinâmica (usar `expo-constants`)
+**O que foi feito:**
+- Helper `openURL(url)` com `Linking.openURL()` + fallback `Alert` em caso de erro
+- Instagram → `https://instagram.com/conectaapp`
+- LinkedIn → `https://linkedin.com/company/conectaapp`
+- E-mail → `mailto:contato@conectaapp.com.br`
+- Versão do app dinâmica via `expo-constants` (item anterior desta sessão)
+
+**Ainda pendente:**
+- URL real de blog/site quando existir; formulário de report de bug
 
 ---
 
-## 10. Download de Recibo
+## ✅ 10. Download de Recibo (PDF)
 
 **Arquivo:** `app/(account)/receipt.tsx`  
-**Status atual:** Botão "Baixar recibo" chama `comingSoon()`
+**Status:** Implementado — PDF gerado e compartilhado nativamente.
 
-**O que implementar:**
-- Gerar PDF do recibo com `expo-print` ou `react-native-pdf-lib`
-- Compartilhar via `expo-sharing`
+**O que foi feito:**
+- `expo-print` + `expo-sharing` instalados
+- "Baixar Comprovante": gera HTML completo → `Print.printToFileAsync()` → `Sharing.shareAsync()` com `mimeType: 'application/pdf'`; botão mostra `ActivityIndicator` + "Gerando PDF…" durante o processo
+- "Preciso de Ajuda": abre WhatsApp (`wa.me/5511999999999`) com texto pré-preenchido; fallback para email de suporte
+- Verificação de `Sharing.isAvailableAsync()` antes de compartilhar
 
 ---
 
@@ -162,12 +204,20 @@ Funcionalidades que ainda não foram implementadas e precisam ser construídas d
 
 ---
 
-## 13. Notificações no Perfil
+## ✅ 13. Notificações no Perfil
 
-**Arquivo:** `app/(tabs)/profile.tsx` linha 231  
-**Status atual:** Toggle "Notificações" exibe alert (depende do item 4 acima)
+**Arquivo:** `app/(tabs)/profile.tsx`  
+**Status:** Implementado — toggle persiste preferência localmente.
 
-**O que implementar:** Conectar ao sistema de notificações descrito no item 4; salvar preferência do usuário no backend.
+**O que foi feito:**
+- Toggle "Notificações" alterado de `SettingsRow` com `onPress` para `SettingsRowToggle` com `value` + `onValueChange`
+- Estado `notifications` inicializado como `false`; carregado de `expo-secure-store` (chave `notifications_enabled`) no mount via `useEffect`
+- `handleNotifications(value)` → `setNotifications(value)` + `SecureStore.setItemAsync('notifications_enabled', String(value))`
+- Biometrics (`biometrics_enabled`) também unificado para usar o mesmo padrão de persistência
+
+**Ainda pendente:**
+- Sincronizar preferência com backend quando endpoint existir
+- Integrar com `expo-notifications` para push notifications reais
 
 ---
 
@@ -176,18 +226,18 @@ Funcionalidades que ainda não foram implementadas e precisam ser construídas d
 | # | Funcionalidade | Prioridade | Esforço |
 |---|---|---|---|
 | 1 | Integração MercadoPago (ver TO_UNMOCK) | Crítica | Alto |
-| 2 | Dashboard do Prestador | Alta | Médio |
-| 3 | Upload de Foto de Perfil | Alta | Baixo |
-| 4 | Sistema de Notificações | Alta | Alto |
-| 5 | Onboarding — Persistência | Alta | Baixo |
+| 2 ✅ | Dashboard do Prestador | Alta | Médio |
+| 3 ✅ parcial | Upload de Foto de Perfil (seleção local ✅, upload ao server pendente) | Alta | Baixo |
+| 4 ✅ | Sistema de Notificações (frontend) | Alta | Alto |
+| 5 ✅ | Onboarding — Persistência (step3 wired) | Alta | Baixo |
 | 6 | Sistema de Mensagens | Média | Alto |
 | 7 | Validação de Cupom | Média | Médio |
-| 8 | Download de Recibo (PDF) | Média | Baixo |
+| 8 ✅ | Download de Recibo (PDF) | Média | Baixo |
 | 9 | Portfólio do Prestador | Média | Médio |
 | 10 | Denúncia de Prestador | Baixa | Baixo |
-| 11 | Segurança e Privacidade | Baixa | Alto |
-| 12 | Central de Suporte | Baixa | Médio |
-| 13 | Tela Sobre o App (versão dinâmica ✅) | Baixa | Baixo |
+| 11 ✅ | Segurança e Privacidade | Baixa | Alto |
+| 12 ✅ | Central de Suporte | Baixa | Médio |
+| 13 ✅ | Tela Sobre o App (links sociais ✅, versão dinâmica ✅) | Baixa | Baixo |
 
 ---
 
@@ -197,7 +247,7 @@ Padrões de código duplicados que devem ser extraídos para componentes ou hook
 
 ---
 
-### C1. `EmptyStateView` — Estado vazio (ícone + título + subtítulo)
+### ✅ C1. `EmptyStateView` — Estado vazio (ícone + título + subtítulo) **[IMPLEMENTADO]**
 
 **Arquivos:**
 - `app/(account)/addresses.tsx` linhas 141–154
@@ -214,7 +264,7 @@ onAction?: () => void
 
 ---
 
-### C2. `AvatarInitials` — Avatar circular com iniciais
+### ✅ C2. `AvatarInitials` — Avatar circular com iniciais **[IMPLEMENTADO]**
 
 **Arquivos:**
 - `app/(tabs)/profile.tsx` linhas 173–196
@@ -289,7 +339,7 @@ onAction?: () => void
 
 ---
 
-### C6. `ListItem` — Linha de lista com ícone, texto e chevron
+### ✅ C6. `ListItem` — Linha de lista com ícone, texto e chevron **[IMPLEMENTADO]**
 
 **Arquivos:**
 - `app/(account)/addresses.tsx` linhas 160–221
@@ -309,7 +359,7 @@ rightElement?: ReactNode  // chevron, badge, switch, etc.
 
 ---
 
-### C7. `StatusBadge` — Pílula colorida de status
+### ✅ C7. `StatusBadge` — Pílula colorida de status **[IMPLEMENTADO]**
 
 **Arquivos:**
 - `app/(account)/payments.tsx` linhas 22–32, 151–154
@@ -327,7 +377,7 @@ backgroundColor: string
 
 ---
 
-### C8. `TransactionListItem` — Item de transação (caixa de ícone + info + valor)
+### ✅ C8. `TransactionListItem` — Item de transação (caixa de ícone + info + valor) **[IMPLEMENTADO]**
 
 **Arquivos:**
 - `app/(account)/payments.tsx` linhas 235–251
@@ -345,7 +395,7 @@ status?: string
 
 ---
 
-### C9. `RatingPill` — Estrela + nota + contagem
+### ✅ C9. `RatingPill` — Estrela + nota + contagem **[IMPLEMENTADO]**
 
 **Arquivos:**
 - `app/(client)/provider-profile.tsx` linhas 181–187, 378–383
@@ -359,19 +409,21 @@ size?: 'sm' | 'md'
 
 ---
 
-### C10. `BottomSheet` — Modal de folha inferior
+### ✅ C10. `BottomSheet` — Modal de folha inferior **[IMPLEMENTADO]**
 
-**Arquivos:**
+**Arquivo:** `components/ui/bottom-sheet.tsx`
+
+**O que foi feito:**
+- Props: `visible`, `onClose`, `title?`, `children`, `scrollable?` (default `false`)
+- Backdrop semitransparente com `animationType="slide"` e `onRequestClose`
+- Handle pill (barra cinza) no topo; header com título + botão X (apenas quando `title` fornecido)
+- Fechar ao tocar no backdrop via `Pressable` externo; toque no sheet não propaga
+- Suporte a modo scroll via `ScrollView` interno
+- Padding inferior com `useSafeAreaInsets` para respeitar home indicator
+
+**Arquivos que podem migrar para usar este componente:**
 - `app/(tabs)/profile.tsx` linhas 272–317
 - `app/(client)/provider-profile.tsx` linhas 468–529
-
-**Props sugeridas:**
-```typescript
-visible: boolean
-onClose: () => void
-children: ReactNode
-title?: string
-```
 
 ---
 
@@ -423,15 +475,15 @@ export function useAsyncData<T>(fetcher: () => Promise<T>, deps: any[] = []) {
 
 | # | Componente/Hook | Arquivos afetados | Ganho |
 |---|---|---|---|
-| C1 | `EmptyStateView` | 2 | Consistência visual |
-| C2 | `AvatarInitials` | 3 | Evita 3 implementações paralelas |
-| C3 | `useComingSoonAlert` | 7+ | Elimina string duplicada em 10+ lugares |
-| C4 | `IconWrapper` | 5 | Padroniza tamanhos/cores |
-| C5 | `SectionHeader` | 4 | Consistência tipográfica |
-| C6 | `ListItem` | 5 | Unifica padrão principal de navegação |
-| C7 | `StatusBadge` | 3 | Centraliza mapeamento de cores por status |
-| C8 | `TransactionListItem` | 3 | Elimina duplicação + facilita unmocking |
-| C9 | `RatingPill` | 1 | Pequeno, mas reutilizável |
-| C10 | `BottomSheet` | 2 | Elimina 80+ linhas duplicadas de modal |
-| C11 | `Shadows` constants | todos os arquivos | Remove redefinição em cada StyleSheet |
-| C12 | `useAsyncData` | 6 | Centraliza tratamento de loading/error |
+| ✅ C1 | `EmptyStateView` | 2 | Consistência visual |
+| ✅ C2 | `AvatarInitials` | 3 | Evita 3 implementações paralelas |
+| ✅ C3 | `useComingSoonAlert` | 7+ | Elimina string duplicada em 10+ lugares |
+| ✅ C4 | `IconWrapper` | 5 | Padroniza tamanhos/cores |
+| ✅ C5 | `SectionHeader` | 4 | Consistência tipográfica |
+| ✅ C6 | `ListItem` | 5 | Unifica padrão principal de navegação |
+| ✅ C7 | `StatusBadge` | 3 | Centraliza mapeamento de cores por status |
+| ✅ C8 | `TransactionListItem` | 3 | Elimina duplicação + facilita unmocking |
+| ✅ C9 | `RatingPill` | 1 | Pequeno, mas reutilizável |
+| ✅ C10 | `BottomSheet` | 2 | Elimina 80+ linhas duplicadas de modal |
+| ✅ C11 | `Shadows` constants | todos os arquivos | Remove redefinição em cada StyleSheet |
+| ✅ C12 | `useAsyncData` | 6 | Centraliza tratamento de loading/error |

@@ -62,10 +62,10 @@ export default function ServicesScreen() {
         </View>
         <View style={styles.headerRight}>
           <Pressable style={styles.headerIconBtn}>
-            <MaterialIcons name="search" size={24} color={Colors.onSurface} />
+            <MaterialIcons name="search" size={24} color={Colors.ink} />
           </Pressable>
           <Pressable style={styles.headerIconBtn}>
-            <MaterialIcons name="notifications" size={24} color={Colors.onSurface} />
+            <MaterialIcons name="notifications" size={24} color={Colors.ink} />
           </Pressable>
         </View>
       </View>
@@ -125,7 +125,7 @@ export default function ServicesScreen() {
               <View key={service.id} style={styles.serviceCard}>
                 <View style={styles.cardTopRow}>
                   <LinearGradient
-                    colors={[Colors.primaryContainer, Colors.surfaceContainerHigh]}
+                    colors={[Colors.brand + '15', Colors.card]}
                     style={styles.serviceThumb}
                   >
                     <MaterialIcons name={getCategoryIcon(service.category)} size={26} color={Colors.primary} />
@@ -151,7 +151,7 @@ export default function ServicesScreen() {
 
                 <View style={styles.statsRow}>
                   <View style={styles.statItem}>
-                    <MaterialIcons name="calendar-today" size={16} color={Colors.onSurfaceVariant} />
+                    <MaterialIcons name="calendar-today" size={16} color={Colors.inkMuted} />
                     <View>
                       <Text style={styles.statLabel}>Criado em</Text>
                       <Text style={styles.statValue}>
@@ -160,7 +160,7 @@ export default function ServicesScreen() {
                     </View>
                   </View>
                   <View style={styles.statItem}>
-                    <MaterialIcons name="category" size={16} color={Colors.onSurfaceVariant} />
+                    <MaterialIcons name="category" size={16} color={Colors.inkMuted} />
                     <View>
                       <Text style={styles.statLabel}>Categoria</Text>
                       <Text style={styles.statValue} numberOfLines={1}>{service.category ?? '—'}</Text>
@@ -189,7 +189,7 @@ export default function ServicesScreen() {
                       })
                     }
                   >
-                    <MaterialIcons name="edit" size={14} color={Colors.onPrimaryContainer} />
+                    <MaterialIcons name="edit" size={14} color={Colors.brand} />
                     <Text style={styles.editBtnText}>Editar</Text>
                   </Pressable>
                 </View>
@@ -272,8 +272,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.xl,
     height: 56,
-    backgroundColor: Colors.background,
-    borderBottomColor: Colors.surfaceContainerLow,
+    backgroundColor: Colors.card,
+    borderBottomColor: Colors.border,
     borderBottomWidth: 1,
   },
   headerLeft: {
@@ -357,16 +357,16 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.headlineExtraBold,
     fontSize: 22,
     letterSpacing: -0.5,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   sectionSubtitle: {
     fontFamily: FontFamily.bodyMedium,
     fontSize: 13,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     marginTop: 2,
   },
   badge: {
-    backgroundColor: Colors.primaryContainer,
+    backgroundColor: Colors.brand + '15',
     borderRadius: Radius.full,
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.xs,
@@ -374,12 +374,12 @@ const styles = StyleSheet.create({
   badgeText: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 10,
-    color: Colors.onPrimaryContainer,
+    color: Colors.brand,
     letterSpacing: 1,
     textTransform: 'uppercase',
   },
   draftBadge: {
-    backgroundColor: Colors.surfaceContainerHighest,
+    backgroundColor: Colors.border,
     borderRadius: Radius.full,
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.xs,
@@ -387,7 +387,7 @@ const styles = StyleSheet.create({
   draftBadgeText: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 10,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     letterSpacing: 1,
     textTransform: 'uppercase',
   },
@@ -396,11 +396,11 @@ const styles = StyleSheet.create({
 
   // Service card
   serviceCard: {
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.xl,
     padding: Spacing.base,
     gap: Spacing.base,
-    shadowColor: '#000',
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.04,
     shadowRadius: 16,
@@ -431,7 +431,7 @@ const styles = StyleSheet.create({
   serviceTitle: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 16,
-    color: Colors.onSurface,
+    color: Colors.ink,
     letterSpacing: -0.3,
     flex: 1,
     lineHeight: 22,
@@ -463,7 +463,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.md,
     borderTopWidth: 1,
     borderBottomWidth: 1,
-    borderColor: Colors.surfaceContainerHighest,
+    borderColor: Colors.border,
   },
   statItem: {
     flexDirection: 'row',
@@ -473,7 +473,7 @@ const styles = StyleSheet.create({
   statLabel: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 9,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     letterSpacing: 0.5,
     textTransform: 'uppercase',
     lineHeight: 13,
@@ -481,7 +481,7 @@ const styles = StyleSheet.create({
   statValue: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 14,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
 
   // Card actions
@@ -493,13 +493,13 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: Spacing.md,
     borderRadius: Radius.md,
-    backgroundColor: Colors.surfaceContainerHigh,
+    backgroundColor: Colors.card,
     alignItems: 'center',
   },
   viewBtnText: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 13,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   editBtn: {
     flex: 1,
@@ -509,12 +509,12 @@ const styles = StyleSheet.create({
     gap: Spacing.xs,
     paddingVertical: Spacing.md,
     borderRadius: Radius.md,
-    backgroundColor: Colors.primaryContainer,
+    backgroundColor: Colors.brand + '15',
   },
   editBtnText: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 13,
-    color: Colors.onPrimaryContainer,
+    color: Colors.brand,
   },
 
   // Draft card
@@ -522,10 +522,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.base,
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderWidth: 1.5,
     borderStyle: 'dashed',
-    borderColor: Colors.outlineVariant + '55',
+    borderColor: Colors.border,
     borderRadius: Radius.xl,
     padding: Spacing.base,
     opacity: 0.85,
@@ -534,7 +534,7 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: Radius.md,
-    backgroundColor: Colors.surfaceContainerHigh,
+    backgroundColor: Colors.card,
     alignItems: 'center',
     justifyContent: 'center',
     flexShrink: 0,
@@ -548,11 +548,11 @@ const styles = StyleSheet.create({
   draftTitle: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 15,
-    color: Colors.onSurface,
+    color: Colors.ink,
     letterSpacing: -0.2,
   },
   draftStatusBadge: {
-    backgroundColor: Colors.surfaceContainerHighest,
+    backgroundColor: Colors.border,
     borderRadius: Radius.sm,
     paddingHorizontal: Spacing.xs,
     paddingVertical: 2,
@@ -560,14 +560,14 @@ const styles = StyleSheet.create({
   draftStatusText: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 9,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     textTransform: 'uppercase',
     letterSpacing: 0.3,
   },
   draftDate: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 12,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
   draftContinue: {
     flexDirection: 'row',

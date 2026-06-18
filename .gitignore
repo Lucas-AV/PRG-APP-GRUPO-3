@@ -59,3 +59,5 @@ conecta-backend/uploads/*
 
 # backend env (credenciais MercadoPago etc.)
 conecta-backend/.env
+conecta-app/.env
+conecta-app/.env.example

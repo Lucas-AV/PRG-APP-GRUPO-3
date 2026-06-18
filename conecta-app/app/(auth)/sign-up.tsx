@@ -21,7 +21,7 @@ import { useAuth } from '@/context/AuthContext';
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function SignUpScreen() {
-  const { register } = useAuth();
+  const { savePendingRegistration } = useAuth();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -46,16 +46,17 @@ export default function SignUpScreen() {
     if (!validate()) return;
     setLoading(true);
     try {
-      await register({
+      // Salva os dados localmente — a conta só será criada no banco após
+      // o usuário escolher o tipo de perfil (cliente/prestador) em step0.
+      await savePendingRegistration({
         name: name.trim(),
         email: email.trim().toLowerCase(),
         phone: phone.trim(),
         password,
-        role: 'cliente',
       });
       router.push('/(onboarding)/step0');
     } catch (e: any) {
-      Alert.alert('Erro ao criar conta', e.message ?? 'Tente novamente em instantes.');
+      Alert.alert('Erro', e.message ?? 'Tente novamente em instantes.');
     } finally {
       setLoading(false);
     }
@@ -64,9 +65,6 @@ export default function SignUpScreen() {
   return (
     <SafeAreaView style={styles.container} edges={['bottom']}>
       <TopAppBar title="Crie sua Conta" onBack={() => router.back()} />
-
-      {/* Decorative background */}
-      <View style={styles.blobTR} pointerEvents="none" />
 
       <KeyboardAvoidingView
         style={styles.flex1}
@@ -161,12 +159,10 @@ export default function SignUpScreen() {
 
           {/* Footer */}
           <View style={styles.footer}>
-            <Text style={styles.footerText}>
-              Já tem uma conta?{' '}
-              <Text style={styles.footerLink} onPress={() => router.back()}>
-                Entrar
-              </Text>
-            </Text>
+            <Text style={styles.footerText}>Já tem uma conta? </Text>
+            <Pressable onPress={() => router.back()}>
+              <Text style={styles.footerLink}>Entrar</Text>
+            </Pressable>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -177,19 +173,9 @@ export default function SignUpScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.surface,
+    backgroundColor: '#f0f5ff',
   },
   flex1: { flex: 1 },
-
-  blobTR: {
-    position: 'absolute',
-    top: 0,
-    right: -40,
-    width: '35%',
-    height: '55%',
-    backgroundColor: 'rgba(0,84,214,0.04)',
-    borderRadius: 200,
-  },
 
   scrollContent: {
     flexGrow: 1,
@@ -204,19 +190,27 @@ const styles = StyleSheet.create({
   },
   editorialTitle: {
     fontFamily: FontFamily.headlineExtraBold,
-    fontSize: 36,
-    letterSpacing: -1,
-    color: Colors.onSurface,
+    fontSize: 32,
+    letterSpacing: -1.2,
+    color: Colors.ink,
   },
   editorialSubtitle: {
     fontFamily: FontFamily.bodyRegular,
-    fontSize: 16,
-    color: Colors.onSurfaceVariant,
+    fontSize: 14,
+    color: Colors.inkMuted,
     lineHeight: 22,
   },
 
   form: {
     gap: Spacing.xxl,
+    backgroundColor: Colors.card,
+    borderRadius: Radius.xl,
+    padding: Spacing.xxl,
+    shadowColor: Colors.ink,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.07,
+    shadowRadius: 8,
+    elevation: 3,
   },
 
   // Terms
@@ -230,8 +224,8 @@ const styles = StyleSheet.create({
     height: 20,
     borderRadius: 4,
     borderWidth: 1.5,
-    borderColor: Colors.outlineVariant,
-    backgroundColor: Colors.surfaceContainerLowest,
+    borderColor: Colors.border,
+    backgroundColor: Colors.card,
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 2,
@@ -245,7 +239,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontFamily: FontFamily.bodyRegular,
     fontSize: 13,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     lineHeight: 19,
   },
   termsLink: {
@@ -253,11 +247,11 @@ const styles = StyleSheet.create({
     color: Colors.primary,
   },
 
-  footer: { alignItems: 'center', paddingBottom: Spacing.xl },
+  footer: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingBottom: Spacing.xl },
   footerText: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 14,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
   footerLink: {
     fontFamily: FontFamily.headlineBold,

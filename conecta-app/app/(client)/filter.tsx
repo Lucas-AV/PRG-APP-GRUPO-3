@@ -5,7 +5,6 @@ import {
   ScrollView,
   Pressable,
   StyleSheet,
-  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -71,7 +70,7 @@ export default function FilterScreen() {
             style={({ pressed }) => [styles.iconBtn, pressed && styles.iconBtnPressed]}
             onPress={() => router.back()}
           >
-            <MaterialIcons name="close" size={24} color={Colors.onSurface} />
+            <MaterialIcons name="close" size={24} color={Colors.ink} />
           </Pressable>
           <Text style={styles.topBarTitle}>Filtros</Text>
         </View>
@@ -298,7 +297,7 @@ export default function FilterScreen() {
                   <MaterialIcons
                     name={cat.icon}
                     size={18}
-                    color={active ? Colors.onPrimaryContainer : Colors.onSurface}
+                    color={active ? Colors.brand : Colors.ink}
                     style={{ marginRight: 6 }}
                   />
                   <Text
@@ -315,26 +314,6 @@ export default function FilterScreen() {
           </View>
         </View>
 
-        {/* Contextual Visual Hint */}
-        <View style={styles.visualHintContainer}>
-          <View style={styles.hintCard}>
-            <Image
-              source={{
-                uri: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAJseHimdm5vOxMt8Hgaj0p0G8VgXJr-Q54cueOgXehbfupO5j23wk_APJasUTXXWWWgC-Zi8L4BD9dz2ykUl7eo3aMqYhn-CfpKePcn_UhAVCrzH5nPvzzqFCVpjigSuhs53WoJxKwhzJfLhmV1-slbyRRNKyxpR2LNAAP2BRBbebkt3_XpQhn923wtU5wTMMYtgYpkHmAKtfMTkcTWT2ALkhKC3pqIXnLG7HHIceh4xDZfQUtxvJLoaY1c6pn5VR_7Lzc8XSo26E',
-              }}
-              style={styles.hintImage}
-            />
-            <LinearGradient
-              colors={['transparent', 'rgba(0,0,0,0.7)']}
-              style={styles.hintGradient}
-            >
-              <Text style={styles.hintTitle}>Encontre os melhores profissionais</Text>
-              <Text style={styles.hintSubtitle}>
-                Mais de 5.000 prestadores verificados na sua região.
-              </Text>
-            </LinearGradient>
-          </View>
-        </View>
       </ScrollView>
 
       {/* ── Footer ─────────────────────────────────────────────────────────── */}
@@ -370,9 +349,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.xl,
     paddingVertical: Spacing.md,
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: Colors.outlineVariant + '33',
+    borderBottomColor: Colors.border,
   },
   topBarLeft: {
     flexDirection: 'row',
@@ -382,7 +361,7 @@ const styles = StyleSheet.create({
   topBarTitle: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 18,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   iconBtn: {
     width: 38,
@@ -392,7 +371,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   iconBtnPressed: {
-    backgroundColor: Colors.surfaceContainerLow,
+    backgroundColor: Colors.card,
   },
   clearBtn: {
     paddingHorizontal: Spacing.md,
@@ -420,14 +399,14 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 22,
-    color: Colors.onSurface,
+    color: Colors.ink,
     letterSpacing: -0.4,
     marginBottom: Spacing.md,
   },
   sectionSubtitle: {
     fontFamily: FontFamily.bodyMedium,
     fontSize: 10,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     letterSpacing: 1.5,
     textTransform: 'uppercase',
     marginBottom: Spacing.md + 4,
@@ -450,11 +429,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   optionCardActive: {
-    backgroundColor: Colors.surfaceContainerLowest,
-    borderColor: Colors.primaryContainer + '40',
+    backgroundColor: Colors.card,
+    borderColor: Colors.brand + '15',
   },
   optionCardInactive: {
-    backgroundColor: Colors.surfaceContainerLow,
+    backgroundColor: Colors.card,
     borderColor: 'transparent',
   },
   optionText: {
@@ -462,10 +441,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   optionTextActive: {
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   optionTextInactive: {
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
   radioCircle: {
     width: 22,
@@ -479,7 +458,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.primary,
   },
   radioCircleInactive: {
-    borderColor: Colors.outlineVariant,
+    borderColor: Colors.border,
   },
   radioDot: {
     width: 11,
@@ -488,7 +467,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary,
   },
   distanceCard: {
-    backgroundColor: Colors.surfaceContainerLow,
+    backgroundColor: Colors.card,
     padding: Spacing.xl,
     borderRadius: Radius.lg,
     gap: Spacing.xl,
@@ -500,7 +479,7 @@ const styles = StyleSheet.create({
   },
   sliderTrack: {
     height: 4,
-    backgroundColor: Colors.surfaceContainerHighest,
+    backgroundColor: Colors.border,
     borderRadius: Radius.full,
     width: '100%',
   },
@@ -532,9 +511,9 @@ const styles = StyleSheet.create({
     width: 12,
     height: 12,
     borderRadius: Radius.full,
-    backgroundColor: Colors.surfaceContainerHighest,
+    backgroundColor: Colors.border,
     borderWidth: 2,
-    borderColor: Colors.outlineVariant,
+    borderColor: Colors.border,
   },
   sliderDotActive: {
     width: 20,
@@ -542,7 +521,7 @@ const styles = StyleSheet.create({
     borderRadius: Radius.full,
     backgroundColor: Colors.primary,
     borderWidth: 4,
-    borderColor: Colors.surfaceContainerLowest,
+    borderColor: Colors.card,
     shadowColor: Colors.primary,
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.4,
@@ -556,7 +535,7 @@ const styles = StyleSheet.create({
   distanceLabel: {
     fontFamily: FontFamily.bodyMedium,
     fontSize: 13,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
   distanceLabelActive: {
     color: Colors.primary,
@@ -576,22 +555,22 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   ratingBtnActive: {
-    backgroundColor: Colors.primaryContainer,
+    backgroundColor: Colors.brand + '15',
     borderColor: Colors.primary,
   },
   ratingBtnInactive: {
-    backgroundColor: Colors.surfaceContainerLowest,
-    borderColor: Colors.outlineVariant,
+    backgroundColor: Colors.card,
+    borderColor: Colors.border,
   },
   ratingBtnText: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 13,
   },
   ratingBtnTextActive: {
-    color: Colors.onPrimaryContainer,
+    color: Colors.brand,
   },
   ratingBtnTextInactive: {
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   priceRow: {
     flexDirection: 'row',
@@ -613,7 +592,7 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   priceBtnInactive: {
-    backgroundColor: Colors.surfaceContainerLow,
+    backgroundColor: Colors.card,
   },
   priceBtnText: {
     fontFamily: FontFamily.bodySemiBold,
@@ -623,7 +602,7 @@ const styles = StyleSheet.create({
     color: Colors.onPrimary,
   },
   priceBtnTextInactive: {
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
   categoriesWrap: {
     flexDirection: 'row',
@@ -638,67 +617,35 @@ const styles = StyleSheet.create({
     borderRadius: Radius.full,
   },
   categoryChipActive: {
-    backgroundColor: Colors.primaryContainer,
+    backgroundColor: Colors.brand + '15',
     borderWidth: 1,
     borderColor: Colors.primary + '33',
   },
   categoryChipInactive: {
-    backgroundColor: Colors.surfaceContainerHighest,
+    backgroundColor: Colors.border,
   },
   categoryChipText: {
     fontFamily: FontFamily.bodyMedium,
     fontSize: 13,
   },
   categoryChipTextActive: {
-    color: Colors.onPrimaryContainer,
+    color: Colors.brand,
     fontFamily: FontFamily.bodySemiBold,
   },
   categoryChipTextInactive: {
-    color: Colors.onSurface,
-  },
-  visualHintContainer: {
-    marginTop: Spacing.xxxl,
-    paddingHorizontal: Spacing.xl,
-  },
-  hintCard: {
-    height: 160,
-    borderRadius: Radius.lg,
-    overflow: 'hidden',
-    position: 'relative',
-  },
-  hintImage: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover',
-  },
-  hintGradient: {
-    position: 'absolute',
-    inset: 0,
-    justifyContent: 'flex-end',
-    padding: Spacing.xl,
-  },
-  hintTitle: {
-    fontFamily: FontFamily.headlineBold,
-    fontSize: 18,
-    color: Colors.surfaceContainerLowest,
-  },
-  hintSubtitle: {
-    fontFamily: FontFamily.bodyRegular,
-    fontSize: 13,
-    color: 'rgba(255, 255, 255, 0.8)',
-    marginTop: 2,
+    color: Colors.ink,
   },
   footer: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     paddingBottom: Spacing.md,
     paddingHorizontal: Spacing.xl,
     paddingTop: Spacing.md,
     borderTopWidth: 1,
-    borderTopColor: Colors.outlineVariant + '1F',
+    borderTopColor: Colors.border,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -8 },
     shadowOpacity: 0.04,

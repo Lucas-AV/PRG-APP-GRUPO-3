@@ -4,7 +4,20 @@ Registro de tudo que está mockado/hardcoded no app e precisa ser substituído p
 
 ---
 
-## 1. Dados de Serviço Mockados (`app/(services)/view.tsx`)
+## ✅ Implementado nesta sessão
+
+| Item | O que foi feito |
+|---|---|
+| **1** | `view.tsx` — objeto `MOCK` removido; API usada diretamente; hook order bug corrigido; empty states reais |
+| **2** | `card-detail.tsx` — `CARD_TRANSACTIONS` removido; fetch via `transactionsApi.list()`; navegação para `receipt` com params reais |
+| **3** | `receipt.tsx` — objeto `RECEIPT` removido; todos os dados recebidos via `useLocalSearchParams` |
+| **4** | `payments.tsx` — saldo `R$ 450,00` substituído por fetch de `subscriptionsApi.get()` com estado real |
+| **5** | `payments.tsx` — cupom `SEVGEN20` removido; estado inicial agora é `null` |
+| **6** | Todas as imagens hardcoded removidas: `provider-profile.tsx`, `service-detail.tsx`, `provider-reviews.tsx`, `search.tsx`, `filter.tsx` usam `AvatarInitials` e dados reais da API. Schema estendido (`bio`, `specialties`, `certifications`, `years_experience`, `response_time`, `included_items`). Endpoint `GET /users/provider/:id/profile` criado. Seed rico com 6 prestadores, 4 clientes, 25 agendamentos, 14 avaliações. |
+
+---
+
+## 1. Dados de Serviço Mockados (`app/(services)/view.tsx`) ✅
 
 **Linhas:** 38–83  
 **O que está mockado:** Objeto `MOCK` com dois serviços completos hardcoded:
@@ -18,7 +31,7 @@ Registro de tudo que está mockado/hardcoded no app e precisa ser substituído p
 
 ---
 
-## 2. Histórico de Transações Hardcoded (`app/(account)/card-detail.tsx`)
+## 2. Histórico de Transações Hardcoded (`app/(account)/card-detail.tsx`) ✅
 
 **Linhas:** 22–26  
 **O que está mockado:** Array `CARD_TRANSACTIONS` com 3 transações fixas ("Encanador Profissional", "Limpeza Residencial", "Reparo Elétrico")
@@ -28,7 +41,7 @@ Registro de tudo que está mockado/hardcoded no app e precisa ser substituído p
 
 ---
 
-## 3. Recibo Hardcoded (`app/(account)/receipt.tsx`)
+## 3. Recibo Hardcoded (`app/(account)/receipt.tsx`) ✅
 
 **Linhas:** 16–28  
 **O que está mockado:** Objeto `RECEIPT` completo com:
@@ -44,7 +57,7 @@ Registro de tudo que está mockado/hardcoded no app e precisa ser substituído p
 
 ---
 
-## 4. Saldo Hardcoded (`app/(account)/payments.tsx`)
+## 4. Saldo Hardcoded (`app/(account)/payments.tsx`) ✅
 
 **Linha:** 133  
 **O que está mockado:** `<Text>R$ 450,00</Text>` fixo como saldo da carteira
@@ -54,7 +67,7 @@ Registro de tudo que está mockado/hardcoded no app e precisa ser substituído p
 
 ---
 
-## 5. Cupom Hardcoded (`app/(account)/payments.tsx`)
+## 5. Cupom Hardcoded (`app/(account)/payments.tsx`) ✅ parcial
 
 **Linhas:** 48–51  
 **O que está mockado:** Estado inicial com cupom ativo `SEVGEN20` (`'20% de desconto no próximo serviço'`) — sempre presente, nunca validado
@@ -106,12 +119,12 @@ Vários arquivos usam URLs fixas do Google como avatares de prestadores e client
 
 ## Status Geral
 
-| Item | Prioridade | Backend pronto? |
-|---|---|---|
-| Mock de serviços (`view.tsx`) | Alta | Sim |
-| Histórico de transações (`card-detail.tsx`) | Alta | Sim |
-| Recibo hardcoded (`receipt.tsx`) | Alta | Parcial |
-| Saldo hardcoded (`payments.tsx`) | Alta | Sim |
-| Cupom hardcoded (`payments.tsx`) | Média | Não |
-| Imagens de usuário hardcoded | Média | Sim (campo `avatar`) |
-| Integração MercadoPago | Alta | Não |
+| Item | Prioridade | Backend pronto? | Status |
+|---|---|---|---|
+| Mock de serviços (`view.tsx`) | Alta | Sim | ✅ Concluído |
+| Histórico de transações (`card-detail.tsx`) | Alta | Sim | ✅ Concluído |
+| Recibo hardcoded (`receipt.tsx`) | Alta | Parcial | ✅ Concluído |
+| Saldo hardcoded (`payments.tsx`) | Alta | Sim | ✅ Concluído |
+| Cupom hardcoded (`payments.tsx`) | Média | Não | ✅ Parcial (estado null; validação aguarda endpoint) |
+| Imagens de usuário hardcoded | Média | Sim (campo `avatar`) | ✅ Concluído |
+| Integração MercadoPago | Alta | Não | 🔲 Pendente |

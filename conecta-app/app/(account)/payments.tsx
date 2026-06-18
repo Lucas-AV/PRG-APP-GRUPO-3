@@ -8,15 +8,18 @@ import {
   TextInput,
   Alert,
   ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { GradientButton } from '@/components/ui/gradient-button';
 import { TopAppBar } from '@/components/ui/top-app-bar';
-import { Colors, FontFamily, Spacing, Radius } from '@/constants/theme';
+import { Colors, FontFamily, GradientColors, Spacing, Radius } from '@/constants/theme';
 import { useAuth } from '@/context/AuthContext';
-import { transactionsApi, Transaction, cardsApi, Card, subscriptionsApi } from '@/services/api';
+import { transactionsApi, Transaction, cardsApi, Card, subscriptionsApi, paymentsApi } from '@/services/api';
 import { useComingSoonAlert } from '@/hooks/useComingSoonAlert';
 
 
@@ -93,25 +96,37 @@ export default function PaymentsScreen() {
 
   const comingSoon = useComingSoonAlert();
 
-  const handleApplyCoupon = () => {
-    if (!couponCode.trim()) return;
-    setActiveCoupon({ code: couponCode.toUpperCase(), description: 'Cupom aplicado com sucesso.' });
-    setCouponCode('');
+  const handleApplyCoupon = async () => {
+    const trimmedCode = couponCode.trim();
+    if (!trimmedCode || !token) return;
+    try {
+      const coupon = await paymentsApi.validateCoupon(trimmedCode, token);
+      setActiveCoupon({ code: coupon.code, description: coupon.description });
+      Alert.alert('Cupom aplicado', `O cupom ${coupon.code} foi aplicado com sucesso!`);
+      setCouponCode('');
+    } catch (e: any) {
+      Alert.alert('Erro ao aplicar cupom', e.message ?? 'Código de cupom inválido.');
+    }
   };
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <TopAppBar title="Pagamentos" />
-      <ScrollView
-        contentContainerStyle={styles.scroll}
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
       >
+        <ScrollView
+          contentContainerStyle={styles.scroll}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
         {/* Plan subscription checkout */}
         {!!subscribe_plan_id && (
           <View style={styles.checkoutCard}>
             <View style={styles.checkoutHeader}>
-              <MaterialIcons name="workspace-premium" size={24} color={Colors.primary} />
+              <MaterialIcons name="workspace-premium" size={24} color={Colors.brand} />
               <Text style={styles.checkoutTitle}>Confirmar Assinatura</Text>
             </View>
             <View style={styles.checkoutRow}>
@@ -132,7 +147,7 @@ export default function PaymentsScreen() {
         )}
 
         {/* Balance card */}
-        <View style={styles.balanceCard}>
+        <LinearGradient colors={GradientColors} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.balanceCard}>
           <View style={styles.balanceInfo}>
             <Text style={styles.balanceLabel}>Saldo Conecta</Text>
             <Text style={styles.balanceAmount}>
@@ -142,7 +157,7 @@ export default function PaymentsScreen() {
             </Text>
           </View>
           <GradientButton label="Adicionar Saldo" onPress={() => router.push('/(account)/add-balance' as any)} style={{ alignSelf: 'stretch' }} />
-        </View>
+        </LinearGradient>
 
         {/* Saved cards */}
         <View style={styles.section}>
@@ -157,7 +172,7 @@ export default function PaymentsScreen() {
                   style={({ pressed }) => [
                     styles.cardRow,
                     idx < cards.length - 1 && styles.cardRowBorder,
-                    pressed && { backgroundColor: Colors.surfaceContainerLow },
+                    pressed && { backgroundColor: Colors.brand + '08' },
                   ]}
                   onPress={() =>
                     router.push({
@@ -171,13 +186,13 @@ export default function PaymentsScreen() {
                   }
                 >
                   <View style={styles.cardIconWrap}>
-                    <MaterialIcons name="credit-card" size={22} color={Colors.primary} />
+                    <MaterialIcons name="credit-card" size={22} color={Colors.brand} />
                   </View>
                   <View style={styles.cardInfo}>
                     <Text style={styles.cardBrand}>{card.brand} final {card.last_four}</Text>
                     <Text style={styles.cardExpiry}>Expira em {card.expiry_month}/{card.expiry_year}</Text>
                   </View>
-                  <MaterialIcons name="chevron-right" size={20} color={Colors.outline} />
+                  <MaterialIcons name="chevron-right" size={20} color={Colors.inkMuted} />
                 </Pressable>
               ))
             )}
@@ -186,7 +201,7 @@ export default function PaymentsScreen() {
             style={({ pressed }) => [styles.addCardBtn, pressed && { opacity: 0.7 }]}
             onPress={() => router.push('/(account)/new-card' as any)}
           >
-            <MaterialIcons name="add" size={20} color={Colors.primary} />
+            <MaterialIcons name="add" size={20} color={Colors.brand} />
             <Text style={styles.addCardLabel}>Adicionar novo cartão</Text>
           </Pressable>
         </View>
@@ -264,7 +279,8 @@ export default function PaymentsScreen() {
             )}
           </View>
         </View>
-      </ScrollView>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -278,12 +294,12 @@ const styles = StyleSheet.create({
     gap: Spacing.xxxl,
   },
   checkoutCard: {
-    backgroundColor: Colors.primaryContainer + '33',
+    backgroundColor: Colors.brand + '15',
     borderRadius: Radius.lg,
     padding: Spacing.xxl,
     gap: Spacing.base,
     borderWidth: 1,
-    borderColor: Colors.primary + '33',
+    borderColor: Colors.border,
   },
   checkoutHeader: {
     flexDirection: 'row',
@@ -294,7 +310,7 @@ const styles = StyleSheet.create({
   checkoutTitle: {
     fontFamily: FontFamily.headlineExtraBold,
     fontSize: 18,
-    color: Colors.onSurface,
+    color: Colors.ink,
     letterSpacing: -0.3,
   },
   checkoutRow: {
@@ -305,43 +321,43 @@ const styles = StyleSheet.create({
   checkoutPlanName: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 16,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   checkoutPlanPrice: {
     fontFamily: FontFamily.headlineExtraBold,
     fontSize: 18,
-    color: Colors.primary,
+    color: Colors.brand,
     letterSpacing: -0.5,
   },
   checkoutNote: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 12,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     marginBottom: Spacing.sm,
   },
   balanceCard: {
-    backgroundColor: Colors.surfaceContainerLowest,
     borderRadius: Radius.lg,
     padding: Spacing.xxl,
     gap: Spacing.xl,
-    shadowColor: '#000',
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.03,
+    shadowOpacity: 0.14,
     shadowRadius: 16,
-    elevation: 2,
+    elevation: 6,
   },
   balanceInfo: { gap: Spacing.xs },
   balanceLabel: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 12,
-    color: Colors.onSurfaceVariant,
+    color: '#ffffff',
+    opacity: 0.8,
     letterSpacing: 1,
     textTransform: 'uppercase',
   },
   balanceAmount: {
     fontFamily: FontFamily.headlineExtraBold,
     fontSize: 32,
-    color: Colors.onSurface,
+    color: '#ffffff',
     letterSpacing: -1,
   },
   section: { gap: Spacing.base },
@@ -353,19 +369,19 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontFamily: FontFamily.headlineExtraBold,
     fontSize: 20,
-    color: Colors.onSurface,
+    color: Colors.ink,
     letterSpacing: -0.4,
   },
   seeAll: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 12,
-    color: Colors.primary,
+    color: Colors.brand,
   },
   cardsContainer: {
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.md,
     overflow: 'hidden',
-    shadowColor: '#000',
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.02,
     shadowRadius: 8,
@@ -374,7 +390,7 @@ const styles = StyleSheet.create({
   emptyCards: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 13,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     textAlign: 'center',
     paddingVertical: Spacing.xl,
   },
@@ -386,12 +402,12 @@ const styles = StyleSheet.create({
   },
   cardRowBorder: {
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: Colors.surfaceContainerLow,
+    borderBottomColor: Colors.border,
   },
   cardIconWrap: {
     width: 44,
     height: 32,
-    backgroundColor: Colors.surfaceContainerHigh,
+    backgroundColor: Colors.brand + '12',
     borderRadius: Radius.sm,
     alignItems: 'center',
     justifyContent: 'center',
@@ -400,12 +416,12 @@ const styles = StyleSheet.create({
   cardBrand: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 14,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   cardExpiry: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 12,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
   addCardBtn: {
     flexDirection: 'row',
@@ -415,18 +431,18 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.base,
     borderWidth: 1.5,
     borderStyle: 'dashed',
-    borderColor: Colors.outlineVariant + '4D',
+    borderColor: Colors.border,
     borderRadius: Radius.md,
   },
   addCardLabel: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 14,
-    color: Colors.primary,
+    color: Colors.brand,
   },
   couponInputRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.surfaceContainerHighest,
+    backgroundColor: Colors.border,
     borderRadius: Radius.full,
     gap: Spacing.sm,
     paddingRight: Spacing.xs,
@@ -435,32 +451,33 @@ const styles = StyleSheet.create({
     flex: 1,
     fontFamily: FontFamily.bodyRegular,
     fontSize: 14,
-    color: Colors.onSurface,
+    color: Colors.ink,
     paddingVertical: Spacing.md,
   },
   couponApplyBtn: {
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     paddingHorizontal: Spacing.xl,
     paddingVertical: Spacing.md,
     borderRadius: Radius.full,
+    marginVertical: Spacing.xs,
   },
   couponApplyLabel: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 13,
-    color: Colors.primary,
+    color: Colors.brand,
   },
   activeCouponCard: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.base,
-    backgroundColor: Colors.primaryContainer + '4D',
+    backgroundColor: Colors.brand + '10',
     borderWidth: 1,
-    borderColor: Colors.primary + '1A',
+    borderColor: Colors.border,
     borderRadius: Radius.md,
     padding: Spacing.base,
   },
   activeCouponIconWrap: {
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.brand,
     borderRadius: Radius.sm,
     padding: Spacing.sm,
   },
@@ -468,12 +485,12 @@ const styles = StyleSheet.create({
   activeCouponCode: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 14,
-    color: Colors.onPrimaryContainer,
+    color: Colors.ink,
   },
   activeCouponDesc: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 12,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
   removeCoupon: {
     fontFamily: FontFamily.headlineBold,
@@ -481,10 +498,10 @@ const styles = StyleSheet.create({
     color: Colors.error,
   },
   transactionsCard: {
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.md,
     overflow: 'hidden',
-    shadowColor: '#000',
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.02,
     shadowRadius: 8,
@@ -507,18 +524,18 @@ const styles = StyleSheet.create({
   txTitle: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 14,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   txDate: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 11,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
   txRight: { alignItems: 'flex-end', gap: 2 },
   txAmount: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 14,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   txStatus: {
     fontFamily: FontFamily.headlineBold,
@@ -527,13 +544,13 @@ const styles = StyleSheet.create({
   },
   txDivider: {
     height: StyleSheet.hairlineWidth,
-    backgroundColor: Colors.surfaceContainer,
+    backgroundColor: Colors.border,
     marginHorizontal: Spacing.base,
   },
   emptyTransactions: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 14,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     textAlign: 'center',
     padding: Spacing.xxl,
   },

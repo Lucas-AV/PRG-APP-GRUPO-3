@@ -6,7 +6,7 @@ export default function SchedulingLayout() {
     <Stack
       screenOptions={{
         headerShown: false,
-        animation: 'slide_from_right',
+        animation: 'fade',
         contentStyle: { backgroundColor: Colors.surface },
       }}
     >

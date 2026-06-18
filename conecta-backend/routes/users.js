@@ -1,7 +1,8 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const db = require('../db/database');
-const { authMiddleware } = require('../middleware/auth');
+const { authMiddleware, JWT_SECRET } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -32,11 +33,16 @@ router.use(authMiddleware);
  *         description: Usuário não encontrado
  */
 router.get('/:userId', (req, res) => {
-  const user = db
-    .prepare('SELECT id, name, email, phone, role, avatar_url, created_at FROM users WHERE id = ?')
+  const userRow = db
+    .prepare('SELECT id, name, email, phone, role, avatar_url, bio, years_experience, response_time, onboarding_completed, created_at FROM users WHERE id = ?')
     .get(req.user.id);
 
-  if (!user) return res.status(404).json({ error: 'Usuário não encontrado' });
+  if (!userRow) return res.status(404).json({ error: 'Usuário não encontrado' });
+
+  const user = {
+    ...userRow,
+    onboarding_completed: userRow.onboarding_completed === 1,
+  };
   return res.json(user);
 });
 
@@ -73,14 +79,27 @@ router.get('/:userId', (req, res) => {
  *         description: Nenhum campo válido ou e-mail já em uso
  */
 router.put('/:userId', (req, res) => {
-  const fields = ['name', 'email', 'phone'];
+  const fields = ['name', 'email', 'phone', 'bio', 'years_experience', 'response_time', 'role', 'onboarding_completed', 'specialties'];
   const updates = {};
   for (const field of fields) {
-    if (req.body[field] !== undefined) updates[field] = req.body[field];
+    if (req.body[field] !== undefined) {
+      let val = req.body[field];
+      if (typeof val === 'boolean') {
+        val = val ? 1 : 0;
+      }
+      updates[field] = val;
+    }
   }
 
   if (Object.keys(updates).length === 0) {
     return res.status(400).json({ error: 'Nenhum campo para atualizar' });
+  }
+
+  if (updates.phone) {
+    const existingPhone = db.prepare('SELECT id FROM users WHERE phone = ? AND id != ?').get(updates.phone, req.user.id);
+    if (existingPhone) {
+      return res.status(400).json({ error: 'Celular já cadastrado por outro usuário' });
+    }
   }
 
   const setClauses = Object.keys(updates).map((k) => `${k} = ?`).join(', ');
@@ -95,10 +114,27 @@ router.put('/:userId', (req, res) => {
     return res.status(500).json({ error: 'Erro interno do servidor' });
   }
 
-  const updated = db
-    .prepare('SELECT id, name, email, phone, role, avatar_url, created_at FROM users WHERE id = ?')
+  const userRow = db
+    .prepare('SELECT id, name, email, phone, role, avatar_url, bio, years_experience, response_time, onboarding_completed, created_at FROM users WHERE id = ?')
     .get(req.user.id);
+
+  if (!userRow) return res.status(404).json({ error: 'Usuário não encontrado' });
+
+  const token = jwt.sign({ id: userRow.id, email: userRow.email, role: userRow.role }, JWT_SECRET, {
+    expiresIn: '7d',
+  });
+
+  const updated = {
+    ...userRow,
+    onboarding_completed: userRow.onboarding_completed === 1,
+    token,
+  };
   return res.json(updated);
+});
+
+router.post('/:userId/complete-onboarding', (req, res) => {
+  db.prepare('UPDATE users SET onboarding_completed = 1 WHERE id = ?').run(req.user.id);
+  return res.json({ ok: true });
 });
 
 /**

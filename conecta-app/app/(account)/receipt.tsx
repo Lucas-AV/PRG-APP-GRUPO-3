@@ -1,15 +1,20 @@
+import { useState } from 'react';
 import {
   View,
   Text,
   ScrollView,
   Pressable,
   StyleSheet,
+  Alert,
+  Linking,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
-import { useComingSoonAlert } from '@/hooks/useComingSoonAlert';
 import { MaterialIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import * as Print from 'expo-print';
+import * as Sharing from 'expo-sharing';
 import { TopAppBar } from '@/components/ui/top-app-bar';
 import { Colors, FontFamily, GradientColors, Spacing, Radius } from '@/constants/theme';
 
@@ -34,10 +39,75 @@ export default function ReceiptScreen() {
     description?: string;
   }>();
 
-  const comingSoon = useComingSoonAlert();
+  const [downloading, setDownloading] = useState(false);
 
   const copyCode = () =>
     Alert.alert('Copiado!', `${transactionCode} copiado para a área de transferência.`, [{ text: 'OK' }]);
+
+  const handleDownload = async () => {
+    setDownloading(true);
+    try {
+      const html = `
+        <!DOCTYPE html>
+        <html lang="pt-BR">
+        <head>
+          <meta charset="UTF-8"/>
+          <style>
+            body { font-family: Arial, sans-serif; padding: 32px; color: #111; }
+            h1 { color: #0054d6; font-size: 22px; margin-bottom: 4px; }
+            .subtitle { color: #666; font-size: 13px; margin-bottom: 24px; }
+            .section { margin-bottom: 20px; }
+            .label { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+            .value { font-size: 15px; font-weight: bold; margin-top: 2px; }
+            .value.price { color: #0054d6; }
+            hr { border: none; border-top: 1px solid #eee; margin: 20px 0; }
+            .footer { font-size: 11px; color: #aaa; text-align: center; margin-top: 32px; }
+          </style>
+        </head>
+        <body>
+          <h1>Conecta</h1>
+          <p class="subtitle">Comprovante de Pagamento</p>
+          <hr/>
+          <div class="section">
+            <div class="label">Serviço</div>
+            <div class="value">${serviceName || '—'}</div>
+          </div>
+          <div class="section">
+            <div class="label">Prestador</div>
+            <div class="value">${providerName || '—'}</div>
+          </div>
+          <div class="section">
+            <div class="label">Data e Hora</div>
+            <div class="value">${date || '—'}</div>
+          </div>
+          <div class="section">
+            <div class="label">Valor Total</div>
+            <div class="value price">${amount || '—'}</div>
+          </div>
+          ${paymentMethod ? `<div class="section"><div class="label">Método de Pagamento</div><div class="value">${paymentMethod}</div></div>` : ''}
+          ${transactionCode ? `<div class="section"><div class="label">Código da Transação</div><div class="value">${transactionCode}</div></div>` : ''}
+          <hr/>
+          <p class="footer">Gerado pelo Conecta · suporte@conectaapp.com.br</p>
+        </body>
+        </html>
+      `;
+      const { uri } = await Print.printToFileAsync({ html, base64: false });
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(uri, { mimeType: 'application/pdf', dialogTitle: 'Salvar Comprovante' });
+      } else {
+        Alert.alert('Compartilhamento não disponível', 'Não foi possível compartilhar o arquivo neste dispositivo.');
+      }
+    } catch {
+      Alert.alert('Erro', 'Não foi possível gerar o comprovante. Tente novamente.');
+    } finally {
+      setDownloading(false);
+    }
+  };
+
+  const handleHelp = () =>
+    Linking.openURL('https://wa.me/5511999999999?text=Preciso+de+ajuda+com+um+pagamento').catch(() =>
+      Linking.openURL('mailto:suporte@conectaapp.com.br')
+    );
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -49,7 +119,7 @@ export default function ReceiptScreen() {
         {/* Success header */}
         <View style={styles.successHeader}>
           <View style={styles.successIconWrap}>
-            <MaterialIcons name="check-circle" size={56} color={Colors.primary} />
+            <MaterialIcons name="check-circle" size={56} color={Colors.brand} />
           </View>
           <Text style={styles.successTitle}>Pagamento Realizado{'\n'}com Sucesso!</Text>
           <Text style={styles.successSub}>Sua transação foi processada com segurança.</Text>
@@ -58,7 +128,7 @@ export default function ReceiptScreen() {
         {/* Service card */}
         <View style={styles.serviceCard}>
           <View style={styles.serviceIconBox}>
-            <MaterialIcons name="receipt-long" size={28} color={Colors.primary} />
+            <MaterialIcons name="receipt-long" size={28} color={Colors.brand} />
           </View>
           <View style={styles.serviceInfo}>
             <Text style={styles.serviceName}>{serviceName}</Text>
@@ -81,7 +151,7 @@ export default function ReceiptScreen() {
             </View>
             <View style={[styles.detailCard, styles.flex1]}>
               <Text style={styles.detailLabel}>Valor Total</Text>
-              <Text style={[styles.detailValue, { color: Colors.primary }]}>{amount}</Text>
+              <Text style={[styles.detailValue, { color: Colors.brand }]}>{amount}</Text>
             </View>
           </View>
 
@@ -91,11 +161,11 @@ export default function ReceiptScreen() {
               <View>
                 <Text style={styles.detailLabel}>Método de Pagamento</Text>
                 <View style={styles.paymentMethodRow}>
-                  <MaterialIcons name="credit-card" size={16} color={Colors.onSurfaceVariant} />
+                  <MaterialIcons name="credit-card" size={16} color={Colors.inkMuted} />
                   <Text style={styles.detailValue}>{paymentMethod}</Text>
                 </View>
               </View>
-              <MaterialIcons name="verified" size={24} color={Colors.outlineVariant} />
+              <MaterialIcons name="verified" size={24} color={Colors.inkMuted} />
             </View>
           )}
 
@@ -110,7 +180,7 @@ export default function ReceiptScreen() {
                 style={({ pressed }) => [styles.copyBtn, pressed && { opacity: 0.6 }]}
                 onPress={copyCode}
               >
-                <MaterialIcons name="content-copy" size={20} color={Colors.primary} />
+                <MaterialIcons name="content-copy" size={20} color={Colors.brand} />
               </Pressable>
             </View>
           )}
@@ -130,8 +200,10 @@ export default function ReceiptScreen() {
             style={({ pressed }) => [
               styles.downloadWrap,
               pressed && { opacity: 0.9, transform: [{ scale: 0.98 }] },
+              downloading && { opacity: 0.7 },
             ]}
-            onPress={comingSoon}
+            onPress={handleDownload}
+            disabled={downloading}
           >
             <LinearGradient
               colors={GradientColors}
@@ -139,16 +211,20 @@ export default function ReceiptScreen() {
               end={{ x: 1, y: 1 }}
               style={styles.downloadBtn}
             >
-              <MaterialIcons name="file-download" size={20} color="#ffffff" />
-              <Text style={styles.downloadBtnLabel}>Baixar Comprovante</Text>
+              {downloading
+                ? <ActivityIndicator size="small" color="#fff" />
+                : <MaterialIcons name="file-download" size={20} color="#ffffff" />}
+              <Text style={styles.downloadBtnLabel}>
+                {downloading ? 'Gerando PDF…' : 'Baixar Comprovante'}
+              </Text>
             </LinearGradient>
           </Pressable>
 
           <Pressable
             style={({ pressed }) => [styles.helpBtn, pressed && { opacity: 0.85 }]}
-            onPress={comingSoon}
+            onPress={handleHelp}
           >
-            <MaterialIcons name="help-outline" size={20} color={Colors.onSecondaryContainer} />
+            <MaterialIcons name="help-outline" size={20} color={Colors.brand} />
             <Text style={styles.helpBtnLabel}>Preciso de Ajuda</Text>
           </Pressable>
 
@@ -182,11 +258,11 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: Colors.primaryContainer,
+    backgroundColor: Colors.brand + '15',
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: Spacing.sm,
-    shadowColor: Colors.primary,
+    shadowColor: Colors.brand,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 12,
@@ -195,7 +271,7 @@ const styles = StyleSheet.create({
   successTitle: {
     fontFamily: FontFamily.headlineExtraBold,
     fontSize: 24,
-    color: Colors.onSurface,
+    color: Colors.ink,
     textAlign: 'center',
     letterSpacing: -0.6,
     lineHeight: 30,
@@ -203,19 +279,21 @@ const styles = StyleSheet.create({
   successSub: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 14,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     textAlign: 'center',
   },
 
   // Service card
   serviceCard: {
-    backgroundColor: Colors.surfaceContainerLowest,
-    borderRadius: Radius.lg,
+    backgroundColor: Colors.card,
+    borderRadius: Radius.xl,
     padding: Spacing.base,
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.base,
-    shadowColor: '#000',
+    borderWidth: 1,
+    borderColor: Colors.border,
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.04,
     shadowRadius: 24,
@@ -225,7 +303,7 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: Radius.md,
-    backgroundColor: Colors.primaryContainer,
+    backgroundColor: Colors.brand + '12',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -233,7 +311,7 @@ const styles = StyleSheet.create({
   serviceName: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 15,
-    color: Colors.onSurface,
+    color: Colors.ink,
     letterSpacing: -0.2,
   },
   providerRow: {
@@ -245,19 +323,19 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 10,
-    backgroundColor: Colors.primaryContainer,
+    backgroundColor: Colors.brand + '12',
     alignItems: 'center',
     justifyContent: 'center',
   },
   providerInitials: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 8,
-    color: Colors.primary,
+    color: Colors.brand,
   },
   providerName: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 12,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
 
   // Details bento
@@ -265,9 +343,11 @@ const styles = StyleSheet.create({
   detailRow2: { flexDirection: 'row', gap: Spacing.base },
   flex1: { flex: 1 },
   detailCard: {
-    backgroundColor: Colors.surfaceContainerLow,
-    borderRadius: Radius.lg,
+    backgroundColor: Colors.card,
+    borderRadius: Radius.xl,
     padding: Spacing.base,
+    borderWidth: 1,
+    borderColor: Colors.border,
   },
   detailRowBetween: {
     flexDirection: 'row',
@@ -277,7 +357,7 @@ const styles = StyleSheet.create({
   detailLabel: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 10,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     letterSpacing: 1,
     textTransform: 'uppercase',
     marginBottom: Spacing.xs,
@@ -285,7 +365,7 @@ const styles = StyleSheet.create({
   detailValue: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 14,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   paymentMethodRow: {
     flexDirection: 'row',
@@ -305,14 +385,14 @@ const styles = StyleSheet.create({
   descTitle: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 11,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     letterSpacing: 1.5,
     textTransform: 'uppercase',
   },
   descText: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 14,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     lineHeight: 22,
   },
 
@@ -321,7 +401,7 @@ const styles = StyleSheet.create({
   downloadWrap: {
     borderRadius: Radius.sm,
     overflow: 'hidden',
-    shadowColor: Colors.primary,
+    shadowColor: Colors.brand,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 8,
@@ -345,14 +425,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: Spacing.sm,
-    backgroundColor: Colors.secondaryContainer,
+    backgroundColor: Colors.brand + '12',
     borderRadius: Radius.sm,
     paddingVertical: Spacing.base,
   },
   helpBtnLabel: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 15,
-    color: Colors.onSecondaryContainer,
+    color: Colors.brand,
   },
   backBtn: {
     alignItems: 'center',
@@ -361,6 +441,6 @@ const styles = StyleSheet.create({
   backBtnLabel: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 15,
-    color: Colors.primary,
+    color: Colors.brand,
   },
 });

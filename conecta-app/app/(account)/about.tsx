@@ -5,13 +5,19 @@ import {
   ScrollView,
   Pressable,
   StyleSheet,
+  Linking,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
 import Constants from 'expo-constants';
 import { Colors, FontFamily, Spacing, Radius } from '@/constants/theme';
-import { useComingSoonAlert } from '@/hooks/useComingSoonAlert';
+
+const openURL = (url: string) =>
+  Linking.openURL(url).catch(() =>
+    Alert.alert('Erro', 'Não foi possível abrir o link.')
+  );
 
 // ── Componente de Cartão Expansível (Collapsible Card) ───────────────────────
 interface ExpandableCardProps {
@@ -37,14 +43,14 @@ function ExpandableCard({ icon, title, summary, linkText, onLinkPress }: Expanda
       <View style={styles.linkCardHeader}>
         <View style={styles.linkCardLeft}>
           <View style={styles.linkIconCircle}>
-            <MaterialIcons name={icon} size={20} color={Colors.onSurfaceVariant} />
+            <MaterialIcons name={icon} size={20} color={Colors.inkMuted} />
           </View>
           <Text style={styles.linkTitle}>{title}</Text>
         </View>
         <MaterialIcons
           name="chevron-right"
           size={20}
-          color={Colors.outlineVariant}
+          color={Colors.border}
           style={{ transform: [{ rotate: expanded ? '90deg' : '0deg' }] }}
         />
       </View>
@@ -60,7 +66,7 @@ function ExpandableCard({ icon, title, summary, linkText, onLinkPress }: Expanda
               style={styles.innerLinkBtn}
             >
               <Text style={styles.innerLinkBtnText}>{linkText}</Text>
-              <MaterialIcons name="arrow-forward" size={14} color={Colors.primary} />
+              <MaterialIcons name="arrow-forward" size={14} color={Colors.brand} />
             </Pressable>
           )}
         </View>
@@ -71,7 +77,6 @@ function ExpandableCard({ icon, title, summary, linkText, onLinkPress }: Expanda
 
 // ── Tela Sobre ───────────────────────────────────────────────────────────────
 export default function AboutScreen() {
-  const comingSoon = useComingSoonAlert();
   const appVersion = Constants.expoConfig?.version ?? '1.0.0';
 
   return (
@@ -82,7 +87,7 @@ export default function AboutScreen() {
           style={({ pressed }) => [styles.iconBtn, pressed && styles.iconBtnPressed]}
           onPress={() => router.back()}
         >
-          <MaterialIcons name="arrow-back" size={24} color={Colors.onSurface} />
+          <MaterialIcons name="arrow-back" size={24} color={Colors.ink} />
         </Pressable>
         <Text style={styles.topBarTitle}>About SevGen</Text>
         <View style={{ width: 38 }} />
@@ -95,7 +100,7 @@ export default function AboutScreen() {
         {/* ── Hero Section ─────────────────────────────────────────────────── */}
         <View style={styles.heroSection}>
           <View style={styles.logoBox}>
-            <MaterialIcons name="diamond" size={48} color={Colors.primary} style={styles.logoIcon} />
+            <MaterialIcons name="diamond" size={48} color={Colors.brand} style={styles.logoIcon} />
             <View style={styles.logoShine} />
           </View>
           <View style={styles.heroTitles}>
@@ -118,7 +123,7 @@ export default function AboutScreen() {
         {/* ── Discover Links (Abas Expansíveis) ─────────────────────────────── */}
         <View style={styles.linksSection}>
           <Text style={styles.sectionHeader}>Descobrir</Text>
-          
+
           <ExpandableCard
             icon="history"
             title="Nossa História"
@@ -163,23 +168,23 @@ export default function AboutScreen() {
         <View style={styles.socialSection}>
           <Pressable
             style={({ pressed }) => [styles.socialCircle, pressed && styles.socialCirclePressed]}
-            onPress={comingSoon}
+            onPress={() => openURL('https://instagram.com/conectaapp')}
           >
-            <MaterialIcons name="photo-camera" size={24} color={Colors.onSurfaceVariant} />
+            <MaterialIcons name="photo-camera" size={24} color={Colors.inkMuted} />
           </Pressable>
 
           <Pressable
             style={({ pressed }) => [styles.socialCircle, pressed && styles.socialCirclePressed]}
-            onPress={comingSoon}
+            onPress={() => openURL('https://linkedin.com/company/conectaapp')}
           >
-            <MaterialIcons name="work-outline" size={24} color={Colors.onSurfaceVariant} />
+            <MaterialIcons name="work-outline" size={24} color={Colors.inkMuted} />
           </Pressable>
 
           <Pressable
             style={({ pressed }) => [styles.socialCircle, pressed && styles.socialCirclePressed]}
-            onPress={comingSoon}
+            onPress={() => openURL('mailto:contato@conectaapp.com.br')}
           >
-            <MaterialIcons name="alternate-email" size={24} color={Colors.onSurfaceVariant} />
+            <MaterialIcons name="alternate-email" size={24} color={Colors.inkMuted} />
           </Pressable>
         </View>
       </ScrollView>
@@ -201,12 +206,12 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.md,
     backgroundColor: Colors.surface,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: Colors.outlineVariant + '33',
+    borderBottomColor: Colors.border,
   },
   topBarTitle: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 16,
-    color: Colors.primary,
+    color: Colors.brand,
     textTransform: 'uppercase',
     letterSpacing: 0.8,
   },
@@ -218,7 +223,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   iconBtnPressed: {
-    backgroundColor: Colors.surfaceContainerLow,
+    backgroundColor: Colors.brand+'08',
   },
   scrollContent: {
     paddingHorizontal: Spacing.xl,
@@ -234,13 +239,13 @@ const styles = StyleSheet.create({
   logoBox: {
     width: 96,
     height: 96,
-    backgroundColor: Colors.surfaceContainerHighest,
+    backgroundColor: Colors.border,
     borderRadius: Radius.lg,
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
     overflow: 'hidden',
-    shadowColor: '#000',
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
@@ -261,22 +266,22 @@ const styles = StyleSheet.create({
   heroName: {
     fontFamily: FontFamily.headlineExtraBold,
     fontSize: 36,
-    color: Colors.onSurface,
+    color: Colors.ink,
     letterSpacing: -0.8,
   },
   heroVersion: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 12,
-    color: Colors.outline,
+    color: Colors.inkMuted,
     letterSpacing: 1.5,
     textTransform: 'uppercase',
   },
   missionCard: {
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     padding: Spacing.xxl,
     borderRadius: Radius.lg,
     gap: Spacing.md,
-    shadowColor: '#000',
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.02,
     shadowRadius: 8,
@@ -285,13 +290,13 @@ const styles = StyleSheet.create({
   missionTitle: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 20,
-    color: Colors.onSurface,
+    color: Colors.ink,
     letterSpacing: -0.4,
   },
   missionText: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 14,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     lineHeight: 22,
     textAlign: 'justify',
   },
@@ -301,26 +306,26 @@ const styles = StyleSheet.create({
   sectionHeader: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 11,
-    color: Colors.outline,
+    color: Colors.inkMuted,
     textTransform: 'uppercase',
     letterSpacing: 1.5,
     paddingLeft: Spacing.xs,
   },
   linkCard: {
     padding: Spacing.base,
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.lg,
-    shadowColor: '#000',
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.02,
     shadowRadius: 8,
     elevation: 1,
   },
   linkCardPressed: {
-    backgroundColor: Colors.surfaceContainerLow,
+    backgroundColor: Colors.card,
   },
   linkCardExpanded: {
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
   },
   linkCardHeader: {
     flexDirection: 'row',
@@ -337,14 +342,14 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: Radius.full,
-    backgroundColor: Colors.surfaceContainer,
+    backgroundColor: Colors.border,
     alignItems: 'center',
     justifyContent: 'center',
   },
   linkTitle: {
     fontFamily: FontFamily.headlineSemiBold,
     fontSize: 16,
-    color: Colors.onSurface,
+    color: Colors.ink,
     letterSpacing: -0.2,
   },
   linkCardContent: {
@@ -355,7 +360,7 @@ const styles = StyleSheet.create({
   linkCardSummary: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 13,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     lineHeight: 18,
   },
   innerLinkBtn: {
@@ -368,7 +373,7 @@ const styles = StyleSheet.create({
   innerLinkBtnText: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 12,
-    color: Colors.primary,
+    color: Colors.brand,
   },
   socialSection: {
     flexDirection: 'row',
@@ -385,17 +390,17 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: Radius.full,
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#000',
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.03,
     shadowRadius: 2,
     elevation: 1,
   },
   socialCirclePressed: {
-    backgroundColor: Colors.primaryContainer,
+    backgroundColor: Colors.brand+'15',
     transform: [{ scale: 0.9 }],
   },
 });

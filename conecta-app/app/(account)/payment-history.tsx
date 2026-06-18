@@ -61,7 +61,7 @@ export default function PaymentHistoryScreen() {
       .finally(() => setLoading(false));
   }, [user, token]);
 
-  if (loading) return <ActivityIndicator style={{ flex: 1 }} color={Colors.primary} />;
+  if (loading) return <ActivityIndicator style={{ flex: 1 }} color={Colors.brand} />;
 
   const thisMonth = groups[0]?.transactions.reduce((sum, tx) => sum + tx.amount, 0) ?? 0;
   const totalLabel = `R$ ${thisMonth.toFixed(2).replace('.', ',')}`;
@@ -135,7 +135,7 @@ export default function PaymentHistoryScreen() {
                       style={({ pressed }) => [
                         styles.txItem,
                         idx < group.transactions.length - 1 && styles.txItemBorder,
-                        pressed && { backgroundColor: Colors.surfaceContainerLow },
+                        pressed && { backgroundColor: Colors.brand+'08' },
                       ]}
                       onPress={() => router.push('/(account)/receipt' as any)}
                     >
@@ -175,11 +175,11 @@ const styles = StyleSheet.create({
     gap: Spacing.xxxl,
   },
   summaryCard: {
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.lg,
     padding: Spacing.xxl,
     overflow: 'hidden',
-    shadowColor: '#000',
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.02,
     shadowRadius: 20,
@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
   summaryLabel: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 11,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
     letterSpacing: 1.5,
     textTransform: 'uppercase',
   },
@@ -201,7 +201,7 @@ const styles = StyleSheet.create({
   summaryAmount: {
     fontFamily: FontFamily.headlineExtraBold,
     fontSize: 32,
-    color: Colors.onSurface,
+    color: Colors.ink,
     letterSpacing: -1,
   },
   trendBadge: {
@@ -225,7 +225,7 @@ const styles = StyleSheet.create({
     width: 96,
     height: 96,
     borderRadius: 48,
-    backgroundColor: Colors.primary + '0D',
+    backgroundColor: Colors.brand+'08',
   },
   filtersRow: {
     gap: Spacing.md,
@@ -235,13 +235,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.xl,
     paddingVertical: Spacing.md,
     borderRadius: Radius.full,
-    backgroundColor: Colors.surfaceContainerHighest,
+    backgroundColor: Colors.border,
   },
-  chipActive: { backgroundColor: Colors.primary },
+  chipActive: { backgroundColor: Colors.brand },
   chipLabel: {
     fontFamily: FontFamily.bodySemiBold,
     fontSize: 14,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
   chipLabelActive: { color: '#ffffff' },
   groups: { gap: Spacing.xxxl },
@@ -254,20 +254,20 @@ const styles = StyleSheet.create({
   groupMonth: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 18,
-    color: Colors.onSurface,
+    color: Colors.ink,
     letterSpacing: -0.3,
   },
   groupDivider: {
     flex: 1,
     height: 1,
-    backgroundColor: Colors.surfaceContainerHighest,
+    backgroundColor: Colors.border,
     borderRadius: 1,
   },
   groupTransactions: {
-    backgroundColor: Colors.surfaceContainerLowest,
+    backgroundColor: Colors.card,
     borderRadius: Radius.lg,
     overflow: 'hidden',
-    shadowColor: '#000',
+    shadowColor: Colors.ink,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.02,
     shadowRadius: 8,
@@ -281,7 +281,7 @@ const styles = StyleSheet.create({
   },
   txItemBorder: {
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: Colors.surfaceContainerLow,
+    borderBottomColor: Colors.border,
   },
   txIconBox: {
     width: 48,
@@ -294,18 +294,18 @@ const styles = StyleSheet.create({
   txTitle: {
     fontFamily: FontFamily.headlineBold,
     fontSize: 14,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   txDate: {
     fontFamily: FontFamily.bodyRegular,
     fontSize: 12,
-    color: Colors.onSurfaceVariant,
+    color: Colors.inkMuted,
   },
   txRight: { alignItems: 'flex-end', gap: Spacing.xs },
   txAmount: {
     fontFamily: FontFamily.headlineExtraBold,
     fontSize: 14,
-    color: Colors.onSurface,
+    color: Colors.ink,
   },
   statusBadge: {
     paddingHorizontal: Spacing.sm,
