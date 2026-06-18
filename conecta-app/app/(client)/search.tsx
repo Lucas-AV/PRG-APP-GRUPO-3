@@ -4,12 +4,10 @@ import {
   Text,
   TextInput,
   ScrollView,
-  FlatList,
   Pressable,
   StyleSheet,
   ActivityIndicator,
   useWindowDimensions,
-  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -18,39 +16,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Colors, FontFamily, Spacing, Radius } from '@/constants/theme';
 import { CATEGORIES } from '@/constants/categories';
 import { publicServicesApi, PublicService } from '@/services/api';
-
-// ── Mock Suggestion Data from Template ─────────────────────────────────────────
-interface SuggestionProfessional {
-  id: string;
-  name: string;
-  specialty: string;
-  rating: number;
-  image: string;
-}
-
-const SUGGESTIONS: SuggestionProfessional[] = [
-  {
-    id: '1',
-    name: 'Ricardo Silva',
-    specialty: 'Encanador Especialista',
-    rating: 4.9,
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAsllWNCy_kiYdRAYYUMDjTcjTHluRUfPfoMea_QZglZyitYaMZaam4kmkuZJV2V_r4cjQ1gt0mLBQHGPASnKRumYCV3WHC1hXqeEsGi5cDpn9HT5jx4z4Sqh7xQ0xkZAYajHbgYH9dNXzAhegpq6P5mk1ihs-jkbbO6x_3rfIl7L5CrADtxXzsonBzzfHffdF3-VvFBvIjbm8uM7HoIy6IjvVKhdAesmyK_evdMhh1ZfQ0edsCc7uim-yKAcBcp2GBsJs4B3Foyoo',
-  },
-  {
-    id: '2',
-    name: 'Dra. Ana Costa',
-    specialty: 'Fisioterapeuta',
-    rating: 5.0,
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAxvEUpRP4lTvxPZ8XsRGx0VUaeFZSO0NM9L2JHXvup0VA5dU5pSRsIrQxMhJPlGsg83C1Frz5nxLcIPG4u9cCGlbrGGaNlUe7p16EQTqdpDlxmLDGIuq5UIxWKOofooqv3O2C4ZVMNri5k55T94wC6k_YrCbN1BIMm2Gw9JzmQZYE8j3eD7P97Uoz2n2rp5HxBiasiYSaGOOuSxscLRLRH7AJVDTmDc5zbrWTe0yX_7bzjYHgheeC412ihJJN8RTXldL1I0gL6AB8',
-  },
-  {
-    id: '3',
-    name: 'Marcos Pontes',
-    specialty: 'Eletricista Residencial',
-    rating: 4.8,
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAwXh01uztVpOn_U2ZbypWjen2b9mDXoss43FOklO16O5zsy05XYU4rbhoqjRECyY8xYUviMgFokk-YKv58w0PZ8Cmczy1o-IpLjdqiKuwRmxLaLFY5FZb-9e7q0iXbkvx-BP9cNxvrf-c3-Eth4E5z7s1d0_5dZifD2doWx5rrCrbJZxy8o6ihEnwV4b8OM7SH0azXrxGOtb6fx_vyfHEZKrpV89TkQMK7P8ilcZppB_CjHLDtbvgGlEAN_VL6kfb0lBcHERQ0DWg',
-  },
-];
+import { AvatarInitials } from '@/components/ui/avatar-initials';
 
 // ── Componente de Busca ────────────────────────────────────────────────────────
 export default function SearchScreen() {
@@ -74,6 +40,18 @@ export default function SearchScreen() {
   const [history, setHistory] = useState<string[]>([]);
   const [services, setServices] = useState<PublicService[]>([]);
   const [loading, setLoading] = useState(false);
+  const [featured, setFeatured] = useState<PublicService[]>([]);
+
+  // Carregar top-rated services para a seção de destaque
+  useEffect(() => {
+    publicServicesApi.list().then(all => {
+      const top = [...all]
+        .filter(s => s.avg_rating != null)
+        .sort((a, b) => (b.avg_rating ?? 0) - (a.avg_rating ?? 0))
+        .slice(0, 3);
+      setFeatured(top);
+    }).catch(() => {});
+  }, []);
 
   // Carregar histórico inicial
   useEffect(() => {
@@ -474,50 +452,34 @@ export default function SearchScreen() {
               </View>
             </View>
 
-            {/* ── Sugestões para Você ────────────────────────────────────────── */}
-            <View style={[styles.section, { marginBottom: Spacing.xxxl }]}>
-              <Text style={styles.sectionTitleWithoutLink}>Sugestões para você</Text>
-              <FlatList
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                data={SUGGESTIONS}
-                keyExtractor={item => item.id}
-                contentContainerStyle={styles.suggestionsScroll}
-                renderItem={({ item }) => (
-                  <View style={styles.suggestionCard}>
-                    <View style={styles.suggestionImageContainer}>
-                      <Image source={{ uri: item.image }} style={styles.suggestionImage} />
+            {/* ── Profissionais em Destaque ──────────────────────────────────── */}
+            {featured.length > 0 && (
+              <View style={styles.suggestionsSection}>
+                <Text style={styles.suggestionsTitle}>Profissionais em Destaque</Text>
+                {featured.map(svc => (
+                  <Pressable
+                    key={svc.id}
+                    style={({ pressed }) => [styles.suggestionItem, pressed && { opacity: 0.8 }]}
+                    onPress={() => router.push({ pathname: '/(client)/service-detail' as any, params: { id: String(svc.id) } })}
+                  >
+                    <AvatarInitials
+                      initials={svc.provider_name.split(' ').slice(0, 2).map(w => w[0]?.toUpperCase() ?? '').join('')}
+                      size="md"
+                    />
+                    <View style={styles.suggestionInfo}>
+                      <Text style={styles.suggestionName} numberOfLines={1}>{svc.provider_name}</Text>
+                      <Text style={styles.suggestionSpecialty} numberOfLines={1}>{svc.name}</Text>
+                    </View>
+                    {svc.avg_rating != null && (
                       <View style={styles.suggestionRating}>
-                        <MaterialIcons name="star" size={12} color={Colors.primary} />
-                        <Text style={styles.suggestionRatingText}>{item.rating.toFixed(1)}</Text>
+                        <MaterialIcons name="star" size={14} color="#f59e0b" />
+                        <Text style={styles.suggestionRatingText}>{svc.avg_rating.toFixed(1)}</Text>
                       </View>
-                    </View>
-                    <View style={styles.suggestionBody}>
-                      <Text style={styles.suggestionName} numberOfLines={1}>
-                        {item.name}
-                      </Text>
-                      <Text style={styles.suggestionSpecialty} numberOfLines={1}>
-                        {item.specialty}
-                      </Text>
-                      <Pressable
-                        style={({ pressed }) => [
-                          styles.suggestionBtn,
-                          pressed && { backgroundColor: Colors.primaryDim },
-                        ]}
-                        onPress={() =>
-                          router.push({
-                            pathname: '/(client)/provider-profile' as any,
-                            params: { id: item.id, name: item.name },
-                          })
-                        }
-                      >
-                        <Text style={styles.suggestionBtnText}>Ver Perfil</Text>
-                      </Pressable>
-                    </View>
-                  </View>
-                )}
-              />
-            </View>
+                    )}
+                  </Pressable>
+                ))}
+              </View>
+            )}
           </>
         ) : (
           /* ── Resultados de Busca ────────────────────────────────────────── */
@@ -814,74 +776,14 @@ const styles = StyleSheet.create({
     color: Colors.ink,
     letterSpacing: 0.8,
   },
-  suggestionsScroll: {
-    paddingHorizontal: Spacing.xl,
-    gap: Spacing.base,
-  },
-  suggestionCard: {
-    width: 256,
-    backgroundColor: Colors.card,
-    borderRadius: Radius.lg,
-    overflow: 'hidden',
-    shadowColor: 'rgba(0,0,0,0.02)',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 1,
-    shadowRadius: 12,
-    elevation: 2,
-  },
-  suggestionImageContainer: {
-    height: 128,
-    width: '100%',
-    position: 'relative',
-  },
-  suggestionImage: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover',
-  },
-  suggestionRating: {
-    position: 'absolute',
-    top: Spacing.sm,
-    right: Spacing.sm,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 3,
-    backgroundColor: 'rgba(255,255,255,0.9)',
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: 4,
-    borderRadius: Radius.full,
-  },
-  suggestionRatingText: {
-    fontFamily: FontFamily.headlineBold,
-    fontSize: 12,
-    color: Colors.ink,
-  },
-  suggestionBody: {
-    padding: Spacing.base,
-  },
-  suggestionName: {
-    fontFamily: FontFamily.headlineBold,
-    fontSize: 16,
-    color: Colors.ink,
-  },
-  suggestionSpecialty: {
-    fontFamily: FontFamily.bodyRegular,
-    fontSize: 12,
-    color: Colors.inkMuted,
-    marginBottom: Spacing.base,
-  },
-  suggestionBtn: {
-    backgroundColor: Colors.primary,
-    paddingVertical: Spacing.sm + 2,
-    borderRadius: Radius.md,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  suggestionBtnText: {
-    fontFamily: FontFamily.bodySemiBold,
-    fontSize: 12,
-    color: Colors.onPrimary,
-  },
+  suggestionsSection: { paddingHorizontal: Spacing.xl, gap: Spacing.md, marginTop: Spacing.xl },
+  suggestionsTitle: { fontFamily: FontFamily.headlineBold, fontSize: 17, color: Colors.ink, letterSpacing: -0.3, marginBottom: Spacing.xs },
+  suggestionItem: { flexDirection: 'row', alignItems: 'center', gap: Spacing.md, backgroundColor: Colors.card, borderRadius: Radius.lg, padding: Spacing.base },
+  suggestionInfo: { flex: 1, gap: 2 },
+  suggestionName: { fontFamily: FontFamily.headlineBold, fontSize: 14, color: Colors.ink },
+  suggestionSpecialty: { fontFamily: FontFamily.bodyRegular, fontSize: 12, color: Colors.inkMuted },
+  suggestionRating: { flexDirection: 'row', alignItems: 'center', gap: 3 },
+  suggestionRatingText: { fontFamily: FontFamily.headlineBold, fontSize: 13, color: Colors.ink },
   resultsSection: {
     marginTop: Spacing.md,
   },
