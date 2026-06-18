@@ -128,10 +128,10 @@ export default function ProviderHomeScreen() {
             <Text style={styles.sectionTitle}>Ações rápidas</Text>
             <View style={styles.quickActions}>
               {[
-                { icon: 'build' as const,           label: 'Meus Serviços',  path: '/(services)/create' as any },
-                { icon: 'event-available' as const,  label: 'Disponibilidade', path: '/(account)/edit-profile' as any },
-                { icon: 'bar-chart' as const,        label: 'Desempenho',     path: '/(services)/view' as any },
-                { icon: 'star-border' as const,      label: 'Avaliações',     path: '/(account)/payments' as any },
+                { icon: 'build' as const,           label: 'Meus Serviços',  path: '/(tabs)/services' as any },
+                { icon: 'event-available' as const,  label: 'Disponibilidade', path: '/(scheduling)/provider-availability' as any },
+                { icon: 'bar-chart' as const,        label: 'Desempenho',     path: '/(account)/payment-history' as any },
+                { icon: 'star-border' as const,      label: 'Avaliações',     path: '/(client)/provider-reviews' as any },
               ].map(action => (
                 <Pressable
                   key={action.label}

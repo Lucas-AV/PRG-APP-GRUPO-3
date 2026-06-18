@@ -8,14 +8,16 @@ import {
   StyleSheet,
   Alert,
   ActivityIndicator,
+  Image,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
 import { GradientButton } from '@/components/ui/gradient-button';
 import { Colors, FontFamily, Spacing, Radius } from '@/constants/theme';
 import { useAuth } from '@/context/AuthContext';
-import { servicesApi } from '@/services/api';
+import { servicesApi, serviceImagesApi, ServiceImage } from '@/services/api';
 
 const CATEGORIES = [
   'Bem-estar e Saúde',
@@ -39,20 +41,53 @@ export default function EditServiceScreen() {
   const [priceType, setPriceType] = useState<'fixo' | 'a_partir_de'>('fixo');
   const [showCategory, setShowCategory] = useState(false);
   const [category, setCategory] = useState('');
+  const [images, setImages] = useState<ServiceImage[]>([]);
+  const [imageUploading, setImageUploading] = useState(false);
 
   useEffect(() => {
     if (!token || !id) return;
-    servicesApi.get(Number(id), token)
-      .then((s) => {
+    Promise.all([
+      servicesApi.get(Number(id), token),
+      serviceImagesApi.list(Number(id), token),
+    ])
+      .then(([s, imgs]) => {
         setName(s.name);
         setDescription(s.description ?? '');
         setPrice(s.price != null ? String(s.price) : '');
         setPriceType(s.price_type);
         setCategory(s.category ?? '');
+        setImages(imgs);
       })
       .catch(() => Alert.alert('Erro', 'Não foi possível carregar o serviço.'))
       .finally(() => setFetchLoading(false));
   }, [id, token]);
+
+  const pickAndUploadImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      quality: 0.8,
+      allowsEditing: false,
+    });
+    if (result.canceled) return;
+    setImageUploading(true);
+    try {
+      const img = await serviceImagesApi.upload(Number(id), result.assets[0].uri, token!);
+      setImages(prev => [...prev, img]);
+    } catch (e: any) {
+      Alert.alert('Erro ao enviar', e.message ?? 'Não foi possível enviar a imagem.');
+    } finally {
+      setImageUploading(false);
+    }
+  };
+
+  const removeImage = async (imageId: number) => {
+    try {
+      await serviceImagesApi.remove(Number(id), imageId, token!);
+      setImages(prev => prev.filter(img => img.id !== imageId));
+    } catch (e: any) {
+      Alert.alert('Erro', e.message ?? 'Não foi possível remover a imagem.');
+    }
+  };
 
   const handleSave = async () => {
     if (!name.trim()) {
@@ -266,26 +301,30 @@ export default function EditServiceScreen() {
         <View style={styles.section}>
           <View style={styles.sectionHeadRow}>
             <Text style={styles.sectionTitle}>Galeria de Fotos</Text>
-            <Pressable style={styles.addPhotoBtn}>
+            <Pressable style={styles.addPhotoBtn} onPress={pickAndUploadImage} disabled={imageUploading}>
               <MaterialIcons name="add-a-photo" size={14} color={Colors.brand} />
               <Text style={styles.addPhotoBtnText}>Adicionar</Text>
             </Pressable>
           </View>
 
           <View style={styles.photoGrid}>
-            {[Colors.card, Colors.border, Colors.card].map(
-              (bg, i) => (
-                <View key={i} style={[styles.photoSlot, { backgroundColor: bg }]}>
-                  <MaterialIcons name="image" size={24} color={Colors.border} />
-                  <Pressable style={styles.photoDeleteBtn}>
-                    <MaterialIcons name="close" size={14} color="#fff" />
-                  </Pressable>
-                </View>
-              )
-            )}
-            <Pressable style={styles.photoUpload}>
-              <MaterialIcons name="cloud-upload" size={22} color={Colors.inkMuted} />
-              <Text style={styles.photoUploadLabel}>UPLOAD</Text>
+            {images.map((img) => (
+              <View key={img.id} style={styles.photoSlot}>
+                <Image source={{ uri: img.url }} style={styles.photoThumb} />
+                <Pressable style={styles.photoDeleteBtn} onPress={() => removeImage(img.id)}>
+                  <MaterialIcons name="close" size={14} color="#fff" />
+                </Pressable>
+              </View>
+            ))}
+            <Pressable style={styles.photoUpload} onPress={pickAndUploadImage} disabled={imageUploading}>
+              {imageUploading ? (
+                <ActivityIndicator size="small" color={Colors.primary} />
+              ) : (
+                <>
+                  <MaterialIcons name="cloud-upload" size={22} color={Colors.inkMuted} />
+                  <Text style={styles.photoUploadLabel}>UPLOAD</Text>
+                </>
+              )}
             </Pressable>
           </View>
         </View>
@@ -565,6 +604,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
+    overflow: 'hidden',
+    backgroundColor: Colors.card,
+  },
+  photoThumb: {
+    width: 80,
+    height: 80,
+    borderRadius: Radius.md,
   },
   photoDeleteBtn: {
     position: 'absolute',

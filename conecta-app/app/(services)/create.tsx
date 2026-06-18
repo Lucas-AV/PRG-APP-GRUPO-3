@@ -8,14 +8,17 @@ import {
   Switch,
   StyleSheet,
   Alert,
+  Image,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
 import { GradientButton } from '@/components/ui/gradient-button';
 import { Colors, FontFamily, Spacing, Radius } from '@/constants/theme';
 import { useAuth } from '@/context/AuthContext';
-import { servicesApi } from '@/services/api';
+import { servicesApi, serviceImagesApi } from '@/services/api';
 
 const CATEGORIES = [
   'Bem-estar e Saúde',
@@ -43,6 +46,21 @@ export default function CreateServiceScreen() {
 
   const [showDuration, setShowDuration] = useState(false);
   const [duration, setDuration] = useState('');
+  const [pendingImages, setPendingImages] = useState<string[]>([]);
+
+  const pickImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      quality: 0.8,
+      allowsEditing: false,
+    });
+    if (result.canceled) return;
+    setPendingImages(prev => [...prev, result.assets[0].uri]);
+  };
+
+  const removePending = (index: number) => {
+    setPendingImages(prev => prev.filter((_, i) => i !== index));
+  };
 
   const handleSave = async (asDraft: boolean) => {
     if (!name.trim()) {
@@ -52,7 +70,7 @@ export default function CreateServiceScreen() {
     if (!token) return;
     setLoading(true);
     try {
-      await servicesApi.create({
+      const service = await servicesApi.create({
         name: name.trim(),
         category: category || undefined,
         price: price ? parseFloat(price.replace(',', '.')) : undefined,
@@ -61,6 +79,9 @@ export default function CreateServiceScreen() {
         description: description.trim() || undefined,
         status: asDraft ? 'rascunho' : (publishNow ? 'ativo' : 'rascunho'),
       }, token);
+      if (pendingImages.length > 0) {
+        await Promise.allSettled(pendingImages.map(uri => serviceImagesApi.upload(service.id, uri, token)));
+      }
       router.back();
     } catch (e: any) {
       Alert.alert('Erro ao salvar', e.message ?? 'Tente novamente.');
@@ -244,16 +265,18 @@ export default function CreateServiceScreen() {
             <Text style={styles.stepTitle}>Fotos do Serviço</Text>
           </View>
           <View style={styles.photoGrid}>
-            <Pressable style={styles.photoUpload}>
+            <Pressable style={styles.photoUpload} onPress={pickImage}>
               <MaterialIcons name="add-a-photo" size={28} color={Colors.inkMuted} />
               <Text style={styles.photoUploadLabel}>Adicionar</Text>
             </Pressable>
-            <View style={styles.photoSlot}>
-              <MaterialIcons name="image" size={28} color={Colors.border} />
-            </View>
-            <View style={[styles.photoSlot, { backgroundColor: Colors.border }]}>
-              <MaterialIcons name="image" size={28} color={Colors.border} />
-            </View>
+            {pendingImages.map((uri, i) => (
+              <View key={i} style={styles.photoSlot}>
+                <Image source={{ uri }} style={styles.photoThumb} />
+                <Pressable style={styles.photoDeleteBtn} onPress={() => removePending(i)}>
+                  <MaterialIcons name="close" size={14} color="#fff" />
+                </Pressable>
+              </View>
+            ))}
           </View>
         </View>
 
@@ -467,6 +490,24 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
     borderRadius: Radius.xl,
     backgroundColor: Colors.card,
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  photoThumb: {
+    width: '100%',
+    height: '100%',
+    borderRadius: Radius.xl,
+  },
+  photoDeleteBtn: {
+    position: 'absolute',
+    top: 6,
+    right: 6,
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    backgroundColor: 'rgba(0,0,0,0.55)',
     alignItems: 'center',
     justifyContent: 'center',
   },

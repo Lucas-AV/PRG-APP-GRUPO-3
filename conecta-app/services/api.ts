@@ -469,6 +469,46 @@ export interface Appointment {
   created_at: string;
 }
 
+// ── Service Images ────────────────────────────────────────────────────────────
+
+export interface ServiceImage {
+  id: number;
+  service_id: number;
+  url: string;
+  created_at: string;
+}
+
+export const serviceImagesApi = {
+  list: (serviceId: number, token: string) =>
+    request<ServiceImage[]>(`/uploads/services/${serviceId}/images`, {}, token),
+
+  upload: async (serviceId: number, fileUri: string, token: string): Promise<ServiceImage> => {
+    const filename = fileUri.split('/').pop() ?? 'image.jpg';
+    const ext = filename.split('.').pop()?.toLowerCase() ?? 'jpg';
+    const mimeType = ext === 'png' ? 'image/png' : ext === 'webp' ? 'image/webp' : 'image/jpeg';
+
+    const form = new FormData();
+    form.append('file', { uri: fileUri, name: filename, type: mimeType } as any);
+
+    let cleanToken = token.trim();
+    if (cleanToken.startsWith('"') && cleanToken.endsWith('"')) {
+      cleanToken = cleanToken.slice(1, -1);
+    }
+
+    const res = await fetch(`${API_BASE_URL}/uploads/services/${serviceId}/images`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${cleanToken}` },
+      body: form,
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error ?? 'Erro ao enviar imagem');
+    return data;
+  },
+
+  remove: (serviceId: number, imageId: number, token: string) =>
+    request<{ message: string }>(`/uploads/services/${serviceId}/images/${imageId}`, { method: 'DELETE' }, token),
+};
+
 export const appointmentsApi = {
   list: (token: string) =>
     request<Appointment[]>('/appointments', {}, token),
