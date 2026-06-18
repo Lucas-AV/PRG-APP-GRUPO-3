@@ -155,6 +155,9 @@ export const usersApi = {
       body: JSON.stringify(data),
     }, token),
 
+  completeOnboarding: (id: number, token: string) =>
+    request<{ ok: boolean }>(`/users/${id}/complete-onboarding`, { method: 'POST' }, token),
+
   changePassword: (id: number, data: { current_password: string; new_password: string }, token: string) =>
     request<{ message: string }>(`/users/${id}/password`, {
       method: 'PUT',
@@ -315,6 +318,7 @@ export interface PublicService {
   description?: string;
   duration?: string;
   included_items?: string[];
+  images?: { id: number; url: string }[];
   provider_id: number;
   provider_name: string;
   avg_rating: number | null;

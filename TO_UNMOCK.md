@@ -13,6 +13,7 @@ Registro de tudo que está mockado/hardcoded no app e precisa ser substituído p
 | **3** | `receipt.tsx` — objeto `RECEIPT` removido; todos os dados recebidos via `useLocalSearchParams` |
 | **4** | `payments.tsx` — saldo `R$ 450,00` substituído por fetch de `subscriptionsApi.get()` com estado real |
 | **5** | `payments.tsx` — cupom `SEVGEN20` removido; estado inicial agora é `null` |
+| **6** | Todas as imagens hardcoded removidas: `provider-profile.tsx`, `service-detail.tsx`, `provider-reviews.tsx`, `search.tsx`, `filter.tsx` usam `AvatarInitials` e dados reais da API. Schema estendido (`bio`, `specialties`, `certifications`, `years_experience`, `response_time`, `included_items`). Endpoint `GET /users/provider/:id/profile` criado. Seed rico com 6 prestadores, 4 clientes, 25 agendamentos, 14 avaliações. |
 
 ---
 
@@ -125,5 +126,5 @@ Vários arquivos usam URLs fixas do Google como avatares de prestadores e client
 | Recibo hardcoded (`receipt.tsx`) | Alta | Parcial | ✅ Concluído |
 | Saldo hardcoded (`payments.tsx`) | Alta | Sim | ✅ Concluído |
 | Cupom hardcoded (`payments.tsx`) | Média | Não | ✅ Parcial (estado null; validação aguarda endpoint) |
-| Imagens de usuário hardcoded | Média | Sim (campo `avatar`) | 🔲 Pendente |
+| Imagens de usuário hardcoded | Média | Sim (campo `avatar`) | ✅ Concluído |
 | Integração MercadoPago | Alta | Não | 🔲 Pendente |

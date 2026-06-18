@@ -459,6 +459,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.xl,
     paddingVertical: Spacing.md,
     borderRadius: Radius.full,
+    marginVertical: Spacing.xs,
   },
   couponApplyLabel: {
     fontFamily: FontFamily.headlineBold,
