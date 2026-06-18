@@ -52,6 +52,14 @@ router.post('/register', async (req, res) => {
     return res.status(400).json({ error: 'role deve ser "cliente" ou "prestador"' });
   }
 
+  // Validate phone number uniqueness
+  if (phone) {
+    const phoneExists = db.prepare('SELECT id FROM users WHERE phone = ?').get(phone);
+    if (phoneExists) {
+      return res.status(400).json({ error: 'telefone indisponivel' });
+    }
+  }
+
   const hashedPassword = await bcrypt.hash(password, 10);
 
   try {
@@ -60,7 +68,7 @@ router.post('/register', async (req, res) => {
     );
     const result = stmt.run(name, email, phone || null, hashedPassword, role);
 
-    const user = { id: result.lastInsertRowid, name, email, phone: phone || null, role };
+    const user = { id: result.lastInsertRowid, name, email, phone: phone || null, role, onboarding_completed: 0 };
     const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, JWT_SECRET, {
       expiresIn: '7d',
     });
@@ -117,7 +125,13 @@ router.post('/login', async (req, res) => {
     return res.status(401).json({ error: 'Credenciais inválidas' });
   }
 
-  const user = { id: userRow.id, name: userRow.name, email: userRow.email, role: userRow.role };
+  const user = {
+    id: userRow.id,
+    name: userRow.name,
+    email: userRow.email,
+    role: userRow.role,
+    onboarding_completed: userRow.onboarding_completed,
+  };
   const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, JWT_SECRET, {
     expiresIn: '7d',
   });

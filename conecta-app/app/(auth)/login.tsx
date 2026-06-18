@@ -76,7 +76,8 @@ export default function LoginScreen() {
     try {
       const user = await login(email.trim().toLowerCase(), password);
       const completed = await SecureStore.getItemAsync(`onboarding_${user.id}`);
-      if (completed === 'true') {
+      if (completed === 'true' || user.onboarding_completed === 1) {
+        await SecureStore.setItemAsync(`onboarding_${user.id}`, 'true');
         router.replace('/(tabs)');
       } else {
         router.replace('/(onboarding)/step0');

@@ -55,7 +55,11 @@ export default function SignUpScreen() {
       });
       router.push('/(onboarding)/step0');
     } catch (e: any) {
-      Alert.alert('Erro ao criar conta', e.message ?? 'Tente novamente em instantes.');
+      if (e.message && e.message.toLowerCase().includes('telefone')) {
+        setErrors(prev => ({ ...prev, phone: 'Telefone indisponível.' }));
+      } else {
+        Alert.alert('Erro ao criar conta', e.message ?? 'Tente novamente em instantes.');
+      }
     } finally {
       setLoading(false);
     }

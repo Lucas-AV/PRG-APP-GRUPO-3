@@ -92,8 +92,13 @@ db.exec(`
     started_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     expires_at DATETIME,
     UNIQUE(user_id)
-  );
 `);
+
+try {
+  db.exec('ALTER TABLE users ADD COLUMN onboarding_completed INTEGER DEFAULT 0');
+} catch (err) {
+  // Column may already exist
+}
 
 const plansCount = db.prepare('SELECT COUNT(*) as n FROM plans').get();
 if (plansCount.n === 0) {

@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import * as SecureStore from 'expo-secure-store';
-import { authApi, User } from '@/services/api';
+import { authApi, User, usersApi } from '@/services/api';
 
 interface AuthContextType {
   user: User | null;
@@ -79,7 +79,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const markOnboardingComplete = async () => {
-    if (!user) return;
+    if (!user || !token) return;
+    try {
+      const updatedUser = await usersApi.update(user.id, { onboarding_completed: 1 }, token);
+      await updateUser(updatedUser);
+    } catch (err) {
+      console.error('Failed to update onboarding state in backend:', err);
+    }
     await SecureStore.setItemAsync(`onboarding_${user.id}`, 'true');
   };
 

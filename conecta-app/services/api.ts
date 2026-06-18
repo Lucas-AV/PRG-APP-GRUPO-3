@@ -25,6 +25,7 @@ export interface User {
   email: string;
   phone?: string;
   role: 'cliente' | 'prestador';
+  onboarding_completed?: number;
 }
 
 export interface AuthResponse {
@@ -116,7 +117,7 @@ export interface Address {
 // ── Users ─────────────────────────────────────────────────────────────────────
 
 export const usersApi = {
-  update: (id: number, data: { name?: string; email?: string; phone?: string }, token: string) =>
+  update: (id: number, data: { name?: string; email?: string; phone?: string; onboarding_completed?: number }, token: string) =>
     request<User>(`/users/${id}`, {
       method: 'PUT',
       body: JSON.stringify(data),
